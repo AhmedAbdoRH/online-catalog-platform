@@ -55,12 +55,12 @@ export function OnboardingForm() {
             variant: 'destructive',
         });
       }
-    } else {
+    } else if (result?.success) {
       toast({
         title: 'نجاح!',
         description: 'تم إنشاء الكتالوج الخاص بك بنجاح.',
       });
-      router.refresh();
+      router.push('/dashboard');
     }
   };
 

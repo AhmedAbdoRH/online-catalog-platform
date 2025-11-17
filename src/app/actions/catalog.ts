@@ -91,7 +91,7 @@ export async function createCatalog(formData: FormData) {
   // Refresh session to ensure middleware has the latest user state
   await supabase.auth.refreshSession();
   
-  redirect('/dashboard');
+  return { success: true };
 }
 
 export async function updateCatalog(catalogId: number, formData: FormData) {
