@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -10,15 +10,15 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 
 const catalogSchema = z.object({
   name: z.string()
-    .min(3)
+    .min(3, 'يجب أن يكون الاسم 3 أحرف على الأقل')
     .max(50)
-    .regex(/^[a-z0-9-]+$/),
+    .regex(/^[a-z0-9-]+$/, 'يجب أن يحتوي الاسم على أحرف إنجليزية صغيرة وأرقام وشرطات فقط'),
   logo: z.instanceof(File)
-    .refine((file) => file.size > 0, "Logo is required.")
-    .refine((file) => file.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+    .refine((file) => file.size > 0, "الشعار مطلوب.")
+    .refine((file) => file.size <= MAX_FILE_SIZE, `الحد الأقصى لحجم الملف 5 ميغابايت.`)
     .refine(
       (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
-      ".jpg, .jpeg, .png and .webp files are accepted."
+      ".jpg, .jpeg, .png و .webp هي الملفات المقبولة."
     ),
 });
 
@@ -48,7 +48,8 @@ export async function createCatalog(prevState: any, formData: FormData) {
 
   if (!validatedFields.success) {
     console.error("Validation failed:", validatedFields.error.flatten().fieldErrors);
-    return { message: 'بيانات غير صالحة.' };
+    const firstError = Object.values(validatedFields.error.flatten().fieldErrors)[0]?.[0] || 'بيانات غير صالحة.';
+    return { message: firstError };
   }
 
   const { name, logo } = validatedFields.data;
@@ -60,9 +61,8 @@ export async function createCatalog(prevState: any, formData: FormData) {
   }
 
   // Upload logo
-  const supabaseService = createServiceRoleClient();
   const logoFileName = `${user.id}-${Date.now()}.${logo.name.split('.').pop()}`;
-  const { data: uploadData, error: uploadError } = await supabaseService.storage
+  const { data: uploadData, error: uploadError } = await supabase.storage
     .from('logos')
     .upload(logoFileName, logo);
 
@@ -71,10 +71,10 @@ export async function createCatalog(prevState: any, formData: FormData) {
     return { message: 'فشل تحميل الشعار.' };
   }
   
-  const { data: { publicUrl } } = supabaseService.storage.from('logos').getPublicUrl(uploadData.path);
+  const { data: { publicUrl } } = supabase.storage.from('logos').getPublicUrl(uploadData.path);
 
   // Create catalog entry
-  const { error: dbError } = await supabaseService.from('catalogs').insert({
+  const { error: dbError } = await supabase.from('catalogs').insert({
     name,
     user_id: user.id,
     logo_url: publicUrl,
@@ -83,7 +83,7 @@ export async function createCatalog(prevState: any, formData: FormData) {
   if (dbError) {
     console.error('DB Error:', dbError);
     // Clean up uploaded logo if db insert fails
-    await supabaseService.storage.from('logos').remove([logoFileName]);
+    await supabase.storage.from('logos').remove([logoFileName]);
     return { message: 'فشل إنشاء الكتالوج في قاعدة البيانات.' };
   }
 

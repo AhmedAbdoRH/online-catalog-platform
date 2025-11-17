@@ -18,23 +18,26 @@ export function OnboardingForm() {
   const { toast } = useToast();
 
    useEffect(() => {
+    // This effect will run when the `state` from the action changes.
+    // We check if there's a message and it's not a success scenario (which would redirect).
     if (state?.message) {
       toast({
-        title: 'خطأ',
+        title: 'خطأ في الإنشاء',
         description: state.message,
         variant: 'destructive'
       });
     }
   }, [state, toast]);
+  
+  // This effect resets the form when the component mounts or the form action result changes.
+  useEffect(() => {
+    if (!state?.message) {
+        formRef.current?.reset();
+    }
+  }, [state])
 
   return (
       <form ref={formRef} action={formAction} className="space-y-8">
-        {state?.message && (
-            <Alert variant="destructive">
-                <AlertTitle>حدث خطأ</AlertTitle>
-                <AlertDescription>{state.message}</AlertDescription>
-            </Alert>
-        )}
         <div className="space-y-2">
             <Label htmlFor="name">اسم الكتالوج (باللغة الإنجليزية)</Label>
             <Input 
@@ -44,9 +47,10 @@ export function OnboardingForm() {
                 required 
                 pattern="^[a-z0-9-]+$"
                 title="يجب أن يحتوي على أحرف إنجليزية صغيرة وأرقام وشرطات فقط"
+                minLength={3}
             />
             <p className="text-sm text-muted-foreground">
-                سيتم استخدام هذا الاسم في رابط الكتالوج الخاص بك. مثال: my-restaurant.online-menu.site
+                سيتم استخدام هذا الاسم في رابط الكتالوج الخاص بك. مثال: your-menu.app/c/my-restaurant
             </p>
         </div>
         
@@ -56,7 +60,7 @@ export function OnboardingForm() {
                 id="logo"
                 name="logo"
                 type="file" 
-                accept="image/*" 
+                accept="image/jpeg,image/png,image/webp" 
                 required 
             />
         </div>
