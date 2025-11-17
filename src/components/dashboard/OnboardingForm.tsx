@@ -18,12 +18,21 @@ import { createCatalog } from '@/app/actions/catalog';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
 const formSchema = z.object({
   name: z.string()
     .min(3, 'يجب أن يكون اسم الكتالوج 3 أحرف على الأقل')
     .max(50, 'يجب أن يكون اسم الكتالوج 50 حرفًا على الأكثر')
     .regex(/^[a-z0-9-]+$/, 'يجب أن يحتوي اسم الكتالوج على أحرف إنجليزية صغيرة وأرقام وشرطات فقط'),
-  logo: z.instanceof(File).refine(file => file.size > 0, 'شعار العمل مطلوب.'),
+  logo: z.instanceof(File)
+    .refine(file => file.size > 0, 'شعار العمل مطلوب.')
+    .refine((file) => file.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+    .refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+      ".jpg, .jpeg, .png and .webp files are accepted."
+    ),
 });
 
 export function OnboardingForm() {
