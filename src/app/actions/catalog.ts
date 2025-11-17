@@ -2,6 +2,7 @@
 
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -80,11 +81,13 @@ export async function createCatalog(formData: FormData) {
 
   if (dbError) {
     console.error('DB Error:', dbError);
+    // Clean up uploaded logo if db insert fails
+    await supabaseService.storage.from('logos').remove([logoFileName]);
     return { error: 'فشل إنشاء الكتالوج في قاعدة البيانات.' };
   }
 
   revalidatePath('/dashboard');
-  return { error: null };
+  redirect('/dashboard');
 }
 
 export async function updateCatalog(catalogId: number, formData: FormData) {
