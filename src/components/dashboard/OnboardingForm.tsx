@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { SubmitButton } from '@/components/common/SubmitButton';
-import { createCatalog, checkCatalogName } from '@/app/actions/catalog';
+import { createCatalog } from '@/app/actions/catalog';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -36,16 +36,9 @@ export function OnboardingForm() {
       name: '',
       logo: new File([], ''),
     },
-    mode: 'onBlur'
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const isAvailable = await checkCatalogName(values.name);
-    if (!isAvailable) {
-        form.setError('name', { message: 'اسم الكتالوج هذا مستخدم بالفعل. الرجاء اختيار اسم آخر.' });
-        return;
-    }
-      
     const formData = new FormData();
     formData.append('name', values.name);
     formData.append('logo', values.logo);
@@ -53,11 +46,15 @@ export function OnboardingForm() {
     const result = await createCatalog(formData);
 
     if (result.error) {
-      toast({
-        title: 'خطأ',
-        description: result.error,
-        variant: 'destructive',
-      });
+       if (result.error === "اسم الكتالوج هذا مستخدم بالفعل.") {
+        form.setError('name', { message: 'اسم الكتالوج هذا مستخدم بالفعل. الرجاء اختيار اسم آخر.' });
+      } else {
+        toast({
+            title: 'خطأ',
+            description: result.error,
+            variant: 'destructive',
+        });
+      }
     } else {
       toast({
         title: 'نجاح!',
