@@ -87,6 +87,10 @@ export async function createCatalog(formData: FormData) {
   }
 
   revalidatePath('/dashboard');
+  
+  // Refresh session to ensure middleware has the latest user state
+  await supabase.auth.refreshSession();
+  
   redirect('/dashboard');
 }
 
