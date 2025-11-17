@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormState } from 'react-dom';
+import { useActionState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -18,7 +18,6 @@ import { SubmitButton } from '@/components/common/SubmitButton';
 import { createCatalog } from '@/app/actions/catalog';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
-import { useEffect } from 'react';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -42,7 +41,7 @@ const initialState = {
 };
 
 export function OnboardingForm() {
-  const [state, formAction] = useFormState(createCatalog, initialState);
+  const [state, formAction] = useActionState(createCatalog, initialState);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
