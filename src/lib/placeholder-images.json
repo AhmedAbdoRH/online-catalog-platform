@@ -1,3 +1,34 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "burger",
+      "description": "صورة برجر",
+      "imageUrl": "https://images.unsplash.com/photo-1550547660-d9450f859349?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxidXJnZXJ8ZW58MHx8fHwxNzYzMzYzNzQ5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "burger"
+    },
+    {
+      "id": "pizza",
+      "description": "صورة بيتزا",
+      "imageUrl": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwaXp6YXxlbnwwfHx8fDE3NjMzNDQ1MTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pizza"
+    },
+    {
+      "id": "salad",
+      "description": "صورة سلطة",
+      "imageUrl": "https://images.unsplash.com/photo-1547496502-affa22d38842?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzYWxhZHxlbnwwfHx8fDE3NjMzMjcyMDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "salad"
+    },
+    {
+      "id": "pasta",
+      "description": "صورة باستا",
+      "imageUrl": "https://images.unsplash.com/photo-1611270629569-8b357cb88da9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwYXN0YXxlbnwwfHx8fDE3NjMzMTUyMDd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pasta"
+    },
+    {
+      "id": "juice",
+      "description": "صورة عصير",
+      "imageUrl": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxqdWljZXxlbnwwfHx8fDE3NjMzOTE5Mzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "juice"
+    }
+  ]
 }

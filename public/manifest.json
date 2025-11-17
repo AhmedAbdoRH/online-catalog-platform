@@ -1,0 +1,22 @@
+{
+  "name": "قائمة طعامي",
+  "short_name": "قائمة طعامي",
+  "description": "منصتك لإنشاء قائمة طعام إلكترونية بسهولة",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F1F8E9",
+  "theme_color": "#66BB6A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ]
+}
