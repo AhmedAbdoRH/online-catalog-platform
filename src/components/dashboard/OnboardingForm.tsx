@@ -34,7 +34,7 @@ export function OnboardingForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      logo: new File([], ''),
+      logo: undefined,
     },
   });
 
@@ -45,7 +45,7 @@ export function OnboardingForm() {
 
     const result = await createCatalog(formData);
 
-    if (result.error) {
+    if (result && result.error) {
        if (result.error === "اسم الكتالوج هذا مستخدم بالفعل.") {
         form.setError('name', { message: 'اسم الكتالوج هذا مستخدم بالفعل. الرجاء اختيار اسم آخر.' });
       } else {
