@@ -8,6 +8,7 @@ const categorySchema = z.object({
   catalog_id: z.coerce.number(),
   name: z.string().min(2, 'يجب أن يكون الاسم حرفين على الأقل').max(50),
   parent_category_id: z.coerce.number().nullable().optional(),
+  subcategories: z.array(z.string().min(2).max(50)).optional().default([]),
 });
 
 const updateCategorySchema = z.object({
@@ -17,17 +18,28 @@ const updateCategorySchema = z.object({
 });
 
 export async function createCategory(prevState: any, formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     return { message: 'غير مصرح به' };
   }
 
+  let parsedSubcategories: string[] = [];
+  const subcategoriesRaw = formData.get('subcategories');
+  if (typeof subcategoriesRaw === 'string' && subcategoriesRaw.trim()) {
+    try {
+      parsedSubcategories = JSON.parse(subcategoriesRaw);
+    } catch (error) {
+      console.error('Invalid subcategories payload', error);
+    }
+  }
+
   const validatedFields = categorySchema.safeParse({
     catalog_id: formData.get('catalog_id'),
     name: formData.get('name'),
     parent_category_id: formData.get('parent_category_id') || null,
+    subcategories: parsedSubcategories,
   });
 
   if (!validatedFields.success) {
@@ -35,17 +47,35 @@ export async function createCategory(prevState: any, formData: FormData) {
     return { message: firstError };
   }
 
-  const { catalog_id, name, parent_category_id } = validatedFields.data;
+  const { catalog_id, name, parent_category_id, subcategories } = validatedFields.data;
 
-  const { error } = await supabase.from('categories').insert({
-    catalog_id,
-    name,
-    parent_category_id,
-  });
+  const { data: insertedParent, error } = await supabase
+    .from('categories')
+    .insert({
+      catalog_id,
+      name,
+      parent_category_id,
+    })
+    .select('id')
+    .single();
 
   if (error) {
     console.error('Error creating category:', error);
     return { message: 'فشل إنشاء الفئة.' };
+  }
+
+  if (subcategories.length && insertedParent?.id) {
+    const subInsertPayload = subcategories.map((subName) => ({
+      catalog_id,
+      name: subName,
+      parent_category_id: insertedParent.id,
+    }));
+
+    const { error: subError } = await supabase.from('categories').insert(subInsertPayload);
+    if (subError) {
+      console.error('Error creating subcategories:', subError);
+      return { message: 'تم إنشاء الفئة الرئيسية لكن حدث خطأ أثناء إضافة الفئات الفرعية.' };
+    }
   }
 
   revalidatePath('/dashboard/categories');
@@ -53,7 +83,7 @@ export async function createCategory(prevState: any, formData: FormData) {
 }
 
 export async function updateCategory(prevState: any, formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -88,7 +118,7 @@ export async function updateCategory(prevState: any, formData: FormData) {
 }
 
 export async function deleteCategory(id: number) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -107,7 +137,7 @@ export async function deleteCategory(id: number) {
 }
 
 export async function getCategories(catalogId: number) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -116,7 +146,7 @@ export async function getCategories(catalogId: number) {
 
   const { data, error } = await supabase
     .from('categories')
-    .select('id, name, parent_category_id')
+    .select('id, name, parent_category_id, created_at')
     .eq('catalog_id', catalogId)
     .order('name', { ascending: true });
 

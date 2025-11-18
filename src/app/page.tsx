@@ -12,7 +12,7 @@ type Props = {
 };
 
 async function getCatalogData(slug: string): Promise<CatalogData | null> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: catalog, error: catalogError } = await supabase
         .from('catalogs')
         .select('*')

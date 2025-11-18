@@ -9,7 +9,7 @@ import { CategoryForm } from '@/components/dashboard/CategoryForm';
 import { CategoriesTable } from '@/components/dashboard/CategoriesTable';
 
 async function getCatalogAndCategories() {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect('/login');
 

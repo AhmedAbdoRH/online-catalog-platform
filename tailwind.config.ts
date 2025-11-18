@@ -10,11 +10,15 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['PT Sans', 'sans-serif'],
-        headline: ['PT Sans', 'sans-serif'],
+        body: ['Tajawal', 'system-ui', 'sans-serif'],
+        headline: ['Tajawal', 'system-ui', 'sans-serif'],
+        latin: ['Satoshi', 'system-ui', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {
+        'brand-primary': '#00D1C9',
+        'brand-accent': '#FF9500',
+        'brand-luxury': '#A855F7',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

@@ -5,7 +5,7 @@ import { SettingsForm } from '@/components/dashboard/SettingsForm';
 
 
 export default async function SettingsPage() {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect('/login');
 

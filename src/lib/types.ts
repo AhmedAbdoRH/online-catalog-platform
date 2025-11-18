@@ -17,3 +17,9 @@ export type CatalogData = Catalog & {
     menu_items: MenuItem[];
   })[];
 };
+
+// Hierarchical category type for storefront views
+export type CategoryWithSubcategories = Category & {
+  menu_items: MenuItem[];
+  subcategories: CategoryWithSubcategories[];
+};

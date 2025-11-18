@@ -5,13 +5,13 @@ import { cn } from '@/lib/utils';
 import ClientProviders from '@/components/common/ClientProviders';
 
 export const metadata: Metadata = {
-  title: 'قائمة طعامي',
-  description: 'منصتك لإنشاء قائمة طعام إلكترونية بسهولة',
+  title: 'أونلاين منيو',
+  description: 'منصتك الفاخرة لإنشاء قائمة طعام إلكترونية عربية جاهزة للمشاركة خلال دقائق.',
   manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
-  themeColor: '#66BB6A',
+  themeColor: '#00D1C9',
 };
 
 export default function RootLayout({
@@ -20,14 +20,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.cdnfonts.com/css/satoshi"
+          rel="stylesheet"
+        />
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
-      <body className={cn("font-body antialiased", "min-h-screen bg-background")}>
+      <body
+        className={cn(
+          "font-body antialiased min-h-screen bg-background text-foreground",
+          "selection:bg-brand-primary/10 selection:text-brand-primary"
+        )}
+      >
         <ClientProviders>
           {children}
           <Toaster />

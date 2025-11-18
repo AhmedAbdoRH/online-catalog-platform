@@ -23,7 +23,7 @@ const catalogSchema = z.object({
 });
 
 export async function checkCatalogName(name: string): Promise<boolean> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('catalogs')
     .select('name')
@@ -34,7 +34,7 @@ export async function checkCatalogName(name: string): Promise<boolean> {
 }
 
 export async function createCatalog(prevState: any, formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -93,7 +93,7 @@ export async function createCatalog(prevState: any, formData: FormData) {
 
 
 export async function updateCatalog(prevState: any, formData: FormData) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

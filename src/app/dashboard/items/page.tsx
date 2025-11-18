@@ -8,7 +8,7 @@ import { ItemForm } from '@/components/dashboard/ItemForm';
 import { ItemsTable } from '@/components/dashboard/ItemsTable';
 
 async function getData() {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect('/login');
 

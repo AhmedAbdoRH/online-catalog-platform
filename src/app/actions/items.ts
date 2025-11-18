@@ -39,7 +39,7 @@ async function uploadImage(image: File, userId: string): Promise<string> {
 }
 
 export async function createItem(formData: FormData) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return { error: "غير مصرح به" };
@@ -84,7 +84,7 @@ export async function createItem(formData: FormData) {
 }
 
 export async function updateItem(itemId: number, formData: FormData) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return { error: "غير مصرح به" };
@@ -118,7 +118,7 @@ export async function updateItem(itemId: number, formData: FormData) {
 }
 
 export async function deleteItem(itemId: number) {
-    const supabase = createClient();
+    const supabase = await createClient();
     // TODO: Verify ownership & delete image from storage
     const { error } = await supabase.from('menu_items').delete().eq('id', itemId);
 
