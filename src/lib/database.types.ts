@@ -12,6 +12,7 @@ export type Database = {
       catalogs: {
         Row: {
           created_at: string
+          enable_subcategories: boolean
           id: number
           logo_url: string | null
           name: string
@@ -19,6 +20,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          enable_subcategories?: boolean
           id?: number
           logo_url?: string | null
           name: string
@@ -26,6 +28,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          enable_subcategories?: boolean
           id?: number
           logo_url?: string | null
           name?: string
@@ -47,18 +50,21 @@ export type Database = {
           created_at: string
           id: number
           name: string
+          parent_id: number | null
         }
         Insert: {
           catalog_id: number
           created_at?: string
           id?: number
           name: string
+          parent_id?: number | null
         }
         Update: {
           catalog_id?: number
           created_at?: string
           id?: number
           name?: string
+          parent_id?: number | null
         }
         Relationships: [
           {
@@ -66,6 +72,13 @@ export type Database = {
             columns: ["catalog_id"]
             isOneToOne: false
             referencedRelation: "catalogs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]

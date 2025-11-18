@@ -1,6 +1,7 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useActionState, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
@@ -14,11 +15,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { SubmitButton } from '@/components/common/SubmitButton';
-import { updateCatalog, checkCatalogName } from '@/app/actions/catalog';
+import { updateCatalog } from '@/app/actions/catalog';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import type { Catalog } from '@/lib/types';
 import Image from 'next/image';
+import { Switch } from '../ui/switch';
 
 const formSchema = z.object({
   name: z.string()
@@ -26,58 +28,46 @@ const formSchema = z.object({
     .max(50, 'يجب أن يكون اسم الكتالوج 50 حرفًا على الأكثر')
     .regex(/^[a-z0-9-]+$/, 'يجب أن يحتوي اسم الكتالوج على أحرف إنجليزية صغيرة وأرقام وشرطات فقط'),
   logo: z.instanceof(File).optional(),
-}).refine(async (data) => {
-    // This is a complex refinement logic that needs to be handled carefully
-    // For now, skipping server-side name check on update form to avoid complexity.
-    return true;
-}, 'اسم الكتالوج هذا مستخدم بالفعل. الرجاء اختيار اسم آخر.');
+  enable_subcategories: z.boolean().default(false),
+});
+
+const initialState = {
+  message: '',
+};
 
 export function SettingsForm({ catalog }: { catalog: Catalog }) {
   const { toast } = useToast();
   const router = useRouter();
+  const [state, formAction] = useActionState(updateCatalog, initialState);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: catalog.name,
       logo: undefined,
+      enable_subcategories: catalog.enable_subcategories,
     },
     mode: 'onBlur'
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // This is a simplified version. A real implementation would be more robust.
-    toast({
-        title: 'قيد التطوير',
-        description: 'لم يتم تنفيذ وظيفة تحديث الإعدادات بعد.',
-        variant: 'default',
-    });
-    // const formData = new FormData();
-    // formData.append('name', values.name);
-    // if (values.logo) {
-    //     formData.append('logo', values.logo);
-    // }
-
-    // const result = await updateCatalog(catalog.id, formData);
-
-    // if (result.error) {
-    //   toast({
-    //     title: 'خطأ',
-    //     description: result.error,
-    //     variant: 'destructive',
-    //   });
-    // } else {
-    //   toast({
-    //     title: 'نجاح!',
-    //     description: 'تم تحديث الكتالوج الخاص بك بنجاح.',
-    //   });
-    //   router.refresh();
-    // }
-  };
+  useEffect(() => {
+    if (state?.message) {
+        const isSuccess = state.message.includes('بنجاح');
+        toast({
+            title: isSuccess ? 'نجاح' : 'خطأ',
+            description: state.message,
+            variant: isSuccess ? 'default' : 'destructive'
+        });
+        if(isSuccess) {
+            router.refresh();
+        }
+    }
+  }, [state, toast, router]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form action={formAction} className="space-y-8">
+        <input type="hidden" name="catalogId" value={catalog.id} />
         <FormField
           control={form.control}
           name="name"
@@ -114,6 +104,27 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
             </FormItem>
           )}
         />
+         <Controller
+            control={form.control}
+            name="enable_subcategories"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">تفعيل الفئات الفرعية</FormLabel>
+                  <FormDescription>
+                    السماح بإنشاء فئات داخل فئات أخرى.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                    <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        name={field.name}
+                    />
+                </FormControl>
+              </FormItem>
+            )}
+          />
         <SubmitButton pendingText="جاري الحفظ..." className="w-full">
           حفظ التغييرات
         </SubmitButton>
