@@ -5,13 +5,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator";
 import type { Metadata } from "next";
 import { ShareButtons } from "@/components/menu/ShareButtons";
-import { CatalogData } from "@/lib/types";
+import type { Catalog, Category, MenuItem, CategoryWithSubcategories } from "@/lib/types";
 
 type Props = {
   params: { slug: string };
 };
 
-async function getCatalogData(slug: string): Promise<CatalogData | null> {
+type CatalogPageData = Catalog & {
+  categories: CategoryWithSubcategories[];
+};
+
+async function getCatalogData(slug: string): Promise<CatalogPageData | null> {
     const supabase = createClient();
     const { data: catalog, error: catalogError } = await supabase
         .from('catalogs')
@@ -36,7 +40,23 @@ async function getCatalogData(slug: string): Promise<CatalogData | null> {
         return { ...catalog, categories: [] };
     }
 
-    return { ...catalog, categories: categories || [] };
+    const categoriesMap = new Map<number, CategoryWithSubcategories>();
+    const rootCategories: CategoryWithSubcategories[] = [];
+
+    categories?.forEach(category => {
+        categoriesMap.set(category.id, { ...category, subcategories: [], menu_items: category.menu_items || [] });
+    });
+
+    categories?.forEach(category => {
+        const categoryNode = categoriesMap.get(category.id)!;
+        if (category.parent_id && categoriesMap.has(category.parent_id)) {
+            categoriesMap.get(category.parent_id)!.subcategories.push(categoryNode);
+        } else {
+            rootCategories.push(categoryNode);
+        }
+    });
+
+    return { ...catalog, categories: rootCategories };
 }
 
 
@@ -63,6 +83,58 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ],
     },
   };
+}
+
+function MenuItemCard({ item }: { item: MenuItem }) {
+    return (
+        <Card className="overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
+            {item.image_url && (
+                <div className="relative h-56 w-full">
+                    <Image src={item.image_url} alt={item.name} layout="fill" objectFit="cover" />
+                </div>
+            )}
+            <CardHeader>
+                <CardTitle className="text-xl">{item.name}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <CardDescription>{item.description}</CardDescription>
+            </CardContent>
+            <CardFooter>
+                <p className="text-lg font-bold text-primary">{item.price} ر.س</p>
+            </CardFooter>
+        </Card>
+    );
+}
+
+function CategorySection({ category, isSubcategory = false }: { category: CategoryWithSubcategories, isSubcategory?: boolean }) {
+    const hasItems = category.menu_items.length > 0;
+    const hasSubcategories = category.subcategories.length > 0;
+
+    if (!hasItems && !hasSubcategories) return null;
+
+    return (
+        <section id={`category-${category.id}`} className={isSubcategory ? "mb-8 mt-8" : "mb-12"}>
+            <h2 className={isSubcategory ? "text-2xl font-semibold mb-4" : "text-3xl font-bold font-headline mb-6"}>
+                {category.name}
+            </h2>
+            {isSubcategory && <Separator className="mb-6" />}
+            
+            {hasItems && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {category.menu_items.map((item) => <MenuItemCard key={item.id} item={item} />)}
+                </div>
+            )}
+
+            {hasSubcategories && (
+                <div className={hasItems ? "mt-12" : ""}>
+                    {category.subcategories.map(subCategory => (
+                        <CategorySection key={subCategory.id} category={subCategory} isSubcategory={true} />
+                    ))}
+                </div>
+            )}
+
+        </section>
+    );
 }
 
 export default async function CatalogPage({ params }: Props) {
@@ -98,30 +170,10 @@ export default async function CatalogPage({ params }: Props) {
             </div>
         ) : (
             data.categories.map((category) => (
-                <section key={category.id} id={`category-${category.id}`} className="mb-12">
-                    <h2 className="text-3xl font-bold font-headline mb-6 text-secondary-dark">{category.name}</h2>
-                    <Separator className="mb-8" />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {category.menu_items.map((item) => (
-                            <Card key={item.id} className="overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
-                                {item.image_url && (
-                                    <div className="relative h-56 w-full">
-                                        <Image src={item.image_url} alt={item.name} layout="fill" objectFit="cover" />
-                                    </div>
-                                )}
-                                <CardHeader>
-                                    <CardTitle className="text-xl">{item.name}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <CardDescription>{item.description}</CardDescription>
-                                </CardContent>
-                                <CardFooter>
-                                    <p className="text-lg font-bold text-primary">{item.price} ر.س</p>
-                                </CardFooter>
-                            </Card>
-                        ))}
-                    </div>
-                </section>
+                <div key={category.id}>
+                    <CategorySection category={category} />
+                    <Separator className="my-12" />
+                </div>
             ))
         )}
       </main>

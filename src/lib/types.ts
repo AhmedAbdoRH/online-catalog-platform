@@ -12,8 +12,11 @@ export type MenuItem = Database['public']['Tables']['menu_items']['Row'];
 export type NewMenuItem = Database['public']['Tables']['menu_items']['Insert'];
 export type UpdateMenuItem = Database['public']['Tables']['menu_items']['Update'];
 
-export type CatalogData = Catalog & {
-  categories: (Category & {
+export type CategoryWithSubcategories = Category & {
+    subcategories: CategoryWithSubcategories[];
     menu_items: MenuItem[];
-  })[];
+};
+
+export type CatalogData = Catalog & {
+  categories: CategoryWithSubcategories[];
 };

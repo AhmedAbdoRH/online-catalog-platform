@@ -14,14 +14,14 @@ async function verifyCatalogOwnership(catalogId: number) {
 }
 
 
-export async function createCategory(catalogId: number, name: string) {
+export async function createCategory(catalogId: number, name: string, parentId?: number | null) {
     const isOwner = await verifyCatalogOwnership(catalogId);
     if (!isOwner) {
         return { error: 'غير مصرح به' };
     }
 
     const supabase = createClient();
-    const { error } = await supabase.from('categories').insert({ catalog_id: catalogId, name });
+    const { error } = await supabase.from('categories').insert({ catalog_id: catalogId, name, parent_id: parentId });
 
     if (error) {
         console.error(error);
@@ -32,10 +32,10 @@ export async function createCategory(catalogId: number, name: string) {
     return { error: null };
 }
 
-export async function updateCategory(categoryId: number, name: string) {
+export async function updateCategory(categoryId: number, name: string, parentId?: number | null) {
     const supabase = createClient();
     // In a real app, you would also verify ownership before updating
-    const { error } = await supabase.from('categories').update({ name }).eq('id', categoryId);
+    const { error } = await supabase.from('categories').update({ name, parent_id: parentId }).eq('id', categoryId);
     
     if (error) {
         console.error(error);

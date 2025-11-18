@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
@@ -92,11 +92,52 @@ export async function createCatalog(prevState: any, formData: FormData) {
 }
 
 
-export async function updateCatalog(catalogId: number, formData: FormData) {
-    // Similar logic to createCatalog, but for updating.
-    // Omitted for brevity but would handle name changes and logo updates.
-    // Remember to handle deleting the old logo from storage if a new one is uploaded.
+export async function updateCatalog(prevState: any, formData: FormData) {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return { message: 'غير مصرح به' };
+    }
+
+    const catalogId = formData.get('catalogId');
+    const name = formData.get('name') as string;
+    const logo = formData.get('logo') as File;
+    const enableSubcategories = formData.get('enable_subcategories') === 'on';
+
+    // Simplified validation for update
+    if (!catalogId) {
+        return { message: "معرف الكتالوج مفقود." };
+    }
+    
+    const updateData: { name: string; logo_url?: string; enable_subcategories: boolean } = {
+        name,
+        enable_subcategories,
+    };
+    
+    if (logo && logo.size > 0) {
+        const logoFileName = `${user.id}-${Date.now()}.${logo.name.split('.').pop()}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('logos')
+            .upload(logoFileName, logo);
+
+        if (uploadError) {
+            console.error('Storage Error:', uploadError);
+            return { message: 'فشل تحميل الشعار.' };
+        }
+        
+        const { data: { publicUrl } } = supabase.storage.from('logos').getPublicUrl(uploadData.path);
+        updateData.logo_url = publicUrl;
+    }
+
+    const { error: dbError } = await supabase.from('catalogs').update(updateData).eq('id', catalogId);
+
+    if (dbError) {
+        console.error('DB Error:', dbError);
+        return { message: 'فشل تحديث الكتالوج.' };
+    }
+
     revalidatePath('/dashboard/settings');
-    revalidatePath(`/c/${formData.get('name')}`);
-    return { error: 'لم يتم تنفيذ وظيفة التحديث بعد' };
+    revalidatePath(`/c/${name}`);
+    return { message: 'تم تحديث الإعدادات بنجاح!' };
 }

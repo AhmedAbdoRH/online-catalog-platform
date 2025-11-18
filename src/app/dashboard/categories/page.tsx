@@ -12,7 +12,7 @@ async function getCatalogAndCategories() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect('/login');
 
-    const { data: catalog } = await supabase.from('catalogs').select('id').eq('user_id', user.id).single();
+    const { data: catalog } = await supabase.from('catalogs').select('id, enable_subcategories').eq('user_id', user.id).single();
     if (!catalog) notFound();
 
     const { data: categories } = await supabase.from('categories').select('*').eq('catalog_id', catalog.id).order('created_at');
@@ -22,6 +22,7 @@ async function getCatalogAndCategories() {
 
 export default async function CategoriesPage() {
     const { catalog, categories } = await getCatalogAndCategories();
+    const mainCategories = categories.filter(c => c.parent_id === null);
 
     return (
         <Card>
@@ -46,12 +47,12 @@ export default async function CategoriesPage() {
                                 أدخل اسم الفئة الجديدة.
                             </DialogDescription>
                         </DialogHeader>
-                        <CategoryForm catalogId={catalog.id} />
+                        <CategoryForm catalogId={catalog.id} mainCategories={mainCategories} enableSubcategories={catalog.enable_subcategories} />
                     </DialogContent>
                 </Dialog>
             </CardHeader>
             <CardContent>
-                <CategoriesTable categories={categories} catalogId={catalog.id} />
+                <CategoriesTable categories={categories} catalogId={catalog.id} enableSubcategories={catalog.enable_subcategories} />
             </CardContent>
         </Card>
     );
