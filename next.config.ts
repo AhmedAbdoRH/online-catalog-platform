@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     if (!isServer) {
       config.resolve.alias = {
         ...config.resolve.alias,
-        'qrcode.react': require.resolve('qrcode.react'),
+        'qrcode.react': false,
       };
     }
     return config;
