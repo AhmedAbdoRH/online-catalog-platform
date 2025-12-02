@@ -7,6 +7,7 @@ interface Database {
           id: number;
           created_at: string;
           name: string;
+          display_name: string | null;
           description: string | null;
           logo_url: string | null;
           cover_url: string | null;
@@ -17,6 +18,7 @@ interface Database {
           id?: number;
           created_at?: string;
           name: string;
+          display_name?: string | null;
           description?: string | null;
           logo_url?: string | null;
           cover_url?: string | null;
@@ -27,6 +29,7 @@ interface Database {
           id?: number;
           created_at?: string;
           name?: string;
+          display_name?: string | null;
           description?: string | null;
           logo_url?: string | null;
           cover_url?: string | null;

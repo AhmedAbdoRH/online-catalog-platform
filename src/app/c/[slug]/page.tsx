@@ -54,8 +54,8 @@ async function getCatalogData(slug: string): Promise<CatalogPageData | null> {
 
   categories?.forEach((category: any) => {
     const categoryNode = categoriesMap.get(category.id)!;
-    if (category.parent_id && categoriesMap.has(category.parent_id)) {
-      categoriesMap.get(category.parent_id)!.subcategories.push(categoryNode);
+    if (category.parent_category_id && categoriesMap.has(category.parent_category_id)) {
+      categoriesMap.get(category.parent_category_id)!.subcategories.push(categoryNode);
     } else {
       rootCategories.push(categoryNode);
     }
@@ -69,7 +69,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const data = await getCatalogData(params.slug);
+  const resolvedParams = await params;
+  const data = await getCatalogData(resolvedParams.slug);
   if (!data) {
     return {
       title: "الكتالوج غير موجود",
@@ -94,7 +95,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CatalogPage({ params }: Props) {
-  const data = await getCatalogData(params.slug);
+  const resolvedParams = await params;
+  const data = await getCatalogData(resolvedParams.slug);
 
   if (!data) {
     notFound();

@@ -13,6 +13,9 @@ const catalogSchema = z.object({
     .min(3, 'يجب أن يكون الاسم 3 أحرف على الأقل')
     .max(50)
     .regex(/^[a-z0-9-]+$/, 'يجب أن يحتوي الاسم على أحرف إنجليزية صغيرة وأرقام وشرطات فقط'),
+  display_name: z.string()
+    .min(3, 'يجب أن يكون اسم العرض 3 أحرف على الأقل')
+    .max(50, 'يجب أن يكون اسم العرض 50 حرفًا على الأكثر'),
   logo: z.instanceof(File).optional(),
   cover: z.instanceof(File).optional(),
   enable_subcategories: z.boolean().default(false),
@@ -50,7 +53,7 @@ export async function createCatalog(prevState: any, formData: FormData) {
     return { message: firstError };
   }
 
-  const { name, logo } = validatedFields.data;
+  const { name, display_name, logo } = validatedFields.data;
 
   // Re-check uniqueness on the server to be safe
   const isAvailable = await checkCatalogName(name);
@@ -80,6 +83,7 @@ export async function createCatalog(prevState: any, formData: FormData) {
   // Create catalog entry
   const { error: dbError } = await supabase.from('catalogs').insert({
     name,
+    display_name,
     user_id: user.id,
     logo_url: publicUrl,
   });
@@ -97,33 +101,42 @@ export async function createCatalog(prevState: any, formData: FormData) {
   redirect('/dashboard');
 }
 
-
 export async function updateCatalog(prevState: any, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    console.error('Update catalog: No user found');
     return { message: 'غير مصرح به' };
   }
 
   const catalogId = formData.get('catalogId');
-
   if (!catalogId) {
-    console.error('Update catalog: No catalogId provided');
-    return { message: "معرف الكتالوج مفقود." };
+    return { message: 'معرف الكتالوج مطلوب' };
   }
 
-  console.log('Update catalog: Starting update for catalog', catalogId);
+  // Get current catalog to preserve existing values
+  const { data: currentCatalog } = await supabase
+    .from('catalogs')
+    .select('*')
+    .eq('id', catalogId)
+    .single();
 
-  const logoFile = formData.get('logo');
-  const coverFile = formData.get('cover');
+  if (!currentCatalog) {
+    return { message: 'الكتالوج غير موجود' };
+  }
+
+  const name = formData.get('name') as string || currentCatalog.name;
+  const display_name = formData.get('display_name') as string || currentCatalog.display_name || currentCatalog.name;
+  const logoFile = formData.get('logo') as File | null;
+  const coverFile = formData.get('cover') as File | null;
+  const enableSubcategories = formData.get('enable_subcategories') === 'on';
 
   const validatedFields = catalogSchema.safeParse({
-    name: formData.get('name'),
+    name,
+    display_name,
     logo: logoFile instanceof File && logoFile.size > 0 ? logoFile : undefined,
     cover: coverFile instanceof File && coverFile.size > 0 ? coverFile : undefined,
-    enable_subcategories: formData.get('enable_subcategories') === 'on',
+    enable_subcategories: enableSubcategories,
   });
 
   if (!validatedFields.success) {
@@ -132,16 +145,13 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     return { message: firstError };
   }
 
-  const { name, logo, cover, enable_subcategories } = validatedFields.data;
+  const { name: validatedName, display_name: validatedDisplayName, logo, cover, enable_subcategories } = validatedFields.data;
 
-  const updateData: { name?: string; logo_url?: string; cover_url?: string; enable_subcategories?: boolean } = {};
-
-  if (name) {
-    updateData.name = name;
-  }
-  if (enable_subcategories !== undefined) {
-    updateData.enable_subcategories = enable_subcategories;
-  }
+  let updateData: any = {
+    name: validatedName,
+    display_name: validatedDisplayName,
+    enable_subcategories: enableSubcategories,
+  };
 
   // Upload logo if provided
   if (logo && logo.size > 0) {

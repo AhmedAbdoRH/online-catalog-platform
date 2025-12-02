@@ -48,9 +48,25 @@ export function ShareButtons({ catalogName }: { catalogName: string }) {
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(url);
-    toast({ title: 'تم النسخ!', description: 'تم نسخ الرابط إلى الحافظة.' });
+  const copyToClipboard = async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+        toast({ title: 'تم النسخ!', description: 'تم نسخ الرابط إلى الحافظة.' });
+      } else {
+        // Fallback for older browsers or restricted contexts
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        toast({ title: 'تم النسخ!', description: 'تم نسخ الرابط إلى الحافظة.' });
+      }
+    } catch (error) {
+      console.error('Error copying to clipboard:', error);
+      toast({ title: 'خطأ', description: 'فشل نسخ الرابط.', variant: 'destructive' });
+    }
   };
 
   if (!url) return null;

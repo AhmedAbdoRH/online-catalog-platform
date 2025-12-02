@@ -17,7 +17,7 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 
 const formSchema = z.object({
   name: z.string().min(2, 'الاسم مطلوب').max(100),
-  description: z.string().max(255).optional(),
+  description: z.string().max(255).optional().or(z.literal('')),
   price: z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً'),
   category_id: z.string().min(1, 'الفئة مطلوبة'),
   image: z.instanceof(File)
@@ -26,12 +26,14 @@ const formSchema = z.object({
     .refine(
       (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
       ".jpg, .jpeg, .png و .webp هي الملفات المقبولة."
-    ).optional(),
+    )
+    .optional()
+    .or(z.literal(undefined)),
 });
 
 // For update, image is not required
 const updateFormSchema = formSchema.extend({
-  image: formSchema.shape.image.optional()
+  image: z.instanceof(File).optional().or(z.literal(undefined))
 });
 
 interface ItemFormProps {
@@ -44,10 +46,13 @@ interface ItemFormProps {
 export function ItemForm({ catalogId, categories, item, onSuccess }: ItemFormProps) {
   const { toast } = useToast();
 
+  // التحقق من أن categories موجود
+  const validCategories = Array.isArray(categories) ? categories : [];
+
   // بناء هيكل فئات هرمي
   const buildHierarchicalCategories = (parentId: number | null = null, depth = 0) => {
-    return categories
-      .filter(cat => cat.parent_category_id === parentId)
+    return validCategories
+      .filter(cat => (cat?.parent_category_id ?? null) === parentId)
       .map(cat => ({
         ...cat,
         depth,
@@ -70,31 +75,41 @@ export function ItemForm({ catalogId, categories, item, onSuccess }: ItemFormPro
     defaultValues: {
       name: item?.name || '',
       description: item?.description || '',
-      price: item?.price || undefined,
-      category_id: item?.category_id.toString() || '',
+      price: item?.price || 0,
+      category_id: item?.category_id ? item.category_id.toString() : (validCategories[0]?.id ? validCategories[0].id.toString() : ''),
       image: undefined,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const formData = new FormData();
-    formData.append('catalogId', catalogId.toString());
-    formData.append('name', values.name);
-    formData.append('description', values.description || '');
-    formData.append('price', values.price.toString());
-    formData.append('category_id', values.category_id);
-    if (values.image) {
-      formData.append('image', values.image);
-    }
+    try {
+      console.log('Form submitted with values:', values);
+      
+      const formData = new FormData();
+      formData.append('catalogId', catalogId.toString());
+      formData.append('name', values.name);
+      formData.append('description', values.description || '');
+      formData.append('price', values.price.toString());
+      formData.append('category_id', values.category_id);
+      if (values.image) {
+        formData.append('image', values.image);
+      }
 
-    const result = item ? await updateItem(item.id, formData) : await createItem(formData);
+      console.log('Sending form data...');
+      const result = item ? await updateItem(item.id, formData) : await createItem(formData);
+      
+      console.log('Server response:', result);
 
-    if (result.error) {
-      toast({ title: 'خطأ', description: result.error, variant: 'destructive' });
-    } else {
-      toast({ title: 'نجاح!', description: `تم ${item ? 'تحديث' : 'إنشاء'} المنتج بنجاح.` });
-      form.reset();
-      onSuccess?.();
+      if (result.error) {
+        toast({ title: 'خطأ', description: result.error, variant: 'destructive' });
+      } else {
+        toast({ title: 'نجاح!', description: `تم ${item ? 'تحديث' : 'إنشاء'} المنتج بنجاح.` });
+        form.reset();
+        onSuccess?.();
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      toast({ title: 'خطأ', description: 'حدث خطأ غير متوقع', variant: 'destructive' });
     }
   };
 
@@ -141,7 +156,10 @@ export function ItemForm({ catalogId, categories, item, onSuccess }: ItemFormPro
             render={({ field }) => (
               <FormItem>
                 <FormLabel>الفئة</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={(val) => {
+                  console.log('Category selected:', val);
+                  field.onChange(val);
+                }} value={field.value || ''}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="اختر فئة" />

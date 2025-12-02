@@ -3,9 +3,8 @@
  */
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { QRCodeCanvas } from "qrcode.react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Catalog, CategoryWithSubcategories, MenuItem } from "@/lib/types";
@@ -243,6 +242,8 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("masonry");
   const [showInstallHint, setShowInstallHint] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<number | null>(null);
   const luxeCatalog = catalog as LuxeCatalog;
 
   useEffect(() => {
@@ -267,6 +268,9 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
       : `https://online-menu.app/c/${catalog.name}`;
 
   const allItems = useMemo(() => flattenMenuItems(categories), [categories]);
+  const displayedCategories = selectedCategoryId
+    ? categories.filter((c) => c.id === selectedCategoryId)
+    : categories;
   const heroImage = luxeCatalog.cover_url ?? "/public/placeholder.svg";
 
   const catalogDescription = luxeCatalog.description ?? "";
@@ -286,239 +290,311 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
 
   return (
     <div className="relative min-h-screen bg-[radial-gradient(circle_at_top,_rgba(0,209,201,0.25),transparent_60%),radial-gradient(circle_at_bottom,_rgba(168,85,247,0.18),transparent_62%)] bg-background pb-32">
-      <motion.section
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1, transition: { duration: 0.7, ease: "easeOut" } }}
-        className="relative mx-auto mt-6 aspect-[16/8] w-[min(92vw,1200px)] overflow-hidden rounded-[2.5rem] border border-white/15 shadow-[0_55px_120px_rgba(15,23,42,0.55)]"
-      >
-        {heroImage && (
-          <Image src={heroImage} alt="غلاف المتجر" fill className="object-cover" priority />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/75" />
-        {isCatalogClosed && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/40 text-white backdrop-blur-md">
-            <Lock className="h-8 w-8" />
-            <p className="text-lg font-semibold">المتجر مغلق مؤقتًا</p>
-          </div>
-        )}
-
-        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-4 px-10 pb-10">
-          <motion.div
-            initial={{ y: -40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1, transition: { delay: 0.15, type: "spring", stiffness: 180 } }}
-            className="inline-flex items-center gap-3 rounded-full bg-white/15 px-4 py-2 text-[12px] uppercase tracking-[0.4em] text-white backdrop-blur"
-          >
-
-          </motion.div>
-          <motion.h1
-            initial={{ clipPath: "inset(0 100% 0 0)" }}
-            animate={{ clipPath: "inset(0 0% 0 0)", transition: { delay: 0.25, duration: 0.9, ease: "easeOut" } }}
-            className="font-headline text-4xl font-extrabold text-white md:text-5xl"
-          >
-            {catalog.name}
-          </motion.h1>
-          {catalogDescription && (
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0, transition: { delay: 0.35 } }}
-              className="max-w-2xl text-sm text-white/80 md:text-base"
-            >
-              {catalogDescription}
-            </motion.p>
+      <div className="relative mx-auto w-[min(92vw,1200px)] pt-6">
+        {/* Hero Image Section */}
+        {/* Hero Image Section */}
+        <motion.section
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1, transition: { duration: 0.7, ease: "easeOut" } }}
+          className="relative mt-16 aspect-[16/9] w-full overflow-hidden rounded-[2.5rem] border border-white/15 shadow-[0_55px_120px_rgba(15,23,42,0.55)]"
+        >
+          {heroImage && (
+            <div className="absolute inset-0 top-0 h-full w-full">
+              <Image
+                src={heroImage}
+                alt="غلاف المتجر"
+                fill
+                className="object-cover object-center"
+                priority
+              />
+            </div>
           )}
+
+          {isCatalogClosed && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-black/60 text-white backdrop-blur-md">
+              <Lock className="h-12 w-12" />
+              <p className="text-xl font-semibold">المتجر مغلق مؤقتًا</p>
+            </div>
+          )}
+
+          <motion.div
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0, transition: { delay: 0.4, type: "spring" } }}
+            className="absolute top-10 left-10 hidden rounded-full bg-white/15 px-4 py-2 text-xs font-medium text-white backdrop-blur lg:flex"
+          >
+            +{allItems.length} منتج فاخر
+          </motion.div>
+        </motion.section>
+
+        {/* Logo and Title Section */}
+        <div className="relative z-20 -mt-12 flex flex-col items-center px-4 text-center">
+          {luxeCatalog.logo_url && (
+            <motion.div
+              initial={{ y: 30, opacity: 0, scale: 0.8 }}
+              animate={{
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                transition: {
+                  delay: 0.3,
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 20
+                }
+              }}
+              className="h-24 w-24 overflow-hidden rounded-full border-4 border-background bg-background p-1 shadow-xl"
+            >
+              <Image
+                src={luxeCatalog.logo_url}
+                alt={catalog.name}
+                width={96}
+                height={96}
+                className="h-full w-full rounded-full object-cover"
+              />
+            </motion.div>
+          )}
+
+          <div className="mt-4 space-y-2">
+            <motion.h1
+              initial={{ y: 20, opacity: 0 }}
+              animate={{
+                y: 0,
+                opacity: 1,
+                transition: {
+                  delay: 0.4,
+                  duration: 0.6,
+                  ease: "easeOut"
+                }
+              }}
+              className="font-heading text-3xl font-bold text-foreground drop-shadow-sm md:text-4xl lg:text-5xl"
+            >
+              {catalog.display_name || catalog.name}
+            </motion.h1>
+
+            {catalogDescription && (
+              <motion.p
+                initial={{ y: 10, opacity: 0 }}
+                animate={{
+                  y: 0,
+                  opacity: 1,
+                  transition: {
+                    delay: 0.5,
+                    duration: 0.5
+                  }
+                }}
+                className="mx-auto max-w-2xl text-sm text-muted-foreground md:text-base"
+              >
+                {catalogDescription}
+              </motion.p>
+            )}
+          </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0, transition: { delay: 0.4, type: "spring" } }}
-          className="absolute top-10 left-10 hidden rounded-full bg-white/15 px-4 py-2 text-xs font-medium text-white backdrop-blur lg:flex"
-        >
-          +{allItems.length} منتج فاخر
-        </motion.div>
+        <main className="mx-auto mt-8 flex w-[min(94vw,1180px)] flex-col gap-8">
+          {/* Category filter toolbar (pills style) */}
+          <div className="mx-auto w-full">
+            <div className="flex items-center gap-3 overflow-x-auto pb-3 px-2">
+              <button
+                onClick={() => { setSelectedCategoryId(null); setSelectedSubcategoryId(null); }}
+                aria-pressed={!selectedCategoryId}
+                className={cn(
+                  "flex-shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all",
+                  !selectedCategoryId
+                    ? "bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-lg scale-[1.02]"
+                    : "bg-white/6 text-muted-foreground hover:bg-white/10"
+                )}
+              >
+                الكل
+              </button>
 
-        <motion.div
-          initial={{ opacity: 0, x: 60 }}
-          animate={{ opacity: 1, x: 0, transition: { delay: 0.5, type: "spring", stiffness: 140 } }}
-          className="pointer-events-auto absolute -right-10 top-10 hidden rotate-[-8deg] rounded-[1.5rem] border border-white/40 bg-white/80 p-3 shadow-[0_35px_80px_rgba(15,23,42,0.55)] backdrop-blur-xl md:flex"
-        >
-          <QRCodeCanvas value={catalogUrl} size={120} bgColor="transparent" fgColor="#0F172A" />
-        </motion.div>
-      </motion.section>
-
-      <main className="mx-auto -mt-32 flex w-[min(94vw,1180px)] flex-col gap-8">
-        <div className="rounded-[2rem] border border-white/15 bg-white/10 p-4 shadow-[0_30px_70px_rgba(15,23,42,0.45)] backdrop-blur-[18px] dark:bg-slate-950/40 md:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="inline-flex items-center rounded-full bg-brand-primary/15 px-3 py-1 text-[11px] font-medium text-brand-primary">
-                المنيو العامة
-              </span>
-              <span>اختر طريقة العرض المفضلة لديك</span>
-            </div>
-            <div className="inline-flex items-center gap-1 rounded-full bg-white/10 p-1 text-[11px] text-muted-foreground shadow-inner backdrop-blur">
-              {(["masonry", "grid", "list", "compact"] as ViewMode[]).map((mode) => (
+              {categories.map((cat) => (
                 <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
+                  key={cat.id}
+                  onClick={() => { setSelectedCategoryId(cat.id); setSelectedSubcategoryId(null); }}
+                  aria-pressed={selectedCategoryId === cat.id}
                   className={cn(
-                    "inline-flex items-center gap-1 rounded-full px-3 py-1 transition",
-                    viewMode === mode
-                      ? "bg-brand-primary text-white shadow-[0_10px_25px_rgba(0,209,201,0.45)]"
-                      : "hover:text-foreground"
+                    "flex items-center gap-2 flex-shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all",
+                    selectedCategoryId === cat.id
+                      ? "bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-lg scale-[1.02]"
+                      : "bg-white/6 text-muted-foreground hover:bg-white/10"
                   )}
                 >
-                  {mode === "masonry" && <Rows3 className="ml-1 h-3.5 w-3.5" />}
-                  {mode === "grid" && <LayoutGrid className="ml-1 h-3.5 w-3.5" />}
-                  {mode === "list" && <LayoutList className="ml-1 h-3.5 w-3.5" />}
-                  {mode === "compact" && <LayoutGrid className="ml-1 h-3.5 w-3.5" />}
-                  <span className="capitalize">{mode}</span>
+                  <span>{cat.name}</span>
+                  <span className="ml-2 inline-flex items-center justify-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium">{cat.menu_items.length}</span>
                 </button>
               ))}
             </div>
-            <div className="hidden items-center gap-2 md:flex">
-              <Button size="sm" className="rounded-full bg-brand-primary px-4 text-[13px] shadow-[0_20px_40px_rgba(0,209,201,0.45)]">
-                <Rows3 className="ml-2 h-4 w-4" />
-                عرض الكتالوج
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="rounded-full border-white/30 bg-white/60 text-[13px] shadow-sm backdrop-blur"
-              >
-                <PanelTop className="ml-2 h-4 w-4" />
-                تثبيت كتطبيق
-              </Button>
-            </div>
-          </div>
-        </div>
 
-        <section className="space-y-10">
-          {categories.length === 0 && (
-            <div className="rounded-[2rem] border border-dashed border-white/25 bg-white/5 px-6 py-16 text-center text-sm text-muted-foreground">
-              سيتم عرض المنتجات هنا بمجرد إضافتها من لوحة التحكم.
-            </div>
-          )}
-
-          {categories.map((category, categoryIndex) => {
-            const luxeCategory = category as LuxeCategory;
-            const categoryDescription = luxeCategory.description ?? "";
-            return (
-              <motion.section
-                key={category.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, delay: categoryIndex * 0.08 }}
-                className="space-y-4"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <h2 className="font-headline text-2xl font-bold text-foreground md:text-3xl">
-                      {category.name}
-                    </h2>
-                    {categoryDescription && (
-                      <p className="text-sm text-muted-foreground">{categoryDescription}</p>
+            {/* Subcategory strip appears only when a main category is selected */}
+            {selectedCategoryId && (() => {
+              const main = categories.find((c) => c.id === selectedCategoryId);
+              if (!main || !main.subcategories || main.subcategories.length === 0) return null;
+              return (
+                <div className="mt-2 flex items-center gap-2 overflow-x-auto px-2">
+                  <button
+                    onClick={() => setSelectedSubcategoryId(null)}
+                    className={cn(
+                      "flex-shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition",
+                      selectedSubcategoryId === null ? "bg-brand-primary text-white" : "bg-white/5 text-muted-foreground hover:bg-white/10"
                     )}
-                  </div>
-                  <div className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] text-muted-foreground">
-                    {category.menu_items.length} منتج
-                  </div>
-                </div>
+                  >
+                    الكل
+                  </button>
 
-                <div
-                  className={cn(
-                    viewMode === "masonry" && "masonry-columns",
-                    viewMode === "grid" &&
-                    "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
-                    (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-3"
-                  )}
-                >
-                  {category.menu_items.map((item, itemIndex) => (
-                    <MenuItemCard
-                      key={item.id}
-                      item={item}
-                      catalogName={catalog.name}
-                      categoryName={category.name}
-                      viewMode={viewMode}
-                      index={itemIndex}
-                    />
+                  {main.subcategories.map((sub) => (
+                    <button
+                      key={sub.id}
+                      onClick={() => setSelectedSubcategoryId(sub.id)}
+                      className={cn(
+                        "flex-shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition",
+                        selectedSubcategoryId === sub.id ? "bg-brand-primary text-white" : "bg-white/5 text-muted-foreground hover:bg-white/10"
+                      )}
+                    >
+                      <span>{sub.name}</span>
+                      <span className="ml-2 inline-flex items-center justify-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium">{sub.menu_items.length}</span>
+                    </button>
                   ))}
                 </div>
+              );
+            })()}
+          </div>
+          <section className="space-y-10">
+            {categories.length === 0 && (
+              <div className="rounded-[2rem] border border-dashed border-white/25 bg-white/5 px-6 py-16 text-center text-sm text-muted-foreground">
+                سيتم عرض المنتجات هنا بمجرد إضافتها من لوحة التحكم.
+              </div>
+            )}
 
-                {category.subcategories?.length > 0 && (
-                  <div className="space-y-6 border-r border-dashed border-brand-primary/20 pr-4">
-                    {category.subcategories.map((sub, subIndex) => {
-                      const luxeSub = sub as LuxeCategory;
-                      const subDescription = luxeSub.description ?? "";
-                      return (
-                        <motion.div
-                          key={sub.id}
-                          initial={{ opacity: 0, y: 18 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{
-                            duration: 0.35,
-                            delay: 0.12 + subIndex * 0.08,
-                            ease: [0.22, 0.61, 0.36, 1],
-                          }}
-                          className="space-y-3"
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <div>
-                              <h3 className="text-sm font-semibold text-foreground md:text-base">
-                                {sub.name}
-                              </h3>
-                              {subDescription && (
-                                <p className="text-xs text-muted-foreground">{subDescription}</p>
-                              )}
-                            </div>
-                            <span className="rounded-full bg-muted px-3 py-1 text-[10px] text-muted-foreground">
-                              {sub.menu_items.length} منتج
-                            </span>
-                          </div>
-                          <div
-                            className={cn(
-                              viewMode === "masonry" && "masonry-columns",
-                              viewMode === "grid" &&
-                              "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
-                              (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-3"
-                            )}
-                          >
-                            {sub.menu_items.map((item, itemIndex) => (
-                              <MenuItemCard
-                                key={item.id}
-                                item={item}
-                                catalogName={catalog.name}
-                                categoryName={sub.name}
-                                viewMode={viewMode}
-                                index={itemIndex}
-                              />
-                            ))}
-                          </div>
-                        </motion.div>
-                      );
-                    })}
+            {displayedCategories.map((category, categoryIndex) => {
+              const luxeCategory = category as LuxeCategory;
+              const categoryDescription = luxeCategory.description ?? "";
+              return (
+                <motion.section
+                  key={category.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, delay: categoryIndex * 0.08 }}
+                  className="space-y-8"
+                >
+                  {/* Main Category Header */}
+                  <div className="space-y-4">
+                    <div className="hidden flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <h2 className="font-headline text-2xl font-bold text-foreground md:text-3xl">
+                          {category.name}
+                        </h2>
+                        {categoryDescription && (
+                          <p className="text-sm text-muted-foreground">{categoryDescription}</p>
+                        )}
+                      </div>
+                      <div className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] text-muted-foreground">
+                        {category.menu_items.length} منتج
+                      </div>
+                    </div>
+
+                    {/* Main Category Items */}
+                    <div
+                      className={cn(
+                        viewMode === "masonry" && "masonry-columns",
+                        viewMode === "grid" &&
+                        "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+                        (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-3"
+                      )}
+                    >
+                      {selectedSubcategoryId === null
+                        ? category.menu_items.map((item, itemIndex) => (
+                            <MenuItemCard
+                              key={item.id}
+                              item={item}
+                              catalogName={catalog.name}
+                              categoryName={category.name}
+                              viewMode={viewMode}
+                              index={itemIndex}
+                            />
+                          ))
+                        : []}
+                    </div>
                   </div>
-                )}
-              </motion.section>
-            );
-          })}
-        </section>
-      </main>
 
-      <a
-        href={`https://wa.me/?text=${encodeURIComponent(
-          `تفضل قائمة طعام ${catalog.name}: ${catalogUrl}`
-        )}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-24 left-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_30px_60px_rgba(37,211,102,0.55)] transition-transform hover:-translate-y-1 md:bottom-14"
-        aria-label="مشاركة المنيو عبر واتساب"
-      >
-        <MessageCircle className="h-6 w-6" />
-      </a>
+                  {/* Subcategories Section (appears below main category) */}
+                  {category.subcategories?.length > 0 && (
+                    <div className="flex flex-col space-y-8 pt-4 border-t border-white/10">
+                      {category.subcategories
+                        .filter((s) => (selectedSubcategoryId ? s.id === selectedSubcategoryId : true))
+                        .map((sub, subIndex) => {
+                        const luxeSub = sub as LuxeCategory;
+                        const subDescription = luxeSub.description ?? "";
+                        return (
+                          <motion.div
+                            key={sub.id}
+                            initial={{ opacity: 0, y: 18 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                              duration: 0.35,
+                              delay: 0.12 + subIndex * 0.08,
+                              ease: [0.22, 0.61, 0.36, 1],
+                            }}
+                            className="flex flex-col space-y-4 w-full"
+                          >
+                            <div className="hidden items-center justify-between gap-3">
+                              <div>
+                                <h3 className="text-lg font-semibold text-foreground md:text-xl">
+                                  {sub.name}
+                                </h3>
+                                {subDescription && (
+                                  <p className="text-xs text-muted-foreground">{subDescription}</p>
+                                )}
+                              </div>
+                              <span className="rounded-full bg-muted px-3 py-1 text-[10px] text-muted-foreground">
+                                {sub.menu_items.length} منتج
+                              </span>
+                            </div>
+                            <div
+                              className={cn(
+                                viewMode === "masonry" && "masonry-columns",
+                                viewMode === "grid" &&
+                                "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+                                (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-3"
+                              )}
+                            >
+                              {sub.menu_items.map((item, itemIndex) => (
+                                <MenuItemCard
+                                  key={item.id}
+                                  item={item}
+                                  catalogName={catalog.name}
+                                  categoryName={sub.name}
+                                  viewMode={viewMode}
+                                  index={itemIndex}
+                                />
+                              ))}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </motion.section>
+              );
+            })}
+          </section>
+        </main>
 
-      <AddToHomeCTA show={showInstallHint} onDismiss={() => setShowInstallHint(false)} />
-      <BottomNav />
-    </div >
+        <a
+          href={`https://wa.me/?text=${encodeURIComponent(
+            `تفضل قائمة طعام ${catalog.name}: ${catalogUrl}`
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-24 left-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_30px_60px_rgba(37,211,102,0.55)] transition-transform hover:-translate-y-1 md:bottom-14"
+          aria-label="مشاركة المنيو عبر واتساب"
+        >
+          <MessageCircle className="h-6 w-6" />
+        </a>
+
+        <AddToHomeCTA show={showInstallHint} onDismiss={() => setShowInstallHint(false)} />
+        <BottomNav />
+      </div>
+    </div>
   );
 }
-

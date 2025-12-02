@@ -83,12 +83,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const { product, catalog } = data;
+  const shopTitle = catalog.display_name || "المتجر";
 
   return {
-    title: `${product.name} | ${catalog.name}`,
-    description: product.description ?? `اكتشف المنتج ${product.name} من ${catalog.name}.`,
+    title: `${product.name} | ${shopTitle}`,
+    description: product.description ?? `اكتشف المنتج ${product.name} من ${shopTitle}.`,
     openGraph: {
-      title: `${product.name} | ${catalog.name}`,
+      title: `${product.name} | ${shopTitle}`,
       description: product.description ?? "",
       images: product.image_url
         ? [
@@ -115,7 +116,7 @@ export default async function ProductPage({ params }: Props) {
   const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:9003";
   const productUrl = `${origin}/c/${catalog.name}/item/${product.id}`;
   const whatsappText = encodeURIComponent(
-    `أرغب في طلب ${product.name} من ${catalog.name}. التفاصيل: ${productUrl}`
+    `أرغب في طلب ${product.name} من ${catalog.display_name}. التفاصيل: ${productUrl}`
   );
 
   return (
@@ -160,7 +161,7 @@ export default async function ProductPage({ params }: Props) {
 
             <div className="space-y-2">
               <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                {catalog.name}
+                {catalog.display_name}
               </p>
               <h1 className="font-headline text-3xl font-extrabold text-foreground md:text-4xl">
                 {product.name}
@@ -197,7 +198,7 @@ export default async function ProductPage({ params }: Props) {
 
 
 
-            <ShareButtons catalogName={catalog.name} />
+            <ShareButtons catalogName={catalog.display_name || ""} />
           </div>
         </section>
 

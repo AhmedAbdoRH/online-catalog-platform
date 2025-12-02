@@ -28,6 +28,9 @@ const formSchema = z.object({
     .min(3, 'يجب أن يكون اسم الكتالوج 3 أحرف على الأقل')
     .max(50, 'يجب أن يكون اسم الكتالوج 50 حرفًا على الأكثر')
     .regex(/^[a-z0-9-]+$/, 'يجب أن يحتوي اسم الكتالوج على أحرف إنجليزية صغيرة وأرقام وشرطات فقط'),
+  display_name: z.string()
+    .min(3, 'يجب أن يكون اسم العرض 3 أحرف على الأقل')
+    .max(50, 'يجب أن يكون اسم العرض 50 حرفًا على الأكثر'),
   logo: z.any().optional(),
   cover: z.any().optional(),
   enable_subcategories: z.boolean().default(false),
@@ -42,6 +45,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: catalog.name,
+      display_name: catalog.display_name || catalog.name,
       enable_subcategories: catalog.enable_subcategories,
     },
   });
@@ -53,6 +57,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
       const formData = new FormData();
       formData.append('catalogId', catalog.id.toString());
       formData.append('name', values.name);
+      formData.append('display_name', values.display_name);
       formData.append('enable_subcategories', values.enable_subcategories ? 'on' : 'off');
 
       // Handle logo file
@@ -96,22 +101,41 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>اسم الكتالوج (باللغة الإنجليزية)</FormLabel>
-              <FormControl>
-                <Input {...field} disabled={isSubmitting} />
-              </FormControl>
-              <FormDescription>
-                سيتم استخدام هذا الاسم في رابط الكتالوج الخاص بك.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>اسم الكتالوج (باللغة الإنجليزية)</FormLabel>
+                <FormControl>
+                  <Input {...field} disabled={isSubmitting} />
+                </FormControl>
+                <FormDescription>
+                  سيتم استخدام هذا الاسم في رابط الكتالوج الخاص بك.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="display_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>اسم المتجر المعروض</FormLabel>
+                <FormControl>
+                  <Input {...field} disabled={isSubmitting} />
+                </FormControl>
+                <FormDescription>
+                  سيظهر هذا الاسم في واجهة المتجر الخاصة بك.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <div className="space-y-4">
           <div>

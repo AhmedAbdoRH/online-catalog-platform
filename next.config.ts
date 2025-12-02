@@ -8,6 +8,16 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  webpack: (config, { isServer }) => {
+    // Fixes npm packages that depend on `qrcode.react` module
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'qrcode.react': require.resolve('qrcode.react'),
+      };
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       {
@@ -35,6 +45,11 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       }
     ],
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
   },
 };
 
