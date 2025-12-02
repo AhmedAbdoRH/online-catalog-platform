@@ -1,7 +1,12 @@
 [build]
   command = "npm run build"
-  publish = ".next"
+  publish = ".next/standalone"
 
 [build.environment]
   NODE_VERSION = "18"
   NPM_VERSION = "9"
+
+[[redirects]]
+  from = "/*"
+  to = "/.next/index.html"
+  status = 200
