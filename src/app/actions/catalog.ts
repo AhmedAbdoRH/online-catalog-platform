@@ -207,6 +207,6 @@ export async function updateCatalog(prevState: any, formData: FormData) {
 
   console.log('Catalog updated successfully');
   revalidatePath('/dashboard/settings');
-  revalidatePath(`/c/${name}`);
+  revalidatePath(`/${name}`);
   return { message: 'تم تحديث الإعدادات بنجاح!' };
 }

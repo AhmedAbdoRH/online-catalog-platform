@@ -46,8 +46,7 @@ export default async function DashboardPage() {
     );
   }
 
-  const catalogUrl = `${APP_URL}/c/${catalog.name}`;
-
+  const catalogUrl = `${APP_URL}/${catalog.name}`;
   return (
     <div className="space-y-8">
       <motion.div

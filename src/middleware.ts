@@ -39,9 +39,10 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - /c/ (public catalog pages)
+     * - public files (files with extensions like .png, .jpg, etc.)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/.*|favicon.ico|c/.*).*)',
+    '/((?!_next/.*|favicon.ico|api/.*|.*\\..*).*)',
   ],
 }
+

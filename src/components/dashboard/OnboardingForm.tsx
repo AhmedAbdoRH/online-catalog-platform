@@ -17,7 +17,7 @@ export function OnboardingForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
-   useEffect(() => {
+  useEffect(() => {
     // This effect will run when the `state` from the action changes.
     // We check if there's a message and it's not a success scenario (which would redirect).
     if (state?.message) {
@@ -28,46 +28,46 @@ export function OnboardingForm() {
       });
     }
   }, [state, toast]);
-  
+
   // This effect resets the form when the component mounts or the form action result changes.
   useEffect(() => {
     if (!state?.message) {
-        formRef.current?.reset();
+      formRef.current?.reset();
     }
   }, [state])
 
   return (
-      <form ref={formRef} action={formAction} className="space-y-8">
-        <div className="space-y-2">
-            <Label htmlFor="name">اسم الكتالوج (باللغة الإنجليزية)</Label>
-            <Input 
-                id="name"
-                name="name"
-                placeholder="my-restaurant" 
-                required 
-                pattern="^[a-z0-9-]+$"
-                title="يجب أن يحتوي على أحرف إنجليزية صغيرة وأرقام وشرطات فقط"
-                minLength={3}
-            />
-            <p className="text-sm text-muted-foreground">
-                سيتم استخدام هذا الاسم في رابط الكتالوج الخاص بك. مثال: your-menu.app/c/my-restaurant
-            </p>
-        </div>
-        
-        <div className="space-y-2">
-            <Label htmlFor="logo">شعار العمل</Label>
-            <Input 
-                id="logo"
-                name="logo"
-                type="file" 
-                accept="image/jpeg,image/png,image/webp" 
-                required 
-            />
-        </div>
+    <form ref={formRef} action={formAction} className="space-y-8">
+      <div className="space-y-2">
+        <Label htmlFor="name">اسم الكتالوج (باللغة الإنجليزية)</Label>
+        <Input
+          id="name"
+          name="name"
+          placeholder="my-restaurant"
+          required
+          pattern="^[a-z0-9-]+$"
+          title="يجب أن يحتوي على أحرف إنجليزية صغيرة وأرقام وشرطات فقط"
+          minLength={3}
+        />
+        <p className="text-sm text-muted-foreground">
+          سيتم استخدام هذا الاسم في رابط الكتالوج الخاص بك. مثال: online-catalog.net/my-restaurant
+        </p>
+      </div>
 
-        <SubmitButton pendingText="جاري الإنشاء..." className="w-full">
-          إنشاء كتالوجي
-        </SubmitButton>
-      </form>
+      <div className="space-y-2">
+        <Label htmlFor="logo">شعار العمل</Label>
+        <Input
+          id="logo"
+          name="logo"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          required
+        />
+      </div>
+
+      <SubmitButton pendingText="جاري الإنشاء..." className="w-full">
+        إنشاء كتالوجي
+      </SubmitButton>
+    </form>
   );
 }

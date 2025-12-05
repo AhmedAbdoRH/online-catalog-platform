@@ -114,7 +114,7 @@ export default async function ProductPage({ params }: Props) {
 
   const { catalog, product, categoryName, related } = data;
   const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:9003";
-  const productUrl = `${origin}/c/${catalog.name}/item/${product.id}`;
+  const productUrl = `${origin}/${catalog.name}/item/${product.id}`;
   const whatsappText = encodeURIComponent(
     `أرغب في طلب ${product.name} من ${catalog.display_name}. التفاصيل: ${productUrl}`
   );
@@ -124,7 +124,7 @@ export default async function ProductPage({ params }: Props) {
       <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 pt-10 md:px-6">
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <Link
-            href={`/c/${catalog.name}`}
+            href={`/${catalog.name}`}
             className="inline-flex items-center gap-2 text-brand-primary hover:text-brand-primary/80"
           >
             <ArrowRight className="h-4 w-4" />
@@ -210,7 +210,7 @@ export default async function ProductPage({ params }: Props) {
                 <p className="text-sm text-muted-foreground">جرّب منتجات أخرى من نفس الفئة</p>
               </div>
               <Link
-                href={`/c/${catalog.name}`}
+                href={`/${catalog.name}`}
                 className="text-sm text-brand-primary hover:text-brand-primary/80"
               >
                 استعرض المنيو كاملة
@@ -220,7 +220,7 @@ export default async function ProductPage({ params }: Props) {
               {related.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/c/${catalog.name}/item/${item.id}`}
+                  href={`/${catalog.name}/item/${item.id}`}
                   className={cn(
                     "glass-surface glass-surface-hover group flex flex-col rounded-2xl p-3 text-right",
                     "transition-transform duration-200"

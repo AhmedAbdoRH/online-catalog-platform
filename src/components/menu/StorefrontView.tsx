@@ -94,7 +94,7 @@ type MenuItemCardProps = {
 };
 
 function MenuItemCard({ item, catalogName, categoryName, viewMode, index }: MenuItemCardProps) {
-  const href = `/c/${catalogName}/item/${item.id}`;
+  const href = `/${catalogName}/item/${item.id}`;
   const isCompact = viewMode === "compact";
   const isList = viewMode === "list";
   const lift = cardLiftSteps[index % cardLiftSteps.length];
@@ -241,7 +241,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
   const catalogUrl =
     typeof window !== "undefined"
       ? window.location.href
-      : `https://online-menu.app/c/${catalog.name}`;
+      : `https://online-catalog.net/${catalog.name}`;
 
   const allItems = useMemo(() => flattenMenuItems(categories), [categories]);
   const displayedCategories = selectedCategoryId
@@ -473,15 +473,15 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                     >
                       {selectedSubcategoryId === null
                         ? category.menu_items.map((item, itemIndex) => (
-                            <MenuItemCard
-                              key={item.id}
-                              item={item}
-                              catalogName={catalog.name}
-                              categoryName={category.name}
-                              viewMode={viewMode}
-                              index={itemIndex}
-                            />
-                          ))
+                          <MenuItemCard
+                            key={item.id}
+                            item={item}
+                            catalogName={catalog.name}
+                            categoryName={category.name}
+                            viewMode={viewMode}
+                            index={itemIndex}
+                          />
+                        ))
                         : []}
                     </div>
                   </div>
@@ -492,55 +492,55 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                       {category.subcategories
                         .filter((s) => (selectedSubcategoryId ? s.id === selectedSubcategoryId : true))
                         .map((sub, subIndex) => {
-                        const luxeSub = sub as LuxeCategory;
-                        const subDescription = luxeSub.description ?? "";
-                        return (
-                          <motion.div
-                            key={sub.id}
-                            initial={{ opacity: 0, y: 18 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{
-                              duration: 0.35,
-                              delay: 0.12 + subIndex * 0.08,
-                              ease: [0.22, 0.61, 0.36, 1],
-                            }}
-                            className="flex flex-col space-y-4 w-full"
-                          >
-                            <div className="hidden items-center justify-between gap-3">
-                              <div>
-                                <h3 className="text-lg font-semibold text-foreground md:text-xl">
-                                  {sub.name}
-                                </h3>
-                                {subDescription && (
-                                  <p className="text-xs text-muted-foreground">{subDescription}</p>
-                                )}
-                              </div>
-                              <span className="rounded-full bg-muted px-3 py-1 text-[10px] text-muted-foreground">
-                                {sub.menu_items.length} منتج
-                              </span>
-                            </div>
-                            <div
-                              className={cn(
-                                viewMode === "masonry" && "masonry-columns",
-                                viewMode === "grid" &&
-                                "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
-                                (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-3"
-                              )}
+                          const luxeSub = sub as LuxeCategory;
+                          const subDescription = luxeSub.description ?? "";
+                          return (
+                            <motion.div
+                              key={sub.id}
+                              initial={{ opacity: 0, y: 18 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{
+                                duration: 0.35,
+                                delay: 0.12 + subIndex * 0.08,
+                                ease: [0.22, 0.61, 0.36, 1],
+                              }}
+                              className="flex flex-col space-y-4 w-full"
                             >
-                              {sub.menu_items.map((item, itemIndex) => (
-                                <MenuItemCard
-                                  key={item.id}
-                                  item={item}
-                                  catalogName={catalog.name}
-                                  categoryName={sub.name}
-                                  viewMode={viewMode}
-                                  index={itemIndex}
-                                />
-                              ))}
-                            </div>
-                          </motion.div>
-                        );
-                      })}
+                              <div className="hidden items-center justify-between gap-3">
+                                <div>
+                                  <h3 className="text-lg font-semibold text-foreground md:text-xl">
+                                    {sub.name}
+                                  </h3>
+                                  {subDescription && (
+                                    <p className="text-xs text-muted-foreground">{subDescription}</p>
+                                  )}
+                                </div>
+                                <span className="rounded-full bg-muted px-3 py-1 text-[10px] text-muted-foreground">
+                                  {sub.menu_items.length} منتج
+                                </span>
+                              </div>
+                              <div
+                                className={cn(
+                                  viewMode === "masonry" && "masonry-columns",
+                                  viewMode === "grid" &&
+                                  "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+                                  (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-3"
+                                )}
+                              >
+                                {sub.menu_items.map((item, itemIndex) => (
+                                  <MenuItemCard
+                                    key={item.id}
+                                    item={item}
+                                    catalogName={catalog.name}
+                                    categoryName={sub.name}
+                                    viewMode={viewMode}
+                                    index={itemIndex}
+                                  />
+                                ))}
+                              </div>
+                            </motion.div>
+                          );
+                        })}
                     </div>
                   )}
                 </motion.section>
