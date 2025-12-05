@@ -14,7 +14,6 @@ type CatalogPageData = Catalog & {
 
 async function getCatalogData(slug: string): Promise<CatalogPageData | null> {
   try {
-    const supabase = await createClient();
     console.log(`Fetching catalog for slug: ${slug}`);
 
     // DEBUG MODE: Bypass DB for testing
@@ -53,6 +52,14 @@ async function getCatalogData(slug: string): Promise<CatalogPageData | null> {
         ]
       };
     }
+
+    // NOW verify env vars and create client
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.error("CRITICAL: Missing Supabase Env Vars in getCatalogData");
+      throw new Error("Server Misconfiguration: Missing Supabase Variables");
+    }
+
+    const supabase = await createClient();
 
     // Test connection?
     // const { count, error: countError } = await supabase.from('catalogs').select('*', { count: 'exact', head: true });
