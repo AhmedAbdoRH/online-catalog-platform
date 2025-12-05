@@ -113,8 +113,7 @@ export default async function ProductPage({ params }: Props) {
   }
 
   const { catalog, product, categoryName, related } = data;
-  const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:9003";
-  const productUrl = `${origin}/${catalog.name}/item/${product.id}`;
+  const productUrl = `https://online-catalog.net/${catalog.name}/item/${product.id}`;
   const whatsappText = encodeURIComponent(
     `أرغب في طلب ${product.name} من ${catalog.display_name}. التفاصيل: ${productUrl}`
   );

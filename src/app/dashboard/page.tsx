@@ -46,7 +46,9 @@ export default async function DashboardPage() {
     );
   }
 
-  const catalogUrl = `${APP_URL}/${catalog.name}`;
+  const catalogUrl = process.env.NODE_ENV === 'production'
+    ? `https://online-catalog.net/${catalog.name}`
+    : `${APP_URL}/${catalog.name}`;
   return (
     <div className="space-y-8">
       <motion.div
