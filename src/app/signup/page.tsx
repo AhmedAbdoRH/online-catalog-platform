@@ -1,9 +1,6 @@
-'use client';
-
 import Link from "next/link"
-import { useRouter } from "next/navigation";
-
-import { Button } from "@/components/ui/button"
+import { signup } from "@/app/actions/auth"
+import { SubmitButton } from "@/components/common/SubmitButton"
 import {
   Card,
   CardContent,
@@ -13,16 +10,12 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { signup } from "@/app/actions/auth"
-import { SubmitButton } from "@/components/common/SubmitButton"
 
-export default function SignupPage() {
-  const router = useRouter();
-  const handleSignup = async (formData: FormData) => {
-    const result = await signup(formData);
-    // The server action will handle the redirect, but we can refresh if needed
-    // or handle messages. For now, the action redirects.
-  };
+export default async function SignupPage(props: {
+  searchParams: Promise<{ message: string }>
+}) {
+  const searchParams = await props.searchParams;
+  const message = searchParams.message;
 
   return (
     <Card className="mx-auto max-w-sm">
@@ -33,7 +26,7 @@ export default function SignupPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={handleSignup} className="grid gap-4">
+        <form action={signup} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">البريد الإلكتروني</Label>
             <Input
@@ -46,11 +39,16 @@ export default function SignupPage() {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">كلمة المرور</Label>
-            <Input id="password" type="password" name="password" required />
+            <Input id="password" type="password" name="password" required minLength={6} />
           </div>
           <SubmitButton pendingText="جاري إنشاء الحساب..." className="w-full">
             إنشاء حساب
           </SubmitButton>
+          {message && (
+            <div className="bg-destructive/15 p-3 text-sm text-destructive rounded-md text-center">
+              {message}
+            </div>
+          )}
         </form>
         <div className="mt-4 text-center text-sm">
           لديك حساب بالفعل؟{" "}

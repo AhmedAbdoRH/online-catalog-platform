@@ -26,7 +26,9 @@ export async function login(formData: FormData) {
 
 export async function signup(formData: FormData) {
   const originHeader = (await headers()).get("origin");
-  const fallbackOrigin = "http://localhost:9002";
+  const fallbackOrigin = process.env.NODE_ENV === 'production'
+    ? "https://online-catalog.net"
+    : "http://localhost:9003";
   const redirectTo = `${originHeader || fallbackOrigin}/auth/callback`;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -41,13 +43,13 @@ export async function signup(formData: FormData) {
   });
 
   if (error) {
-    console.error(error);
-    return redirect("/signup?message=تعذر إنشاء الحساب. يرجى المحاولة مرة أخرى.");
+    console.error("Signup error:", error.message);
+    return redirect(`/signup?message=${encodeURIComponent("خطأ: " + error.message)}`);
   }
 
   // A confirmation email is sent. For this demo, we'll redirect to a page that tells the user to check their email.
   // In a real app, you might want to handle this more gracefully.
-  return redirect("/login?message=تم إرسال رابط التأكيد إلى بريدك الإلكتروني");
+  return redirect(`/login?message=${encodeURIComponent("تم إرسال رابط التأكيد إلى بريدك الإلكتروني")}`);
 }
 
 export async function logout() {
