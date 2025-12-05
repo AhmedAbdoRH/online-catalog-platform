@@ -17,6 +17,43 @@ async function getCatalogData(slug: string): Promise<CatalogPageData | null> {
     const supabase = await createClient();
     console.log(`Fetching catalog for slug: ${slug}`);
 
+    // DEBUG MODE: Bypass DB for testing
+    if (slug === 'debug-test') {
+      return {
+        id: 99999,
+        user_id: 'debug-user',
+        name: 'debug-test',
+        display_name: 'Debug Test Store',
+        description: 'This is a debug store to test rendering without DB.',
+        logo_url: null,
+        cover_url: null,
+        enable_subcategories: false,
+        created_at: new Date().toISOString(),
+        categories: [
+          {
+            id: 1,
+            catalog_id: 99999,
+            name: 'Debug Category',
+            parent_category_id: null,
+            created_at: new Date().toISOString(),
+            subcategories: [],
+            menu_items: [
+              {
+                id: 1,
+                catalog_id: 99999,
+                category_id: 1,
+                name: 'Debug Item',
+                description: 'Test item',
+                price: 100,
+                image_url: null,
+                created_at: new Date().toISOString()
+              }
+            ]
+          }
+        ]
+      };
+    }
+
     // Test connection?
     // const { count, error: countError } = await supabase.from('catalogs').select('*', { count: 'exact', head: true });
     // if (countError) console.error("Supabase Connection Error:", countError);
