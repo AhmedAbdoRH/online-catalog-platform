@@ -9,8 +9,35 @@ export async function createClient() {
   const cookieStore = await cookies()
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.error("Missing Supabase Environment Variables!");
-    throw new Error("Supabase is not configured properly on the server.");
+    const stub = {
+      auth: {
+        getSession: async () => ({ data: { session: null }, error: null }),
+        getUser: async () => ({ data: { user: null }, error: null }),
+        refreshSession: async () => ({ data: null, error: null }),
+      },
+      from: (_table: string) => {
+        const chain: any = {
+          select: () => chain,
+          eq: () => chain,
+          order: () => chain,
+          neq: () => chain,
+          limit: () => chain,
+          single: async () => ({ data: null, error: { message: "Supabase not configured" } }),
+          maybeSingle: async () => ({ data: null, error: { message: "Supabase not configured" } }),
+          insert: async () => ({ data: null, error: { message: "Supabase not configured" } }),
+          update: async () => ({ data: null, error: { message: "Supabase not configured" } }),
+        }
+        return chain
+      },
+      storage: {
+        from: () => ({
+          upload: async () => ({ data: null, error: { message: "Supabase not configured" } }),
+          remove: async () => ({ data: null, error: { message: "Supabase not configured" } }),
+          getPublicUrl: (_path: string) => ({ data: { publicUrl: "" } }),
+        }),
+      },
+    }
+    return stub as any
   }
 
   return createServerClient(

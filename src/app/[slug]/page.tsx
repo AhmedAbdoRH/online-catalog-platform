@@ -4,6 +4,10 @@ import type { Metadata } from "next";
 import type { Catalog, CategoryWithSubcategories } from "@/lib/types";
 import { StorefrontView } from "@/components/menu/StorefrontView";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 type Props = {
   params: { slug: string };
 };
@@ -53,10 +57,8 @@ async function getCatalogData(slug: string): Promise<CatalogPageData | null> {
       };
     }
 
-    // NOW verify env vars and create client
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      console.error("CRITICAL: Missing Supabase Env Vars in getCatalogData");
-      throw new Error("Server Misconfiguration: Missing Supabase Variables");
+      return null;
     }
 
     const supabase = await createClient();
@@ -125,9 +127,6 @@ async function getCatalogData(slug: string): Promise<CatalogPageData | null> {
   }
 }
 
-export async function generateStaticParams() {
-  return [];
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
@@ -165,5 +164,3 @@ export default async function CatalogPage({ params }: Props) {
 
   return <StorefrontView catalog={data} categories={data.categories} />;
 }
-
-

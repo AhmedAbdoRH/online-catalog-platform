@@ -70,9 +70,6 @@ async function getProductData(slug: string, itemId: string): Promise<ProductPage
   };
 }
 
-export async function generateStaticParams() {
-  return [];
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await getProductData(params.slug, params.itemId);
@@ -256,4 +253,6 @@ export default async function ProductPage({ params }: Props) {
   );
 }
 
-
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;

@@ -247,7 +247,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
   const displayedCategories = selectedCategoryId
     ? categories.filter((c) => c.id === selectedCategoryId)
     : categories;
-  const heroImage = luxeCatalog.cover_url ?? "/public/placeholder.svg";
+  const heroImage = luxeCatalog.cover_url ?? "https://placehold.co/1600x600/png?text=Menu+Cover";
 
   const catalogDescription = luxeCatalog.description ?? "";
   const isCatalogClosed = luxeCatalog.is_open === false || luxeCatalog.status === "closed";
