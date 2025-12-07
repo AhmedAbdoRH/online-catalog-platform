@@ -1,60 +1,45 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-// NOTE:
-// In Next.js 15, `cookies()` is an async dynamic API and **must be awaited**
-// before using its value. We therefore make `createClient` async and await
-// `cookies()` once, then pass the resulting cookieStore into Supabase.
 export async function createClient() {
   const cookieStore = await cookies()
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    const stub = {
+    const supabase: any = {
       auth: {
         getSession: async () => ({ data: { session: null }, error: null }),
         getUser: async () => ({ data: { user: null }, error: null }),
         refreshSession: async () => ({ data: null, error: null }),
-      },
-      from: (_table: string) => {
-        const chain: any = {
-          select: () => chain,
-          eq: () => chain,
-          order: () => chain,
-          neq: () => chain,
-          limit: () => chain,
-          single: async () => ({ data: null, error: { message: "Supabase not configured" } }),
-          maybeSingle: async () => ({ data: null, error: { message: "Supabase not configured" } }),
-          insert: async () => ({ data: null, error: { message: "Supabase not configured" } }),
-          update: async () => ({ data: null, error: { message: "Supabase not configured" } }),
-        }
-        return chain
-      },
-      storage: {
-        from: () => ({
-          upload: async () => ({ data: null, error: { message: "Supabase not configured" } }),
-          remove: async () => ({ data: null, error: { message: "Supabase not configured" } }),
-          getPublicUrl: (_path: string) => ({ data: { publicUrl: "" } }),
-        }),
+        signInWithPassword: async () => ({ data: null, error: { message: 'Supabase not configured' } }),
+        signUp: async () => ({ data: null, error: { message: 'Supabase not configured' } }),
+        signOut: async () => ({ error: null }),
       },
     }
-    return stub as any
+    return supabase
   }
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll()
+        get(name: string) {
+          return cookieStore.get(name)?.value
         },
-        setAll(cookiesToSet) {
+        set(name: string, value: string, options: CookieOptions) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-            // The `setAll` method was called from a Server Component.
+            cookieStore.set(name, value, options)
+          } catch (error) {
+            // The `set` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.set(name, '', options)
+          } catch (error) {
+            // The `remove` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing
             // user sessions.
           }
@@ -62,19 +47,4 @@ export async function createClient() {
       },
     }
   )
-}
-
-export async function createServiceRoleClient() {
-  const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        get: (name: string) => {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
 }
