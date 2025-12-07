@@ -13,6 +13,7 @@ interface Database {
           cover_url: string | null;
           user_id: string;
           enable_subcategories: boolean;
+          plan: string;
         };
         Insert: {
           id?: number;
@@ -35,6 +36,7 @@ interface Database {
           cover_url?: string | null;
           user_id?: string;
           enable_subcategories?: boolean;
+          plan?: string;
         };
       };
       categories: {

@@ -7,6 +7,19 @@ import Link from "next/link";
 import { APP_URL } from "@/lib/constants";
 import { Clipboard, Eye, Settings, Package, Tags, ArrowRight } from "lucide-react";
 import * as motion from "framer-motion/client";
+import { Badge } from "@/components/ui/badge";
+
+const getPlanDetails = (plan: string) => {
+  switch (plan?.toLowerCase()) {
+    case 'pro':
+      return { label: 'باقة احترافية', className: 'bg-brand-accent hover:bg-brand-accent/90 text-white' };
+    case 'business':
+      return { label: 'باقة أعمال', className: 'bg-brand-luxury hover:bg-brand-luxury/90 text-white' };
+    case 'basic':
+    default:
+      return { label: 'باقة أساسية', className: 'bg-brand-primary hover:bg-brand-primary/90 text-white' };
+  }
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -49,16 +62,24 @@ export default async function DashboardPage() {
   const catalogUrl = process.env.NODE_ENV === 'production'
     ? `https://online-catalog.net/${catalog.name}`
     : `${APP_URL}/${catalog.name}`;
+
+  const planDetails = getPlanDetails(catalog.plan || 'basic');
+
   return (
     <div className="space-y-8">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
+        className="flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">لوحة التحكم</h1>
-          <p className="text-muted-foreground mt-1">نظرة عامة على متجرك الإلكتروني</p>
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold tracking-tight">لوحة التحكم</h1>
+            <Badge className={`${planDetails.className} text-sm px-3 py-1 items-center gap-1`}>
+              {planDetails.label}
+            </Badge>
+          </div>
+          <p className="text-muted-foreground">نظرة عامة على متجرك الإلكتروني</p>
         </div>
         <Button asChild variant="outline" className="gap-2">
           <Link href="/dashboard/settings">
