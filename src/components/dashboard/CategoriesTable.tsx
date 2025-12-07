@@ -291,8 +291,8 @@ export function CategoriesTable({ categories, catalogId }: { categories: Categor
           <Folder className="h-8 w-8 text-muted-foreground/50" />
         </div>
         <h3 className="mb-1 text-lg font-semibold">لا توجد فئات</h3>
-        <p className="mb-6 max-w-sm text-sm text-muted-foreground">
-          لم تقم بإضافة أي فئات بعد. ابدأ بإضافة فئة جديدة لتنظيم قائمة طعامك.
+        <p className="mt-2 text-sm text-muted-foreground">
+          لم تقم بإضافة أي فئات بعد. ابدأ بإضافة فئة جديدة لتنظيم كتالوجك.
         </p>
       </div>
     );

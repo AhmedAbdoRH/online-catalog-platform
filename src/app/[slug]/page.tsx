@@ -31,6 +31,7 @@ async function getCatalogData(slug: string): Promise<CatalogPageData | null> {
         logo_url: null,
         cover_url: null,
         enable_subcategories: false,
+        plan: 'basic',
         created_at: new Date().toISOString(),
         categories: [
           {
@@ -137,11 +138,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
   return {
-    title: `قائمة ${data.name} - أونلاين منيو`,
-    description: `تصفح قائمة الطعام الفاخرة الخاصة بـ ${data.name} في أونلاين منيو.`,
+    title: `كتالوج ${data.name} - أونلاين منيو`,
+    description: `تصفح الكتالوج الفاخر الخاص بـ ${data.name} في أونلاين منيو.`,
     openGraph: {
-      title: `قائمة طعام ${data.name}`,
-      description: `تصفح قائمة الطعام الخاصة بـ ${data.name}`,
+      title: `كتالوج ${data.name}`,
+      description: `تصفح الكتالوج الخاص بـ ${data.name}`,
       images: [
         {
           url: data.logo_url || "",

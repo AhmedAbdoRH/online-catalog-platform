@@ -29,7 +29,7 @@ export default async function ItemsPage() {
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                     <CardTitle>المنتجات</CardTitle>
-                    <CardDescription>إدارة المنتجات في قائمة الطعام الخاصة بك.</CardDescription>
+                    <CardDescription>إدارة المنتجات في الكتالوج الخاص بك.</CardDescription>
                 </div>
                 <Dialog>
                     <DialogTrigger asChild>

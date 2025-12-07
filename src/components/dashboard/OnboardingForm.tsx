@@ -43,7 +43,7 @@ export function OnboardingForm() {
         <Input
           id="display_name"
           name="display_name"
-          placeholder="مطعم الوفاء"
+          placeholder="متجر الوفاء"
           required
           minLength={3}
           maxLength={50}
@@ -58,14 +58,14 @@ export function OnboardingForm() {
         <Input
           id="name"
           name="name"
-          placeholder="my-restaurant"
+          placeholder="my-store"
           required
           pattern="^[a-z0-9-]+$"
           title="يجب أن يحتوي على أحرف إنجليزية صغيرة وأرقام وشرطات فقط"
           minLength={3}
         />
         <p className="text-sm text-muted-foreground">
-          سيتم استخدام هذا الاسم في رابط الكتالوج الخاص بك. مثال: online-catalog.net/my-restaurant
+          سيتم استخدام هذا الاسم في رابط الكتالوج الخاص بك. مثال: online-catalog.net/my-store
         </p>
       </div>
 

@@ -551,12 +551,12 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
 
         <a
           href={`https://wa.me/?text=${encodeURIComponent(
-            `تفضل قائمة طعام ${catalog.name}: ${catalogUrl}`
+            `تفضل كتالوج ${catalog.name}: ${catalogUrl}`
           )}`}
           target="_blank"
           rel="noopener noreferrer"
           className="fixed bottom-6 left-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_30px_60px_rgba(37,211,102,0.55)] transition-transform hover:-translate-y-1 md:bottom-6"
-          aria-label="مشاركة المنيو عبر واتساب"
+          aria-label="مشاركة الكتالوج عبر واتساب"
         >
           <MessageCircle className="h-6 w-6" />
         </a>

@@ -38,7 +38,7 @@ export default async function CategoriesPage() {
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">الفئات</h1>
                     <p className="text-muted-foreground">
-                        إدارة هيكلية قائمة الطعام وتنظيم الأصناف في مجموعات.
+                        إدارة هيكلية الكتالوج وتنظيم الأصناف في مجموعات.
                     </p>
                 </div>
                 <Dialog>

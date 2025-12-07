@@ -1,7 +1,7 @@
 {
-  "name": "قائمة طعامي",
-  "short_name": "قائمة طعامي",
-  "description": "منصتك لإنشاء قائمة طعام إلكترونية بسهولة",
+  "name": "كتالوجي",
+  "short_name": "كتالوجي",
+  "description": "منصتك لإنشاء كتالوج إلكتروني بسهولة",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F1F8E9",

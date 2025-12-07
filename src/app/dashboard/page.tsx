@@ -45,9 +45,9 @@ export default async function DashboardPage() {
         >
           <Card className="glass-surface border-primary/20">
             <CardHeader>
-              <CardTitle className="text-2xl text-brand-primary">مرحباً بك في قائمة طعامي!</CardTitle>
+              <CardTitle className="text-2xl text-brand-primary">مرحباً بك في كتالوجي!</CardTitle>
               <CardDescription className="text-lg">
-                خطوتك الأولى هي إنشاء الكتالوج الخاص بك. الرجاء تعبئة المعلومات التالية للبدء.
+                أبدأ في انشاء الكاتلوج الخاص بك. الرجاء تعبئة المعلومات التالية للبدء.
               </CardDescription>
             </CardHeader>
             <CardContent>

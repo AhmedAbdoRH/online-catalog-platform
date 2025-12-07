@@ -32,13 +32,13 @@ export function ShareButtons({ catalogName }: { catalogName: string }) {
     setUrl(window.location.href);
   }, []);
 
-  const shareText = `تفضلوا قائمة طعام ${catalogName}`;
+  const shareText = `تفضلوا كتالوج ${catalogName}`;
 
   const handleNativeShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `قائمة طعام ${catalogName}`,
+          title: `كتالوج ${catalogName}`,
           text: shareText,
           url: url,
         });
