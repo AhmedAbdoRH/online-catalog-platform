@@ -179,9 +179,6 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index }: Menu
           <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             <div className="absolute inset-0 rounded-[1.5rem] shadow-[inset_0_0_45px_rgba(255,255,255,0.18)]" />
           </div>
-          <div className="pointer-events-none absolute bottom-3 left-4 rounded-full bg-black/70 px-3 py-1 text-[12px] font-semibold text-white">
-            {formatPrice(item.price)}
-          </div>
         </div>
 
         <div className={cn("flex flex-col gap-3", contentPadding)}>
@@ -235,7 +232,7 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index }: Menu
             }}
             aria-label="أضف إلى العربة"
           >
-            <Plus className="h-3 w-3 opacity-60" />
+            <Plus className="h-3.5 w-3.5 opacity-90" />
             <ShoppingCart className="h-3 w-3" />
           </Button>
       </div>
@@ -622,7 +619,26 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
               </div>
             )}
 
-            {displayedCategories.map((category, categoryIndex) => {
+            {!selectedCategoryId ? (
+              // Show all products in a single grid when no category is selected
+              <div className={cn(
+                viewMode === "masonry" && "masonry-columns space-y-4",
+                viewMode === "grid" && "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+                (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-4"
+              )}>
+                {flattenMenuItems(categories).map((item, index) => (
+                  <MenuItemCard
+                    key={item.id}
+                    item={item}
+                    catalogName={catalog.name}
+                    viewMode={viewMode}
+                    index={index % cardLiftSteps.length}
+                  />
+                ))}
+              </div>
+            ) : (
+              // Show products by category when a category is selected
+              displayedCategories.map((category, categoryIndex) => {
               const luxeCategory = category as LuxeCategory;
               const categoryDescription = luxeCategory.description ?? "";
               return (
@@ -653,10 +669,10 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                     {/* Main Category Items */}
                     <div
                       className={cn(
-                        viewMode === "masonry" && "masonry-columns",
+                        viewMode === "masonry" && "masonry-columns space-y-4",
                         viewMode === "grid" &&
-                        "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
-                        (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-3"
+                        "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+                        (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-4"
                       )}
                     >
                       {selectedSubcategoryId === null
@@ -733,7 +749,8 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                   )}
                 </motion.section>
               );
-            })}
+            })
+            )}
           </section>
         </main>
 

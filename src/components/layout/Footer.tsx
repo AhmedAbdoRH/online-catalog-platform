@@ -6,7 +6,7 @@ import { MessageCircle, ShoppingCart } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/5 bg-background/95 backdrop-blur-sm h-7 flex items-center justify-center">
+    <footer className="border-t border-white/5 bg-background/95 backdrop-blur-sm h-7 flex items-center justify-center mt-auto">
       <div className="w-full max-w-7xl px-3 text-center">
         <div className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground">
           <span>تم تنفيذ هذا المتجر بواسطة</span>
