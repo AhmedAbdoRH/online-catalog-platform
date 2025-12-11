@@ -3,38 +3,40 @@
  */
 "use client";
 
-import { useEffect, useMemo, useState, lazy, Suspense } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
-import type { Catalog, CategoryWithSubcategories, MenuItem } from "@/lib/types";
-import { ShareButtons } from "./ShareButtons";
-import { Button } from "@/components/ui/button";
-import { Footer } from "@/components/layout/Footer";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import {
+import { useEffect, useMemo, useState, useRef, lazy, Suspense } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Search, 
+  X as XIcon, 
+  ShoppingCart, 
+  Plus, 
+  Sparkles, 
+  MessageCircle, 
+  ChevronDown, 
+  ChevronUp, 
+  Menu as MenuIcon,
   LayoutGrid,
   LayoutList,
   Rows3,
   PanelTop,
   Home,
-  Menu,
   Palette,
   Settings,
-  MessageCircle,
   Lock,
-  Sparkles,
-  Crown,
-  Search,
-  X,
-  Plus,
-  ShoppingCart,
-} from "lucide-react";
-import { CartProvider } from '@/components/cart/CartContext'
-import { useCart } from '@/components/cart/CartContext'
-import { CartDrawer } from '@/components/cart/CartDrawer'
-import { CartButton } from '@/components/cart/CartButton'
+  Crown
+} from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useOnClickOutside } from '@/hooks/use-click-outside';
+import { cn } from "@/lib/utils";
+import { CartProvider } from '@/components/cart/CartContext';
+import { useCart } from '@/components/cart/CartContext';
+import { CartDrawer } from '@/components/cart/CartDrawer';
+import { CartButton } from '@/components/cart/CartButton';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Footer } from '@/components/layout/Footer';
 
 type ViewMode = "masonry" | "grid" | "list" | "compact";
 
@@ -268,7 +270,21 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(true);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  
+  // Handle clicks outside the search container
+  useOnClickOutside(searchContainerRef, () => {
+    if (isSearchExpanded || searchTerm) {
+      setIsSearchExpanded(false);
+      searchInputRef.current?.blur();
+      // On mobile, we want to close the keyboard when clicking outside
+      if (window.innerWidth < 768) {
+        document.activeElement instanceof HTMLElement && document.activeElement.blur();
+      }
+    }
+  });
   const luxeCatalog = catalog as LuxeCatalog;
 
   useEffect(() => {
@@ -292,11 +308,9 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
       ? window.location.href
       : `https://online-catalog.net/${catalog.name}`;
 
-
-  
   // Apply search filtering first, then category filtering
-  const searchFilteredCategories = useMemo(() => 
-    filterCategoriesBySearch(categories, searchTerm), 
+  const searchFilteredCategories = useMemo(
+    () => searchTerm ? filterCategoriesBySearch(categories, searchTerm) : categories,
     [categories, searchTerm]
   );
   
@@ -324,7 +338,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
 
   return (
     <CartProvider storageKey={`oc_cart_${catalog.name}`}>
-    <div className="relative min-h-screen bg-[radial-gradient(circle_at_top,_rgba(0,209,201,0.25),transparent_60%),radial-gradient(circle_at_bottom,_rgba(168,85,247,0.18),transparent_62%)] bg-background pb-3">
+    <div className="relative flex flex-col min-h-screen bg-[radial-gradient(circle_at_top,_rgba(0,209,201,0.25),transparent_60%),radial-gradient(circle_at_bottom,_rgba(168,85,247,0.18),transparent_62%)] bg-background pb-3">
       <div className="relative mx-auto w-[min(92vw,1200px)] pt-2">
         {/* Hero Image Section */}
         {/* Hero Image Section */}
@@ -451,93 +465,41 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
 
         <main className="mx-auto mt-8 flex w-[min(94vw,1180px)] flex-col gap-0">
           {/* Search Section */}
-          <div className="mx-auto w-full max-w-md px-2 mb-4">
+          <div className="mx-auto w-full max-w-md px-1 mb-2 mt-2">
             <motion.div 
-              className="relative search-container"
+              ref={searchContainerRef}
+              className="relative w-full"
               initial={false}
-              animate={{
-                width: isSearchExpanded || searchTerm ? '100%' : 'auto',
-                transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] }
-              }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <AnimatePresence mode="wait">
-                {!isSearchExpanded && !searchTerm ? (
-                  // Collapsed search state - small and compact
-                  <motion.button
-                    key="collapsed-search"
-                    initial={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                    onClick={() => {
-                      setIsSearchExpanded(true);
+              <div className="relative w-full">
+                <div className="absolute inset-0 rounded-full bg-white/10 border border-white/15"></div>
+                <Search className="absolute right-3 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground/60" />
+                <Input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="ابحث..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onFocus={() => setIsSearchExpanded(true)}
+                  className="relative z-10 pr-8 pl-3 py-1.5 text-xs bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-8 w-full"
+                  style={{ boxShadow: 'none' }}
+                />
+                {searchTerm && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSearchTerm("");
+                      searchInputRef.current?.focus();
                     }}
-                    className="absolute inset-0 flex items-center gap-2 w-full h-6 rounded-full bg-white/8 border border-white/15 backdrop-blur-sm hover:bg-white/12 transition-all duration-300 mx-auto px-3 z-10"
-                    aria-label="بحث"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-20"
+                    aria-label="مسح البحث"
                   >
-                    <Search className="h-3 w-3 text-muted-foreground/50 flex-shrink-0" />
-                    <span className="text-xs font-light text-muted-foreground/50 truncate">ابحث عن منتج معين</span>
-                  </motion.button>
-                ) : (
-                  // Expanded search state
-                  <motion.div 
-                    key="expanded-search"
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    transition={{ duration: 0.2 }}
-                    onAnimationComplete={() => {
-                      const input = document.querySelector('input[type="text"]') as HTMLInputElement;
-                      input?.focus();
-                    }}
-                    className="relative w-full"
-                  >
-                    <motion.div 
-                      className="absolute inset-0 rounded-full bg-white/8 border border-white/15 backdrop-blur-sm"
-                      initial={false}
-                      animate={{
-                        backgroundColor: isSearchExpanded ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.08)',
-                        borderColor: isSearchExpanded ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.15)',
-                      }}
-                      transition={{ duration: 0.2 }}
-                    />
-                    <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
-                    <Input
-                      type="text"
-                      placeholder="ابحث عن منتج..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      onFocus={() => setIsSearchExpanded(true)}
-                      onBlur={() => {
-                        setIsSearchExpanded(false);
-                      }}
-                      className="relative z-10 pl-10 pr-8 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-10 w-full"
-                      style={{ boxShadow: 'none' }}
-                    />
-                    {searchTerm && (
-                      <motion.button
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        onClick={() => {
-                          setSearchTerm("");
-                          const input = document.querySelector('input[type="text"]') as HTMLInputElement;
-                          input?.focus();
-                        }}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-20"
-                        aria-label="مسح البحث"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </motion.button>
-                    )}
-                  </motion.div>
+                    <XIcon className="h-3 w-3" />
+                  </button>
                 )}
-              </AnimatePresence>
-            </motion.div>
-            {searchTerm && (
-              <div className="mt-2 text-sm text-muted-foreground text-center">
-                تم العثور على {flattenMenuItems(displayedCategories).length} منتج لـ "{searchTerm}"
               </div>
-            )}
+            </motion.div>
           </div>
           
           {/* Category filter toolbar (pills style) */}
@@ -619,8 +581,31 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
               </div>
             )}
 
-            {!selectedCategoryId ? (
-              // Show all products in a single grid when no category is selected
+            {searchTerm ? (
+              // Show search results when there's a search term
+              <div className={cn(
+                viewMode === "masonry" && "masonry-columns space-y-4",
+                viewMode === "grid" && "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+                (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-4"
+              )}>
+                {flattenMenuItems(searchFilteredCategories).length > 0 ? (
+                  flattenMenuItems(searchFilteredCategories).map((item, index) => (
+                    <MenuItemCard
+                      key={`${item.id}-${index}`}
+                      item={item}
+                      catalogName={catalog.name}
+                      viewMode={viewMode}
+                      index={index % cardLiftSteps.length}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full py-12 text-center text-muted-foreground">
+                    لا توجد نتائج للبحث
+                  </div>
+                )}
+              </div>
+            ) : !selectedCategoryId ? (
+              // Show all products in a single grid when no category is selected and no search
               <div className={cn(
                 viewMode === "masonry" && "masonry-columns space-y-4",
                 viewMode === "grid" && "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
@@ -777,9 +762,9 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
       </div>
       
       {/* Fixed Footer */}
-      <Footer />
       
     </div>
+    <Footer />
     </CartProvider>
   );
 }
