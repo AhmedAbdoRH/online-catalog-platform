@@ -13,9 +13,9 @@ export const metadata: Metadata = {
   description: 'منصة إنشاء الكتالوج الرقمي للمحال والمتاجر. سجل مجاناً وأنشئ متجرك خلال دقائق.',
   manifest: '/manifest.json',
   icons: {
-    icon: '/icon.png',
-    shortcut: '/icon.png',
-    apple: '/icon.png',
+    icon: '/mainlogo.png',
+    shortcut: '/mainlogo.png',
+    apple: '/mainlogo.png',
   },
   openGraph: {
     type: 'website',

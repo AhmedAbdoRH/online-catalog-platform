@@ -243,7 +243,7 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index }: Menu
 }
 
 
-function AddToHomeCTA({ show, onDismiss }: { show: boolean; onDismiss: () => void }) {
+function AddToHomeCTA({ show, onDismiss, catalogName }: { show: boolean; onDismiss: () => void; catalogName: string }) {
   return (
     <AnimatePresence>
       {show && (
@@ -253,9 +253,9 @@ function AddToHomeCTA({ show, onDismiss }: { show: boolean; onDismiss: () => voi
           animate={{ opacity: 1, y: 0, transition: { type: "spring", stiffness: 220 } }}
           exit={{ opacity: 0, y: 50 }}
           onClick={onDismiss}
-          className="fixed inset-x-0 bottom-4 z-40 mx-auto flex w-[min(90%,400px)] items-center justify-between rounded-full bg-brand-primary px-4 py-3 text-sm font-semibold text-white shadow-[0_30px_65px_rgba(0,209,201,0.45)]"
+          className="fixed inset-x-0 bottom-4 z-50 mx-auto flex w-[min(90%,400px)] items-center justify-between rounded-full bg-brand-primary px-4 py-3 text-sm font-semibold text-white shadow-[0_30px_65px_rgba(0,209,201,0.45)]"
         >
-          <span>أضف الكتالوج للشاشة الرئيسية</span>
+          <span>أضف {catalogName} للشاشة الرئيسية</span>
           <span className="text-xs opacity-80">تم</span>
         </motion.button>
       )}
@@ -756,6 +756,11 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
 
         <CartDrawer catalog={catalog} />
         <CartButton />
+        <AddToHomeCTA 
+          show={showInstallHint} 
+          onDismiss={() => setShowInstallHint(false)} 
+          catalogName={catalog.display_name || catalog.name}
+        />
 
 
 

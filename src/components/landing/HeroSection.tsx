@@ -71,7 +71,7 @@ export default function HeroSection() {
                                 </Link>
                             </Button>
                             <Button size="lg" variant="outline" className="h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-10 text-base sm:text-lg md:text-xl rounded-full border-2 border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 w-full sm:w-auto transition-all" asChild>
-                                <Link href="https://online-catalog.net/fath" target="_blank" rel="noopener noreferrer">
+                                <Link href="https://online-catalog.net/elfath" target="_blank" rel="noopener noreferrer">
                                     اعرض مثال
                                 </Link>
                             </Button>
