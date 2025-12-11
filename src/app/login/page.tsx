@@ -1,6 +1,5 @@
 import Link from "next/link"
-
-import { Button } from "@/components/ui/button"
+import { LoginForm } from "./components/LoginForm"
 import {
   Card,
   CardContent,
@@ -8,10 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { login } from "@/app/actions/auth"
-import { SubmitButton } from "@/components/common/SubmitButton"
 
 export default async function LoginPage(props: {
   searchParams: Promise<{ message: string }>
@@ -24,36 +19,12 @@ export default async function LoginPage(props: {
       <CardHeader>
         <CardTitle className="text-2xl">تسجيل الدخول</CardTitle>
         <CardDescription>
-          أدخل رقم الهاتف وكلمة المرور للدخول إلى حسابك
+          أدخل البريد الإلكتروني وكلمة المرور للدخول إلى حسابك
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={login} className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="phone">رقم الهاتف</Label>
-            <Input
-              id="phone"
-              type="tel"
-              name="phone"
-              placeholder="01xxxxxxxxx"
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <div className="flex items-center">
-              <Label htmlFor="password">كلمة المرور</Label>
-            </div>
-            <Input id="password" type="password" name="password" required />
-          </div>
-          <SubmitButton pendingText="جاري تسجيل الدخول..." className="w-full">
-            تسجيل الدخول
-          </SubmitButton>
-          {message && (
-            <div className="bg-destructive/15 p-3 text-sm text-destructive rounded-md text-center">
-              {message}
-            </div>
-          )}
-        </form>
+        <LoginForm message={message || ""} />
+        
         <div className="mt-4 text-center text-sm">
           ليس لديك حساب؟{" "}
           <Link href="/signup" className="underline">

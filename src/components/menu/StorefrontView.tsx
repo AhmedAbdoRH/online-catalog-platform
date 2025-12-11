@@ -37,6 +37,7 @@ import { CartButton } from '@/components/cart/CartButton';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Footer } from '@/components/layout/Footer';
+import type { CategoryWithSubcategories, MenuItem } from '@/lib/types';
 
 type ViewMode = "masonry" | "grid" | "list" | "compact";
 

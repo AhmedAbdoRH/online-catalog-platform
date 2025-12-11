@@ -15,10 +15,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { logout } from '@/app/actions/auth';
 import type { Catalog } from '@/lib/types';
 
-function getInitials(name: string | undefined, email: string | undefined) {
+function getInitials(name: string | undefined, email: string | undefined, phone: string | undefined) {
   if (name) return name.substring(0, 2).toUpperCase();
+  if (phone) return phone.substring(0, 2).toUpperCase();
   if (email) return email.substring(0, 2).toUpperCase();
   return 'U';
+}
+
+function getDisplayIdentifier(email: string | undefined, phone: string | undefined) {
+  if (phone) return phone;
+  if (email && email.includes('@catalog.app')) {
+    return email.replace('@catalog.app', '');
+  }
+  return email || 'Unknown';
 }
 
 interface HeaderProps {
@@ -42,8 +51,8 @@ export default function Header({ user, catalog }: HeaderProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-9 w-9">
-                    <AvatarImage src={user.user_metadata.avatar_url} alt={catalog?.display_name || user.email} />
-                    <AvatarFallback>{getInitials(catalog?.display_name ?? undefined, user.email)}</AvatarFallback>
+                    <AvatarImage src={user.user_metadata.avatar_url} alt={catalog?.display_name || getDisplayIdentifier(user.email, user.user_metadata?.phone)} />
+                    <AvatarFallback>{getInitials(catalog?.display_name ?? undefined, user.email, user.user_metadata?.phone)}</AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
@@ -52,6 +61,9 @@ export default function Header({ user, catalog }: HeaderProps) {
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">
                       {catalog?.display_name || catalog?.name || APP_NAME}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {getDisplayIdentifier(user.email, user.user_metadata?.phone)}
                     </p>
                   </div>
                 </DropdownMenuLabel>
