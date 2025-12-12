@@ -17,6 +17,13 @@ interface OnboardingFormProps {
   userPhone?: string;
 }
 
+const countries = [
+  { code: '+20', name: 'مصر', flag: '🇪🇬' },
+  { code: '+966', name: 'السعودية', flag: '🇸🇦' },
+  { code: '+971', name: 'الإمارات', flag: '🇦🇪' },
+  { code: '+212', name: 'المغرب', flag: '🇲🇦' },
+];
+
 export function OnboardingForm({ userPhone }: OnboardingFormProps) {
   const [state, formAction] = useActionState(createCatalog, initialState);
   const formRef = useRef<HTMLFormElement>(null);
@@ -26,9 +33,13 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
   const [formData, setFormData] = useState({
     display_name: '',
     name: '',
-    whatsapp_number: userPhone ? `+20${userPhone}` : '',
+    whatsapp_number: '',
     logo: null as File | null,
     cover: null as File | null,
+  });
+  const [selectedCountry, setSelectedCountry] = useState({
+    code: '+966',
+    name: 'السعودية'
   });
   const [nameError, setNameError] = useState('');
   const { toast } = useToast();
@@ -57,7 +68,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
     // Add all form fields
     submitFormData.append('display_name', formData.display_name);
     submitFormData.append('name', formData.name);
-    submitFormData.append('whatsapp_number', formData.whatsapp_number);
+    submitFormData.append('whatsapp_number', selectedCountry.code + formData.whatsapp_number);
     
     // Add file objects if they exist
     if (formData.logo) {
@@ -117,6 +128,31 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
     return true;
   };
 
+  // Auto focus on first input when step changes
+  useEffect(() => {
+    const focusFirstInput = () => {
+      let inputId = '';
+      if (currentStep === 1) inputId = 'display_name';
+      else if (currentStep === 2) inputId = 'whatsapp_number';
+      
+      if (inputId) {
+        const input = document.getElementById(inputId) as HTMLInputElement;
+        if (input) {
+          setTimeout(() => input.focus(), 100);
+        }
+      }
+    };
+    focusFirstInput();
+  }, [currentStep]);
+
+  // Initial focus on component mount to show keyboard immediately
+  useEffect(() => {
+    const input = document.getElementById('display_name') as HTMLInputElement;
+    if (input) {
+      setTimeout(() => input.focus(), 300);
+    }
+  }, []);
+
   const nextStep = () => {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
@@ -140,12 +176,13 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                 id="display_name"
                 name="display_name"
                 placeholder="مثال: متجر الفتح"
-                className="placeholder:text-muted-foreground/50"
+                className="placeholder:text-muted-foreground/50 bg-white text-black h-12 sm:h-10"
                 required
                 minLength={3}
                 maxLength={50}
                 value={formData.display_name}
                 onChange={(e) => handleInputChange('display_name', e.target.value)}
+                autoFocus
               />
               <p className="text-xs text-muted-foreground/70">
                 هذا هو الاسم الذي سيظهر للعملاء في صفحة الكتالوج
@@ -161,7 +198,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                 id="name"
                 name="name"
                 placeholder="my-store"
-                className="placeholder:text-muted-foreground/50"
+                className="placeholder:text-muted-foreground/50 bg-white text-black h-12 sm:h-10"
                 required
                 pattern="^[a-z0-9-]+$"
                 title="يجب أن يحتوي على أحرف إنجليزية صغيرة وأرقام وشرطات فقط"
@@ -207,18 +244,32 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
           <div className="space-y-4">
             <div className="space-y-2 pb-3 border-b border-border/30">
               <Label htmlFor="whatsapp_number">رقم واتساب المتجر</Label>
-              <div dir="ltr">
+              <div className="flex gap-2" dir="ltr">
+                <select
+                  value={selectedCountry.code}
+                  onChange={(e) => {
+                    const country = countries.find(c => c.code === e.target.value);
+                    if (country) setSelectedCountry(country);
+                  }}
+                  className="bg-white text-[#1e3a5f] border border-border/30 rounded-md px-3 py-2 h-12 sm:h-10 focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
+                >
+                  {countries.map((country) => (
+                    <option key={country.code} value={country.code} className="text-[#1e3a5f]">
+                      {country.flag} {country.code}
+                    </option>
+                  ))}
+                </select>
                 <Input
                   id="whatsapp_number"
                   name="whatsapp_number"
-                  placeholder="+966500000000"
-                  className="placeholder:text-muted-foreground/50"
+                  placeholder="500000000"
+                  className="placeholder:text-muted-foreground/50 bg-white text-black h-12 sm:h-10 flex-1"
                   value={formData.whatsapp_number}
                   onChange={(e) => handleInputChange('whatsapp_number', e.target.value)}
                   required
                   type="tel"
-                  pattern="^\+?[0-9]{7,15}$"
-                  title="يرجى إدخال رقم هاتف صحيح (مثال: +966...)"
+                  pattern="[0-9]{7,15}"
+                  title="يرجى إدخال رقم هاتف صحيح"
                 />
               </div>
               <p className="text-xs text-muted-foreground/70">
@@ -240,7 +291,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                   htmlFor="logo" 
                   className="relative group cursor-pointer w-full"
                 >
-                  <div className="w-20 h-20 mx-auto rounded-full border-2 border-dashed border-border/50 hover:border-brand-primary/50 transition-all duration-200 flex flex-col items-center justify-center bg-muted/20 hover:bg-brand-primary/5">
+                  <div className="w-24 h-24 mx-auto rounded-full border-4 border-dashed border-border hover:border-brand-primary transition-all duration-200 flex flex-col items-center justify-center bg-muted/20 hover:bg-brand-primary/5 hover:shadow-lg hover:-translate-y-1">
                     {formData.logo ? (
                       <div className="relative w-full h-full rounded-full overflow-hidden">
                         <img 
@@ -289,7 +340,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                 htmlFor="cover" 
                 className="relative group cursor-pointer block"
               >
-                <div className="w-full h-20 rounded-xl border-2 border-dashed border-border/50 hover:border-brand-primary/50 transition-all duration-200 flex flex-col items-center justify-center bg-muted/20 hover:bg-brand-primary/5 overflow-hidden">
+                <div className="w-full h-20 rounded-xl border-4 border-dashed border-border hover:border-brand-primary transition-all duration-200 flex flex-col items-center justify-center bg-muted/20 hover:bg-brand-primary/5 overflow-hidden hover:shadow-lg hover:-translate-y-1">
                   {formData.cover ? (
                     <div className="relative w-full h-full">
                       <img 

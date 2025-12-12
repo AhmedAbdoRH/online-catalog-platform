@@ -6,16 +6,19 @@ import { Button } from "@/components/ui/button"
 export function LoginForm({ message }: { message: string }) {
 
   return (
-    <div className="grid gap-4">
-      <div className="text-center mb-2">
+    <div className="grid gap-6">
+      <div className="text-center">
         <p className="text-sm text-muted-foreground">
-          سجل دخولك باستخدام حساب جوجل
+          خيارات تسجيل الدخول
         </p>
       </div>
 
       <form action={signInWithGoogle}>
-        <Button type="submit" variant="outline" className="w-full h-12 gap-3">
-          <svg className="h-5 w-5" viewBox="0 0 24 24">
+        <Button 
+          type="submit" 
+          className="w-full h-14 gap-3 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-md hover:shadow-lg transition-all duration-200 rounded-xl font-medium text-base"
+        >
+          <svg className="h-6 w-6" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
               fill="#4285F4"
@@ -33,15 +36,22 @@ export function LoginForm({ message }: { message: string }) {
               fill="#EA4335"
             />
           </svg>
-          تسجيل الدخول بجوجل
+          تسجيل الدخول بحساب جوجل
         </Button>
       </form>
       
       {message && (
-        <div className="bg-destructive/15 p-3 text-sm text-destructive rounded-md text-center">
+        <div className="bg-destructive/10 border border-destructive/20 p-4 text-sm text-destructive rounded-xl text-center">
           {message}
         </div>
       )}
+
+      <p className="text-xs text-center text-muted-foreground px-4">
+        بالمتابعة، أنت توافق على{" "}
+        <span className="text-primary cursor-pointer hover:underline">شروط الاستخدام</span>
+        {" "}و{" "}
+        <span className="text-primary cursor-pointer hover:underline">سياسة الخصوصية</span>
+      </p>
     </div>
   )
 }
