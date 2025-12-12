@@ -15,23 +15,18 @@ export default async function SignupPage(props: {
   const message = searchParams.message;
 
   return (
-    <Card className="mx-auto max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-xl">إنشاء حساب</CardTitle>
-        <CardDescription>
-          أدخل البريد الإلكتروني وكلمة المرور لإنشاء حساب جديد
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <SignupForm message={message || ""} />
-        
-        <div className="mt-4 text-center text-sm">
-          لديك حساب بالفعل؟{" "}
-          <Link href="/login" className="underline">
-            تسجيل الدخول
-          </Link>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <Card className="mx-auto max-w-sm w-full">
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">إنشاء حساب</CardTitle>
+          <CardDescription>
+            أنشئ حسابك الجديد للبدء
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <SignupForm message={message || ""} />
+        </CardContent>
+      </Card>
+    </div>
   )
 }

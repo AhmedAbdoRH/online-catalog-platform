@@ -15,23 +15,25 @@ export default async function LoginPage(props: {
   const message = searchParams.message;
 
   return (
-    <Card className="mx-auto max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl">تسجيل الدخول</CardTitle>
-        <CardDescription>
-          أدخل البريد الإلكتروني وكلمة المرور للدخول إلى حسابك
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <LoginForm message={message || ""} />
-        
-        <div className="mt-4 text-center text-sm">
-          ليس لديك حساب؟{" "}
-          <Link href="/signup" className="underline">
-            إنشاء حساب
-          </Link>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <Card className="mx-auto max-w-sm w-full">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">تسجيل الدخول</CardTitle>
+          <CardDescription>
+            سجل دخولك للوصول إلى حسابك
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LoginForm message={message || ""} />
+          
+          <div className="mt-4 text-center text-sm">
+            ليس لديك حساب؟{" "}
+            <Link href="/signup" className="underline">
+              إنشاء حساب
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
