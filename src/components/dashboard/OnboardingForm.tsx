@@ -38,8 +38,8 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
     cover: null as File | null,
   });
   const [selectedCountry, setSelectedCountry] = useState({
-    code: '+966',
-    name: 'السعودية'
+    code: '+20',
+    name: 'مصر'
   });
   const [nameError, setNameError] = useState('');
   const { toast } = useToast();
