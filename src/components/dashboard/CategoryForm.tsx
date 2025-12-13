@@ -166,7 +166,7 @@ export function CategoryForm({ catalogId, category, categories, defaultParentId,
                             <FormItem>
                                 <FormLabel className="text-base font-semibold flex items-center gap-2">
                                     <Tag className="h-4 w-4 text-primary" />
-                                    اسم الفئة
+                                    اسم التصنيف
                                 </FormLabel>
                                 <FormControl>
                                     <div className="relative">
@@ -189,7 +189,7 @@ export function CategoryForm({ catalogId, category, categories, defaultParentId,
                                 <FormItem>
                                     <FormLabel className="text-base font-semibold flex items-center gap-2">
                                         <Layers className="h-4 w-4 text-primary" />
-                                        الفئة الأم (اختياري)
+                                        التصنيف الأم (اختياري)
                                     </FormLabel>
                                     <Select
                                         onValueChange={(value) => field.onChange(value === 'none' ? null : Number(value))}
@@ -197,12 +197,12 @@ export function CategoryForm({ catalogId, category, categories, defaultParentId,
                                     >
                                         <FormControl>
                                             <SelectTrigger className="h-11 bg-muted/30 focus:bg-background transition-colors">
-                                                <SelectValue placeholder="اختر فئة أم" />
+                                                <SelectValue placeholder="اختر تصنيف أم" />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
                                             <SelectItem value="none" className="font-medium text-muted-foreground">
-                                                لا يوجد فئة أم (فئة رئيسية)
+                                                لا يوجد تصنيف أم (تصنيف رئيسي)
                                             </SelectItem>
                                             {renderCategoryOptions(categories)}
                                         </SelectContent>
@@ -226,7 +226,7 @@ export function CategoryForm({ catalogId, category, categories, defaultParentId,
                             pendingText={category ? 'جاري التحديث...' : 'جاري الحفظ...'}
                             className="w-full h-11 text-base font-medium shadow-md hover:shadow-lg transition-all"
                         >
-                            {category ? 'حفظ التغييرات' : 'حفظ الفئة'}
+                            {category ? 'حفظ التغييرات' : 'حفظ التصنيف'}
                         </SubmitButton>
                     </div>
                 </form>

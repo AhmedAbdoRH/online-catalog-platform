@@ -218,7 +218,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                 </p>
               )}
               <p className="text-xs text-muted-foreground/70">
-                سيتم استخدام هذا الاسم في رابط الكتالوج الخاص بك
+                سيتم استخدام هذا الاسم في رابط المتجر الخاص بك
               </p>
               {catalogName && (
                 <div className="mt-2 p-3 bg-brand-primary/10 border border-brand-primary/20 rounded-lg">

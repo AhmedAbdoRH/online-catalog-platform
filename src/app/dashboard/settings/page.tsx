@@ -18,9 +18,9 @@ export default async function SettingsPage() {
     return (
         <Card className="max-w-2xl mx-auto">
             <CardHeader>
-                <CardTitle>إعدادات الكتالوج</CardTitle>
+                <CardTitle>إعدادات المتجر</CardTitle>
                 <CardDescription>
-                    قم بتحديث اسم الكتالوج أو الشعار الخاص بك.
+                    قم بتحديث اسم المتجر أو الشعار الخاص بك.
                 </CardDescription>
             </CardHeader>
             <CardContent>

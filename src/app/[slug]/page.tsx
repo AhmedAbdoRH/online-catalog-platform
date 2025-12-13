@@ -138,7 +138,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await getCatalogData(resolvedParams.slug);
   if (!data) {
     return {
-      title: "الكتالوج غير موجود",
+      title: "المتجر غير موجود",
     };
   }
   const storeName = data.display_name || data.name;
@@ -146,10 +146,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   
   return {
     title: titleWithSlogan,
-    description: `تصفح الكتالوج الفاخر الخاص بـ ${storeName}`,
+    description: `تصفح المتجر الفاخر الخاص بـ ${storeName}`,
     openGraph: {
       title: titleWithSlogan,
-      description: `تصفح الكتالوج الخاص بـ ${storeName}`,
+      description: `تصفح المتجر الخاص بـ ${storeName}`,
       images: [
         {
           url: data.logo_url || "",

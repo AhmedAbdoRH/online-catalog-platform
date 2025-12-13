@@ -744,7 +744,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
         {catalog.whatsapp_number && (
           <a
             href={`https://wa.me/${catalog.whatsapp_number.replace(/[^\d]/g, '')}?text=${encodeURIComponent(
-              `مرحباً، أود الاستفسار عن منتجاتكم من كتالوج ${catalog.name}`
+              `مرحباً، أود الاستفسار عن منتجاتكم من متجر ${catalog.name}`
             )}`}
             target="_blank"
             rel="noopener noreferrer"

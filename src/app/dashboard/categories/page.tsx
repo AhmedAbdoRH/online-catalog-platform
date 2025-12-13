@@ -60,23 +60,23 @@ export default function CategoriesPage() {
         <div className="space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight">الفئات</h1>
+                    <h1 className="text-2xl font-bold tracking-tight">التصنيفات</h1>
                     <p className="text-muted-foreground">
-                        إدارة هيكلية الكتالوج وتنظيم الأصناف في مجموعات.
+                        إدارة هيكلية المتجر وتنظيم الأصناف في مجموعات.
                     </p>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button className="gap-2 shadow-sm">
                             <PlusCircle className="h-4 w-4" />
-                            <span>إضافة فئة جديدة</span>
+                            <span>إضافة تصنيف جديد</span>
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px]">
                         <DialogHeader>
-                            <DialogTitle>إضافة فئة جديدة</DialogTitle>
+                            <DialogTitle>إضافة تصنيف جديد</DialogTitle>
                             <DialogDescription>
-                                قم بإنشاء فئة رئيسية جديدة لتنظيم منتجاتك.
+                                قم بإنشاء تصنيف رئيسي جديد لتنظيم منتجاتك.
                             </DialogDescription>
                         </DialogHeader>
                         <CategoryForm 
@@ -94,13 +94,13 @@ export default function CategoriesPage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardDescription>إجمالي الفئات الرئيسية</CardDescription>
+                        <CardDescription>إجمالي التصنيفات الرئيسية</CardDescription>
                         <CardTitle className="text-3xl">{totalCategories}</CardTitle>
                     </CardHeader>
                 </Card>
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardDescription>إجمالي الفئات الفرعية</CardDescription>
+                        <CardDescription>إجمالي التصنيفات الفرعية</CardDescription>
                         <CardTitle className="text-3xl">{totalSubcategories}</CardTitle>
                     </CardHeader>
                 </Card>
@@ -110,7 +110,7 @@ export default function CategoriesPage() {
                 <CardHeader className="px-0 pt-0">
                     <CardTitle className="text-lg">هيكل القائمة</CardTitle>
                     <CardDescription>
-                        يمكنك سحب وإفلات الفئات لإعادة ترتيبها (قريباً).
+                        يمكنك سحب وإفلات التصنيفات لإعادة ترتيبها (قريباً).
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="px-0">

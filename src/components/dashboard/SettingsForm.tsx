@@ -121,7 +121,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                   <Input {...field} disabled={isSubmitting} />
                 </FormControl>
                 <FormDescription>
-                  سيتم استخدام هذا الاسم في رابط الكتالوج الخاص بك.
+                  سيتم استخدام هذا الاسم في رابط المتجر الخاص بك.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

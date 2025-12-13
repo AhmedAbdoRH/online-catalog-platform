@@ -117,7 +117,7 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
               )}
             </div>
             <span className="text-xs font-medium text-muted-foreground/80">
-              {isSubcategory ? 'فئة فرعية' : 'فئة رئيسية'}
+              {isSubcategory ? 'تصنيف فرعي' : 'تصنيف رئيسي'}
             </span>
           </div>
         </div>
@@ -134,7 +134,7 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
               onClick={() => setIsAddSubOpen(true)}
             >
               <Plus className="h-3.5 w-3.5 ml-1.5" />
-              إضافة فئة فرعية
+              إضافة تصنيف فرعي
             </Button>
           )}
           <CategoryActionsMenu category={category} catalogId={catalogId} categories={categories} size="icon" />
@@ -144,9 +144,9 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
       <Dialog open={isAddSubOpen} onOpenChange={setIsAddSubOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>إضافة فئة فرعية</DialogTitle>
+            <DialogTitle>إضافة تصنيف فرعي</DialogTitle>
             <DialogDescription>
-              إضافة فئة فرعية جديدة تحت "{category.name}".
+              إضافة تصنيف فرعي جديد تحت "{category.name}".
             </DialogDescription>
           </DialogHeader>
           <CategoryForm
@@ -202,7 +202,7 @@ function CategoryActionsMenu({ category, catalogId, categories, size = 'default'
       if (result.error) {
         toast({ title: 'خطأ', description: result.error, variant: 'destructive' });
       } else {
-        toast({ title: 'تم الحذف', description: 'تم حذف الفئة بنجاح.' });
+        toast({ title: 'تم الحذف', description: 'تم حذف التصنيف بنجاح.' });
         setDeleteOpen(false);
       }
     });
@@ -231,7 +231,7 @@ function CategoryActionsMenu({ category, catalogId, categories, size = 'default'
             }}
             className="cursor-pointer"
           >
-            تعديل الفئة
+            تعديل التصنيف
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer text-destructive focus:text-destructive"
@@ -240,7 +240,7 @@ function CategoryActionsMenu({ category, catalogId, categories, size = 'default'
               setDeleteOpen(true);
             }}
           >
-            حذف الفئة
+            حذف التصنيف
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -248,8 +248,8 @@ function CategoryActionsMenu({ category, catalogId, categories, size = 'default'
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>تعديل الفئة</DialogTitle>
-            <DialogDescription>قم بتحديث اسم الفئة أو ربطها بفئة رئيسية.</DialogDescription>
+            <DialogTitle>تعديل التصنيف</DialogTitle>
+            <DialogDescription>قم بتحديث اسم التصنيف أو ربطه بتصنيف رئيسي.</DialogDescription>
           </DialogHeader>
           <CategoryForm
             catalogId={catalogId}
@@ -267,7 +267,7 @@ function CategoryActionsMenu({ category, catalogId, categories, size = 'default'
           <AlertDialogHeader>
             <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
             <AlertDialogDescription>
-              سيتم حذف هذه الفئة وجميع الفئات الفرعية والمنتجات المرتبطة بها بشكل دائم.
+              سيتم حذف هذا التصنيف وجميع التصنيفات الفرعية والمنتجات المرتبطة به بشكل دائم.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -277,7 +277,7 @@ function CategoryActionsMenu({ category, catalogId, categories, size = 'default'
               disabled={isPending}
               className="bg-destructive hover:bg-destructive/90"
             >
-              نعم، احذف الفئة
+              نعم، احذف التصنيف
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -293,9 +293,9 @@ export function CategoriesTable({ categories, catalogId }: { categories: Categor
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
           <Folder className="h-8 w-8 text-muted-foreground/50" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold">لا توجد فئات</h3>
+        <h3 className="mb-1 text-lg font-semibold">لا توجد تصنيفات</h3>
         <p className="mt-2 text-sm text-muted-foreground">
-          لم تقم بإضافة أي فئات بعد. ابدأ بإضافة فئة جديدة لتنظيم كتالوجك.
+          لم تقم بإضافة أي تصنيفات بعد. ابدأ بإضافة تصنيف جديد لتنظيم متجرك.
         </p>
       </div>
     );

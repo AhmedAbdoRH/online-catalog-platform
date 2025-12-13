@@ -2,8 +2,50 @@
 
 import { signInWithGoogle } from "@/app/actions/auth"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useState } from "react"
+import { createClient } from "@/lib/supabase/client"
+import { useRouter } from "next/navigation"
 
-export function LoginForm({ message }: { message: string }) {
+interface LoginFormProps {
+  message: string
+  onLogoDoubleClick?: () => void
+  showEmailForm?: boolean
+}
+
+export function LoginForm({ message, onLogoDoubleClick, showEmailForm = false }: LoginFormProps) {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [email, setEmail] = useState("01100434503@catalog.app")
+  const [password, setPassword] = useState("Anaahmedgedo1001")
+  const [error, setError] = useState("")
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError("")
+    
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      
+      if (error) {
+        setError(error.message)
+        return
+      }
+      
+      router.push('/dashboard')
+      router.refresh()
+    } catch (err: any) {
+      setError(err.message || 'حدث خطأ أثناء تسجيل الدخول')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="grid gap-6">
@@ -39,6 +81,57 @@ export function LoginForm({ message }: { message: string }) {
           تسجيل الدخول بحساب جوجل
         </Button>
       </form>
+
+      {/* Hidden Email/Password Form - appears on logo double click */}
+      {showEmailForm && (
+        <>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">أو</span>
+            </div>
+          </div>
+
+          <form onSubmit={handleEmailLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">البريد الإلكتروني</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                className="bg-white text-[#1e3a5f]"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">كلمة المرور</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                className="bg-white text-[#1e3a5f]"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && (
+              <p className="text-sm text-red-500 text-center">{error}</p>
+            )}
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول بالبريد الإلكتروني"}
+            </Button>
+          </form>
+        </>
+      )}
       
       {message && (
         <div className="bg-destructive/10 border border-destructive/20 p-4 text-sm text-destructive rounded-xl text-center">

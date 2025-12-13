@@ -32,7 +32,7 @@ export default function LandingHeader() {
                             priority
                         />
                     </div>
-                    <span className="text-lg sm:text-xl font-bold text-foreground">منصة اونلاين كتالوج</span>
+                    <span className="text-lg sm:text-xl font-bold text-foreground">منصة اونلاين متجر</span>
                 </div>
 
                 {/* Desktop Navigation */}
@@ -80,7 +80,7 @@ export default function LandingHeader() {
                                         className="object-contain"
                                     />
                                 </div>
-                                <span className="text-xl font-bold text-foreground">منصة اونلاين كتالوج</span>
+                                <span className="text-xl font-bold text-foreground">منصة اونلاين متجر</span>
                             </div>
                             {navLinks.map((link) => (
                                 <Link

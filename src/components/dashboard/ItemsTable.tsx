@@ -145,7 +145,7 @@ export function ItemsTable({ items, catalogId, categories }: ItemsTableProps) {
               <span className="sr-only">الصورة</span>
             </TableHead>
             <TableHead>الاسم</TableHead>
-            <TableHead>الفئة</TableHead>
+            <TableHead>التصنيف</TableHead>
             <TableHead>السعر</TableHead>
             <TableHead className="w-[50px]">
               <span className="sr-only">الإجراءات</span>

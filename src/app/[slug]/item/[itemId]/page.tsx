@@ -129,7 +129,7 @@ export default async function ProductPage({ params }: Props) {
             className="inline-flex items-center gap-2 text-brand-primary hover:text-brand-primary/80"
           >
             <ArrowRight className="h-4 w-4" />
-            العودة للكتالوج
+            العودة للمتجر
           </Link>
                   </div>
 
@@ -210,13 +210,13 @@ export default async function ProductPage({ params }: Props) {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="font-headline text-xl font-bold text-foreground">منتجات مقترحة</h2>
-                <p className="text-sm text-muted-foreground">جرّب منتجات أخرى من نفس الفئة</p>
+                <p className="text-sm text-muted-foreground">جرّب منتجات أخرى من نفس التصنيف</p>
               </div>
               <Link
                 href={`/${catalog.name}`}
                 className="text-sm text-brand-primary hover:text-brand-primary/80"
               >
-                استعرض الكتالوج كامل
+                استعرض المتجر كامل
               </Link>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

@@ -1,6 +1,7 @@
-
 'use client';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Home,
   Package,
@@ -8,7 +9,8 @@ import {
   UtensilsCrossed,
   Tags,
   LogOut,
-  PanelLeft
+  PanelLeft,
+  MessageCircle
 } from 'lucide-react';
 import {
   Tooltip,
@@ -27,15 +29,38 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 const navItems = [
   { href: '/dashboard', icon: Home, label: 'لوحة التحكم' },
-  { href: '/dashboard/categories', icon: Tags, label: 'الفئات' },
+  { href: '/dashboard/categories', icon: Tags, label: 'التصنيفات' },
   { href: '/dashboard/items', icon: Package, label: 'المنتجات' },
 ];
 
 export function DashboardNav({ user }: { user: User }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const closeSheet = () => setIsSheetOpen(false);
+
+  const handleNavClick = (href: string) => {
+    if (href !== pathname) {
+      setIsLoading(true);
+    }
+    closeSheet();
+  };
+
+  // Reset loading when pathname changes
+  useEffect(() => {
+    setIsLoading(false);
+  }, [pathname]);
 
   return (
     <TooltipProvider>
+      {/* Loading Bar */}
+      {isLoading && (
+        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-muted overflow-hidden">
+          <div className="h-full bg-brand-primary animate-loading-bar" />
+        </div>
+      )}
       <aside className="fixed inset-y-0 right-0 z-10 hidden w-14 flex-col border-l bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
@@ -48,16 +73,14 @@ export function DashboardNav({ user }: { user: User }) {
           {navItems.map((item) => (
             <Tooltip key={item.href}>
               <TooltipTrigger asChild>
-                <Link href={item.href} className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
-                  pathname === item.href ? "bg-accent text-accent-foreground" : ""
-                )} onClick={() => {
-                  // Close mobile sheet if open
-                  const sheetTrigger = document.querySelector('[data-state="open"] button') as HTMLButtonElement;
-                  if (sheetTrigger) {
-                    sheetTrigger.click();
-                  }
-                }}>
+                <Link 
+                  href={item.href} 
+                  onClick={() => handleNavClick(item.href)}
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
+                    pathname === item.href ? "bg-accent text-accent-foreground" : ""
+                  )}
+                >
                   <item.icon className="h-5 w-5" />
                   <span className="sr-only">{item.label}</span>
                 </Link>
@@ -67,22 +90,30 @@ export function DashboardNav({ user }: { user: User }) {
           ))}
         </nav>
         <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="https://wa.me/201008116452"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+              >
+                <MessageCircle className="h-5 w-5" />
+                <span className="sr-only">تواصل مع الدعم الفني</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="left">تواصل مع الدعم الفني</TooltipContent>
+          </Tooltip>
           <ThemeToggle />
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
                 href="/dashboard/settings"
+                onClick={() => handleNavClick('/dashboard/settings')}
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
                   pathname === '/dashboard/settings' ? 'bg-accent text-accent-foreground' : ''
                 )}
-                onClick={() => {
-                  // Close mobile sheet if open
-                  const sheetTrigger = document.querySelector('[data-state="open"] button') as HTMLButtonElement;
-                  if (sheetTrigger) {
-                    sheetTrigger.click();
-                  }
-                }}
               >
                 <Settings className="h-5 w-5" />
                 <span className="sr-only">الإعدادات</span>
@@ -104,10 +135,10 @@ export function DashboardNav({ user }: { user: User }) {
         </nav>
       </aside>
       <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:pr-20">
-        <Sheet>
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <Button size="icon" variant="outline" className="sm:hidden">
-              <PanelLeft className="h-5 w-5" />
+              <PanelLeft className="h-5 w-5 transform scale-x-[-1]" />
               <span className="sr-only">فتح القائمة</span>
             </Button>
           </SheetTrigger>
@@ -115,44 +146,50 @@ export function DashboardNav({ user }: { user: User }) {
             <nav className="grid gap-6 text-lg font-medium">
               <Link
                 href="/dashboard"
+                onClick={closeSheet}
                 className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
               >
                 <UtensilsCrossed className="h-5 w-5 transition-all group-hover:scale-110" />
                 <span className="sr-only">{APP_NAME}</span>
               </Link>
               {navItems.map((item) => (
-                <Link key={item.href} href={item.href} className={cn("flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground", pathname === item.href ? "text-foreground" : "")} onClick={() => {
-                  // Close mobile sheet
-                  const sheetContent = document.querySelector('[data-state="open"][role="dialog"]') as HTMLElement;
-                  const closeButton = sheetContent?.querySelector('button[data-state="open"]') as HTMLButtonElement;
-                  if (closeButton) {
-                    closeButton.click();
-                  }
-                }}>
+                <Link 
+                  key={item.href} 
+                  href={item.href} 
+                  onClick={() => handleNavClick(item.href)}
+                  className={cn("flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground", pathname === item.href ? "text-foreground" : "")}
+                >
                   <item.icon className="h-5 w-5" />
                   {item.label}
                 </Link>
               ))}
+              <Link
+                href="https://wa.me/201008116452"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closeSheet}
+                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              >
+                <MessageCircle className="h-5 w-5" />
+                تواصل مع الدعم الفني
+              </Link>
               <div className="px-2.5">
                 <ThemeToggle />
               </div>
               <Link
                 href="/dashboard/settings"
+                onClick={() => handleNavClick('/dashboard/settings')}
                 className={cn("flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground", pathname === '/dashboard/settings' ? "text-foreground" : "")}
-                onClick={() => {
-                  // Close mobile sheet
-                  const sheetContent = document.querySelector('[data-state="open"][role="dialog"]') as HTMLElement;
-                  const closeButton = sheetContent?.querySelector('button[data-state="open"]') as HTMLButtonElement;
-                  if (closeButton) {
-                    closeButton.click();
-                  }
-                }}
               >
                 <Settings className="h-5 w-5" />
                 الإعدادات
               </Link>
               <form action={logout}>
-                <Button variant="ghost" className="w-full justify-start gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                  onClick={closeSheet}
+                >
                   <LogOut className="h-5 w-5" />
                   تسجيل الخروج
                 </Button>

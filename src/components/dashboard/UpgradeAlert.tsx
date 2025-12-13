@@ -21,7 +21,7 @@ interface UpgradeAlertProps {
 
 export function UpgradeAlert({ open, onOpenChange, resourceType }: UpgradeAlertProps) {
     const whatsappNumber = "201008116452";
-    const message = `مرحباً، أرغب في ترقية باقتي في ${APP_NAME} للباقة الاحترافية لإضافة المزيد من ${resourceType === 'product' ? 'المنتجات' : 'الفئات'}.`;
+    const message = `مرحباً، أرغب في ترقية باقتي في ${APP_NAME} للباقة الاحترافية لإضافة المزيد من ${resourceType === 'product' ? 'المنتجات' : 'التصنيفات'}.`;
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
     return (

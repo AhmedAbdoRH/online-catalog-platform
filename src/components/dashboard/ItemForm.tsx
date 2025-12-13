@@ -22,7 +22,7 @@ const formSchema = z.object({
   name: z.string().min(2, 'الاسم مطلوب').max(100),
   description: z.string().max(255).optional().or(z.literal('')),
   price: z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً'),
-  category_id: z.string().min(1, 'الفئة مطلوبة'),
+  category_id: z.string().min(1, 'التصنيف مطلوب'),
   image: z.instanceof(File)
     .refine((file) => file.size > 0, 'صورة المنتج مطلوبة.')
     .refine((file) => file.size <= MAX_FILE_SIZE, `الحد الأقصى لحجم الملف 5 ميغابايت.`)

@@ -109,7 +109,7 @@ export async function createCategory(prevState: any, formData: FormData) {
     .eq('catalog_id', catalog_id);
 
   if (existingCategories && hasCircularReference(-1, parent_category_id || null, existingCategories)) {
-    return { message: 'لا يمكن إنشاء فئة فرعية لنفسها أو إنشاء مرجع دائري.' };
+    return { message: 'لا يمكن إنشاء تصنيف فرعي لنفسه أو إنشاء مرجع دائري.' };
   }
 
   const { data: insertedParent, error } = await supabase
@@ -124,7 +124,7 @@ export async function createCategory(prevState: any, formData: FormData) {
 
   if (error) {
     console.error('Error creating category:', error);
-    return { message: 'فشل إنشاء الفئة.' };
+    return { message: 'فشل إنشاء التصنيف.' };
   }
 
   if (subcategories.length && insertedParent?.id) {
@@ -137,12 +137,12 @@ export async function createCategory(prevState: any, formData: FormData) {
     const { error: subError } = await supabase.from('categories').insert(subInsertPayload);
     if (subError) {
       console.error('Error creating subcategories:', subError);
-      return { message: 'تم إنشاء الفئة الرئيسية لكن حدث خطأ أثناء إضافة الفئات الفرعية.' };
+      return { message: 'تم إنشاء التصنيف الرئيسي لكن حدث خطأ أثناء إضافة التصنيفات الفرعية.' };
     }
   }
 
   revalidatePath('/dashboard/categories');
-  return { message: 'تم إنشاء الفئة بنجاح.' };
+  return { message: 'تم إنشاء التصنيف بنجاح.' };
 }
 
 export async function updateCategory(prevState: any, formData: FormData) {
@@ -183,11 +183,11 @@ export async function updateCategory(prevState: any, formData: FormData) {
 
   if (error) {
     console.error('Error updating category:', error);
-    return { message: 'فشل تحديث الفئة.' };
+    return { message: 'فشل تحديث التصنيف.' };
   }
 
   revalidatePath('/dashboard/categories');
-  return { message: 'تم تحديث الفئة بنجاح.' };
+  return { message: 'تم تحديث التصنيف بنجاح.' };
 }
 
 export async function deleteCategory(id: number) {
@@ -202,7 +202,7 @@ export async function deleteCategory(id: number) {
 
   if (error) {
     console.error('Error deleting category:', error);
-    return { error: 'فشل حذف الفئة.' };
+    return { error: 'فشل حذف التصنيف.' };
   }
 
   revalidatePath('/dashboard/categories');
@@ -235,7 +235,7 @@ export async function getCategories(catalogId?: number) {
 
   if (error) {
     console.error('Error fetching categories:', error);
-    return { categories: [], catalog: { id: targetCatalogId }, error: 'فشل جلب الفئات.' };
+    return { categories: [], catalog: { id: targetCatalogId }, error: 'فشل جلب التصنيفات.' };
   }
 
   // Build category hierarchy properly

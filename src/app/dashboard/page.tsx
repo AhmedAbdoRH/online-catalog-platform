@@ -14,22 +14,25 @@ const getPlanDetails = (plan: string) => {
   switch (plan?.toLowerCase()) {
     case 'pro':
       return { 
-        label: 'باقة احترافية', 
-        className: 'bg-brand-accent hover:bg-brand-accent/90 text-white',
-        icon: Zap
+        label: 'الباقة الاحترافية', 
+        className: 'relative overflow-hidden bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 text-white shadow-lg shadow-orange-500/30 border-0',
+        icon: Zap,
+        glowColor: 'shadow-orange-400/50'
       };
     case 'business':
       return { 
-        label: 'باقة أعمال', 
-        className: 'bg-brand-luxury hover:bg-brand-luxury/90 text-white',
-        icon: Building
+        label: 'باقة الأعمال', 
+        className: 'relative overflow-hidden bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 text-white shadow-lg shadow-purple-500/30 border-0',
+        icon: Building,
+        glowColor: 'shadow-purple-400/50'
       };
     case 'basic':
     default:
       return { 
-        label: 'باقة أساسية', 
-        className: 'bg-brand-primary hover:bg-brand-primary/90 text-white',
-        icon: Package
+        label: 'الباقة الأساسية', 
+        className: 'relative overflow-hidden bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30 border-0',
+        icon: Package,
+        glowColor: 'shadow-teal-400/50'
       };
   }
 };
@@ -91,9 +94,9 @@ export default async function DashboardPage() {
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold tracking-tight">لوحة التحكم</h1>
-            <Badge className={`${planDetails.className} text-sm px-3 py-1 items-center gap-2`}>
-              <planDetails.icon className="h-3 w-3" />
-              {planDetails.label}
+            <Badge className={`${planDetails.className} text-sm px-4 py-1.5 items-center gap-2 font-bold rounded-full`}>
+              <planDetails.icon className="h-4 w-4" />
+              <span>{planDetails.label}</span>
             </Badge>
           </div>
           <p className="text-muted-foreground">نظرة عامة على متجرك الإلكتروني</p>
@@ -101,7 +104,7 @@ export default async function DashboardPage() {
         <Button asChild variant="outline" className="gap-2">
           <Link href="/dashboard/settings">
             <Settings className="h-4 w-4" />
-            إعدادات الكتالوج
+            إعدادات المتجر
           </Link>
         </Button>
       </motion.div>
@@ -115,10 +118,10 @@ export default async function DashboardPage() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <span className="text-xl">رابط الكتالوج الخاص بك</span>
+              <span className="text-xl">رابط المتجر الخاص بك</span>
               <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-brand-primary text-primary-foreground hover:bg-brand-primary/80">نشط</span>
             </CardTitle>
-            <CardDescription>شارك هذا الرابط مع عملائك للوصول إلى كتالوجك.</CardDescription>
+            <CardDescription>شارك هذا الرابط مع عملائك للوصول إلى متجرك.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col sm:flex-row items-center gap-4 z-10 relative">
             <div className="flex-1 bg-background/50 p-3 rounded-lg border border-border/50 w-full font-mono text-sm truncate">
@@ -130,7 +133,7 @@ export default async function DashboardPage() {
               <Button variant="default" className="flex-1 sm:flex-none gap-2" asChild>
                 <Link href={catalogUrl} target="_blank">
                   <Eye className="h-4 w-4" />
-                  عرض الكتالوج
+                  عرض المتجر
                 </Link>
               </Button>
               <CopyLinkButton url={catalogUrl} />
@@ -149,14 +152,14 @@ export default async function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Tags className="h-5 w-5 text-brand-accent" />
-                إدارة الفئات
+                إدارة التصنيفات
               </CardTitle>
-              <CardDescription>نظم كتالوجك عن طريق إضافة وتعديل الفئات.</CardDescription>
+              <CardDescription>نظم متجرك عن طريق إضافة وتعديل التصنيفات.</CardDescription>
             </CardHeader>
             <CardContent className="mt-auto pt-0">
               <Button asChild className="w-full group" variant="ghost">
                 <Link href="/dashboard/categories" className="justify-between">
-                  الانتقال إلى الفئات
+                  الانتقال إلى التصنيفات
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
                 </Link>
               </Button>

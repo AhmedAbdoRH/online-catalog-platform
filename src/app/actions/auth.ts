@@ -39,6 +39,63 @@ export async function signup(formData: FormData) {
     await signInWithGoogle();
 }
 
+export async function signUpWithEmail(formData: FormData) {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    
+    // Basic validation
+    if (!email || !password) {
+        return redirect(`/signup?message=${encodeURIComponent("البريد الإلكتروني وكلمة المرور مطلوبان")}`);
+    }
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return redirect(`/signup?message=${encodeURIComponent("البريد الإلكتروني غير صحيح")}`);
+    }
+    
+    if (password.length < 6) {
+        return redirect(`/signup?message=${encodeURIComponent("كلمة المرور يجب أن تكون 6 أحرف على الأقل")}`);
+    }
+    
+    const supabase = await createClient();
+    
+    try {
+        console.log("Attempting email signup for:", email);
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                emailRedirectTo: `${(await headers()).get("origin") || "http://localhost:9003"}/auth/callback`
+            }
+        });
+        
+        if (error) {
+            console.error("Email signup error:", error.message);
+            let errorMessage = "حدث خطأ أثناء إنشاء الحساب";
+            if (error.message.includes("User already registered")) {
+                errorMessage = "هذا البريد الإلكتروني مسجل بالفعل";
+            } else if (error.message.includes("Invalid email")) {
+                errorMessage = "البريد الإلكتروني غير صحيح";
+            } else if (error.message.includes("Password should be")) {
+                errorMessage = "كلمة المرور ضعيفة جدًا";
+            }
+            return redirect(`/signup?message=${encodeURIComponent(errorMessage)}`);
+        }
+        
+        console.log("Email signup successful");
+        if (data.user && !data.session) {
+            // User created but email confirmation required
+            return redirect(`/signup?message=${encodeURIComponent("تم إرسال رابط التأكيد إلى بريدك الإلكتروني. يرجى التحقق من بريدك وتأكيد الحساب.")}`);
+        }
+        
+        // Auto sign in if no email confirmation needed
+        return redirect(`/dashboard`);
+        
+    } catch (error) {
+        console.error("Email signup error:", error);
+        return redirect(`/signup?message=${encodeURIComponent("حدث خطأ غير متوقع أثناء إنشاء الحساب")}`);
+    }
+}
+
 export async function logout() {
     const supabase = await createClient();
     await supabase.auth.signOut();

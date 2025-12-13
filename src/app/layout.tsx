@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     default: 'أونلاين كاتلوج | Online Catalog',
     template: '%s | أونلاين كاتلوج'
   },
-  description: 'منصة إنشاء الكتالوج الرقمي للمحال والمتاجر. سجل مجاناً وأنشئ متجرك خلال دقائق.',
+  description: 'منصة إنشاء المتجر الرقمي للمحال والمتاجر. سجل مجاناً وأنشئ متجرك خلال دقائق.',
   manifest: '/manifest.json',
   icons: {
     icon: '/mainlogo.png',

@@ -29,7 +29,7 @@ export default async function ItemsPage() {
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                     <CardTitle>المنتجات</CardTitle>
-                    <CardDescription>إدارة المنتجات في الكتالوج الخاص بك.</CardDescription>
+                    <CardDescription>إدارة المنتجات في المتجر الخاص بك.</CardDescription>
                 </div>
                 <Dialog>
                     <DialogTrigger asChild>
@@ -54,7 +54,7 @@ export default async function ItemsPage() {
             <CardContent>
                 {categories.length === 0 ? (
                     <div className="text-center text-muted-foreground py-8">
-                        يجب عليك <a href="/dashboard/categories" className="text-primary underline">إضافة فئة</a> أولاً قبل إضافة المنتجات.
+                        يجب عليك <a href="/dashboard/categories" className="text-primary underline">إضافة تصنيف</a> أولاً قبل إضافة المنتجات.
                     </div>
                 ) : (
                     <ItemsTable items={items as any} catalogId={catalog.id} categories={categories} />

@@ -157,4 +157,53 @@
     break-inside: avoid;
     margin-bottom: 1.5rem;
   }
+
+  /* Plan Badge Animations */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.95;
+      transform: scale(1.02);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+  }
+
+  /* Loading Bar Animation */
+  @keyframes loading-bar {
+    0% {
+      width: 0%;
+      margin-left: 0;
+    }
+    50% {
+      width: 70%;
+      margin-left: 0;
+    }
+    100% {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+
+  .animate-loading-bar {
+    animation: loading-bar 1.5s ease-in-out infinite;
+  }
 }
