@@ -64,7 +64,9 @@ export function DashboardNav({ user }: { user: User }) {
       <aside className="fixed inset-y-0 right-0 z-10 hidden w-14 flex-col border-l bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
-            href="/dashboard"
+            href="https://online-catalog.net"
+            target="_blank"
+            rel="noopener noreferrer"
             className="group flex h-9 w-9 shrink-0 items-center justify-center"
           >
             <div className="relative h-9 w-9">
@@ -152,7 +154,9 @@ export function DashboardNav({ user }: { user: User }) {
           <SheetContent side="right" className="sm:max-w-xs">
             <div className="flex items-center justify-between mb-6">
               <Link
-                href="/dashboard"
+                href="https://online-catalog.net"
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={closeSheet}
                 className="group flex h-12 w-12 shrink-0 items-center justify-center"
               >

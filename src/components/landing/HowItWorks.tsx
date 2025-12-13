@@ -5,7 +5,7 @@ const steps = [
     {
         icon: UserPlus,
         title: "سجّل حساباً",
-        description: "ادخل اسم متجرك، بريدك، واختر الرابط.",
+        description: "أدخل اسم متجرك، واسم الرابط، ورقم الواتساب.",
         step: "01"
     },
     {
