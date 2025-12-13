@@ -199,6 +199,8 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   const { name: validatedName, display_name: validatedDisplayName, logo, cover, whatsapp_number: validatedWhatsappNumber, slogan: validatedSlogan } = validatedFields.data;
 
   const theme = formData.get('theme') as string | null;
+  const hideFooterStr = formData.get('hide_footer') as string | null;
+  const hideFooter = hideFooterStr === 'true';
 
   let updateData: any = {
     name: validatedName,
@@ -206,6 +208,7 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     whatsapp_number: validatedWhatsappNumber ?? null,
     slogan: validatedSlogan,
     theme: theme || null,
+    hide_footer: hideFooter,
   };
 
   // Upload logo if provided

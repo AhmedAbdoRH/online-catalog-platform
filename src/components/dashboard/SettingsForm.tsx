@@ -28,8 +28,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import type { Catalog } from '@/lib/types';
 import NextImage from 'next/image';
+import { Loader2, Lock, Check, Crown, Palette, Sparkles, MessageCircle, EyeOff } from 'lucide-react';
 import { Switch } from '../ui/switch';
-import { Loader2, Lock, Check, Crown, Palette, Sparkles, MessageCircle } from 'lucide-react';
 
 const THEME_OPTIONS = [
   { id: 'default', name: 'الافتراضي', gradient: 'bg-gradient-default' },
@@ -68,6 +68,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [selectedTheme, setSelectedTheme] = useState(catalog.theme || 'default');
+  const [hideFooter, setHideFooter] = useState(catalog.hide_footer || false);
   const isPro = catalog.plan === 'pro' || catalog.plan === 'business';
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -93,6 +94,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
 
       formData.append('whatsapp_number', values.whatsapp_number || '');
       formData.append('theme', selectedTheme);
+      formData.append('hide_footer', hideFooter.toString());
 
       // Handle logo file
       const logoInput = document.querySelector('input[name="logo"]') as HTMLInputElement;
@@ -376,7 +378,82 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
           </div>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {/* قسم إخفاء الفوتر */}
+        <div className="space-y-4 pt-4 border-t">
+          <div className="flex items-center justify-between">
+            <div>
+              <FormLabel className="text-base">إخفاء فوتر "أونلاين كتالوج"</FormLabel>
+              <FormDescription className="text-xs">
+                إزالة شعار المنصة من أسفل صفحة المتجر
+              </FormDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              {!isPro && (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer">
+                      <Lock className="h-3 w-3" />
+                      باقة البرو
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader className="text-center">
+                      <DialogTitle className="flex items-center justify-center gap-2 text-2xl">
+                        <Crown className="h-7 w-7 text-amber-500" />
+                        ترقية إلى باقة البرو
+                      </DialogTitle>
+                      <DialogDescription className="text-center text-base">
+                        احصل على مميزات حصرية لمتجرك
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                          <Sparkles className="h-5 w-5 text-brand-primary mt-0.5" />
+                          <div>
+                            <p className="font-medium text-sm">عدد غير محدود من المنتجات والتصنيفات</p>
+                            <p className="text-xs text-muted-foreground">أضف عدد لا نهائي من المنتجات والتصنيفات</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                          <Palette className="h-5 w-5 text-brand-primary mt-0.5" />
+                          <div>
+                            <p className="font-medium text-sm">أنماط مظهر متعددة</p>
+                            <p className="text-xs text-muted-foreground">اختر من بين 10 أنماط ألوان مختلفة لمتجرك</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                          <EyeOff className="h-5 w-5 text-brand-primary mt-0.5" />
+                          <div>
+                            <p className="font-medium text-sm">إخفاء فوتر المنصة</p>
+                            <p className="text-xs text-muted-foreground">إزالة شعار "أونلاين كتالوج" من متجرك</p>
+                          </div>
+                        </div>
+                      </div>
+                      <Button asChild className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                        <a
+                          href="https://wa.me/201008116452?text=مرحباً، أريد الترقية إلى باقة البرو لمتجري"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <MessageCircle className="h-4 w-4 ml-2" />
+                          طلب الترقية
+                        </a>
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
+              <Switch
+                checked={hideFooter}
+                onCheckedChange={setHideFooter}
+                disabled={!isPro || isSubmitting}
+              />
+            </div>
+          </div>
+        </div>
+
+        <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isSubmitting ? 'جاري الحفظ...' : 'حفظ التغييرات'}
         </Button>

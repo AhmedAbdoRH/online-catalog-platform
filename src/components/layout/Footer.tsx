@@ -4,7 +4,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
-export function Footer() {
+interface FooterProps {
+  hideFooter?: boolean;
+}
+
+export function Footer({ hideFooter = false }: FooterProps) {
+  if (hideFooter) {
+    return null;
+  }
+
   return (
     <footer className="border-t border-white/5 backdrop-blur-sm h-7 flex items-center justify-center mt-auto bg-black/40">
       <div className="w-full max-w-7xl px-3 text-center">

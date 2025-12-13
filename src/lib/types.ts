@@ -18,6 +18,7 @@ interface Database {
           slogan: string | null;
           country_code: string | null;
           theme: string | null;
+          hide_footer: boolean | null;
         };
         Insert: {
           id?: number;
@@ -33,6 +34,7 @@ interface Database {
           slogan?: string | null;
           country_code?: string | null;
           theme?: string | null;
+          hide_footer?: boolean | null;
         };
         Update: {
           id?: number;
@@ -49,6 +51,7 @@ interface Database {
           slogan?: string | null;
           country_code?: string | null;
           theme?: string | null;
+          hide_footer?: boolean | null;
         };
       };
       categories: {

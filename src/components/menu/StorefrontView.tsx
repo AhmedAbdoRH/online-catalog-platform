@@ -774,10 +774,11 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
 
         </div>
 
-        {/* Fixed Footer */}
+        {/* Bottom spacing */}
+        <div className="h-16"></div>
 
       </div>
-      <Footer />
+      <Footer hideFooter={catalog.hide_footer || false} />
     </CartProvider>
   );
 }
