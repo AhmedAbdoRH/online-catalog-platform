@@ -65,9 +65,9 @@ export function DashboardNav({ user }: { user: User }) {
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
             href="/dashboard"
-            className="group flex h-12 w-12 shrink-0 items-center justify-center"
+            className="group flex h-9 w-9 shrink-0 items-center justify-center"
           >
-            <div className="relative h-12 w-12">
+            <div className="relative h-9 w-9">
               <Image
                 src="/mainlogo.png"
                 alt={APP_NAME}

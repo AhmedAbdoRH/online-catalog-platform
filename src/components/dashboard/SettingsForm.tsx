@@ -52,7 +52,6 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
       name: catalog.name,
       display_name: catalog.display_name || catalog.name,
       slogan: catalog.slogan || '',
-
       whatsapp_number: catalog.whatsapp_number || '',
     },
   });
@@ -113,15 +112,15 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="name"
+            name="display_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>اسم المستخدم للمتجر (باللغة الإنجليزية)</FormLabel>
+                <FormLabel>اسم المتجر المعروض</FormLabel>
                 <FormControl>
-                  <Input {...field} disabled={isSubmitting} />
+                  <Input {...field} disabled={isSubmitting} className="bg-white text-[#1e3a5f] text-lg" />
                 </FormControl>
                 <FormDescription>
-                  سيتم استخدام هذا الاسم في رابط المتجر الخاص بك.
+                  سيظهر هذا الاسم في واجهة المتجر الخاصة بك.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -130,15 +129,15 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
 
           <FormField
             control={form.control}
-            name="display_name"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>اسم المتجر المعروض</FormLabel>
+                <FormLabel>اسم المستخدم للمتجر (باللغة الإنجليزية)</FormLabel>
                 <FormControl>
-                  <Input {...field} disabled={isSubmitting} />
+                  <Input {...field} disabled={isSubmitting} className="bg-white text-[#1e3a5f] text-lg" />
                 </FormControl>
                 <FormDescription>
-                  سيظهر هذا الاسم في واجهة المتجر الخاصة بك.
+                  سيتم استخدام هذا الاسم في رابط المتجر الخاص بك.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -151,7 +150,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
               <FormItem>
                 <FormLabel>شعار نصي (سلوغان)</FormLabel>
                 <FormControl>
-                  <Input {...field} disabled={isSubmitting} placeholder="شعار متجرك أو جملة ترويجية" />
+                  <Input {...field} disabled={isSubmitting} placeholder="شعار متجرك أو جملة ترويجية" className="bg-white text-[#1e3a5f] text-lg" />
                 </FormControl>
                 <FormDescription>
                   سيظهر هذا النص بخط صغير تحت اسم المتجر.
@@ -169,7 +168,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
             <FormItem>
               <FormLabel>رقم الواتساب</FormLabel>
               <FormControl>
-                <Input {...field} disabled={isSubmitting} placeholder="+201234567890" />
+                <Input {...field} disabled={isSubmitting} placeholder="+201234567890" className="bg-white text-[#1e3a5f] text-lg" />
               </FormControl>
               <FormDescription>
                 رقم الواتساب الخاص بمتجرك (اختياري).
@@ -203,6 +202,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                 name="logo"
                 accept="image/jpeg,image/jpg,image/png,image/webp"
                 disabled={isSubmitting}
+                className="bg-white text-[#1e3a5f]"
               />
             </FormControl>
             <FormDescription>
@@ -235,6 +235,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                 name="cover"
                 accept="image/jpeg,image/jpg,image/png,image/webp"
                 disabled={isSubmitting}
+                className="bg-white text-[#1e3a5f]"
               />
             </FormControl>
             <FormDescription>
