@@ -49,7 +49,7 @@ function ItemRow({ item, catalogId, categories }: { item: ItemWithCategory, cata
 
   return (
     <TableRow className="hover:bg-muted/50 transition-colors">
-      <TableCell className="hidden sm:table-cell">
+      <TableCell>
         <div className="relative h-16 w-16 overflow-hidden rounded-lg border border-border/50">
           <Image
             alt={item.name}
@@ -59,7 +59,7 @@ function ItemRow({ item, catalogId, categories }: { item: ItemWithCategory, cata
           />
         </div>
       </TableCell>
-      <TableCell className="font-bold text-base">{item.name}</TableCell>
+      <TableCell className="font-medium text-sm">{item.name}</TableCell>
       <TableCell>
         <Badge variant="outline" className="bg-muted/50">{item.categories?.name || 'غير مصنف'}</Badge>
       </TableCell>
@@ -141,8 +141,8 @@ export function ItemsTable({ items, catalogId, categories }: ItemsTableProps) {
       <Table>
         <TableHeader className="bg-muted/50">
           <TableRow>
-            <TableHead className="hidden w-[100px] sm:table-cell">
-              <span className="sr-only">الصورة</span>
+            <TableHead className="w-[100px]">
+              الصورة
             </TableHead>
             <TableHead>الاسم</TableHead>
             <TableHead>التصنيف</TableHead>

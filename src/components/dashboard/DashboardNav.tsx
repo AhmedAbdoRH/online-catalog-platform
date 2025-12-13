@@ -1,12 +1,12 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Home,
   Package,
   Settings,
-  UtensilsCrossed,
   Tags,
   LogOut,
   PanelLeft,
@@ -64,10 +64,17 @@ export function DashboardNav({ user }: { user: User }) {
       <aside className="fixed inset-y-0 right-0 z-10 hidden w-14 flex-col border-l bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
-            href="#"
-            className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+            href="/dashboard"
+            className="group flex h-12 w-12 shrink-0 items-center justify-center"
           >
-            <UtensilsCrossed className="h-4 w-4 transition-all group-hover:scale-110" />
+            <div className="relative h-12 w-12">
+              <Image
+                src="/mainlogo.png"
+                alt={APP_NAME}
+                fill
+                className="object-contain transition-all group-hover:scale-110"
+              />
+            </div>
             <span className="sr-only">{APP_NAME}</span>
           </Link>
           {navItems.map((item) => (
@@ -104,7 +111,6 @@ export function DashboardNav({ user }: { user: User }) {
             </TooltipTrigger>
             <TooltipContent side="left">تواصل مع الدعم الفني</TooltipContent>
           </Tooltip>
-          <ThemeToggle />
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
@@ -121,6 +127,7 @@ export function DashboardNav({ user }: { user: User }) {
             </TooltipTrigger>
             <TooltipContent side="left">الإعدادات</TooltipContent>
           </Tooltip>
+          <ThemeToggle />
           <form action={logout}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -143,15 +150,25 @@ export function DashboardNav({ user }: { user: User }) {
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="sm:max-w-xs">
-            <nav className="grid gap-6 text-lg font-medium">
+            <div className="flex items-center justify-between mb-6">
               <Link
                 href="/dashboard"
                 onClick={closeSheet}
-                className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
+                className="group flex h-12 w-12 shrink-0 items-center justify-center"
               >
-                <UtensilsCrossed className="h-5 w-5 transition-all group-hover:scale-110" />
+                <div className="relative h-12 w-12">
+                  <Image
+                    src="/mainlogo.png"
+                    alt={APP_NAME}
+                    fill
+                    className="object-contain transition-all group-hover:scale-110"
+                  />
+                </div>
                 <span className="sr-only">{APP_NAME}</span>
               </Link>
+              <ThemeToggle />
+            </div>
+            <nav className="grid gap-6 text-lg font-medium">
               {navItems.map((item) => (
                 <Link 
                   key={item.href} 
@@ -173,9 +190,6 @@ export function DashboardNav({ user }: { user: User }) {
                 <MessageCircle className="h-5 w-5" />
                 تواصل مع الدعم الفني
               </Link>
-              <div className="px-2.5">
-                <ThemeToggle />
-              </div>
               <Link
                 href="/dashboard/settings"
                 onClick={() => handleNavClick('/dashboard/settings')}

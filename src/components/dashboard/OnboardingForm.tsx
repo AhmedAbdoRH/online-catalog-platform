@@ -133,7 +133,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
   useEffect(() => {
     const focusFirstInput = () => {
       let inputId = '';
-      if (currentStep === 1) inputId = 'display_name';
+      if (currentStep === 1) inputId = 'name';
       else if (currentStep === 2) inputId = 'whatsapp_number';
       
       if (inputId) {
@@ -148,7 +148,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
 
   // Initial focus on component mount to show keyboard immediately
   useEffect(() => {
-    const input = document.getElementById('display_name') as HTMLInputElement;
+    const input = document.getElementById('name') as HTMLInputElement;
     if (input) {
       setTimeout(() => input.focus(), 300);
     }
@@ -172,27 +172,8 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
         return (
           <div className="space-y-4">
             <div className="space-y-2 pb-3 border-b border-border/30">
-              <Label htmlFor="display_name">اسم المتجر للعرض</Label>
-              <Input
-                id="display_name"
-                name="display_name"
-                placeholder="مثال: متجر الفتح"
-                className="placeholder:text-muted-foreground/50 bg-white text-black h-12 sm:h-10"
-                required
-                minLength={3}
-                maxLength={50}
-                value={formData.display_name}
-                onChange={(e) => handleInputChange('display_name', e.target.value)}
-                autoFocus
-              />
-              <p className="text-xs text-muted-foreground/70">
-                هذا هو الاسم الذي سيظهر للعملاء في صفحة الكتالوج
-              </p>
-            </div>
-
-            <div className="space-y-2 pb-3 border-b border-border/30">
               <Label htmlFor="name">
-                اسم الكتالوج للرابط
+                اسم المستخدم للمتجر
                 <span className="font-light text-sm text-muted-foreground mr-2">(باللغة الإنجليزية)</span>
               </Label>
               <Input
@@ -211,6 +192,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                   handleInputChange('name', value);
                   setCatalogName(value);
                 }}
+                autoFocus
               />
               {nameError && (
                 <p className="text-xs text-red-500 mt-1">
@@ -236,6 +218,24 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                   </div>
                 </div>
               )}
+            </div>
+
+            <div className="space-y-2 pb-3 border-b border-border/30">
+              <Label htmlFor="display_name">اسم المتجر للعرض</Label>
+              <Input
+                id="display_name"
+                name="display_name"
+                placeholder="مثال: متجر الفتح"
+                className="placeholder:text-muted-foreground/50 bg-white text-black h-12 sm:h-10"
+                required
+                minLength={3}
+                maxLength={50}
+                value={formData.display_name}
+                onChange={(e) => handleInputChange('display_name', e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground/70">
+                هذا هو الاسم الذي سيظهر للعملاء في صفحة المتجر
+              </p>
             </div>
           </div>
         );

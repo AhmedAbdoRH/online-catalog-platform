@@ -35,7 +35,7 @@ export default async function ItemsPage() {
                     <DialogTrigger asChild>
                         <Button size="sm" className="gap-1" disabled={categories.length === 0}>
                             <PlusCircle className="h-3.5 w-3.5" />
-                            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                            <span className="whitespace-nowrap">
                                 إضافة منتج
                             </span>
                         </Button>

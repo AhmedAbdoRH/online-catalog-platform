@@ -116,7 +116,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>اسم الكتالوج (باللغة الإنجليزية)</FormLabel>
+                <FormLabel>اسم المستخدم للمتجر (باللغة الإنجليزية)</FormLabel>
                 <FormControl>
                   <Input {...field} disabled={isSubmitting} />
                 </FormControl>
