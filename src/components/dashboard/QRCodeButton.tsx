@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,14 +17,24 @@ interface QRCodeButtonProps {
   storeName: string;
 }
 
+// Create a wrapper component for QRCode
+const QRCodeCanvas = dynamic(
+  () => import('qrcode.react').then((mod) => {
+    // Return a wrapper component
+    return ({ value, size, level, includeMargin }: any) => {
+      const QR = mod.QRCodeCanvas;
+      return <QR value={value} size={size} level={level} includeMargin={includeMargin} />;
+    };
+  }),
+  { 
+    ssr: false,
+    loading: () => <div className="w-[200px] h-[200px] bg-gray-100 animate-pulse rounded" />
+  }
+);
+
 export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleDownload = () => {
     const canvas = canvasRef.current?.querySelector('canvas');
@@ -35,9 +46,6 @@ export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
     downloadLink.href = pngFile;
     downloadLink.click();
   };
-
-  // Lazy load QRCode component
-  const QRCodeComponent = mounted ? require('qrcode.react').QRCodeCanvas : null;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -52,17 +60,13 @@ export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
           <DialogTitle className="text-center">رمز QR للمتجر</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center gap-4 py-4">
-          <div ref={canvasRef} className="bg-white p-4 rounded-lg min-h-[232px] min-w-[232px] flex items-center justify-center">
-            {mounted && QRCodeComponent ? (
-              <QRCodeComponent
-                value={url}
-                size={200}
-                level="H"
-                includeMargin
-              />
-            ) : (
-              <div className="w-[200px] h-[200px] bg-gray-100 animate-pulse rounded" />
-            )}
+          <div ref={canvasRef} className="bg-white p-4 rounded-lg">
+            <QRCodeCanvas
+              value={url}
+              size={200}
+              level="H"
+              includeMargin={true}
+            />
           </div>
           <p className="text-sm text-muted-foreground text-center">
             امسح هذا الرمز للوصول إلى متجرك
