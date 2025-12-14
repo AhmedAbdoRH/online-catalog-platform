@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { QRCodeCanvas } from 'qrcode.react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -19,7 +18,12 @@ interface QRCodeButtonProps {
 
 export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleDownload = () => {
     const canvas = canvasRef.current?.querySelector('canvas');
@@ -31,6 +35,9 @@ export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
     downloadLink.href = pngFile;
     downloadLink.click();
   };
+
+  // Lazy load QRCode component
+  const QRCodeComponent = mounted ? require('qrcode.react').QRCodeCanvas : null;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -45,13 +52,17 @@ export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
           <DialogTitle className="text-center">رمز QR للمتجر</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center gap-4 py-4">
-          <div ref={canvasRef} className="bg-white p-4 rounded-lg">
-            <QRCodeCanvas
-              value={url}
-              size={200}
-              level="H"
-              includeMargin
-            />
+          <div ref={canvasRef} className="bg-white p-4 rounded-lg min-h-[232px] min-w-[232px] flex items-center justify-center">
+            {mounted && QRCodeComponent ? (
+              <QRCodeComponent
+                value={url}
+                size={200}
+                level="H"
+                includeMargin
+              />
+            ) : (
+              <div className="w-[200px] h-[200px] bg-gray-100 animate-pulse rounded" />
+            )}
           </div>
           <p className="text-sm text-muted-foreground text-center">
             امسح هذا الرمز للوصول إلى متجرك
