@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
+import { QRCodeCanvas } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -18,15 +19,7 @@ interface QRCodeButtonProps {
 
 export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [QRComponent, setQRComponent] = useState<React.ComponentType<any> | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Only load QRCode on client side
-    import('qrcode.react').then((mod) => {
-      setQRComponent(() => mod.QRCodeCanvas);
-    });
-  }, []);
 
   const handleDownload = () => {
     const canvas = canvasRef.current?.querySelector('canvas');
@@ -53,14 +46,12 @@ export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
         </DialogHeader>
         <div className="flex flex-col items-center gap-4 py-4">
           <div ref={canvasRef} className="bg-white p-4 rounded-lg">
-            {QRComponent && (
-              <QRComponent
-                value={url}
-                size={200}
-                level="H"
-                includeMargin
-              />
-            )}
+            <QRCodeCanvas
+              value={url}
+              size={200}
+              level="H"
+              includeMargin
+            />
           </div>
           <p className="text-sm text-muted-foreground text-center">
             امسح هذا الرمز للوصول إلى متجرك
