@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import type { NewMenuItem, UpdateMenuItem } from '@/lib/types';
+import type { NewMenuItem, UpdateMenuItem, NewProductImage } from '@/lib/types';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -14,11 +14,10 @@ const itemSchema = z.object({
   description: z.string().max(255).optional(),
   price: z.coerce.number().min(0),
   category_id: z.coerce.number(),
-  image: z
-    .instanceof(File)
-    .refine((file) => file.size <= MAX_FILE_SIZE, 'Max file size is 5MB.')
+  images: z.array(z.instanceof(File))
+    .refine((files) => files.every(f => f.size <= MAX_FILE_SIZE), 'Max file size is 5MB.')
     .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+      (files) => files.every(f => ACCEPTED_IMAGE_TYPES.includes(f.type)),
       '.jpg, .jpeg, .png and .webp files are accepted.'
     )
     .optional(),
@@ -90,13 +89,17 @@ export async function createItem(formData: FormData) {
       return { error: 'غير مصرح به' };
     }
 
+    const rawImages = formData.getAll('images');
+    // Filter out empty files if any
+    const images = rawImages.filter((f): f is File => f instanceof File && f.size > 0);
+
     const validatedFields = itemSchema.safeParse({
       catalogId: formData.get('catalogId'),
       name: formData.get('name'),
       description: formData.get('description'),
       price: formData.get('price'),
       category_id: formData.get('category_id'),
-      image: formData.get('image'),
+      images: images,
     });
 
     if (!validatedFields.success) {
@@ -104,8 +107,7 @@ export async function createItem(formData: FormData) {
       return { error: 'بيانات غير صالحة.' };
     }
 
-    const { catalogId, name, description, price, category_id, image } =
-      validatedFields.data;
+    const { catalogId, name, description, price, category_id } = validatedFields.data;
 
     // Check for plan limits
     const { data: catalog } = await supabase
@@ -118,7 +120,10 @@ export async function createItem(formData: FormData) {
       return { error: 'الكتالوج غير موجود.' };
     }
 
-    if ((!catalog.plan || catalog.plan === 'basic')) {
+    const isPro = catalog.plan === 'pro';
+
+    // Limit check for basic plan
+    if (!isPro) {
       const { count } = await supabase
         .from('menu_items')
         .select('*', { count: 'exact', head: true })
@@ -127,12 +132,22 @@ export async function createItem(formData: FormData) {
       if (count !== null && count >= 50) {
         return { error: 'LIMIT_REACHED' };
       }
+
+      // Prevent multiple images for non-pro
+      if (images.length > 1) {
+        return { error: 'LIMIT_REACHED' }; // Reuse same error for UI trigger or use specific message
+      }
     }
 
-    let imageUrl: string | null = null;
-    if (image) {
-      imageUrl = await uploadImage(image, user.id);
+    // Upload images
+    const uploadedUrls: string[] = [];
+    for (const img of images) {
+      const url = await uploadImage(img, user.id);
+      if (url) uploadedUrls.push(url);
     }
+
+    // First image acts as main image
+    const mainImageUrl = uploadedUrls.length > 0 ? uploadedUrls[0] : null;
 
     const newItem: NewMenuItem = {
       catalog_id: catalogId,
@@ -140,12 +155,30 @@ export async function createItem(formData: FormData) {
       description,
       price,
       category_id,
-      image_url: imageUrl || null,
+      image_url: mainImageUrl, // Backward compatibility
     };
 
-    const { error: dbError } = await supabase.from('menu_items').insert(newItem);
+    const { data: insertedItem, error: dbError } = await supabase
+      .from('menu_items')
+      .insert(newItem)
+      .select()
+      .single();
 
     if (dbError) throw dbError;
+
+    // Insert all images into product_images table if we have inserted key
+    if (insertedItem && uploadedUrls.length > 0) {
+      const productImages: NewProductImage[] = uploadedUrls.map(url => ({
+        menu_item_id: insertedItem.id,
+        image_url: url
+      }));
+
+      const { error: imagesError } = await supabase
+        .from('product_images')
+        .insert(productImages);
+
+      if (imagesError) console.error('Error inserting product images:', imagesError);
+    }
 
     revalidatePath('/dashboard/items');
     return { error: null };
@@ -169,7 +202,30 @@ export async function updateItem(itemId: number, formData: FormData) {
       return { error: 'غير مصرح به' };
     }
 
-    const imageFile = formData.get('image') as File | null;
+    // We need catalog info to check plan
+    // Get item first to get catalog_id
+    const { data: existingItem } = await supabase
+      .from('menu_items')
+      .select('catalog_id')
+      .eq('id', itemId)
+      .single();
+
+    if (!existingItem) return { error: 'المنتج غير موجود' };
+
+    const { data: catalog } = await supabase
+      .from('catalogs')
+      .select('plan')
+      .eq('id', existingItem.catalog_id)
+      .single();
+
+    const isPro = catalog?.plan === 'pro';
+
+    const rawImages = formData.getAll('images');
+    const images = rawImages.filter((f): f is File => f instanceof File && f.size > 0);
+
+    if (!isPro && images.length > 1) {
+      return { error: 'LIMIT_REACHED' };
+    }
 
     const updatePayload: UpdateMenuItem = {
       name: formData.get('name') as string,
@@ -178,8 +234,39 @@ export async function updateItem(itemId: number, formData: FormData) {
       category_id: parseInt(formData.get('category_id') as string),
     };
 
-    if (imageFile && imageFile.size > 0) {
-      updatePayload.image_url = await uploadImage(imageFile, user.id);
+    const uploadedUrls: string[] = [];
+    if (images.length > 0) {
+      for (const img of images) {
+        const url = await uploadImage(img, user.id);
+        if (url) uploadedUrls.push(url);
+      }
+    }
+
+    if (uploadedUrls.length > 0) {
+      // We can get current item image_url to check
+      const { data: currentItem } = await supabase.from('menu_items').select('image_url').eq('id', itemId).single();
+      if (!currentItem?.image_url) {
+        updatePayload.image_url = uploadedUrls[0];
+      } else {
+        // If plan is NOT PRO, and they upload 1 image, maybe they want to REPLACE the main image?
+        // Since non-pro has only 1 image.
+        if (!isPro) {
+          updatePayload.image_url = uploadedUrls[0];
+          // Should delete old one? Ideally yes but let's skip for safety.
+        }
+      }
+
+      // Add all to product_images
+      const productImages: NewProductImage[] = uploadedUrls.map(url => ({
+        menu_item_id: itemId,
+        image_url: url
+      }));
+
+      const { error: imagesError } = await supabase
+        .from('product_images')
+        .insert(productImages);
+
+      if (imagesError) console.error('Error inserting product images:', imagesError);
     }
 
     const { error: dbError } = await supabase

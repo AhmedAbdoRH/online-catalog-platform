@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, Sparkles, Clock, Flame, MessageCircle } from "lucide-react";
 import ProductImage from "@/components/ProductImage";
 import RelatedProductImage from "@/components/RelatedProductImage";
+import { ProductGallery } from "@/components/menu/ProductGallery";
 
 type Props = {
   params: Promise<{
@@ -24,6 +25,7 @@ type ProductPageData = {
   product: MenuItem;
   categoryName?: string;
   related: MenuItem[];
+  images: string[];
 };
 
 async function getProductData(slug: string, itemId: string): Promise<ProductPageData | null> {
@@ -50,6 +52,34 @@ async function getProductData(slug: string, itemId: string): Promise<ProductPage
     return null;
   }
 
+  // Fetch multiple images
+  const { data: productImages } = await supabase
+    .from("product_images")
+    .select("image_url")
+    .eq("menu_item_id", product.id)
+    .order('created_at', { ascending: true });
+
+  console.log(`[Debug] Product ${product.id} main image:`, product.image_url);
+  console.log(`[Debug] Product ${product.id} additional images found:`, productImages?.length);
+
+  const dbImages = productImages ? productImages.map((i: { image_url: string }) => i.image_url) : [];
+
+  let images: string[] = [];
+
+  if (dbImages.length > 0) {
+    if (product.image_url && !dbImages.includes(product.image_url)) {
+      // If the main image is NOT in the list (e.g. legacy item updated with new images), add it to the front
+      images = [product.image_url, ...dbImages];
+    } else {
+      images = dbImages;
+    }
+  } else {
+    // Fallback to single image
+    images = product.image_url ? [product.image_url] : [];
+  }
+
+  console.log(`[Debug] Final merged images for product ${product.id}:`, images);
+
   const { data: category } = await supabase
     .from("categories")
     .select("name")
@@ -69,6 +99,7 @@ async function getProductData(slug: string, itemId: string): Promise<ProductPage
     product,
     categoryName: category?.name ?? undefined,
     related: related ?? [],
+    images
   };
 }
 
@@ -86,10 +117,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const shopTitle = catalog.display_name || "المتجر";
 
   return {
-    title: `${product.name} | ${shopTitle}`,
+    title: `${product.name} | ${shopTitle} `,
     description: product.description ?? `اكتشف المنتج ${product.name} من ${shopTitle}.`,
     openGraph: {
-      title: `${product.name} | ${shopTitle}`,
+      title: `${product.name} | ${shopTitle} `,
       description: product.description ?? "",
       images: product.image_url
         ? [
@@ -102,7 +133,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ]
         : undefined,
     },
-      };
+  };
 }
 
 export default async function ProductPage({ params }: Props) {
@@ -113,7 +144,7 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
-  const { catalog, product, categoryName, related } = data;
+  const { catalog, product, categoryName, related, images } = data;
   const productUrl = `https://online-catalog.net/${catalog.name}/item/${product.id}`;
   const whatsappText = encodeURIComponent(
     `أرغب في طلب ${product.name} من ${catalog.display_name}. التفاصيل: ${productUrl}`
@@ -164,25 +195,25 @@ export default async function ProductPage({ params }: Props) {
             <ArrowRight className="h-4 w-4" />
             العودة للمتجر
           </Link>
-                  </div>
+        </div>
 
         <section className="glass-surface grid gap-6 rounded-3xl bg-white/10 p-4 shadow-2xl backdrop-blur-2xl md:grid-cols-[1.15fr_0.85fr] md:p-6">
           <div className={cn("relative aspect-square overflow-hidden rounded-[1.5rem] border border-white/30 bg-gradient-to-br text-white shadow-[0_20px_55px_rgba(15,23,42,0.4)] md:aspect-auto md:h-[400px]", getCardColors())}>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
-            {product.image_url && product.image_url.trim() !== '' ? (
-              <ProductImage
-                src={product.image_url}
-                alt={product.name}
-                priority
-              />
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
-                <Sparkles className="h-10 w-10 text-brand-primary" />
-                <p className="text-sm">صورة المنتج ستظهر هنا بعد رفعها من لوحة التحكم</p>
-                <p className="text-xs text-muted-foreground">رابط الصورة: {product.image_url || 'غير متوفر'}</p>
-              </div>
-            )}
-            <div className="pointer-events-none absolute bottom-4 left-4 rounded-full bg-white/85 px-4 py-2 text-sm font-semibold text-brand-primary">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent pointer-events-none z-10" />
+
+            <ProductGallery
+              images={images}
+              productName={product.name}
+              placeholder={
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center z-0">
+                  <Sparkles className="h-10 w-10 text-brand-primary" />
+                  <p className="text-sm">صورة المنتج ستظهر هنا بعد رفعها من لوحة التحكم</p>
+                  <p className="text-xs text-muted-foreground">رابط الصورة: {product.image_url || 'غير متوفر'}</p>
+                </div>
+              }
+            />
+
+            <div className="pointer-events-none absolute bottom-4 left-4 z-20 rounded-full bg-white/85 px-4 py-2 text-sm font-semibold text-brand-primary">
               {product.price} ج.م
             </div>
           </div>
@@ -231,8 +262,6 @@ export default async function ProductPage({ params }: Props) {
                 </div>
               )}
             </div>
-
-
 
             <ShareButtons catalogName={catalog.display_name || ""} />
           </div>

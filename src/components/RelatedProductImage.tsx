@@ -26,10 +26,12 @@ export default function RelatedProductImage({ src, alt, className = "" }: Relate
       alt={alt}
       fill
       className={`object-cover transition-transform duration-300 group-hover:scale-105 ${className}`}
+      unoptimized={true}
       onError={() => {
         console.error('Related image failed to load:', src);
         setHasError(true);
       }}
+      onLoadingComplete={() => console.debug('Related image loaded:', src)}
     />
   );
 }

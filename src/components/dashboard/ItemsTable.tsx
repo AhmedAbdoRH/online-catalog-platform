@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { Category, MenuItem } from '@/lib/types';
+import type { Category, MenuItemWithDetails } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import {
@@ -27,15 +27,16 @@ import { ItemForm } from './ItemForm';
 import { deleteItem } from '@/app/actions/items';
 import { toast } from '@/hooks/use-toast';
 
-type ItemWithCategory = MenuItem & { categories: { name: string } | null };
+type ItemWithCategory = MenuItemWithDetails;
 
 interface ItemsTableProps {
   items: ItemWithCategory[];
   catalogId: number;
+  catalogPlan: string;
   categories: Category[];
 }
 
-function ItemRow({ item, catalogId, categories }: { item: ItemWithCategory, catalogId: number, categories: Category[] }) {
+function ItemRow({ item, catalogId, catalogPlan, categories }: { item: ItemWithCategory, catalogId: number, catalogPlan: string, categories: Category[] }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleDelete = async (itemId: number) => {
@@ -91,6 +92,7 @@ function ItemRow({ item, catalogId, categories }: { item: ItemWithCategory, cata
               </DialogHeader>
               <ItemForm
                 catalogId={catalogId}
+                catalogPlan={catalogPlan}
                 categories={categories}
                 item={item}
                 onSuccess={() => setIsEditDialogOpen(false)}
@@ -121,7 +123,7 @@ function ItemRow({ item, catalogId, categories }: { item: ItemWithCategory, cata
   )
 }
 
-export function ItemsTable({ items, catalogId, categories }: ItemsTableProps) {
+export function ItemsTable({ items, catalogId, catalogPlan, categories }: ItemsTableProps) {
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/25 bg-muted/10 py-16 text-center">
@@ -154,7 +156,7 @@ export function ItemsTable({ items, catalogId, categories }: ItemsTableProps) {
         </TableHeader>
         <TableBody>
           {items.map((item) => (
-            <ItemRow key={item.id} item={item} catalogId={catalogId} categories={categories} />
+            <ItemRow key={item.id} item={item} catalogId={catalogId} catalogPlan={catalogPlan} categories={categories} />
           ))}
         </TableBody>
       </Table>

@@ -11,7 +11,7 @@ import { SubmitButton } from '@/components/common/SubmitButton';
 import { Button } from '@/components/ui/button';
 import { createItem, updateItem } from '@/app/actions/items';
 import { useToast } from '@/hooks/use-toast';
-import type { Category, MenuItem } from '@/lib/types';
+import type { Category, MenuItemWithDetails } from '@/lib/types';
 import { UpgradeAlert } from './UpgradeAlert';
 import { useState } from 'react';
 
@@ -23,34 +23,30 @@ const formSchema = z.object({
   description: z.string().max(255).optional().or(z.literal('')),
   price: z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً'),
   category_id: z.string().min(1, 'التصنيف مطلوب'),
-  image: z.instanceof(File)
-    .refine((file) => file.size > 0, 'صورة المنتج مطلوبة.')
-    .refine((file) => file.size <= MAX_FILE_SIZE, `الحد الأقصى لحجم الملف 5 ميغابايت.`)
-    .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
-      ".jpg, .jpeg, .png و .webp هي الملفات المقبولة."
-    )
+  images: z.array(z.instanceof(File))
     .optional()
     .or(z.literal(undefined)),
 });
 
-// For update, image is not required
+// For update, images are not required
 const updateFormSchema = formSchema.extend({
-  image: z.instanceof(File).optional().or(z.literal(undefined))
+  images: z.array(z.instanceof(File)).optional().or(z.literal(undefined))
 });
 
 interface ItemFormProps {
   catalogId: number;
+  catalogPlan: string;
   categories: Category[];
-  item?: MenuItem;
+  item?: MenuItemWithDetails;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
 
-export function ItemForm({ catalogId, categories, item, onSuccess, onCancel }: ItemFormProps) {
+export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, onCancel }: ItemFormProps) {
   const { toast } = useToast();
   const [showUpgradeAlert, setShowUpgradeAlert] = useState(false);
   const [submissionId, setSubmissionId] = useState<string>('');
+  const isPro = catalogPlan === 'pro';
 
   // التحقق من أن categories موجود
   const validCategories = Array.isArray(categories) ? categories : [];
@@ -83,7 +79,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel }: I
       description: item?.description || '',
       price: item?.price || 0,
       category_id: item?.category_id ? item.category_id.toString() : '',
-      image: undefined,
+      images: undefined,
     },
   });
 
@@ -110,8 +106,11 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel }: I
       formData.append('description', values.description || '');
       formData.append('price', values.price.toString());
       formData.append('category_id', values.category_id);
-      if (values.image) {
-        formData.append('image', values.image);
+
+      if (values.images && values.images.length > 0) {
+        values.images.forEach((file) => {
+          formData.append('images', file);
+        });
       }
 
       console.log('Sending form data...');
@@ -209,25 +208,52 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel }: I
           </div>
           <FormField
             control={form.control}
-            name="image"
+            name="images"
             render={({ field: { onChange, value, ...rest } }) => (
               <FormItem>
-                <FormLabel>صورة المنتج {item && '(اختياري للتغيير)'}</FormLabel>
+                <FormLabel>
+                  صور المنتج
+                  {item && ' (اختياري للتغيير)'}
+                  {!isPro && <span className="text-xs text-muted-foreground mr-2">(صورة واحدة فقط)</span>}
+                  {isPro && <span className="text-xs text-primary mr-2">(يمكنك إضافة أكثر من صورة)</span>}
+                </FormLabel>
                 <FormControl>
-                  <Input type="file" accept="image/*" onChange={(e) => onChange(e.target.files?.[0])} {...rest} />
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    multiple={true} // Allow multiple selection for UX checking
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files || []);
+                      if (!isPro && files.length > 1) {
+                        setShowUpgradeAlert(true);
+                        onChange([files[0]]);
+                        // Reset input value to show only one file? Hard with uncontrolled input.
+                        // Just warn and take first.
+                        e.target.value = ''; // clear to force re-selection if they want? No that's annoying.
+                        return;
+                      }
+                      onChange(files);
+                    }}
+                    {...rest}
+                  />
                 </FormControl>
                 <FormMessage />
+                {item && (
+                  <div className="mt-2 text-sm text-muted-foreground">
+                    الصور الحالية: {item.image_url ? 1 : 0} + {(item as any).product_images?.length || 0} إضافية
+                  </div>
+                )}
               </FormItem>
             )}
           />
           <div className="flex gap-2">
             <Button
-                type="button"
-                variant="destructive"
-                onClick={onCancel}
-                className="w-full"
+              type="button"
+              variant="destructive"
+              onClick={onCancel}
+              className="w-full"
             >
-                إلغاء
+              إلغاء
             </Button>
             <SubmitButton pendingText="جاري الحفظ..." className="w-full">
               {item ? 'حفظ التغييرات' : 'حفظ المنتج'}

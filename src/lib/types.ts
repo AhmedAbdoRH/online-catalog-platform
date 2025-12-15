@@ -109,6 +109,26 @@ interface Database {
           catalog_id?: number;
         };
       };
+      product_images: {
+        Row: {
+          id: number;
+          created_at: string;
+          menu_item_id: number;
+          image_url: string;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string;
+          menu_item_id: number;
+          image_url: string;
+        };
+        Update: {
+          id?: number;
+          created_at?: string;
+          menu_item_id?: number;
+          image_url?: string;
+        };
+      };
     };
   };
 }
@@ -124,6 +144,14 @@ export type UpdateCategory = Database['public']['Tables']['categories']['Update'
 export type MenuItem = Database['public']['Tables']['menu_items']['Row'];
 export type NewMenuItem = Database['public']['Tables']['menu_items']['Insert'];
 export type UpdateMenuItem = Database['public']['Tables']['menu_items']['Update'];
+
+export type ProductImage = Database['public']['Tables']['product_images']['Row'];
+export type NewProductImage = Database['public']['Tables']['product_images']['Insert'];
+
+export type MenuItemWithDetails = MenuItem & {
+  product_images: ProductImage[];
+  categories: { name: string } | null;
+};
 
 export type CatalogData = Catalog & {
   categories: (Category & {

@@ -20,32 +20,41 @@ const nextConfig: NextConfig = {
     return config;
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'ikelmblsikapgbxbpebz.supabase.co',
-        port: '',
-        pathname: '/**',
+    remotePatterns: (() => {
+      const patterns: Array<Record<string, string>> = [
+        {
+          protocol: 'https',
+          hostname: 'placehold.co',
+          port: '',
+          pathname: '/**',
+        },
+        {
+          protocol: 'https',
+          hostname: 'images.unsplash.com',
+          port: '',
+          pathname: '/**',
+        },
+        {
+          protocol: 'https',
+          hostname: 'picsum.photos',
+          port: '',
+          pathname: '/**',
+        },
+      ];
+
+      // If a Supabase URL is configured in env, add its hostname so storage URLs are allowed
+      try {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        if (supabaseUrl) {
+          const u = new URL(supabaseUrl);
+          patterns.push({ protocol: u.protocol.replace(':', ''), hostname: u.hostname, port: '', pathname: '/**' });
+        }
+      } catch (e) {
+        // ignore malformed env
       }
-    ],
+
+      return patterns;
+    })(),
   },
   experimental: {
     serverActions: {
