@@ -55,8 +55,8 @@ export function SignupForm({ message, showEmailForm = false }: SignupFormProps) 
   return (
     <div className="grid gap-6">
       <form action={signInWithGoogle}>
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           className="w-full h-14 gap-3 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-md hover:shadow-lg transition-all duration-200 rounded-xl font-medium text-base flex items-center justify-center flex-row-reverse"
         >
           <svg className="h-8 w-8" viewBox="0 0 24 24">
@@ -138,8 +138,8 @@ export function SignupForm({ message, showEmailForm = false }: SignupFormProps) 
                 {error}
               </div>
             )}
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full"
               disabled={isLoading}
             >
@@ -148,13 +148,13 @@ export function SignupForm({ message, showEmailForm = false }: SignupFormProps) 
           </form>
         </div>
       )}
-      
+
       {message && (
         <div className="bg-destructive/10 border border-destructive/20 p-4 text-sm text-destructive rounded-xl text-center">
           {message}
         </div>
       )}
-      
+
       <div className="mt-2 text-center text-sm text-muted-foreground">
         لديك حساب بالفعل؟{" "}
         <Link href="/login" className="text-primary font-medium hover:underline">

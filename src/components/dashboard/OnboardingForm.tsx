@@ -43,9 +43,8 @@ const countries = [
 const steps = [
   { id: 0, title: 'البداية', emoji: '👋' },
   { id: 1, title: 'اسم المتجر', emoji: '🏪' },
-  { id: 2, title: 'الرابط', emoji: '🔗' },
-  { id: 3, title: 'واتساب', emoji: '💬' },
-  { id: 4, title: 'اللوجو', emoji: '🎨' },
+  { id: 2, title: 'واتساب', emoji: '💬' },
+  { id: 3, title: 'اللوجو', emoji: '🎨' },
 ];
 
 export function OnboardingForm({ userPhone }: OnboardingFormProps) {
@@ -58,7 +57,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
 
   const [formData, setFormData] = useState({
     display_name: '',
-    name: '',
+    name: userPhone || '',
     whatsapp_number: userPhone || '',
     logo: null as File | null,
   });
@@ -84,21 +83,8 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
     setFormData(prev => {
       const newData = { ...prev, [field]: value };
 
-      // Smart suggestion for slug when display name changes
-      if (field === 'display_name' && typeof value === 'string' && !prev.name) {
-        // Simple slugification for English or basic cleanup
-        const suggestedSlug = value
-          .toLowerCase()
-          .replace(/[^\u0600-\u06FFa-z0-9\s-]/g, '') // Keep Arabic, English, numbers
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-')
-          .trim();
-
-        // Remove non-ASCII for the actual URL slug
-        const validSlug = suggestedSlug.replace(/[^\x00-\x7F]/g, '');
-        if (validSlug.length >= 3) {
-          newData.name = validSlug;
-        }
+      if (field === 'whatsapp_number' && typeof value === 'string') {
+        newData.name = value.replace(/[^\d]/g, '');
       }
 
       return newData;
@@ -144,7 +130,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
   }, [formData.name, validateSlug, currentStep]);
 
   const nextStep = () => {
-    if (currentStep < 4) {
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -162,10 +148,8 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
       case 1:
         return formData.display_name.length >= 3;
       case 2:
-        return formData.name.length >= 3 && isNameAvailable === true && !isCheckingName;
+        return formData.whatsapp_number.length >= 7 && isNameAvailable === true && !isCheckingName;
       case 3:
-        return formData.whatsapp_number.length >= 7;
-      case 4:
         return true;
       default:
         return false;
@@ -325,84 +309,6 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                       animate={{ scale: 1 }}
                       className="text-7xl mb-4 inline-block transform hover:scale-110 transition-transform"
                     >
-                      🌐
-                    </motion.div>
-                    <h2 className="text-3xl font-black">رابط متجرك على الإنترنت</h2>
-                    <p className="text-muted-foreground text-lg italic">عنوانك الفريد الذي ستشاركه مع عملائك</p>
-                  </div>
-
-                  <div className="space-y-5">
-                    <div className="flex flex-col gap-3" dir="ltr">
-                      <div className="flex items-center bg-card/50 backdrop-blur-md rounded-3xl border-2 border-border/50 focus-within:border-primary transition-all overflow-hidden shadow-lg">
-                        <div className="px-6 py-6 bg-muted/40 text-muted-foreground font-mono text-base border-r border-border/30 select-none">
-                          online-catalog.net/
-                        </div>
-                        <Input
-                          id="name"
-                          name="name"
-                          placeholder="shop-name"
-                          className="h-20 text-xl bg-transparent border-0 focus-visible:ring-0 font-mono flex-1 px-5"
-                          required
-                          pattern="^[a-z0-9-]+$"
-                          minLength={3}
-                          value={formData.name}
-                          onChange={(e) => handleInputChange('name', e.target.value.toLowerCase())}
-                        />
-                        <div className="pr-5 flex items-center">
-                          {isCheckingName && <Loader2 className="h-6 w-6 animate-spin text-primary" />}
-                          {!isCheckingName && isNameAvailable === true && (
-                            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                              <CheckCircle2 className="h-6 w-6 text-brand-success" />
-                            </motion.div>
-                          )}
-                          {!isCheckingName && isNameAvailable === false && (
-                            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                              <AlertCircle className="h-6 w-6 text-brand-error" />
-                            </motion.div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="min-h-[24px] text-center">
-                      <AnimatePresence mode="wait">
-                        {nameError ? (
-                          <motion.p
-                            key="error"
-                            initial={{ opacity: 0, y: -5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0 }}
-                            className="text-base text-destructive font-bold"
-                          >
-                            {nameError}
-                          </motion.p>
-                        ) : (
-                          formData.name.length >= 3 && isNameAvailable === true && (
-                            <motion.div
-                              key="success"
-                              initial={{ opacity: 0, y: -5 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className="text-base text-brand-success font-bold flex items-center justify-center gap-2"
-                            >
-                              <Zap className="h-5 w-5 fill-current" />
-                              هذا الرابط متاح ومثالي لبراندك!
-                            </motion.div>
-                          )
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 3 && (
-                <div className="space-y-8">
-                  <div className="text-center space-y-3">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="text-7xl mb-4 inline-block transform hover:scale-110 transition-transform"
-                    >
                       💬
                     </motion.div>
                     <h2 className="text-3xl font-black">طلباتك تصلك على واتساب</h2>
@@ -425,7 +331,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                           </option>
                         ))}
                       </select>
-                      <div className="relative flex-1 group">
+                      <div className="relative flex-1 group" dir="ltr">
                         <MessageCircle className="absolute right-5 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground group-focus-within:text-brand-success transition-colors" />
                         <Input
                           id="whatsapp_number"
@@ -441,23 +347,41 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                       </div>
                     </div>
 
-                    {formData.whatsapp_number.length >= 7 && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="p-5 bg-brand-success/10 border-2 border-brand-success/20 rounded-3xl text-center shadow-sm"
-                      >
-                        <div className="flex items-center justify-center gap-3 text-brand-success font-black text-lg">
-                          <CheckCircle2 className="h-6 w-6" />
-                          <span>رائع! سيتم ربط المتجر بهذا الرقم فوراً</span>
-                        </div>
-                      </motion.div>
-                    )}
+                    <div className="min-h-[60px]">
+                      <AnimatePresence mode="wait">
+                        {formData.whatsapp_number.length >= 7 ? (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="p-5 bg-brand-success/10 border-2 border-brand-success/20 rounded-3xl text-center shadow-sm space-y-2"
+                          >
+                            <div className="flex items-center justify-center gap-3 text-brand-success font-black text-lg">
+                              {isCheckingName ? (
+                                <Loader2 className="h-6 w-6 animate-spin" />
+                              ) : (
+                                <CheckCircle2 className="h-6 w-6" />
+                              )}
+                              <span>{isNameAvailable === false ? 'عذراً، هذا الرقم مستخدم في متجر آخر' : 'رائع! سيتم ربط المتجر بهذا الرقم فوراً'}</span>
+                            </div>
+                            {isNameAvailable === true && (
+                              <div className="text-sm font-mono text-muted-foreground flex items-center justify-center gap-2 pt-1 border-t border-brand-success/10" dir="ltr">
+                                <Link2 className="h-4 w-4" />
+                                online-catalog.net/{formData.name}
+                              </div>
+                            )}
+                          </motion.div>
+                        ) : (
+                          <div className="p-5 border-2 border-dashed border-border/30 rounded-3xl text-center">
+                            <p className="text-muted-foreground text-sm font-medium italic">أدخل رقم الهاتف لإنشاء رابط متجرك تلقائياً</p>
+                          </div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {currentStep === 4 && (
+              {currentStep === 3 && (
                 <div className="space-y-8">
                   <div className="text-center space-y-3">
                     <motion.div
@@ -476,7 +400,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                       <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="w-48 h-48 rounded-[3rem] border-4 border-dashed border-border/50 group-hover:border-primary transition-all duration-500 flex flex-col items-center justify-center bg-card/30 group-hover:bg-primary/5 overflow-hidden shadow-2xl relative backdrop-blur-sm"
+                        className="w-48 h-48 rounded-[3rem] border-4 border-dashed border-primary transition-all duration-500 flex flex-col items-center justify-center bg-primary/5 hover:bg-primary/10 overflow-hidden shadow-2xl relative backdrop-blur-sm"
                       >
                         {formData.logo ? (
                           <div className="relative w-full h-full p-4">
@@ -491,10 +415,10 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                           </div>
                         ) : (
                           <div className="text-center p-8 space-y-3">
-                            <div className="w-16 h-16 mx-auto bg-muted/50 rounded-2xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                              <ImageIcon className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors" />
+                            <div className="w-16 h-16 mx-auto bg-primary/20 rounded-2xl flex items-center justify-center transition-colors">
+                              <ImageIcon className="w-8 h-8 text-primary transition-colors" />
                             </div>
-                            <div className="text-sm text-muted-foreground font-black tracking-tight">اضغط لرفع اللوجو</div>
+                            <div className="text-sm text-primary font-black tracking-tight">اضغط لرفع اللوجو</div>
                             <div className="text-[10px] text-muted-foreground/60 uppercase font-bold">PNG, JPG, WEBP</div>
                           </div>
                         )}
@@ -512,8 +436,8 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                   </div>
 
                   <div className="bg-muted/30 p-5 rounded-3xl border border-border/50">
-                    <p className="text-sm text-center text-muted-foreground italic font-medium leading-relaxed">
-                      💡 نصيحة: إذا لم يكن لديك لوجو الآن، لا داعي للقلق! اضغط على "أطلق متجري" وسنقوم بإنشاء متجرك فوراً، ويمكنك إضافة اللوجو في أي وقت لاحقاً.
+                    <p className="text-lg text-center text-muted-foreground italic font-bold leading-relaxed">
+                      💡 يمكنك تخطي هذه الخطوة الآن وإضافة اللوجو لاحقاً من الإعدادات.
                     </p>
                   </div>
                 </div>
@@ -541,7 +465,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
           )}
 
           {currentStep > 0 && (
-            currentStep < 4 ? (
+            currentStep < 3 ? (
               <Button
                 type="button"
                 onClick={handleNext}
