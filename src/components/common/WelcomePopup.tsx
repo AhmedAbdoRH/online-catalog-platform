@@ -143,7 +143,7 @@ export function WelcomePopup() {
                   متجرك جاهز للانطلاق.
                 </h3>
                 <p className="text-white/80 text-sm leading-relaxed mb-4">
-                  امتلك كتالوج احترافي في 3 دقائق.
+                  امتلك متجر احترافي في 3 دقائق.
                   <span className="text-[#4ade80] font-bold"> مجاناً!</span>
                 </p>
 
@@ -243,7 +243,7 @@ export function WelcomePopup() {
                     الرابط متاح ✨
                   </p>
                   <p className="text-white/80 text-sm">
-                    احفظ متجرك الآن بضغطة واحدة
+                    ابدأ متجرك الآن بضغطة واحدة
                   </p>
                   <div className="mt-2 text-xs text-[#4ade80] font-mono" dir="ltr">
                     online-catalog.net/{generatedSlug}
@@ -279,12 +279,13 @@ export function WelcomePopup() {
                 </form>
 
                 {/* Back button */}
-                <button
-                  onClick={() => setStage('input')}
-                  className="w-full mt-2 text-xs text-white/60 hover:text-white transition-colors"
-                >
-                  ← تعديل البيانات
-                </button>
+<button
+   onClick={() => setStage('input')}
+   className="absolute left-4 top-4 text-2xl text-white/30 hover:text-white transition-colors"
+   aria-label="تعديل البيانات"
+ >
+   ←
+</button>
               </>
             )}
           </div>

@@ -17,7 +17,7 @@ export default function LandingFooter() {
                         <div className="relative h-10 w-32">
                             <Image
                                 src="/mainlogo.png"
-                                alt="Online Catalog"
+                                alt="منصة اونلاين كاتلوج"
                                 fill
                                 className="object-contain object-left grayscale opacity-80"
                             />
@@ -70,7 +70,7 @@ export default function LandingFooter() {
                 </div>
 
                 <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-                    <p>© {currentYear} Online Catalog. كل الحقوق محفوظة.</p>
+                    <p>© {currentYear} منصة اونلاين كاتلوج. كل الحقوق محفوظة.</p>
                     <div className="flex gap-6">
                         <Link href="/privacy" className="hover:text-primary">سياسة الخصوصية</Link>
                         <Link href="/terms" className="hover:text-primary">شروط الاستخدام</Link>

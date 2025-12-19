@@ -33,7 +33,7 @@ function SignupContent() {
             >
               <Image
                 src="/mainlogo.png"
-                alt="Online Catalog"
+                alt="منصة اونلاين كاتلوج"
                 fill
                 className="object-contain"
                 priority
@@ -41,7 +41,7 @@ function SignupContent() {
             </div>
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold">منصة أونلاين كاتلوج</CardTitle>
+            <CardTitle className="text-2xl font-bold">منصة اونلاين كاتلوج</CardTitle>
             <CardDescription className="mt-2 text-primary font-medium">
               إنشاء حساب جديد
             </CardDescription>

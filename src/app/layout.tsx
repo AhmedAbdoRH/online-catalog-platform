@@ -9,10 +9,10 @@ import NextTopLoader from 'nextjs-toploader';
 
 export const metadata: Metadata = {
   title: {
-    default: 'أونلاين كاتلوج | Online Catalog',
-    template: '%s | أونلاين كاتلوج'
+    default: 'منصة اونلاين كاتلوج',
+    template: '%s | منصة اونلاين كاتلوج'
   },
-  description: 'منصة إنشاء المتجر الرقمي للمحال والمتاجر. سجل مجاناً وأنشئ متجرك خلال دقائق.',
+    description: 'منصة اونلاين كاتلوج: منصة إنشاء المتجر الرقمي للمحال والمتاجر. سجل مجاناً وأنشئ متجرك خلال دقائق.',
   icons: {
     icon: '/mainlogo.png',
     shortcut: '/mainlogo.png',
@@ -24,13 +24,13 @@ export const metadata: Metadata = {
     url: 'https://online-catalog.net',
     title: 'أونلاين كاتلوج | Online Catalog',
     description: 'أنشئ متجرك الرقمي والكاتلوج الخاص بك في دقائق. منصة متكاملة تدعم واتساب، بدون الحاجة لمبرمج.',
-    siteName: 'Online Catalog',
+    siteName: 'منصة اونلاين كاتلوج',
     images: [
       {
         url: '/wphoto.png',
         width: 1200,
         height: 630,
-        alt: 'Online Catalog Interface Preview',
+        alt: 'منصة اونلاين كاتلوج - واجهة المعاينة',
       },
     ],
   },
