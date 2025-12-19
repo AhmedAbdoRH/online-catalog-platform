@@ -160,12 +160,84 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>اسم المستخدم للمتجر (باللغة الإنجليزية)</FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel>رابط المتجر (بالإنجليزية)</FormLabel>
+                  {!isPro && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer">
+                          <Lock className="h-3 w-3" />
+                          باقة البرو
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader className="text-center">
+                          <DialogTitle className="flex items-center justify-center gap-2 text-2xl">
+                            <Crown className="h-7 w-7 text-amber-500" />
+                            ترقية إلى باقة البرو
+                          </DialogTitle>
+                          <DialogDescription className="text-center text-base">
+                            احصل على إمكانية تعديل رابط متجرك
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                          <div className="space-y-3">
+                            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                              <Sparkles className="h-5 w-5 text-brand-primary mt-0.5" />
+                              <div>
+                                <p className="font-medium text-sm">تعديل رابط المتجر</p>
+                                <p className="text-xs text-muted-foreground">اختر رابطاً مخصصاً لمتجرك بدلاً من رقم الهاتف</p>
+                              </div>
+                            </div>
+                            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                              <Palette className="h-5 w-5 text-brand-primary mt-0.5" />
+                              <div>
+                                <p className="font-medium text-sm">أنماط مظهر متعددة</p>
+                                <p className="text-xs text-muted-foreground">اختر من بين 10 أنماط ألوان مختلفة لمتجرك</p>
+                              </div>
+                            </div>
+                            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                              <EyeOff className="h-5 w-5 text-brand-primary mt-0.5" />
+                              <div>
+                                <p className="font-medium text-sm">إخفاء فوتر المنصة</p>
+                                <p className="text-xs text-muted-foreground">إزالة شعار "أونلاين كتالوج" من متجرك</p>
+                              </div>
+                            </div>
+                          </div>
+                          <Button asChild className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                            <a
+                              href="https://wa.me/201008116452?text=مرحباً، أريد الترقية إلى باقة البرو لمتجري"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <MessageCircle className="h-4 w-4 ml-2" />
+                              طلب الترقية
+                            </a>
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                </div>
                 <FormControl>
-                  <Input {...field} disabled={isSubmitting} className="bg-white text-[#1e3a5f] text-lg" />
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      disabled={isSubmitting || !isPro}
+                      className={`bg-white text-[#1e3a5f] text-lg ${!isPro ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    />
+                    {!isPro && (
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                        <Lock className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
                 </FormControl>
                 <FormDescription>
-                  سيتم استخدام هذا الاسم في رابط المتجر الخاص بك.
+                  {isPro
+                    ? 'يمكنك تغيير رابط المتجر الخاص بك.'
+                    : 'ترقية إلى باقة البرو لتتمكن من تعديل رابط متجرك.'
+                  }
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -336,23 +408,22 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
           <FormDescription>
             اختر نمط الخلفية لمتجرك
           </FormDescription>
-          
+
           <div className="grid grid-cols-5 gap-x-3 gap-y-4">
             {THEME_OPTIONS.map((theme, index) => {
               const isDefault = index === 0;
               const isLocked = !isPro && !isDefault;
-              
+
               return (
                 <div key={theme.id} className={`flex flex-col items-center gap-1 ${isLocked ? 'opacity-60' : ''}`}>
                   <button
                     type="button"
                     disabled={isLocked || isSubmitting}
                     onClick={() => !isLocked && setSelectedTheme(theme.id)}
-                    className={`relative h-16 w-full rounded-lg ${theme.gradient} border-2 transition-all ${
-                      selectedTheme === theme.id
+                    className={`relative h-16 w-full rounded-lg ${theme.gradient} border-2 transition-all ${selectedTheme === theme.id
                         ? 'border-brand-primary ring-2 ring-brand-primary/50'
                         : 'border-transparent hover:border-white/30'
-                    } ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                      } ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                     title={theme.name}
                   >
                     {selectedTheme === theme.id && (

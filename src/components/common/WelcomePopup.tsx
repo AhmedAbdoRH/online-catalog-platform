@@ -160,15 +160,15 @@ export function WelcomePopup() {
                     />
                   </div>
 
-                  {/* WhatsApp Number Input */}
-                  <div className="flex gap-2" dir="ltr">
+                  {/* WhatsApp Number Joined Field */}
+                  <div className="flex bg-white/10 border border-white/20 rounded-xl overflow-hidden focus-within:border-[#4ade80] focus-within:ring-1 focus-within:ring-[#4ade80]" dir="ltr">
                     <select
                       value={selectedCountry.code}
                       onChange={(e) => {
                         const country = countries.find(c => c.code === e.target.value);
                         if (country) setSelectedCountry(country);
                       }}
-                      className="bg-white/10 border border-white/20 rounded-xl px-2 h-11 text-white text-sm focus:outline-none focus:border-[#4ade80] min-w-[90px]"
+                      className="bg-transparent border-r border-white/10 px-1 h-11 text-white text-[13px] focus:outline-none w-[75px] cursor-pointer appearance-none text-center"
                     >
                       {countries.map((country) => (
                         <option key={country.code} value={country.code} className="bg-[#1a3a4a]">
@@ -184,7 +184,7 @@ export function WelcomePopup() {
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, ''))}
                         onKeyDown={(e) => e.key === 'Enter' && handleReserveName()}
-                        className="h-11 pl-9 text-left bg-white/10 border-white/20 text-white placeholder:text-white/50 rounded-xl focus:border-[#4ade80] focus:ring-[#4ade80] font-mono text-sm"
+                        className="h-11 pl-9 border-0 bg-transparent text-white placeholder:text-white/50 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 font-mono text-sm"
                         dir="ltr"
                       />
                       {isCheckingSlug && (
