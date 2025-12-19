@@ -168,11 +168,11 @@ export function WelcomePopup() {
                         const country = countries.find(c => c.code === e.target.value);
                         if (country) setSelectedCountry(country);
                       }}
-                      className="bg-transparent border-r border-white/10 px-1 h-11 text-white text-[13px] focus:outline-none w-[75px] cursor-pointer appearance-none text-center"
+                      className="bg-transparent border-r border-white/10 px-1 h-11 text-white text-[13px] focus:outline-none w-[55px] cursor-pointer appearance-none text-center"
                     >
                       {countries.map((country) => (
                         <option key={country.code} value={country.code} className="bg-[#1a3a4a]">
-                          {country.flag} {country.code}
+                          {country.code}
                         </option>
                       ))}
                     </select>
