@@ -10,8 +10,13 @@ import {
   Tags,
   LogOut,
   PanelLeft,
-  MessageCircle
+  MessageCircle,
+  Zap,
+  Package as PackageIcon,
+  Building
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import type { Catalog } from '@/lib/types';
 import {
   Tooltip,
   TooltipContent,
@@ -30,10 +35,33 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 const navItems = [
   { href: '/dashboard', icon: Home, label: 'لوحة التحكم' },
   { href: '/dashboard/categories', icon: Tags, label: 'التصنيفات' },
-  { href: '/dashboard/items', icon: Package, label: 'المنتجات' },
+  { href: '/dashboard/items', icon: PackageIcon, label: 'المنتجات' },
 ];
 
-export function DashboardNav({ user }: { user: User }) {
+const getPlanDetails = (plan: string) => {
+  switch (plan?.toLowerCase()) {
+    case 'pro':
+      return {
+        label: 'الباقة الاحترافية',
+        className: 'relative overflow-hidden bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 text-white shadow-lg border-0',
+        icon: Zap,
+      };
+    case 'business':
+      return {
+        label: 'باقة الأعمال',
+        className: 'relative overflow-hidden bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 text-white shadow-lg border-0',
+        icon: Building,
+      };
+    default:
+      return {
+        label: 'الباقة الأساسية',
+        className: 'relative overflow-hidden bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-lg border-0',
+        icon: PackageIcon,
+      };
+  }
+};
+
+export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -82,8 +110,8 @@ export function DashboardNav({ user }: { user: User }) {
           {navItems.map((item) => (
             <Tooltip key={item.href}>
               <TooltipTrigger asChild>
-                <Link 
-                  href={item.href} 
+                <Link
+                  href={item.href}
                   onClick={() => handleNavClick(item.href)}
                   className={cn(
                     "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
@@ -174,9 +202,9 @@ export function DashboardNav({ user }: { user: User }) {
             </div>
             <nav className="grid gap-6 text-lg font-medium">
               {navItems.map((item) => (
-                <Link 
-                  key={item.href} 
-                  href={item.href} 
+                <Link
+                  key={item.href}
+                  href={item.href}
                   onClick={() => handleNavClick(item.href)}
                   className={cn("flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground", pathname === item.href ? "text-foreground" : "")}
                 >
@@ -203,8 +231,8 @@ export function DashboardNav({ user }: { user: User }) {
                 الإعدادات
               </Link>
               <form action={logout}>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="w-full justify-start gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                   onClick={closeSheet}
                 >
@@ -215,6 +243,31 @@ export function DashboardNav({ user }: { user: User }) {
             </nav>
           </SheetContent>
         </Sheet>
+
+        {catalog && (
+          <div className="flex items-center gap-3 flex-1 overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 overflow-hidden">
+              <h1 className="text-base sm:text-xl font-bold tracking-tight text-foreground truncate">
+                {pathname === '/dashboard' ? 'لوحة التحكم' :
+                  pathname === '/dashboard/categories' ? 'التصنيفات' :
+                    pathname === '/dashboard/items' ? 'المنتجات' :
+                      pathname === '/dashboard/settings' ? 'إعدادات المتجر' : 'لوحة التحكم'}
+              </h1>
+              <Badge className={cn(getPlanDetails(catalog.plan || 'basic').className, "text-[9px] sm:text-xs px-1.5 sm:px-3 py-0 sm:py-0.5 items-center gap-1 font-bold rounded-full shrink-0 w-fit")}>
+                {(() => {
+                  const Details = getPlanDetails(catalog.plan || 'basic');
+                  return (
+                    <>
+                      <Details.icon className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                      <span>{Details.label}</span>
+                    </>
+                  );
+                })()}
+              </Badge>
+            </div>
+            <p className="hidden md:block text-xs text-muted-foreground border-r pr-4 truncate">نظرة عامة على متجرك الإلكتروني</p>
+          </div>
+        )}
       </header>
     </TooltipProvider>
   );

@@ -55,86 +55,84 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
       {/* Connection lines for tree structure */}
       {level > 0 && (
         <>
-          {/* Vertical line from parent */}
           <div
             className="absolute -top-3 bottom-1/2 w-px bg-border/60"
-            style={{ left: -24 }}
+            style={{ right: -24 }}
           />
-          {/* Horizontal line to item */}
           <div
             className="absolute top-1/2 h-px w-6 bg-border/60"
-            style={{ left: -24 }}
+            style={{ right: -24 }}
           />
         </>
       )}
 
       <div
         className={cn(
-          "group relative flex items-center justify-between rounded-xl border p-4 transition-all duration-200",
+          "group relative flex items-center justify-between rounded-xl border p-3 sm:p-4 transition-all duration-200",
           isSubcategory
             ? "border-border/40 bg-muted/20 hover:bg-muted/40 hover:border-border/60"
             : "glass-surface border-border/50 hover:border-primary/20 mb-3"
         )}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <Button
             variant="ghost"
             size="icon"
             className={cn(
-              "h-8 w-8 shrink-0 text-muted-foreground/70 transition-transform hover:bg-muted hover:text-foreground",
+              "h-7 w-7 sm:h-8 sm:w-8 shrink-0 text-muted-foreground/70 transition-transform hover:bg-muted hover:text-foreground",
               !hasSubcategories && "opacity-0 pointer-events-none"
             )}
             onClick={() => setIsExpanded(!isExpanded)}
           >
-            {isExpanded ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+            {isExpanded ? <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5" /> : <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />}
           </Button>
 
           <div className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-2xl shadow-sm transition-colors",
+            "flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl shadow-sm transition-colors",
             isSubcategory
               ? "bg-background border border-border/50 text-muted-foreground"
               : "bg-primary/10 text-primary border border-primary/10"
           )}>
             {hasSubcategories ? (
-              isExpanded ? <FolderOpen className="h-6 w-6" /> : <Folder className="h-6 w-6" />
+              isExpanded ? <FolderOpen className="h-5 w-5 sm:h-6 sm:w-6" /> : <Folder className="h-5 w-5 sm:h-6 sm:w-6" />
             ) : (
-              <Folder className="h-6 w-6" />
+              <Folder className="h-5 w-5 sm:h-6 sm:w-6" />
             )}
           </div>
 
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-0.5 sm:gap-1 min-w-0">
+            <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
               <span className={cn(
-                "font-bold text-foreground tracking-tight",
-                !isSubcategory && "text-lg"
+                "font-bold text-foreground tracking-tight truncate",
+                !isSubcategory ? "text-base sm:text-lg" : "text-sm sm:text-base"
               )}>
                 {category.name}
               </span>
               {hasSubcategories && (
-                <Badge variant="secondary" className="h-6 px-2 text-xs font-medium bg-muted/50 text-muted-foreground border-transparent">
-                  {category.subcategories.length} فئات فرعية
+                <Badge variant="secondary" className="h-5 sm:h-6 px-1.5 sm:px-2 text-[10px] sm:text-xs font-medium bg-muted/50 text-muted-foreground border-transparent whitespace-nowrap">
+                  {category.subcategories.length} <span className="hidden xs:inline">فئات فرعية</span>
                 </Badge>
               )}
             </div>
-            <span className="text-xs font-medium text-muted-foreground/80">
+            <span className="text-[10px] sm:text-xs font-medium text-muted-foreground/80">
               {isSubcategory ? 'تصنيف فرعي' : 'تصنيف رئيسي'}
             </span>
           </div>
         </div>
 
         <div className={cn(
-          "flex items-center gap-3 transition-opacity duration-200",
+          "flex items-center gap-1.5 sm:gap-3 transition-opacity duration-200 shrink-0",
           isSubcategory ? "opacity-100 sm:opacity-0 sm:group-hover:opacity-100" : "opacity-100"
         )}>
           {!isSubcategory && (
             <Button
               variant="default"
               size="sm"
-              className="h-9 px-4 text-xs font-medium bg-brand-primary hover:bg-brand-primary/90 text-primary-foreground shadow-sm transition-all"
+              className="h-7 sm:h-9 w-auto px-1 sm:px-4 gap-0 text-[9px] sm:text-xs font-medium bg-brand-primary hover:bg-brand-primary/90 text-primary-foreground shadow-sm transition-all"
               onClick={() => setIsAddSubOpen(true)}
             >
-              <Plus className="h-3.5 w-3.5 ml-1.5" />
-              إضافة تصنيف فرعي
+              <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+              <span>تصنيف فرعي</span>
             </Button>
           )}
           <CategoryActionsMenu category={category} catalogId={catalogId} categories={categories} size="icon" />
@@ -166,12 +164,11 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="relative mr-10 flex flex-col gap-3 pt-3"
+            className="relative mr-6 sm:mr-10 flex flex-col gap-3 pt-3"
           >
-            {/* Vertical line for children */}
             <div
-              className="absolute bottom-4 left-0 top-0 w-px bg-border/60"
-              style={{ left: -24 }}
+              className="absolute bottom-4 top-0 w-px bg-border/60"
+              style={{ right: -24 }}
             />
 
             {category.subcategories.map((subCategory, index) => (

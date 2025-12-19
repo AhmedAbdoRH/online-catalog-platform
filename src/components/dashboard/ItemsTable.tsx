@@ -50,8 +50,8 @@ function ItemRow({ item, catalogId, catalogPlan, categories }: { item: ItemWithC
 
   return (
     <TableRow className="hover:bg-muted/50 transition-colors">
-      <TableCell>
-        <div className="relative h-16 w-16 overflow-hidden rounded-lg border border-border/50">
+      <TableCell className="p-1 sm:p-4">
+        <div className="relative h-10 w-10 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-lg border border-border/50">
           <Image
             alt={item.name}
             className="object-cover"
@@ -60,17 +60,26 @@ function ItemRow({ item, catalogId, catalogPlan, categories }: { item: ItemWithC
           />
         </div>
       </TableCell>
-      <TableCell className="font-medium text-sm">{item.name}</TableCell>
-      <TableCell>
+      <TableCell className="font-medium text-[11px] sm:text-sm p-1 sm:p-4 overflow-hidden">
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <span className="truncate block font-bold" title={item.name}>{item.name}</span>
+          <div className="sm:hidden">
+            <Badge variant="outline" className="text-[9px] px-1 py-0 h-3.5 bg-muted/50 whitespace-nowrap">
+              {item.categories?.name || 'غير مصنف'}
+            </Badge>
+          </div>
+        </div>
+      </TableCell>
+      <TableCell className="hidden sm:table-cell p-4">
         <Badge variant="outline" className="bg-muted/50">{item.categories?.name || 'غير مصنف'}</Badge>
       </TableCell>
-      <TableCell className="font-mono">{item.price} ج.م</TableCell>
-      <TableCell>
+      <TableCell className="font-mono text-[10px] sm:text-sm p-1 sm:p-4 whitespace-nowrap text-left sm:text-right">{item.price} ج.م</TableCell>
+      <TableCell className="p-1 sm:p-4 text-left">
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <AlertDialog>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button aria-haspopup="true" size="icon" variant="ghost">
+                <Button aria-haspopup="true" size="icon" variant="ghost" className="h-7 w-7 sm:h-8 sm:w-8">
                   <MoreHorizontal className="h-4 w-4" />
                   <span className="sr-only">Toggle menu</span>
                 </Button>
@@ -139,17 +148,17 @@ export function ItemsTable({ items, catalogId, catalogPlan, categories }: ItemsT
   }
 
   return (
-    <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
-      <Table>
+    <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-x-auto">
+      <Table className="w-full table-fixed min-w-[300px]">
         <TableHeader className="bg-muted/50">
           <TableRow>
-            <TableHead className="w-[100px]">
+            <TableHead className="w-[50px] sm:w-[100px] p-2 sm:p-4 text-right">
               الصورة
             </TableHead>
-            <TableHead>الاسم</TableHead>
-            <TableHead>التصنيف</TableHead>
-            <TableHead>السعر</TableHead>
-            <TableHead className="w-[50px]">
+            <TableHead className="sm:w-auto p-2 sm:p-4 text-right">الاسم</TableHead>
+            <TableHead className="hidden sm:table-cell p-4 text-right">التصنيف</TableHead>
+            <TableHead className="w-[70px] sm:w-[120px] p-2 sm:p-4 text-right">السعر</TableHead>
+            <TableHead className="w-[35px] sm:w-[50px] p-2 sm:p-4 text-left">
               <span className="sr-only">الإجراءات</span>
             </TableHead>
           </TableRow>

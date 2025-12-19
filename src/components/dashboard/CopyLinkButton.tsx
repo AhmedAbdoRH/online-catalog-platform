@@ -10,7 +10,7 @@ interface CopyLinkButtonProps {
 
 export function CopyLinkButton({ url }: CopyLinkButtonProps) {
   const [copied, setCopied] = useState(false);
-  
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(url);
@@ -22,9 +22,10 @@ export function CopyLinkButton({ url }: CopyLinkButtonProps) {
   };
 
   return (
-    <Button 
-      variant="default" 
-      className="flex-1 sm:flex-none gap-2 bg-green-600 hover:bg-green-700"
+    <Button
+      variant="default"
+      size="sm"
+      className="flex-1 sm:flex-none gap-2 bg-green-500 hover:bg-green-600 text-xs sm:text-sm"
       onClick={handleCopy}
     >
       <Clipboard className="h-4 w-4" />

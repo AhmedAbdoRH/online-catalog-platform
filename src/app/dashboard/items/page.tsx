@@ -22,15 +22,17 @@ export default async function ItemsPage() {
     const { catalog, categories, items } = await getData();
 
     return (
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+        <Card className="border-none sm:border shadow-none sm:shadow-sm bg-transparent sm:bg-card">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-6 py-4 sm:py-6">
                 <div>
-                    <CardTitle>المنتجات</CardTitle>
-                    <CardDescription>إدارة المنتجات في المتجر الخاص بك.</CardDescription>
+                    <CardTitle className="text-xl sm:text-2xl">المنتجات</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">إدارة المنتجات في المتجر الخاص بك.</CardDescription>
                 </div>
-                <AddItemButton catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} />
+                <div className="w-full sm:w-auto">
+                    <AddItemButton catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} />
+                </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-2 sm:px-6">
                 {categories.length === 0 ? (
                     <div className="text-center text-muted-foreground py-8">
                         يجب عليك <a href="/dashboard/categories" className="text-primary underline">إضافة تصنيف</a> أولاً قبل إضافة المنتجات.
