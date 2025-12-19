@@ -238,6 +238,19 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
     prevStep();
   };
 
+  // Hide onboarding if we found data from popup and are auto-creating
+  const [isAutoCreating, setIsAutoCreating] = useState(false);
+  useEffect(() => {
+    const hasPendingData = localStorage.getItem('pendingStoreName') &&
+      localStorage.getItem('pendingStoreSlug') &&
+      localStorage.getItem('pendingWhatsApp');
+    if (hasPendingData) {
+      setIsAutoCreating(true);
+    }
+  }, []);
+
+  if (isAutoCreating) return null;
+
   return (
     <div className="relative">
       {/* Decorative Blobs */}

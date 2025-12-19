@@ -225,7 +225,7 @@ export function WelcomePopup() {
                   ) : (
                     <Sparkles className="h-4 w-4 ml-2" />
                   )}
-                  احجز متجرك مجاناً
+                  أنشئ متجرك الآن
                 </Button>
               </>
             ) : (
