@@ -337,7 +337,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
         {/* قسم تخصيص مظهر المتجر */}
         <div className="space-y-4 pt-4 border-t">
           <div className="flex items-center justify-between">
-            <FormLabel className="text-lg font-semibold">تخصيص مظهر المتجر</FormLabel>
+            <FormLabel className="text-lg font-semibold">تخصيص خلفية المتجر</FormLabel>
             {!isPro && (
               <Dialog>
                 <DialogTrigger asChild>
