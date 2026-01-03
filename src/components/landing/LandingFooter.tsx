@@ -35,10 +35,10 @@ export default function LandingFooter() {
                     <div>
                         <h4 className="font-bold mb-6">المنتج</h4>
                         <ul className="space-y-3 text-sm text-muted-foreground">
-                            <li><Link href="#features" className="hover:text-primary transition-colors">الميزات</Link></li>
-                            <li><Link href="#how-it-works" className="hover:text-primary transition-colors">كيف تعمل</Link></li>
-                            <li><Link href="#pricing" className="hover:text-primary transition-colors">الأسعار</Link></li>
-                            <li><Link href="#testimonials" className="hover:text-primary transition-colors">تجارب العملاء</Link></li>
+                            <li><Link href="/home#features" className="hover:text-primary transition-colors">الميزات</Link></li>
+                            <li><Link href="/home#how-it-works" className="hover:text-primary transition-colors">كيف تعمل</Link></li>
+                            <li><Link href="/home#pricing" className="hover:text-primary transition-colors">الأسعار</Link></li>
+                            <li><Link href="/home#testimonials" className="hover:text-primary transition-colors">تجارب العملاء</Link></li>
                         </ul>
                     </div>
 
@@ -47,9 +47,9 @@ export default function LandingFooter() {
                         <h4 className="font-bold mb-6">الدعم</h4>
                         <ul className="space-y-3 text-sm text-muted-foreground">
                             <li><Link href="/login" className="hover:text-primary transition-colors">تسجيل الدخول</Link></li>
-                            <li><Link href="/signup" className="hover:text-primary transition-colors">إنشاء حساب</Link></li>
+                            <li><Link href="/" className="hover:text-primary transition-colors">إنشاء حساب</Link></li>
                             <li><a href="mailto:support@online-catalog.net" className="hover:text-primary transition-colors">تواصل معنا</a></li>
-                            <li><Link href="#faq" className="hover:text-primary transition-colors">الأسئلة الشائعة</Link></li>
+                            <li><Link href="/home#faq" className="hover:text-primary transition-colors">الأسئلة الشائعة</Link></li>
                         </ul>
                     </div>
 

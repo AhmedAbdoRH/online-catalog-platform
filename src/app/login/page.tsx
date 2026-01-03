@@ -64,7 +64,7 @@ function LoginContent() {
           <div className="mt-6 text-center text-sm text-muted-foreground">
             ليس لديك حساب؟{" "}
             <Link
-              href="/signup"
+              href="/"
               className="text-primary font-medium hover:underline"
             >
               إنشاء حساب جديد

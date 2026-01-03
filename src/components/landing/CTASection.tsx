@@ -13,7 +13,7 @@ export default function CTASection() {
                         </p>
                         <div className="flex justify-center">
                             <Button asChild size="lg" className="gap-2 h-14 px-8 text-base font-medium">
-                                <Link href="/signup">
+                                <Link href="/">
                                     ابدأ الآن
                                 </Link>
                             </Button>

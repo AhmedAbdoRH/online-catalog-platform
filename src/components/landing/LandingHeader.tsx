@@ -11,17 +11,17 @@ import {
 
 export default function LandingHeader() {
     const navLinks = [
-        { name: "الميزات", href: "#features" },
-        { name: "كيف تعمل", href: "#how-it-works" },
-        { name: "الأسعار", href: "#pricing" },
-        { name: "الأسئلة", href: "#faq" },
+        { name: "الميزات", href: "/home#features" },
+        { name: "كيف تعمل", href: "/home#how-it-works" },
+        { name: "الأسعار", href: "/home#pricing" },
+        { name: "الأسئلة", href: "/home#faq" },
     ];
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
                 {/* Logo */}
-                <div className="flex items-center gap-2 sm:gap-3">
+                <Link href="/home" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
                     <div className="relative h-8 w-8 sm:h-10 sm:w-10 md:h-10 md:w-10">
                             <Image
                                 src="/logo.png"
@@ -32,7 +32,7 @@ export default function LandingHeader() {
                             />
                         </div>
                     <span className="text-lg sm:text-xl font-bold text-foreground">منصة اونلاين كاتلوج</span>
-                </div>
+                </Link>
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-4 lg:gap-8">
@@ -53,7 +53,7 @@ export default function LandingHeader() {
                         <Link href="/login">تسجيل دخول</Link>
                     </Button>
                     <Button size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all px-3 md:px-4">
-                        <Link href="/signup">ابدأ مجاناً</Link>
+                        <Link href="/">ابدأ مجاناً</Link>
                     </Button>
                 </div>
 
@@ -66,7 +66,7 @@ export default function LandingHeader() {
                     </SheetTrigger>
                     <SheetContent side="right" className="w-80 sm:w-96">
                         <div className="flex flex-col gap-6 mt-8">
-                            <div className="flex items-center gap-3 mx-auto">
+                            <Link href="/home" className="flex items-center gap-3 mx-auto hover:opacity-80 transition-opacity">
                                 <div className="relative h-12 w-12">
                                         <Image
                                             src="/logo.png"
@@ -76,7 +76,7 @@ export default function LandingHeader() {
                                         />
                                     </div>
                                 <span className="text-xl font-bold text-foreground">منصة اونلاين كاتلوج</span>
-                            </div>
+                            </Link>
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.name}
@@ -91,7 +91,7 @@ export default function LandingHeader() {
                                     <Link href="/login">تسجيل دخول</Link>
                                 </Button>
                                 <Button asChild className="w-full h-12">
-                                    <Link href="/signup">ابدأ مجاناً</Link>
+                                    <Link href="/">ابدأ مجاناً</Link>
                                 </Button>
                             </div>
                         </div>

@@ -65,7 +65,7 @@ export default function HeroSection() {
 
                         <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 md:gap-6 justify-center lg:justify-start px-4 sm:px-0">
                             <Button size="lg" className="h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-10 text-base sm:text-lg md:text-xl rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all font-bold group w-full sm:w-auto" asChild>
-                                <Link href="/signup">
+                                <Link href="/">
                                     <ArrowRight className="mr-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                                     ابدأ مجاناً
                                 </Link>

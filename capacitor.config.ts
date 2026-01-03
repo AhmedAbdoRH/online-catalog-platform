@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'NextCatalogApp',
   webDir: 'out',
   server: {
-    url: 'https://online-catalog.net',
+    url: 'http://10.0.2.2:9004',
     cleartext: true
   },
   plugins: {

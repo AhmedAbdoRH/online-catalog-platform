@@ -32,7 +32,7 @@ export default function StickyCTA() {
                         جاهز تبيع اونلاين؟
                     </div>
                     <Button size="sm" className="rounded-md sm:rounded-lg font-bold bg-white text-primary hover:bg-white/90 shadow-md sm:shadow-lg shadow-white/20 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base transition-all hover:scale-105 border-2 border-primary/20 mr-4" asChild>
-                        <Link href="/signup">
+                        <Link href="/">
                             ابدأ مجاناً
                         </Link>
                     </Button>
