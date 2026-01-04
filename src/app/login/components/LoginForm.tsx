@@ -28,8 +28,9 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
 
           useEffect(() => {
             if (Capacitor.isNativePlatform()) {
+              // للهاتف نستخدم معرف الأندرويد المخصص
               GoogleAuth.initialize({
-                clientId: '471992011728-o37eenopdmpm81s6npksqjv6j0ug9uhu.apps.googleusercontent.com',
+                clientId: '471992011728-1n4quq623he5rpvd09hebe3lsbtbvmrt.apps.googleusercontent.com',
                 scopes: ['profile', 'email'],
                 grantOfflineAccess: true,
               });
