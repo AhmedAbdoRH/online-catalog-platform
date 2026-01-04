@@ -87,34 +87,28 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
                 console.log('Starting native Google login...');
                 const user = await GoogleAuth.signIn();
                 console.log('Native Google User obtained');
-                console.log('Native Google User:', user);
-
-                console.log('Verifying with Supabase...');
-                console.log('Sending ID Token to Supabase:', user.authentication.idToken);
-
+                
                 const { data, error } = await supabase.auth.signInWithIdToken({
                   provider: 'google',
                   token: user.authentication.idToken,
                 });
 
-                if (error) {
-                  console.error('Supabase Login Error:', error);
-                  throw error;
-                }
-
-                console.log('Supabase Login Success:', data);
-                
+                if (error) throw error;
                 router.push('/dashboard');
                 router.refresh();
               } else {
+                console.log('Starting Web OAuth login...');
                 const { error } = await supabase.auth.signInWithOAuth({
                   provider: 'google',
                   options: {
-                    redirectTo: `${window.location.origin}/auth/callback`
+                    redirectTo: `${window.location.origin}/auth/callback`,
+                    queryParams: {
+                      access_type: 'offline',
+                      prompt: 'consent',
+                    },
                   }
                 })
                 if (error) throw error;
-                console.log('OAuth redirect triggered');
               }
             } catch (err: any) {
               console.error('Google login error detail:', err);
