@@ -28,11 +28,8 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
 
           useEffect(() => {
             if (Capacitor.isNativePlatform()) {
-              // On Android/iOS, the plugin reads from capacitor.config.ts
-              // Calling initialize with explicit IDs can help if config reading fails
-              // For Supabase, we MUST use the Web Client ID here to get the correct audience in idToken
               GoogleAuth.initialize({
-                clientId: '471992011728-n051jite6n017emj40qm5nht9a999jn6.apps.googleusercontent.com',
+                clientId: '471992011728-o37eenopdmpm81s6npksqjv6j0ug9uhu.apps.googleusercontent.com',
                 scopes: ['profile', 'email'],
                 grantOfflineAccess: true,
               });

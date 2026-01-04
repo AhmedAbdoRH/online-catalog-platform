@@ -5,14 +5,14 @@ const config: CapacitorConfig = {
   appName: 'NextCatalogApp',
   webDir: 'out',
   server: {
-    url: 'http://10.0.2.2:9004',
+    url: 'https://online-catalog.net',
     cleartext: true
   },
   plugins: {
       GoogleAuth: {
         scopes: ['profile', 'email'],
-        serverClientId: '471992011728-n051jite6n017emj40qm5nht9a999jn6.apps.googleusercontent.com',
-        androidClientId: '471992011728-1n4quq623he5rpvd09hebe3lsbtbvmrt.apps.googleusercontent.com',
+        serverClientId: '471992011728-o37eenopdmpm81s6npksqjv6j0ug9uhu.apps.googleusercontent.com',
+        androidClientId: '471992011728-o37eenopdmpm81s6npksqjv6j0ug9uhu.apps.googleusercontent.com',
         forceCodeForRefreshToken: false,
       },
   },
