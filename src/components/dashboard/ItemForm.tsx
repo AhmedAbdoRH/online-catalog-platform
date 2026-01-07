@@ -213,8 +213,7 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
     }
   };
 
-  return (
-    <>
+    <div className="bg-slate-50/50 -m-6 p-6 rounded-b-xl">
       <UpgradeAlert
         open={showUpgradeAlert}
         onOpenChange={setShowUpgradeAlert}
@@ -225,13 +224,13 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* الجهة اليمنى: البيانات الأساسية */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="space-y-4">
+              <div className="space-y-4 bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 shadow-sm">
                 <FormField
                   control={form.control}
                   name="category_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-bold">الفئة</FormLabel>
+                      <FormLabel className="text-base font-bold text-slate-700">الفئة</FormLabel>
                       <Select onValueChange={(val) => {
                         console.log('Category selected:', val);
                         if (val === 'new_category') {
@@ -242,16 +241,16 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                         field.onChange(val);
                       }} value={field.value || ''}>
                         <FormControl>
-                        <SelectTrigger className="h-12 text-base border-2 focus:ring-brand-primary/20">
+                        <SelectTrigger className="h-12 text-base border-2 border-slate-100 bg-slate-50/50 focus:ring-brand-primary/20">
                           <SelectValue placeholder="اختر فئة للمنتج" />
                         </SelectTrigger>
                       </FormControl>
-                        <SelectContent>
+                        <SelectContent className="bg-white border-slate-200 shadow-xl">
                             <SelectGroup>
                                <SelectLabel className="text-[#4ade80] font-black py-3.5 px-4 text-[15px] bg-[#4ade80]/5 mb-1">الإجراءات</SelectLabel>
                                <SelectItem 
                              value="new_category" 
-                             className="flex items-center gap-2 text-[#4ade80] font-black text-[15px] cursor-pointer py-4 focus:bg-muted focus:text-[#22c55e] border-b border-muted/50"
+                             className="flex items-center gap-2 text-[#4ade80] font-black text-[15px] cursor-pointer py-4 focus:bg-[#4ade80]/10 focus:text-[#22c55e] border-b border-slate-100"
                            >
                              <div className="flex items-center gap-2 justify-center w-full">
                                <PlusCircle className="h-5 w-5 stroke-[3px]" />
@@ -261,7 +260,7 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                              </SelectGroup>
                              <SelectSeparator className="bg-[#4ade80]/10" />
                              <SelectGroup>
-                               <SelectLabel className="text-[#4ade80] font-black py-3.5 px-4 text-[15px] bg-[#4ade80]/5 mt-1 mb-1">التصنيفات المتاحة</SelectLabel>
+                               <SelectLabel className="text-slate-400 font-bold py-3.5 px-4 text-[13px] bg-slate-50 mt-1 mb-1 uppercase tracking-wider">التصنيفات المتاحة</SelectLabel>
                                {renderCategoryItems(buildHierarchicalCategories())}
                              </SelectGroup>
                           </SelectContent>
@@ -275,9 +274,9 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-bold">اسم المنتج</FormLabel>
+                      <FormLabel className="text-base font-bold text-slate-700">اسم المنتج</FormLabel>
                       <FormControl>
-                        <Input placeholder="مثال: بيتزا مارجريتا" className="h-12 text-lg" {...field} />
+                        <Input placeholder="مثال: بيتزا مارجريتا" className="h-12 text-lg border-2 border-slate-100 bg-slate-50/50 focus:bg-white transition-all" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -288,11 +287,11 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-bold">وصف المنتج</FormLabel>
+                      <FormLabel className="text-base font-bold text-slate-700">وصف المنتج</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="اكتب وصفاً جذاباً لمنتجك..." 
-                          className="min-h-[120px] text-base resize-none" 
+                          className="min-h-[120px] text-base resize-none border-2 border-slate-100 bg-slate-50/50 focus:bg-white transition-all" 
                           {...field} 
                         />
                       </FormControl>
@@ -301,9 +300,10 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                   )}
                 />
               </div>
-              <div className="space-y-4 rounded-xl border-2 border-brand-primary/10 p-6 bg-brand-primary/5">
+              <div className="space-y-4 rounded-2xl border-2 border-brand-primary/10 p-6 bg-white/80 backdrop-blur-sm shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 rounded-full -mr-16 -mt-16 blur-2xl" />
                 <FormLabel className="text-lg font-black text-brand-primary flex items-center gap-2">
-                  <span className="bg-brand-primary text-white p-1 rounded-md"><Plus className="h-4 w-4" /></span>
+                  <span className="bg-brand-primary text-white p-1 rounded-lg shadow-sm"><Plus className="h-4 w-4" /></span>
                   نظام التسعير
                 </FormLabel>
                 <Tabs
@@ -315,11 +315,11 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                   }}
                   className="w-full"
                 >
-                  <TabsList className="grid w-full grid-cols-2 p-1 bg-muted/50 h-12">
-                    <TabsTrigger value="multi" className="text-base font-bold data-[state=active]:bg-white data-[state=active]:text-brand-primary shadow-sm">
+                  <TabsList className="grid w-full grid-cols-2 p-1.5 bg-slate-100/80 h-[52px] rounded-xl">
+                    <TabsTrigger value="multi" className="text-base font-bold rounded-lg data-[state=active]:bg-white data-[state=active]:text-brand-primary data-[state=active]:shadow-md transition-all">
                       أسعار متعددة (أحجام)
                     </TabsTrigger>
-                    <TabsTrigger value="unified" className="text-base font-bold data-[state=active]:bg-white data-[state=active]:text-brand-primary shadow-sm">
+                    <TabsTrigger value="unified" className="text-base font-bold rounded-lg data-[state=active]:bg-white data-[state=active]:text-brand-primary data-[state=active]:shadow-md transition-all">
                       سعر موحد
                     </TabsTrigger>
                   </TabsList>
@@ -330,11 +330,11 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                       name="price"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-bold">السعر النهائي (ج.م)</FormLabel>
+                          <FormLabel className="font-bold text-slate-600">السعر النهائي (ج.م)</FormLabel>
                           <FormControl>
                             <div className="relative">
-                              <Input type="number" step="0.01" placeholder="0.00" className="h-12 pl-12 text-xl font-bold" {...field} />
-                              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">ج.م</span>
+                              <Input type="number" step="0.01" placeholder="0.00" className="h-14 pl-14 text-2xl font-black border-2 border-slate-100 bg-slate-50/50 focus:bg-white focus:border-brand-primary/30 transition-all rounded-xl" {...field} />
+                              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-sm">ج.م</span>
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -345,30 +345,30 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
 
                   <TabsContent value="multi" className="mt-6">
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground font-medium">أضف الأحجام المختلفة (مثلاً: صغير، كبير)</span>
+                      <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span className="text-sm text-slate-500 font-bold">أضف الأحجام المختلفة (مثلاً: صغير، كبير)</span>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={() => append({ name: '', price: undefined as any })}
-                          className="gap-2 border-brand-primary text-brand-primary hover:bg-brand-primary/10 font-bold"
+                          className="gap-2 border-2 border-brand-primary/20 text-brand-primary hover:bg-brand-primary hover:text-white transition-all font-black rounded-lg h-9"
                         >
                           <Plus className="h-4 w-4" />
                           إضافة خيار
                         </Button>
                       </div>
 
-                      <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                      <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
                         {fields.map((field, index) => (
-                          <div key={field.id} className="flex gap-3 items-start p-3 rounded-lg bg-white border-2 border-transparent hover:border-brand-primary/20 transition-all shadow-sm">
+                          <div key={field.id} className="flex gap-3 items-start p-4 rounded-xl bg-slate-50/50 border-2 border-slate-100 hover:border-brand-primary/30 hover:bg-white transition-all shadow-sm group">
                             <FormField
                               control={form.control}
                               name={`variants.${index}.name`}
                               render={({ field }) => (
                                 <FormItem className="flex-1">
                                   <FormControl>
-                                    <Input placeholder="مثلاً: حجم كبير" className="h-11 border-none bg-muted/30 focus-visible:ring-0 font-bold" {...field} />
+                                    <Input placeholder="مثلاً: حجم كبير" className="h-12 border-none bg-transparent focus-visible:ring-0 font-bold text-lg p-0" {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -378,11 +378,11 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                               control={form.control}
                               name={`variants.${index}.price`}
                               render={({ field }) => (
-                                <FormItem className="w-32">
+                                <FormItem className="w-36">
                                   <FormControl>
                                     <div className="relative">
-                                      <Input type="number" step="0.01" placeholder="0.00" className="h-11 pl-10 border-none bg-muted/30 focus-visible:ring-0 font-bold" {...field} />
-                                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground font-bold">ج.م</span>
+                                      <Input type="number" step="0.01" placeholder="0.00" className="h-12 pl-12 border-2 border-slate-200 bg-white rounded-lg focus-visible:ring-brand-primary/20 font-black text-lg" {...field} />
+                                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 font-black">ج.م</span>
                                     </div>
                                   </FormControl>
                                   <FormMessage />
@@ -394,7 +394,7 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                               variant="ghost"
                               size="icon"
                               onClick={() => remove(index)}
-                              className="text-destructive hover:bg-destructive/10 h-11 w-11"
+                              className="text-slate-300 hover:text-destructive hover:bg-destructive/10 h-12 w-12 rounded-lg transition-colors"
                             >
                               <Trash2 className="h-5 w-5" />
                             </Button>
@@ -409,13 +409,13 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
 
             {/* الجهة اليسرى: الصور */}
             <div className="lg:col-span-5 space-y-6">
-              <div className="space-y-4 rounded-xl border-2 border-dashed border-muted-foreground/20 p-6 bg-muted/5">
+              <div className="space-y-4 rounded-2xl border-2 border-dashed border-slate-300 p-6 bg-white/80 backdrop-blur-sm shadow-sm">
                 <FormField
                   control={form.control}
                   name="main_image"
                   render={({ field: { onChange, value, ...rest } }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2 mb-4 text-base font-bold">
+                      <FormLabel className="flex items-center gap-2 mb-4 text-base font-bold text-slate-700">
                         <ImageIcon className="h-5 w-5 text-brand-primary" />
                         الصورة الرئيسية للمنتج
                       </FormLabel>
@@ -445,8 +445,8 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                             className={cn(
                               "relative flex flex-col items-center justify-center w-full aspect-square rounded-2xl border-4 border-dashed cursor-pointer transition-all overflow-hidden",
                               mainImagePreview 
-                                ? "border-brand-primary/40 bg-white shadow-inner" 
-                                : "border-muted-foreground/20 hover:border-brand-primary/50 hover:bg-brand-primary/5 bg-white"
+                                ? "border-brand-primary/40 bg-slate-50 shadow-inner" 
+                                : "border-slate-200 hover:border-brand-primary/50 hover:bg-brand-primary/5 bg-slate-50/50"
                             )}
                           >
                             {mainImagePreview ? (
@@ -456,20 +456,22 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                                   alt="Preview" 
                                   className="w-full h-full object-cover"
                                 />
-                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <div className="flex flex-col items-center text-white">
-                                    <Upload className="h-10 w-10 mb-2" />
-                                    <span className="font-bold">تغيير الصورة</span>
+                                <div className="absolute inset-0 bg-brand-primary/40 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                  <div className="flex flex-col items-center text-white transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                                    <div className="bg-white/20 p-4 rounded-full backdrop-blur-md mb-3">
+                                      <Upload className="h-8 w-8" />
+                                    </div>
+                                    <span className="font-black text-lg">تغيير الصورة</span>
                                   </div>
                                 </div>
                               </>
                             ) : (
-                              <div className="flex flex-col items-center text-center p-6">
-                                <div className="bg-brand-primary/10 p-5 rounded-full mb-4">
-                                  <Upload className="h-10 w-10 text-brand-primary" />
+                              <div className="flex flex-col items-center text-center p-8 group-hover:scale-105 transition-transform duration-300">
+                                <div className="bg-brand-primary/10 p-6 rounded-full mb-5 ring-8 ring-brand-primary/5">
+                                  <Upload className="h-12 w-12 text-brand-primary" />
                                 </div>
-                                <span className="text-lg font-black text-foreground">أضف صورة جذابة</span>
-                                <span className="text-sm text-muted-foreground mt-2">يفضل أن تكون مربعة وبإضاءة جيدة</span>
+                                <span className="text-xl font-black text-slate-700">أضف صورة جذابة</span>
+                                <span className="text-sm text-slate-500 mt-2 max-w-[200px]">يفضل أن تكون مربعة وبإضاءة جيدة لجذب الزبائن</span>
                               </div>
                             )}
                           </label>
@@ -486,11 +488,11 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                   render={({ field: { onChange, value, ...rest } }) => (
                     <FormItem className="mt-8">
                       <FormLabel className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2 text-base font-bold">
+                        <div className="flex items-center gap-2 text-base font-bold text-slate-700">
                           <Plus className="h-5 w-5 text-brand-primary" />
                           صور إضافية للمنتج
                         </div>
-                        {!isPro && <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-bold">باقة PRO فقط</span>}
+                        {!isPro && <span className="text-[10px] bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-black tracking-wide uppercase">باقة PRO فقط</span>}
                       </FormLabel>
                       <FormControl>
                         <div className={cn(!isPro && "opacity-50 pointer-events-none")}>
@@ -513,17 +515,21 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                           />
                           <label
                             htmlFor="additional-images-upload"
-                            className="flex flex-col items-center justify-center w-full py-8 rounded-xl border-2 border-dashed border-muted-foreground/20 hover:border-brand-primary/40 bg-white transition-all cursor-pointer"
+                            className="flex flex-col items-center justify-center w-full py-10 rounded-2xl border-2 border-dashed border-slate-200 hover:border-brand-primary/40 bg-slate-50/50 hover:bg-white transition-all cursor-pointer group"
                           >
-                            <Plus className="h-8 w-8 text-muted-foreground mb-2" />
-                            <span className="text-sm font-bold">اضغط هنا لإضافة المزيد من الصور</span>
+                            <div className="bg-slate-200 group-hover:bg-brand-primary/10 p-3 rounded-full transition-colors mb-3">
+                              <Plus className="h-8 w-8 text-slate-400 group-hover:text-brand-primary" />
+                            </div>
+                            <span className="text-sm font-black text-slate-500 group-hover:text-brand-primary">اضغط هنا لإضافة المزيد من الصور</span>
                           </label>
                         </div>
                       </FormControl>
                       {item && (item as any).product_images && (
-                        <div className="mt-4 p-3 bg-blue-50 rounded-lg text-blue-700 text-xs font-bold flex items-center gap-2">
-                          <ImageIcon className="h-4 w-4" />
-                          الصور المرفوعة حالياً: {(item as any).product_images.length}
+                        <div className="mt-4 p-4 bg-brand-primary/5 rounded-xl text-brand-primary text-sm font-black flex items-center gap-3 border border-brand-primary/10">
+                          <div className="bg-brand-primary text-white p-1.5 rounded-lg shadow-sm">
+                            <ImageIcon className="h-4 w-4" />
+                          </div>
+                          <span>الصور المرفوعة حالياً: {(item as any).product_images.length} صورة</span>
                         </div>
                       )}
                       <FormMessage />
@@ -534,32 +540,35 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
             </div>
           </div>
 
-          <div className="flex gap-4 pt-6 border-t mt-8 sticky bottom-0 bg-white pb-2">
+          <div className="flex gap-4 pt-6 border-t border-slate-200 mt-8 sticky bottom-0 bg-white/95 backdrop-blur-md -mx-6 px-6 pb-4 rounded-b-2xl z-10 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
             <Button
               type="button"
               variant="outline"
               onClick={onCancel}
-              className="flex-1 h-14 text-lg font-bold border-2"
+              className="flex-1 h-14 text-lg font-bold border-2 border-slate-200 hover:bg-slate-50 transition-all rounded-xl"
             >
               إلغاء
             </Button>
             <Button
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="flex-[2] h-14 text-lg font-black bg-brand-primary hover:bg-brand-primary/90 text-white shadow-lg shadow-brand-primary/20"
+              className="flex-[2] h-14 text-lg font-black bg-brand-primary hover:bg-brand-primary/90 text-white shadow-xl shadow-brand-primary/20 hover:shadow-brand-primary/30 transform hover:-translate-y-0.5 transition-all rounded-xl"
             >
               {form.formState.isSubmitting ? (
                 <div className="flex items-center gap-3">
-                  <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="h-6 w-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
                   <span>جاري الحفظ...</span>
                 </div>
               ) : (
-                item ? 'تحديث المنتج' : 'إضافة المنتج '
+                <div className="flex items-center gap-2">
+                   {item ? <PlusCircle className="h-5 w-5" /> : <Plus className="h-6 w-6" />}
+                   <span>{item ? 'تحديث المنتج' : 'إضافة المنتج للمنيو'}</span>
+                </div>
               )}
             </Button>
           </div>
         </form>
       </Form>
-    </>
+    </div>
   );
 }
