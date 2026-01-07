@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/home', request.url))
     }
 
-    if (user && (url.pathname === '/login' || url.pathname === '/signup')) {
+    if (user && (url.pathname === '/login' || url.pathname === '/signup' || url.pathname === '/home')) {
       // console.log("Middleware: User logged in, redirecting to dashboard");
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
