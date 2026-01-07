@@ -6,32 +6,27 @@ export async function middleware(request: NextRequest) {
     const { supabase, response } = createClient(request)
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession()
-
-    const {
       data: { user },
     } = await supabase.auth.getUser()
 
     const url = new URL(request.url)
-    // console.log(`Middleware: Checking ${url.pathname}. User found: ${!!user}`);
 
+    // Log for debugging
+    // console.log(`Middleware: ${url.pathname}, User: ${!!user}`);
+
+    // 1. If at root, go to /home
     if (url.pathname === '/') {
       return NextResponse.redirect(new URL('/home', request.url))
     }
 
+    // 2. If logged in and trying to access login/signup/home, go to dashboard
     if (user && (url.pathname === '/login' || url.pathname === '/signup' || url.pathname === '/home')) {
-      // console.log("Middleware: User logged in, redirecting to dashboard");
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
+    // 3. If NOT logged in and trying to access dashboard, go to login
     if (!user && url.pathname.startsWith('/dashboard')) {
-      // console.log("Middleware: No user, redirecting to login");
       return NextResponse.redirect(new URL('/login', request.url))
-    }
-
-    if (session) {
-      await supabase.auth.refreshSession()
     }
 
     return response

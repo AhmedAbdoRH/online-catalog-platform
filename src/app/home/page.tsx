@@ -22,15 +22,6 @@ function UnifiedHomeContent() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const checkUser = async () => {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        router.push('/dashboard');
-      }
-    };
-    checkUser();
-
     if (Capacitor.isNativePlatform()) {
       GoogleAuth.initialize({
         clientId: '471992011728-n051jite6n017emj40qm5nht9a999jn6.apps.googleusercontent.com',

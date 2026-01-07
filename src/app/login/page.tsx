@@ -20,18 +20,6 @@ function LoginContent() {
   const message = searchParams.get("message") || "";
   const [showEmailForm, setShowEmailForm] = useState(false);
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        router.push('/dashboard');
-      }
-    };
-    checkUser();
-  }, [router]);
-
   const handleLogoDoubleClick = () => {
     setShowEmailForm(!showEmailForm);
   };
