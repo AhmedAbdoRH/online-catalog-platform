@@ -547,7 +547,7 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
                   <span>جاري الحفظ...</span>
                 </div>
               ) : (
-                item ? 'تحديث المنتج' : 'إضافة المنتج للمنيو'
+                item ? 'تحديث المنتج' : 'إضافة المنتج '
               )}
             </Button>
           </div>
