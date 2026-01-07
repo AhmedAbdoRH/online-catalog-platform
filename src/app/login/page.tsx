@@ -10,14 +10,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
 
 function LoginContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const message = searchParams.get("message") || "";
   const [showEmailForm, setShowEmailForm] = useState(false);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { createClient } = await import("@/lib/supabase/client");
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.push('/dashboard');
+      }
+    };
+    checkUser();
+  }, [router]);
 
   const handleLogoDoubleClick = () => {
     setShowEmailForm(!showEmailForm);

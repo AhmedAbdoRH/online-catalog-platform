@@ -124,15 +124,33 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
                 if (error) throw error;
               }
             } catch (err: any) {
-              console.error('Google login error detail:', err);
+              const errorMessage = err instanceof Error ? err.message : String(err);
+              console.error('Google Sign In Error Details:', {
+                error: err,
+                message: errorMessage,
+                stack: err instanceof Error ? err.stack : undefined,
+                timestamp: new Date().toISOString(),
+                sha1: '15:23:C5:5A:95:79:49:07:36:9E:34:92:A5:DF:37:15:0D:83:A2:D2'
+              });
+
+              let friendlyMessage = 'حدث خطأ أثناء تسجيل الدخول بجوجل. يرجى التأكد من إعدادات Google Cloud و SHA-1.';
               
-              const errorMsg = err.message || 'تأكد من إعدادات Google Cloud و SHA-1';
+              if (errorMessage.includes('10:')) {
+                friendlyMessage = 'خطأ في الإعدادات (Developer Error). يرجى التأكد من إضافة SHA-1 الصحيح في Firebase Console.';
+              } else if (errorMessage.includes('7:')) {
+                friendlyMessage = 'خطأ في الاتصال بالشبكة. يرجى المحاولة مرة أخرى.';
+              } else if (errorMessage.includes('12501')) {
+                friendlyMessage = 'تم إلغاء تسجيل الدخول.';
+              }
+              
+              const finalErrorMsg = `${friendlyMessage}\nSHA-1 المطلوب: 15:23:C5:5A:95:79:49:07:36:9E:34:92:A5:DF:37:15:0D:83:A2:D2`;
+              
               toast({
                 variant: "destructive",
                 title: "عطل في تسجيل الدخول",
-                description: errorMsg
+                description: finalErrorMsg
               });
-              setError(errorMsg);
+              setError(finalErrorMsg);
               setIsLoading(false);
             }
           }}

@@ -22,6 +22,15 @@ function UnifiedHomeContent() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const checkUser = async () => {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.push('/dashboard');
+      }
+    };
+    checkUser();
+
     if (Capacitor.isNativePlatform()) {
       GoogleAuth.initialize({
         clientId: '471992011728-n051jite6n017emj40qm5nht9a999jn6.apps.googleusercontent.com',
@@ -72,11 +81,29 @@ function UnifiedHomeContent() {
         if (error) throw error;
       }
     } catch (err: any) {
-      console.error('Google Auth Error:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error('Google Sign In Error Details:', {
+        error: err,
+        message: errorMessage,
+        stack: err instanceof Error ? err.stack : undefined,
+        timestamp: new Date().toISOString(),
+        sha1: '15:23:C5:5A:95:79:49:07:36:9E:34:92:A5:DF:37:15:0D:83:A2:D2'
+      });
+
+      let friendlyMessage = 'حدث خطأ أثناء تسجيل الدخول بجوجل. يرجى التأكد من إعدادات Google Cloud و SHA-1.';
+      
+      if (errorMessage.includes('10:')) {
+        friendlyMessage = 'خطأ في الإعدادات (Developer Error). يرجى التأكد من إضافة SHA-1 الصحيح في Firebase Console.';
+      } else if (errorMessage.includes('7:')) {
+        friendlyMessage = 'خطأ في الاتصال بالشبكة. يرجى المحاولة مرة أخرى.';
+      } else if (errorMessage.includes('12501')) {
+        friendlyMessage = 'تم إلغاء تسجيل الدخول.';
+      }
+      
       toast({
         variant: "destructive",
         title: "خطأ في تسجيل الدخول",
-        description: err.message || "تأكد من إعدادات Google Cloud و SHA-1"
+        description: `${friendlyMessage}\nSHA-1 المطلوب: 15:23:C5:5A:95:79:49:07:36:9E:34:92:A5:DF:37:15:0D:83:A2:D2`
       });
       setIsLoading(false);
     }
