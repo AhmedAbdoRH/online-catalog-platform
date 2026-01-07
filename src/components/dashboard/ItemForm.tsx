@@ -27,7 +27,7 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 const formSchema = z.object({
   name: z.string().min(2, 'الاسم مطلوب').max(100),
   description: z.string().max(255).optional().or(z.literal('')),
-  price: z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً'),
+  price: z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً').optional().or(z.literal(undefined)),
   category_id: z.string().min(1, 'التصنيف مطلوب'),
   main_image: z.instanceof(File).optional(),
   additional_images: z.array(z.instanceof(File))
@@ -38,18 +38,26 @@ const formSchema = z.object({
     name: z.string().min(1, 'اسم الخيار مطلوب'),
     price: z.coerce.number().min(0, 'السعر مطلوب')
   })).optional(),
+}).refine((data) => {
+  if (data.pricing_type === 'unified') {
+    return data.price !== undefined && data.price !== null;
+  }
+  return true;
+}, {
+  message: "السعر مطلوب في حال السعر الموحد",
+  path: ["price"],
+}).refine((data) => {
+  if (data.pricing_type === 'multi') {
+    return data.variants && data.variants.length > 0;
+  }
+  return true;
+}, {
+  message: "يجب إضافة خيار واحد على الأقل في حال الأسعار المتعددة",
+  path: ["variants"],
 });
 
 // For update, images are not required
-const updateFormSchema = formSchema.extend({
-  main_image: z.instanceof(File).optional(),
-  additional_images: z.array(z.instanceof(File)).optional().or(z.literal(undefined)),
-  pricing_type: z.enum(['unified', 'multi']).default('unified'),
-  variants: z.array(z.object({
-    name: z.string().min(1, 'اسم الخيار مطلوب'),
-    price: z.coerce.number().min(0, 'السعر مطلوب')
-  })).optional(),
-});
+const updateFormSchema = formSchema;
 
 interface ItemFormProps {
   catalogId: number;
@@ -154,13 +162,12 @@ export function ItemForm({ catalogId, catalogPlan, categories, item, onSuccess, 
       if (values.pricing_type === 'multi' && values.variants && values.variants.length > 0) {
         // Send variants as JSON string
         formData.append('variants', JSON.stringify(values.variants));
-        // Price might be calculated on server or we send 0/min here. 
-        // The server action logic we wrote relies on 'variants' field presence/content.
-        formData.append('price', '0'); // Helper, server will overwrite with min
+        // Find the minimum price to send as a fallback/default price
+        const minPrice = Math.min(...values.variants.map(v => v.price));
+        formData.append('price', minPrice.toString());
       } else {
-        formData.append('price', values.price.toString());
-        // Ensure to clear variants if switching back to unified? 
-        // We can send empty array to indicate no variants.
+        formData.append('price', (values.price || 0).toString());
+        // Ensure to clear variants if switching back to unified
         formData.append('variants', JSON.stringify([]));
       }
 

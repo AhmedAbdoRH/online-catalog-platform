@@ -12,7 +12,7 @@ const itemSchema = z.object({
   catalogId: z.coerce.number(),
   name: z.string().min(2).max(100),
   description: z.string().max(255).optional(),
-  price: z.coerce.number().min(0),
+  price: z.coerce.number().min(0).optional().or(z.literal(null)),
   category_id: z.coerce.number(),
   images: z.array(z.instanceof(File))
     .refine((files) => files.every(f => f.size <= MAX_FILE_SIZE), 'Max file size is 5MB.')
@@ -118,7 +118,7 @@ export async function createItem(formData: FormData) {
     }
 
     const { catalogId, name, description, category_id, variants } = validatedFields.data;
-    let { price } = validatedFields.data;
+    let price = validatedFields.data.price || 0;
 
     // Determine price from variants if valid
     if (variants && variants.length > 0) {
