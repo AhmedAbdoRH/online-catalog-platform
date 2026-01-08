@@ -80,12 +80,12 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
   const [showAllThemes, setShowAllThemes] = useState(false);
 
   useEffect(() => {
-    // Show tooltips if logo or cover are missing
-    // Hide if both exist OR if user has selected files locally
+    // Show tooltips only if BOTH are missing
+    // Hide if EITHER exists
     const hasLogo = catalog.logo_url || logoFile;
     const hasCover = catalog.cover_url || coverFile;
-    
-    if (!hasLogo || !hasCover) {
+
+    if (!hasLogo && !hasCover) {
       const timer = setTimeout(() => {
         setShowTooltips(true);
       }, 1500);
@@ -251,14 +251,12 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8, y: 10 }}
                   animate={{ 
-                    opacity: [1, 0.7, 1],
-                    scale: [1, 1.02, 1],
+                    opacity: 1,
+                    scale: 1,
                     y: 0 
                   }}
                   exit={{ opacity: 0, scale: 0.8, y: 10 }}
                   transition={{
-                    opacity: { repeat: Infinity, duration: 2, ease: "easeInOut" },
-                    scale: { repeat: Infinity, duration: 2, ease: "easeInOut" },
                     duration: 0.3
                   }}
                   className="absolute left-[-40%] -translate-x-full bottom-full mb-6 z-[70] pointer-events-none w-[240px] sm:w-[280px]"

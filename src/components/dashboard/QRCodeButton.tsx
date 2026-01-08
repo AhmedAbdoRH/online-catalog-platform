@@ -36,15 +36,44 @@ export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const canvas = canvasRef.current?.querySelector('canvas');
     if (!canvas) return;
 
-    const pngFile = canvas.toDataURL('image/png');
-    const downloadLink = document.createElement('a');
-    downloadLink.download = `${storeName}-qrcode.png`;
-    downloadLink.href = pngFile;
-    downloadLink.click();
+    try {
+      // Create a blob from the canvas
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) return;
+
+      // For mobile devices, we can try to use the Web Share API if available
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'qrcode.png', { type: 'image/png' })] })) {
+        const file = new File([blob], `${storeName}-qrcode.png`, { type: 'image/png' });
+        await navigator.share({
+          files: [file],
+          title: 'رمز QR للمتجر',
+          text: `رمز QR لمتجر ${storeName}`,
+        });
+        return;
+      }
+
+      // Fallback for browsers that don't support sharing files or desktop
+      const url = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.download = `${storeName}-qrcode.png`;
+      downloadLink.href = url;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading QR code:', error);
+      // Final fallback to data URL
+      const pngFile = canvas.toDataURL('image/png');
+      const downloadLink = document.createElement('a');
+      downloadLink.download = `${storeName}-qrcode.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    }
   };
 
   return (

@@ -53,11 +53,11 @@ export function SupportButton() {
             </AnimatePresence>
 
             <button
-                className="bg-brand-primary/40 backdrop-blur-md text-white py-1.5 px-3 rounded-r-lg shadow-md hover:pl-4 hover:bg-brand-primary/60 transition-all flex items-center gap-2 border-y border-r border-white/20 -ml-4 sm:-ml-6 h-9 group"
+                className="bg-brand-primary/25 backdrop-blur-md text-white py-1 px-2.5 rounded-r-lg shadow-md hover:pl-3.5 hover:bg-brand-primary/40 transition-all flex items-center gap-1.5 border-y border-r border-white/20 -ml-4 sm:-ml-6 h-8 group"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                <MessageCircle className="h-4 w-4" />
-                <span className="font-bold text-[11px] whitespace-nowrap">تحتاج مساعدة؟</span>
+                <MessageCircle className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 transition-opacity" />
+                <span className="font-bold text-[10px] whitespace-nowrap opacity-60 group-hover:opacity-100 transition-opacity">تحتاج مساعدة؟</span>
             </button>
         </div>
     );
