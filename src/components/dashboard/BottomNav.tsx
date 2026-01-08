@@ -75,6 +75,20 @@ export function BottomNav() {
 
   useEffect(() => {
     fetchData();
+
+    // Listen for category addition to show tooltip
+    const handleCategoryAdded = () => {
+      fetchData().then(() => {
+        // Only show if there are still no items
+        // We use a small delay to ensure fetchData completed and state is updated
+        setTimeout(() => {
+          setShowTooltip(true);
+        }, 500);
+      });
+    };
+
+    window.addEventListener('categoryAdded', handleCategoryAdded);
+    return () => window.removeEventListener('categoryAdded', handleCategoryAdded);
   }, []);
 
   useEffect(() => {

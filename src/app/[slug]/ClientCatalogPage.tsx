@@ -55,10 +55,14 @@ export default function ClientCatalogPage() {
                 const rootCategories: CategoryWithSubcategories[] = [];
 
                 categories?.forEach((category: any) => {
+                    const sortedItems = (category.menu_items || []).sort((a: any, b: any) => {
+                        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                    });
+                    
                     categoriesMap.set(category.id, {
                         ...category,
                         subcategories: [],
-                        menu_items: category.menu_items || [],
+                        menu_items: sortedItems,
                     });
                 });
 

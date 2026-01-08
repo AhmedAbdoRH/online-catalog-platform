@@ -127,6 +127,12 @@ export function CategoryForm({ catalogId, category, categories, defaultParentId,
                     if (!message.includes('فشل') && !message.includes('خطأ')) {
                         form.reset();
                         console.log('onSuccess called in CategoryForm');
+                        
+                        // Dispatch custom event to notify other components (like BottomNav)
+                        if (!category) {
+                          window.dispatchEvent(new CustomEvent('categoryAdded'));
+                        }
+
                         // Introduce a small delay to allow revalidatePath to complete
                         setTimeout(() => {
                           onSuccess?.();

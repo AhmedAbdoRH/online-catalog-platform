@@ -128,6 +128,7 @@ export default function ClientProductPage() {
                 .eq("catalog_id", catalog.id)
                 .eq("category_id", product.category_id)
                 .neq("id", product.id)
+                .order('created_at', { ascending: false })
                 .limit(4);
 
             setData({

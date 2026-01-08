@@ -22,10 +22,11 @@ import Image from 'next/image';
 import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { ItemForm } from './ItemForm';
 import { deleteItem } from '@/app/actions/items';
 import { toast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 type ItemWithCategory = MenuItemWithDetails;
 
@@ -38,14 +39,19 @@ interface ItemsTableProps {
 
 function ItemRow({ item, catalogId, catalogPlan, categories }: { item: ItemWithCategory, catalogId: number, catalogPlan: string, categories: Category[] }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleDelete = async (itemId: number) => {
-    const result = await deleteItem(itemId);
-    if (result.error) {
-      toast({ title: 'خطأ', description: result.error, variant: 'destructive' });
-    } else {
-      toast({ title: 'نجاح', description: 'تم حذف المنتج.' });
-    }
+    startTransition(async () => {
+      const result = await deleteItem(itemId);
+      if (result.error) {
+        toast({ title: 'خطأ', description: result.error, variant: 'destructive' });
+      } else {
+        toast({ title: 'نجاح', description: 'تم حذف المنتج.' });
+        router.refresh();
+      }
+    });
   }
 
   return (
@@ -118,9 +124,13 @@ function ItemRow({ item, catalogId, catalogPlan, categories }: { item: ItemWithC
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>إلغاء</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleDelete(item.id)} className="bg-destructive hover:bg-destructive/90">
-                  نعم، احذف المنتج
+                <AlertDialogCancel disabled={isPending}>إلغاء</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={() => handleDelete(item.id)} 
+                  disabled={isPending}
+                  className="bg-destructive hover:bg-destructive/90"
+                >
+                  {isPending ? 'جاري الحذف...' : 'نعم، احذف المنتج'}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent >

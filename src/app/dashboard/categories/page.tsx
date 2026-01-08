@@ -67,7 +67,7 @@ export default function CategoriesPage() {
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="gap-2 shadow-lg bg-[#FFB300] hover:bg-[#FF9500] text-white border-none font-black text-lg h-14 px-8 rounded-xl transition-all hover:scale-105 active:scale-95">
+                        <Button className="gap-2 shadow-lg bg-amber-500 hover:bg-amber-600 dark:bg-amber-500/20 dark:hover:bg-amber-500/30 text-white dark:text-amber-300 border-none font-black text-lg h-14 px-8 rounded-xl transition-all hover:scale-105 active:scale-95">
                             <PlusCircle className="h-6 w-6 stroke-[3px]" />
                             <span>إضافة تصنيف جديد</span>
                         </Button>
@@ -114,7 +114,13 @@ export default function CategoriesPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="px-0">
-                    {catalog && <CategoriesTable categories={categories} catalogId={catalog.id} />}
+                    {catalog && (
+                        <CategoriesTable 
+                            categories={categories} 
+                            catalogId={catalog.id} 
+                            onSuccess={handleCategorySuccess}
+                        />
+                    )}
                 </CardContent>
             </Card>
             <div className="h-24" /> {/* مسافة إضافية في نهاية الصفحة لتجنب التداخل مع شريط التنقل السفلي */}

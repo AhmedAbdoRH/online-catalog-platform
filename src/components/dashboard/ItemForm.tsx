@@ -210,9 +210,10 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                                  type="button"
                                  onClick={(e) => {
                                    e.preventDefault();
+                                   onSuccess?.();
                                    router.push('/dashboard/categories');
                                  }}
-                                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-200 dark:border-emerald-500/30 rounded-xl transition-all hover:bg-emerald-100 dark:hover:bg-emerald-500/20 hover:border-emerald-300 dark:hover:border-emerald-500/50 group"
+                                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-black text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 border-2 border-emerald-300 dark:border-emerald-500/40 rounded-xl transition-all hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:border-emerald-400 dark:hover:border-emerald-500/60 group"
                                >
                                  <PlusCircle className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
                                  <span>إضافة تصنيف جديد</span>
@@ -254,7 +255,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-bold text-slate-700 dark:text-slate-200 mb-2 block">وصف المنتج</FormLabel>
+                      <FormLabel className="text-base font-bold text-slate-700 dark:text-slate-200 mb-2 block">وصف المنتج (اختياري)</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="اكتب وصفاً جذاباً لمنتجك..." 

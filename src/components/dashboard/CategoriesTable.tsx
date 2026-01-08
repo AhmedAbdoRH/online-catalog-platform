@@ -34,6 +34,7 @@ type CategoryActionsMenuProps = {
   catalogId: number;
   categories: CategoryWithSubcategories[];
   size?: 'icon' | 'default';
+  onSuccess?: () => void;
 };
 
 type CategoryRowProps = {
@@ -42,9 +43,10 @@ type CategoryRowProps = {
   categories: CategoryWithSubcategories[];
   level?: number;
   isLast?: boolean;
+  onSuccess?: () => void;
 };
 
-function CategoryRow({ category, catalogId, categories, level = 0, isLast = false }: CategoryRowProps) {
+function CategoryRow({ category, catalogId, categories, level = 0, isLast = false, onSuccess }: CategoryRowProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isAddSubOpen, setIsAddSubOpen] = useState(false);
   const hasSubcategories = category.subcategories && category.subcategories.length > 0;
@@ -136,7 +138,7 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
               <span className="xs:hidden">فرعي</span>
             </Button>
           )}
-          <CategoryActionsMenu category={category} catalogId={catalogId} categories={categories} size="icon" />
+          <CategoryActionsMenu category={category} catalogId={catalogId} categories={categories} size="icon" onSuccess={onSuccess} />
         </div>
       </div>
 
@@ -152,7 +154,10 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
             catalogId={catalogId}
             categories={categories}
             defaultParentId={category.id}
-            onSuccess={() => setIsAddSubOpen(false)}
+            onSuccess={() => {
+              setIsAddSubOpen(false);
+              onSuccess?.();
+            }}
             onCancel={() => setIsAddSubOpen(false)}
           />
         </DialogContent>
@@ -180,6 +185,7 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
                 categories={categories}
                 level={level + 1}
                 isLast={index === category.subcategories.length - 1}
+                onSuccess={onSuccess}
               />
             ))}
           </motion.div>
@@ -189,7 +195,7 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
   );
 }
 
-function CategoryActionsMenu({ category, catalogId, categories, size = 'default' }: CategoryActionsMenuProps) {
+function CategoryActionsMenu({ category, catalogId, categories, size = 'default', onSuccess }: CategoryActionsMenuProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -202,6 +208,7 @@ function CategoryActionsMenu({ category, catalogId, categories, size = 'default'
       } else {
         toast({ title: 'تم الحذف', description: 'تم حذف التصنيف بنجاح.' });
         setDeleteOpen(false);
+        onSuccess?.();
       }
     });
   };
@@ -254,7 +261,10 @@ function CategoryActionsMenu({ category, catalogId, categories, size = 'default'
             category={category}
             categories={categories}
             hideParentSelection={category.parent_category_id !== null}
-            onSuccess={() => setEditOpen(false)}
+            onSuccess={() => {
+              setEditOpen(false);
+              onSuccess?.();
+            }}
             onCancel={() => setEditOpen(false)}
           />
         </DialogContent>
@@ -284,7 +294,7 @@ function CategoryActionsMenu({ category, catalogId, categories, size = 'default'
   );
 }
 
-export function CategoriesTable({ categories, catalogId }: { categories: CategoryWithSubcategories[]; catalogId: number }) {
+export function CategoriesTable({ categories, catalogId, onSuccess }: { categories: CategoryWithSubcategories[]; catalogId: number; onSuccess?: () => void }) {
   if (categories.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/25 bg-muted/10 py-16 text-center">
@@ -308,6 +318,7 @@ export function CategoriesTable({ categories, catalogId }: { categories: Categor
           catalogId={catalogId}
           categories={categories}
           isLast={index === categories.length - 1}
+          onSuccess={onSuccess}
         />
       ))}
     </div>

@@ -13,7 +13,7 @@ async function getData() {
     if (!catalog) notFound();
 
     const { data: categories } = await supabase.from('categories').select('*').eq('catalog_id', catalog.id);
-    const { data: items } = await supabase.from('menu_items').select('*, categories(name), product_images(*)').eq('catalog_id', catalog.id).order('created_at');
+    const { data: items } = await supabase.from('menu_items').select('*, categories(name), product_images(*)').eq('catalog_id', catalog.id).order('created_at', { ascending: false });
 
     return { catalog, categories: categories || [], items: items || [] };
 }
