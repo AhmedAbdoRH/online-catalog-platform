@@ -11,25 +11,25 @@
     --brand-success: 160 84% 39%; /* #10B981 */
     --brand-error: 0 84% 63%; /* #EF4444 */
 
-    /* Light theme */
-    --background: 165 30% 98%; /* Very light green-ish background */
-    --foreground: 165 60% 10%; /* Very dark green text */
-    --card: 0 0% 100%;
-    --card-foreground: 165 60% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 165 60% 10%;
+    /* Light theme - Adjusted to be Dark as requested */
+    --background: 165 60% 5%; /* Emerald 950 area - Dark Petrol Green */
+    --foreground: 165 20% 98%; /* Light text for readability */
+    --card: 165 50% 8%;
+    --card-foreground: 165 20% 98%;
+    --popover: 165 50% 8%;
+    --popover-foreground: 165 20% 98%;
     --primary: var(--brand-primary);
     --primary-foreground: 0 0% 100%;
-    --secondary: 165 20% 45%;
+    --secondary: 165 30% 20%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 165 30% 95%;
-    --muted-foreground: 165 20% 40%;
+    --muted: 165 30% 15%;
+    --muted-foreground: 165 20% 70%;
     --accent: var(--brand-accent);
     --accent-foreground: 165 60% 10%;
     --destructive: var(--brand-error);
     --destructive-foreground: 0 0% 100%;
-    --border: 165 30% 90%;
-    --input: 165 30% 90%;
+    --border: 165 30% 18%;
+    --input: 165 30% 18%;
     --ring: var(--brand-primary);
     --chart-1: 165 60% 30%;
     --chart-2: 45 100% 50%;

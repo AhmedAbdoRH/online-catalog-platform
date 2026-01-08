@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ItemForm } from './ItemForm';
 import type { Category } from '@/lib/types';
@@ -26,9 +26,12 @@ export function AddItemButton({ catalogId, catalogPlan, categories }: AddItemBut
                     </span>
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-full sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[1000px] max-h-[95vh] overflow-y-auto">
-                <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">إضافة منتج جديد</DialogTitle>
+                    <DialogContent className="max-w-full sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[1000px] max-h-[95vh] overflow-y-auto bg-emerald-950 border-slate-800">
+                        <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold flex items-center gap-2 text-amber-500">
+                        <Sparkles className="h-6 w-6 text-amber-400 animate-pulse" />
+                        إضافة منتج جديد
+                    </DialogTitle>
                     <DialogDescription>
                         املأ تفاصيل المنتج الجديد بدقة ليظهر بشكل جذاب في متجرك.
                     </DialogDescription>
