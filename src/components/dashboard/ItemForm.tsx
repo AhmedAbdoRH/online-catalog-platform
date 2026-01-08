@@ -168,7 +168,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
   };
 
   return (
-    <div className="bg-slate-50/50 dark:bg-slate-900/50 -m-6 p-6 rounded-b-xl transition-colors">
+    <div className="bg-slate-50 dark:bg-slate-900 -m-6 p-6 rounded-b-xl">
       <UpgradeAlert
         open={showUpgradeAlert}
         onOpenChange={setShowUpgradeAlert}
@@ -191,7 +191,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-7 space-y-6">
-              <div className="space-y-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
+              <div className="space-y-4 bg-white dark:bg-slate-800 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                 <FormField
                   control={form.control}
                   name="category_id"
@@ -224,15 +224,13 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                               <SelectItem 
                                 key={category.id} 
                                 value={category.id.toString()} 
-                                className="relative rounded-sm py-3 mb-2 focus:bg-brand-primary focus:text-white cursor-pointer transition-all border border-transparent pr-4 pl-4 overflow-hidden group"
+                                className="relative py-3 mb-2 focus:bg-brand-primary focus:text-white cursor-pointer transition-colors pr-8 pl-4 overflow-hidden group border-b border-slate-100 dark:border-slate-700/50 last:border-0"
                               >
                                 <div className="flex items-center justify-end w-full relative z-10">
                                   <span className="font-bold text-right">{category.name}</span>
                                 </div>
-                                {/* Distinct Background Strip - Sharp Edges */}
-                                 <div className="absolute inset-y-0 right-0 left-0 bg-brand-primary/20 dark:bg-brand-primary/30 rounded-none group-focus:bg-transparent transition-colors" />
-                                 {/* Accent border-strip on the far right - Sharp Edges */}
-                                 <div className="absolute right-0 top-0 bottom-0 w-2 bg-brand-primary" />
+                                {/* Accent border-strip on the far right - Sharp Edges */}
+                                <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-brand-primary opacity-70 group-focus:opacity-100 transition-opacity" />
                               </SelectItem>
                             ))}
                          </SelectContent>
@@ -344,7 +342,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                     )}
                   />
                 ) : (
-                  <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 bg-slate-50/50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 transition-colors">
+                  <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-700">
                     <div className="flex items-center justify-between mb-2">
                       <Label className="text-base font-bold text-slate-700 dark:text-slate-200">خيارات الأسعار</Label>
                       <Button
@@ -393,7 +391,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
             </div>
 
             <div className="lg:col-span-5 space-y-6">
-              <div className="space-y-4 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 p-6 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-sm transition-colors">
+              <div className="space-y-4 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 p-6 bg-white dark:bg-slate-800 backdrop-blur-sm shadow-sm">
                 <FormField
                   control={form.control}
                   name="main_image"
