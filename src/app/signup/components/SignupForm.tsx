@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { Capacitor } from '@capacitor/core';
 import { useToast } from "@/hooks/use-toast";
+import { convertArabicNumerals } from "@/lib/utils";
 
 interface SignupFormProps {
   message: string;
@@ -206,7 +207,7 @@ export function SignupForm({
                 type="email"
                 placeholder="example@email.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(convertArabicNumerals(e.target.value))}
                 required
                 dir="ltr"
               />

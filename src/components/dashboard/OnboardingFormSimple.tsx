@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { checkCatalogName } from '@/app/actions/catalog';
 import { useRouter } from 'next/navigation';
+import { convertArabicNumerals } from '@/lib/utils';
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -164,7 +165,10 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
                   type="tel"
                   placeholder="رقم الواتساب"
                   value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, ''))}
+                  onChange={(e) => {
+                    const converted = convertArabicNumerals(e.target.value);
+                    setPhoneNumber(converted.replace(/[^0-9]/g, ''));
+                  }}
                   className="h-14 md:h-16 pl-10 md:pl-12 border-0 bg-transparent text-white placeholder:text-white/30 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 font-mono text-lg md:text-xl"
                   dir="ltr"
                   required

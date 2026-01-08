@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '../ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import { convertArabicNumerals } from '@/lib/utils';
 import {
   Store,
   Link2,
@@ -134,10 +135,15 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
 
   const handleInputChange = (field: string, value: string | File | null) => {
     setFormData(prev => {
-      const newData = { ...prev, [field]: value };
-
+      let finalValue = value;
       if (field === 'whatsapp_number' && typeof value === 'string') {
-        newData.name = value.replace(/[^\d]/g, '');
+        finalValue = convertArabicNumerals(value);
+      }
+      
+      const newData = { ...prev, [field]: finalValue };
+
+      if (field === 'whatsapp_number' && typeof finalValue === 'string') {
+        newData.name = finalValue.replace(/[^\d]/g, '');
       }
 
       return newData;

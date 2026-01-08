@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation"
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { Capacitor } from '@capacitor/core';
 import { useToast } from "@/hooks/use-toast"
+import { convertArabicNumerals } from "@/lib/utils"
 
 interface LoginFormProps {
   message: string
@@ -218,7 +219,7 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
                 placeholder="you@example.com"
                 className="bg-white text-[#1e3a5f]"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(convertArabicNumerals(e.target.value))}
                 required
               />
             </div>

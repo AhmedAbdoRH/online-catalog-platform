@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useState, Suspense } from 'react';
+import { convertArabicNumerals } from '@/lib/utils';
 
 function VerifyOtpContent() {
     const router = useRouter();
@@ -74,7 +75,7 @@ function VerifyOtpContent() {
                                 maxLength={6}
                                 placeholder="000000"
                                 value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
+                                onChange={(e) => setOtp(convertArabicNumerals(e.target.value))}
                             />
                         </div>
                         <Button type="submit" className="w-full" disabled={loading}>
