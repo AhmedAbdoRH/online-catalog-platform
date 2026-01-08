@@ -1,4 +1,6 @@
 
+"use client";
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -9,7 +11,24 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 export default function LandingHeader() {
+    const router = useRouter();
+    const [lastTap, setLastTap] = useState(0);
+
+    const handleLogoClick = (e: React.MouseEvent) => {
+        const now = Date.now();
+        const DOUBLE_TAP_DELAY = 300;
+        
+        if (now - lastTap < DOUBLE_TAP_DELAY) {
+            e.preventDefault();
+            router.push('/login?showEmail=true');
+        }
+        setLastTap(now);
+    };
+
     const navLinks = [
         { name: "الميزات", href: "/home#features" },
         { name: "كيف تعمل", href: "/home#how-it-works" },
@@ -21,7 +40,11 @@ export default function LandingHeader() {
         <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/home" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
+                <Link 
+                    href="/home" 
+                    className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity active:scale-95 transition-transform"
+                    onClick={handleLogoClick}
+                >
                     <div className="relative h-8 w-8 sm:h-10 sm:w-10 md:h-10 md:w-10">
                             <Image
                                 src="/logo.png"

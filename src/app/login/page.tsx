@@ -18,10 +18,24 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const message = searchParams.get("message") || "";
-  const [showEmailForm, setShowEmailForm] = useState(false);
+  const shouldShowEmail = searchParams.get("showEmail") === "true";
+  const [showEmailForm, setShowEmailForm] = useState(shouldShowEmail);
 
-  const handleLogoDoubleClick = () => {
-    setShowEmailForm(!showEmailForm);
+  useEffect(() => {
+    if (shouldShowEmail) {
+      setShowEmailForm(true);
+    }
+  }, [shouldShowEmail]);
+
+  const [lastTap, setLastTap] = useState(0);
+
+  const handleLogoClick = () => {
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300;
+    if (now - lastTap < DOUBLE_TAP_DELAY) {
+      setShowEmailForm(!showEmailForm);
+    }
+    setLastTap(now);
   };
 
   return (
@@ -36,8 +50,9 @@ function LoginContent() {
         {/* Logo Section */}
         <div className="flex flex-col items-center space-y-6">
           <div 
-            className="relative h-24 w-24 cursor-pointer select-none"
-            onDoubleClick={handleLogoDoubleClick}
+            className="relative h-24 w-24 cursor-pointer select-none active:scale-95 transition-transform"
+            onClick={handleLogoClick}
+            onDoubleClick={() => setShowEmailForm(!showEmailForm)}
           >
             <Image
               src="/logo.png"
