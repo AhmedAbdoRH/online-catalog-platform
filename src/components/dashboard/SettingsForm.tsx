@@ -29,6 +29,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import type { Catalog } from '@/lib/types';
 import NextImage from 'next/image';
+import { Capacitor } from '@capacitor/core';
 import { Loader2, Lock, Check, Crown, Palette, Sparkles, MessageCircle, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Switch } from '../ui/switch';
 
@@ -78,6 +79,19 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
   const [selectedTheme, setSelectedTheme] = useState(catalog.theme || 'default');
   const [hideFooter, setHideFooter] = useState(catalog.hide_footer || false);
   const [showAllThemes, setShowAllThemes] = useState(false);
+
+  const requestPermissions = async () => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        console.log('Requesting permissions on native platform...');
+        if ((Capacitor as any).Plugins?.Permissions) {
+           await (Capacitor as any).Plugins.Permissions.request({ name: 'photos' });
+        }
+      } catch (err) {
+        console.warn('Permission request failed or not supported:', err);
+      }
+    }
+  };
 
   useEffect(() => {
     // Show tooltips only if BOTH are missing
@@ -239,7 +253,10 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
               name="cover"
               accept="image/*"
                 className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-50 pointer-events-auto p-0 border-0 rounded-none"
-                onClick={() => console.log('SettingsForm: cover input clicked')}
+                onClick={async (e) => {
+                  console.log('SettingsForm: cover input clicked');
+                  await requestPermissions();
+                }}
                 onChange={handleCoverChange}
             />
           </div>
@@ -301,13 +318,16 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
               </div>
 
               <Input
-                type="file"
-                name="logo"
-                accept="image/*"
-                className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-[70] pointer-events-auto p-0 border-0 rounded-full"
-                onClick={() => console.log('SettingsForm: logo input clicked')}
-                onChange={handleLogoChange}
-              />
+                              type="file"
+                              name="logo"
+                              accept="image/*"
+                              className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-[70] pointer-events-auto p-0 border-0 rounded-full"
+                              onClick={async (e) => {
+                                console.log('SettingsForm: logo input clicked');
+                                await requestPermissions();
+                              }}
+                              onChange={handleLogoChange}
+                            />
             </div>
           </div>
         </div>
