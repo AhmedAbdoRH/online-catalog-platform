@@ -417,11 +417,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             className="hidden"
                             accept="image/*"
                             onChange={async (e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                const compressedFile = await compressImage(file);
-                                onChange(compressedFile);
-                              }
+                            onChange(e.target.files?.[0]);
                             }}
                             {...rest}
                           />
@@ -496,10 +492,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             multiple
                             onChange={async (e) => {
                               const files = Array.from(e.target.files || []);
-                              const compressedFiles = await Promise.all(
-                                files.map(file => compressImage(file))
-                              );
-                              onChange([...(value || []), ...compressedFiles]);
+                              onChange([...(value || []), ...files]);
                             }}
                             {...rest}
                           />
