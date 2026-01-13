@@ -125,15 +125,36 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
 
       formData.append('category_id', values.category_id);
 
+      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
       if (values.main_image) {
         console.log('Main image details:', { name: values.main_image.name, size: values.main_image.size, type: values.main_image.type });
         try {
           console.log('Compressing main image...');
           const compressedMain = await compressImage(values.main_image);
-          console.log('Main image compressed successfully, size:', compressedMain.size);
+          console.log('Main image compression result:', { size: compressedMain.size, type: compressedMain.type });
+
+          if (compressedMain.size > MAX_FILE_SIZE) {
+            toast({
+              title: "حجم الصورة كبير جداً",
+              description: "تعذر ضغط الصورة الأساسية لحجم مقبول (أقل من 5 ميجابايت). حاول اختيار صورة أصغر.",
+              variant: "destructive",
+            });
+            return;
+          }
+
           formData.append('images', compressedMain, compressedMain.name);
         } catch (compError) {
-          console.error('Main image compression failed, using original:', compError);
+          console.error('Main image compression failed:', compError);
+          // Fallback to original, but check size
+          if (values.main_image.size > MAX_FILE_SIZE) {
+            toast({
+              title: "حجم الصورة كبير جداً",
+              description: "حدث خطأ أثناء ضغط الصورة، والصورة الأصلية أكبر من 5 ميجابايت.",
+              variant: "destructive",
+            });
+            return;
+          }
           formData.append('images', values.main_image);
         }
       }
@@ -143,11 +164,29 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
         for (let i = 0; i < values.additional_images.length; i++) {
           const img = values.additional_images[i];
           try {
-            console.log(`Compressing additional image ${i+1}...`);
+            console.log(`Compressing additional image ${i + 1}...`);
             const compressedImg = await compressImage(img);
+
+            if (compressedImg.size > MAX_FILE_SIZE) {
+              toast({
+                title: "حجم الصورة كبير جداً",
+                description: `تعذر ضغط الصورة رقم ${i + 1} لحجم مقبول.`,
+                variant: "destructive",
+              });
+              return;
+            }
+
             formData.append('images', compressedImg, compressedImg.name);
           } catch (compError) {
-            console.error(`Additional image ${i+1} compression failed, using original:`, compError);
+            console.error(`Additional image ${i + 1} compression failed:`, compError);
+            if (img.size > MAX_FILE_SIZE) {
+              toast({
+                title: "حجم الصورة كبير جداً",
+                description: `الصورة رقم ${i + 1} كبيرة جداً وتعذر ضغطها.`,
+                variant: "destructive",
+              });
+              return;
+            }
             formData.append('images', img);
           }
         }
@@ -187,9 +226,9 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
         resourceType="product"
       />
       <Form {...form}>
-        <form 
+        <form
           onSubmit={form.handleSubmit(
-            onSubmit, 
+            onSubmit,
             (errors) => {
               console.log('--- Form Validation Errors ---', errors);
               toast({
@@ -198,7 +237,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                 variant: 'destructive'
               });
             }
-          )} 
+          )}
           className="space-y-6"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -217,34 +256,34 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="rounded-xl border-slate-700 bg-slate-800 text-right">
-                           <div className="p-2 sticky top-0 z-20 bg-slate-800 border-b border-slate-700">
-                               <button
-                                 type="button"
-                                 onClick={(e) => {
-                                   e.preventDefault();
-                                   onSuccess?.();
-                                   router.push('/dashboard/categories');
-                                 }}
-                                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-black text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 border-2 border-emerald-300 dark:border-emerald-500/40 rounded-xl transition-all hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:border-emerald-400 dark:hover:bg-emerald-500/60 group"
-                               >
-                                 <PlusCircle className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
-                                 <span>إضافة تصنيف جديد</span>
-                               </button>
-                             </div>
-  
-                            {categories.map((category) => (
-                              <SelectItem 
-                                key={category.id} 
-                                value={category.id.toString()} 
-                                className="relative py-3 mb-2 focus:bg-brand-primary focus:text-white cursor-pointer transition-colors pr-8 pl-4 group border-r-4 border-brand-primary bg-brand-primary/5 dark:bg-brand-primary/10"
-                              >
-                                <span className="font-bold text-right block w-full">{category.name}</span>
-                              </SelectItem>
-                            ))}
-                         </SelectContent>
-                       </Select>
-                       <FormMessage />
-                     </FormItem>
+                          <div className="p-2 sticky top-0 z-20 bg-slate-800 border-b border-slate-700">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                onSuccess?.();
+                                router.push('/dashboard/categories');
+                              }}
+                              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-black text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 border-2 border-emerald-300 dark:border-emerald-500/40 rounded-xl transition-all hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:border-emerald-400 dark:hover:bg-emerald-500/60 group"
+                            >
+                              <PlusCircle className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
+                              <span>إضافة تصنيف جديد</span>
+                            </button>
+                          </div>
+
+                          {categories.map((category) => (
+                            <SelectItem
+                              key={category.id}
+                              value={category.id.toString()}
+                              className="relative py-3 mb-2 focus:bg-brand-primary focus:text-white cursor-pointer transition-colors pr-8 pl-4 group border-r-4 border-brand-primary bg-brand-primary/5 dark:bg-brand-primary/10"
+                            >
+                              <span className="font-bold text-right block w-full">{category.name}</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
                   )}
                 />
 
@@ -255,9 +294,9 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                     <FormItem>
                       <FormLabel className="text-base font-bold text-slate-200 mb-2 block">اسم المنتج</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="مثلاً: برجر كلاسيك" 
-                          {...field} 
+                        <Input
+                          placeholder="مثلاً: برجر كلاسيك"
+                          {...field}
                           className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl text-white"
                         />
                       </FormControl>
@@ -273,10 +312,10 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                     <FormItem>
                       <FormLabel className="text-base font-bold text-slate-200 mb-2 block">وصف المنتج (اختياري)</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="اكتب وصفاً جذاباً لمنتجك..." 
+                        <Textarea
+                          placeholder="اكتب وصفاً جذاباً لمنتجك..."
                           className="min-h-[120px] bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl resize-none text-white"
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -333,11 +372,11 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                         <FormLabel className="text-base font-bold text-slate-200 mb-2 block">السعر</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <Input 
-                              type="number" 
-                              step="0.01" 
-                              placeholder="0.00" 
-                              {...field} 
+                            <Input
+                              type="number"
+                              step="0.01"
+                              placeholder="0.00"
+                              {...field}
                               className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl pl-12 text-white"
                             />
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-500">
@@ -417,7 +456,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             className="hidden"
                             accept="image/*"
                             onChange={async (e) => {
-                            onChange(e.target.files?.[0]);
+                              onChange(e.target.files?.[0]);
                             }}
                             {...rest}
                           />
@@ -533,8 +572,8 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                   {item ? <PlusCircle className="h-5 w-5" /> : <Plus className="h-6 w-6" />}
-                   <span>{item ? 'تحديث المنتج' : 'إضافة المنتج'}</span>
+                  {item ? <PlusCircle className="h-5 w-5" /> : <Plus className="h-6 w-6" />}
+                  <span>{item ? 'تحديث المنتج' : 'إضافة المنتج'}</span>
                 </div>
               )}
             </Button>
