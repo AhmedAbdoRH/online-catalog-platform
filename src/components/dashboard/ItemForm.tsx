@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Capacitor } from '@capacitor/core';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Plus, Trash2, Image as ImageIcon, PlusCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -105,48 +104,6 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
 
   const pricingType = form.watch('pricing_type');
 
-  const requestPermissions = async () => {
-    if (Capacitor.isNativePlatform()) {
-      try {
-        await Camera.requestPermissions();
-      } catch (err) {
-        console.warn('Permission request failed or not supported:', err);
-      }
-    }
-  };
-
-  const dataURLtoFile = (dataurl: string, filename: string) => {
-    const arr = dataurl.split(',');
-    const mime = arr[0].match(/:(.*?);/)?.[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-  };
-
-  const pickImage = async (onImageSelect: (file: File) => void) => {
-    if (Capacitor.isNativePlatform()) {
-      try {
-        const image = await Camera.getPhoto({
-          quality: 90,
-          allowEditing: false,
-          resultType: CameraResultType.DataUrl,
-          source: CameraSource.Photos
-        });
-
-        if (image.dataUrl) {
-          const file = dataURLtoFile(image.dataUrl, `product_${Date.now()}.jpg`);
-          onImageSelect(file);
-        }
-      } catch (err) {
-        console.error('Error picking image:', err);
-      }
-    }
-  };
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       console.log('Form validated values:', values);
@@ -186,11 +143,11 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
         for (let i = 0; i < values.additional_images.length; i++) {
           const img = values.additional_images[i];
           try {
-            console.log(`Compressing additional image ${i + 1}...`);
+            console.log(`Compressing additional image ${i+1}...`);
             const compressedImg = await compressImage(img);
             formData.append('images', compressedImg, compressedImg.name);
           } catch (compError) {
-            console.error(`Additional image ${i + 1} compression failed, using original:`, compError);
+            console.error(`Additional image ${i+1} compression failed, using original:`, compError);
             formData.append('images', img);
           }
         }
@@ -230,9 +187,9 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
         resourceType="product"
       />
       <Form {...form}>
-        <form
+        <form 
           onSubmit={form.handleSubmit(
-            onSubmit,
+            onSubmit, 
             (errors) => {
               console.log('--- Form Validation Errors ---', errors);
               toast({
@@ -241,7 +198,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                 variant: 'destructive'
               });
             }
-          )}
+          )} 
           className="space-y-6"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -260,34 +217,34 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="rounded-xl border-slate-700 bg-slate-800 text-right">
-                          <div className="p-2 sticky top-0 z-20 bg-slate-800 border-b border-slate-700">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                onSuccess?.();
-                                router.push('/dashboard/categories');
-                              }}
-                              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-black text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 border-2 border-emerald-300 dark:border-emerald-500/40 rounded-xl transition-all hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:border-emerald-400 dark:hover:bg-emerald-500/60 group"
-                            >
-                              <PlusCircle className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
-                              <span>إضافة تصنيف جديد</span>
-                            </button>
-                          </div>
-
-                          {categories.map((category) => (
-                            <SelectItem
-                              key={category.id}
-                              value={category.id.toString()}
-                              className="relative py-3 mb-2 focus:bg-brand-primary focus:text-white cursor-pointer transition-colors pr-8 pl-4 group border-r-4 border-brand-primary bg-brand-primary/5 dark:bg-brand-primary/10"
-                            >
-                              <span className="font-bold text-right block w-full">{category.name}</span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
+                           <div className="p-2 sticky top-0 z-20 bg-slate-800 border-b border-slate-700">
+                               <button
+                                 type="button"
+                                 onClick={(e) => {
+                                   e.preventDefault();
+                                   onSuccess?.();
+                                   router.push('/dashboard/categories');
+                                 }}
+                                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-black text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 border-2 border-emerald-300 dark:border-emerald-500/40 rounded-xl transition-all hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:border-emerald-400 dark:hover:bg-emerald-500/60 group"
+                               >
+                                 <PlusCircle className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
+                                 <span>إضافة تصنيف جديد</span>
+                               </button>
+                             </div>
+  
+                            {categories.map((category) => (
+                              <SelectItem 
+                                key={category.id} 
+                                value={category.id.toString()} 
+                                className="relative py-3 mb-2 focus:bg-brand-primary focus:text-white cursor-pointer transition-colors pr-8 pl-4 group border-r-4 border-brand-primary bg-brand-primary/5 dark:bg-brand-primary/10"
+                              >
+                                <span className="font-bold text-right block w-full">{category.name}</span>
+                              </SelectItem>
+                            ))}
+                         </SelectContent>
+                       </Select>
+                       <FormMessage />
+                     </FormItem>
                   )}
                 />
 
@@ -298,9 +255,9 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                     <FormItem>
                       <FormLabel className="text-base font-bold text-slate-200 mb-2 block">اسم المنتج</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="مثلاً: برجر كلاسيك"
-                          {...field}
+                        <Input 
+                          placeholder="مثلاً: برجر كلاسيك" 
+                          {...field} 
                           className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl text-white"
                         />
                       </FormControl>
@@ -316,10 +273,10 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                     <FormItem>
                       <FormLabel className="text-base font-bold text-slate-200 mb-2 block">وصف المنتج (اختياري)</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="اكتب وصفاً جذاباً لمنتجك..."
+                        <Textarea 
+                          placeholder="اكتب وصفاً جذاباً لمنتجك..." 
                           className="min-h-[120px] bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl resize-none text-white"
-                          {...field}
+                          {...field} 
                         />
                       </FormControl>
                       <FormMessage />
@@ -376,11 +333,11 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                         <FormLabel className="text-base font-bold text-slate-200 mb-2 block">السعر</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              {...field}
+                            <Input 
+                              type="number" 
+                              step="0.01" 
+                              placeholder="0.00" 
+                              {...field} 
                               className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl pl-12 text-white"
                             />
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-500">
@@ -469,18 +426,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             {...rest}
                           />
                           <label
-                            htmlFor={Capacitor.isNativePlatform() ? undefined : "main-image-upload"}
-                            onClick={async (e) => {
-                              if (Capacitor.isNativePlatform()) {
-                                e.preventDefault();
-                                await pickImage(async (file) => {
-                                  const compressedFile = await compressImage(file);
-                                  onChange(compressedFile);
-                                });
-                              } else {
-                                await requestPermissions();
-                              }
-                            }}
+                            htmlFor="main-image-upload"
                             className="flex flex-col items-center justify-center w-full aspect-square rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-brand-primary/40 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all cursor-pointer group relative overflow-hidden"
                           >
                             {value ? (
@@ -558,18 +504,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             {...rest}
                           />
                           <label
-                            htmlFor={Capacitor.isNativePlatform() ? undefined : "additional-images-upload"}
-                            onClick={async (e) => {
-                              if (Capacitor.isNativePlatform()) {
-                                e.preventDefault();
-                                await pickImage(async (file) => {
-                                  const compressedFile = await compressImage(file);
-                                  onChange([...(value || []), compressedFile]);
-                                });
-                              } else {
-                                await requestPermissions();
-                              }
-                            }}
+                            htmlFor="additional-images-upload"
                             className="flex flex-col items-center justify-center aspect-square rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-brand-primary/40 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all cursor-pointer group"
                           >
                             <Plus className="h-6 w-6 text-slate-300 dark:text-slate-600 group-hover:text-brand-primary transition-colors" />
@@ -605,8 +540,8 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  {item ? <PlusCircle className="h-5 w-5" /> : <Plus className="h-6 w-6" />}
-                  <span>{item ? 'تحديث المنتج' : 'إضافة المنتج'}</span>
+                   {item ? <PlusCircle className="h-5 w-5" /> : <Plus className="h-6 w-6" />}
+                   <span>{item ? 'تحديث المنتج' : 'إضافة المنتج'}</span>
                 </div>
               )}
             </Button>
