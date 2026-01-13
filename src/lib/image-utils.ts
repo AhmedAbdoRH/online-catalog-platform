@@ -10,11 +10,16 @@ export async function compressImage(file: File): Promise<File> {
     initialQuality: 0.8,
   };
 
+  if (!file || (typeof file.size !== 'number') || file.size === 0) {
+    console.warn('Invalid file passed to compressImage', file);
+    return file;
+  }
+
   try {
     const compressedBlob = await imageCompression(file, options);
 
     // Construct new filename
-    const baseName = file.name.replace(/\.[^/.]+$/, "");
+    const baseName = file.name ? file.name.replace(/\.[^/.]+$/, "") : "image";
     const newFileName = `${baseName}.jpg`;
 
     return new File([compressedBlob], newFileName, {

@@ -39,13 +39,18 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
+// Custom file validator to handle Android/Capacitor file objects
+const fileSchema = z.custom<File>((val) => {
+  return val instanceof File || val instanceof Blob || (typeof val === 'object' && val !== null && 'size' in val && 'type' in val);
+}, "الملف غير صالح");
+
 const formSchema = z.object({
   name: z.string().min(2, 'الاسم مطلوب').max(100),
   description: z.string().max(255).optional().or(z.literal('')),
   price: z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً').optional().or(z.literal(undefined)),
   category_id: z.string().min(1, 'التصنيف مطلوب'),
-  main_image: z.instanceof(File).optional(),
-  additional_images: z.array(z.instanceof(File))
+  main_image: fileSchema.optional(),
+  additional_images: z.array(fileSchema)
     .optional()
     .or(z.literal(undefined)),
   pricing_type: z.enum(['unified', 'multi']).default('unified'),
@@ -454,7 +459,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             type="file"
                             id="main-image-upload"
                             className="hidden"
-                            accept="image/*"
+                            accept="image/jpeg,image/png,image/jpg,image/webp"
                             onChange={async (e) => {
                               onChange(e.target.files?.[0]);
                             }}
@@ -527,7 +532,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             type="file"
                             id="additional-images-upload"
                             className="hidden"
-                            accept="image/*"
+                            accept="image/jpeg,image/png,image/jpg,image/webp"
                             multiple
                             onChange={async (e) => {
                               const files = Array.from(e.target.files || []);
