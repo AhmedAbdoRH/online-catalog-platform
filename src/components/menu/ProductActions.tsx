@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ItemVariant } from "@/lib/types";
@@ -15,6 +15,7 @@ interface ProductActionsProps {
     catalogPhone: string | null;
     productUrl: string;
     themeClass?: string;
+    countryCode?: string | null;
 }
 
 export function ProductActions({
@@ -24,7 +25,8 @@ export function ProductActions({
     catalogName,
     catalogPhone,
     productUrl,
-    themeClass
+    themeClass,
+    countryCode
 }: ProductActionsProps) {
     // Sort variants by price just in case
     const sortedVariants = [...variants].sort((a, b) => a.price - b.price);
@@ -37,13 +39,8 @@ export function ProductActions({
     const currentPrice = selectedVariant ? selectedVariant.price : basePrice;
 
     // Formatting price
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('en-EG', {
-            style: 'decimal',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2,
-        }).format(price);
-    };
+    // formatPrice moved to @/lib/utils.ts
+
 
     // WhatsApp logic
     const getWhatsAppLink = () => {
@@ -54,8 +51,9 @@ export function ProductActions({
             message += ` (${selectedVariant.name})`;
         }
         message += ` من ${catalogName}`;
-        message += `.\nالسعر: ${currentPrice} ج.م`;
+        message += `.\nالسعر: ${formatPrice(currentPrice, countryCode)}`;
         message += `\nالتفاصيل: ${productUrl}`;
+
 
         const encodedMessage = encodeURIComponent(message);
         const cleanPhone = catalogPhone.replace(/[^\d]/g, '');
@@ -71,8 +69,9 @@ export function ProductActions({
             <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">السعر</span>
                 <span className="font-semibold text-brand-primary text-xl">
-                    {formatPrice(currentPrice)} <span className="text-sm font-normal text-muted-foreground">ج.م</span>
+                    {formatPrice(currentPrice, countryCode)}
                 </span>
+
             </div>
         );
     };

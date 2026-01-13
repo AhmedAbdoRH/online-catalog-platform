@@ -27,9 +27,16 @@ export function AutoCatalogCreator({
         const formData = new FormData();
         formData.append('display_name', displayName);
         formData.append('name', slug);
-        formData.append('whatsapp_number', whatsapp);
+        // Extract country code if present, otherwise default to +20
+        let countryCode = '+20';
+        if (whatsapp.startsWith('+966')) countryCode = '+966';
+        else if (whatsapp.startsWith('+971')) countryCode = '+971';
+        else if (whatsapp.startsWith('+212')) countryCode = '+212';
+        else if (whatsapp.startsWith('+20')) countryCode = '+20';
 
-        // Use +20 as default if not in whatsapp
+        formData.append('country_code', countryCode);
+
+        // Ensure whatsapp starts with +
         if (!whatsapp.startsWith('+')) {
             formData.set('whatsapp_number', '+20' + whatsapp);
         }
@@ -71,7 +78,7 @@ export function AutoCatalogCreator({
 
     if (showForm && !isCreating) {
         return (
-            <OnboardingFormSimple 
+            <OnboardingFormSimple
                 onSubmit={(data) => handleCreateCatalog(data.displayName, data.slug, data.whatsapp)}
                 isSubmitting={isCreating}
             />

@@ -33,6 +33,13 @@ import { Capacitor } from '@capacitor/core';
 import { Loader2, Lock, Check, Crown, Palette, Sparkles, MessageCircle, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Switch } from '../ui/switch';
 
+const countries = [
+  { code: '+20', name: 'مصر', flag: '🇪🇬' },
+  { code: '+966', name: 'السعودية', flag: '🇸🇦' },
+  { code: '+971', name: 'الإمارات', flag: '🇦🇪' },
+  { code: '+212', name: 'المغرب', flag: '🇲🇦' },
+];
+
 const THEME_OPTIONS = [
   { id: 'default', name: 'الافتراضي', gradient: 'bg-gradient-default' },
   { id: 'gradient-1', name: 'بنفسجي', gradient: 'bg-gradient-1' },
@@ -62,6 +69,7 @@ const formSchema = z.object({
     "رقم الواتساب غير صالح"
   ),
   theme: z.string().optional(),
+  country_code: z.string().optional(),
 });
 
 export function SettingsForm({ catalog }: { catalog: Catalog }) {
@@ -85,7 +93,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
       try {
         console.log('Requesting permissions on native platform...');
         if ((Capacitor as any).Plugins?.Permissions) {
-           await (Capacitor as any).Plugins.Permissions.request({ name: 'photos' });
+          await (Capacitor as any).Plugins.Permissions.request({ name: 'photos' });
         }
       } catch (err) {
         console.warn('Permission request failed or not supported:', err);
@@ -121,8 +129,9 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
       name: catalog.name,
       display_name: catalog.display_name || catalog.name,
       slogan: catalog.slogan || '',
-      whatsapp_number: catalog.whatsapp_number || '',
+      whatsapp_number: catalog.whatsapp_number?.replace(catalog.country_code || '+20', '') || '',
       theme: catalog.theme || 'default',
+      country_code: catalog.country_code || '+20',
     },
   });
 
@@ -136,10 +145,10 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
         setLogoPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
-      
+
       // Auto-submit after state updates
       setTimeout(() => {
-        form.handleSubmit((values) => onSubmit(values, file, coverFile))();
+        form.handleSubmit((values) => onSubmit(values, undefined, file, coverFile))();
       }, 100);
     }
   };
@@ -157,12 +166,12 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
 
       // Auto-submit after state updates
       setTimeout(() => {
-        form.handleSubmit((values) => onSubmit(values, logoFile, file))();
+        form.handleSubmit((values) => onSubmit(values, undefined, logoFile, file))();
       }, 100);
     }
   };
 
-  const onSubmit = async (values: z.infer<typeof formSchema>, manualLogo?: File | null, manualCover?: File | null) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>, event?: any, manualLogo?: File | null, manualCover?: File | null) => {
     setIsSubmitting(true);
 
     try {
@@ -172,7 +181,8 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
       formData.append('display_name', values.display_name);
       formData.append('slogan', values.slogan || '');
 
-      formData.append('whatsapp_number', values.whatsapp_number || '');
+      formData.append('whatsapp_number', (values.country_code || '+20') + values.whatsapp_number);
+      formData.append('country_code', values.country_code || '+20');
       formData.append('theme', selectedTheme);
       formData.append('hide_footer', hideFooter.toString());
 
@@ -252,12 +262,12 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
               type="file"
               name="cover"
               accept="image/*"
-                className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-50 pointer-events-auto p-0 border-0 rounded-none"
-                onClick={async (e) => {
-                  console.log('SettingsForm: cover input clicked');
-                  await requestPermissions();
-                }}
-                onChange={handleCoverChange}
+              className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-50 pointer-events-auto p-0 border-0 rounded-none"
+              onClick={async (e) => {
+                console.log('SettingsForm: cover input clicked');
+                await requestPermissions();
+              }}
+              onChange={handleCoverChange}
             />
           </div>
 
@@ -267,10 +277,10 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
               {showTooltips && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                  animate={{ 
+                  animate={{
                     opacity: 1,
                     scale: 1,
-                    y: 0 
+                    y: 0
                   }}
                   exit={{ opacity: 0, scale: 0.8, y: 10 }}
                   transition={{
@@ -283,14 +293,14 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                       <Camera className="h-5 w-5 shrink-0" />
                       <p className="text-sm font-black leading-tight">أضف شعار / غلاف لمتجرك</p>
                     </div>
-                    
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); dismissTooltips(); }} 
+
+                    <button
+                      onClick={(e) => { e.stopPropagation(); dismissTooltips(); }}
                       className="absolute -top-2 -right-2 bg-red-500 border border-white/40 p-1.5 hover:bg-red-600 rounded-full transition-colors shadow-lg pointer-events-auto"
                     >
                       <X className="h-3.5 w-3.5 text-white" />
                     </button>
-                    
+
                     {/* Arrow */}
                     <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-brand-primary rotate-45 border-r border-b border-white/20" />
                   </div>
@@ -318,16 +328,16 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
               </div>
 
               <Input
-                              type="file"
-                              name="logo"
-                              accept="image/*"
-                              className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-[70] pointer-events-auto p-0 border-0 rounded-full"
-                              onClick={async (e) => {
-                                console.log('SettingsForm: logo input clicked');
-                                await requestPermissions();
-                              }}
-                              onChange={handleLogoChange}
-                            />
+                type="file"
+                name="logo"
+                accept="image/*"
+                className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-[70] pointer-events-auto p-0 border-0 rounded-full"
+                onClick={async (e) => {
+                  console.log('SettingsForm: logo input clicked');
+                  await requestPermissions();
+                }}
+                onChange={handleLogoChange}
+              />
             </div>
           </div>
         </div>
@@ -344,6 +354,44 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                 </FormControl>
                 <FormDescription>
                   سيظهر هذا الاسم في واجهة المتجر الخاصة بك.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="whatsapp_number"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>رقم الواتساب</FormLabel>
+                <div className="flex gap-2" dir="ltr">
+                  <div className="relative">
+                    <select
+                      value={form.watch('country_code')}
+                      onChange={(e) => form.setValue('country_code', e.target.value)}
+                      className="h-12 bg-white border-2 border-slate-200 rounded-xl px-4 appearance-none focus:outline-none focus:border-brand-primary font-bold text-slate-700 min-w-[100px] text-center"
+                    >
+                      {countries.map((c) => (
+                        <option key={c.code} value={c.code}>
+                          {c.flag} {c.code}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                  </div>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isSubmitting}
+                      placeholder="رقم الواتساب بدون كود الدولة"
+                      className="bg-white text-[#1e3a5f] text-lg flex-1 h-12"
+                    />
+                  </FormControl>
+                </div>
+                <FormDescription>
+                  سيتم توجيه طلبات العملاء إلى هذا الرقم. العملة ستتغير تلقائياً حسب كود الدولة المختار.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -560,7 +608,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
               );
             })}
           </div>
-          
+
           <Button
             type="button"
             variant="ghost"

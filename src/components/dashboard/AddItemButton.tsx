@@ -11,9 +11,10 @@ interface AddItemButtonProps {
     catalogId: number;
     catalogPlan: string;
     categories: Category[];
+    countryCode?: string | null;
 }
 
-export function AddItemButton({ catalogId, catalogPlan, categories }: AddItemButtonProps) {
+export function AddItemButton({ catalogId, catalogPlan, categories, countryCode }: AddItemButtonProps) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -26,8 +27,8 @@ export function AddItemButton({ catalogId, catalogPlan, categories }: AddItemBut
                     </span>
                 </Button>
             </DialogTrigger>
-                    <DialogContent className="max-w-full sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[1000px] max-h-[95vh] overflow-y-auto bg-emerald-950 border-slate-800">
-                        <DialogHeader>
+            <DialogContent className="max-w-full sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[1000px] max-h-[95vh] overflow-y-auto bg-emerald-950 border-slate-800">
+                <DialogHeader>
                     <DialogTitle className="text-2xl font-bold flex items-center gap-2 text-amber-500">
                         <Sparkles className="h-6 w-6 text-amber-400 animate-pulse" />
                         إضافة منتج جديد
@@ -38,11 +39,13 @@ export function AddItemButton({ catalogId, catalogPlan, categories }: AddItemBut
                 </DialogHeader>
                 <ItemForm
                     catalogId={catalogId}
-                    catalogPlan={catalogPlan}
+                    isPro={catalogPlan === 'pro' || catalogPlan === 'business'}
                     categories={categories}
+                    countryCode={countryCode}
                     onSuccess={() => setOpen(false)}
                     onCancel={() => setOpen(false)}
                 />
+
             </DialogContent>
         </Dialog>
     );

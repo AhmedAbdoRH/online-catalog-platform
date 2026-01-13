@@ -83,9 +83,10 @@ interface ItemFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
   isPro?: boolean;
+  countryCode?: string | null;
 }
 
-export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isPro = false }: ItemFormProps) {
+export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isPro = false, countryCode }: ItemFormProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [showUpgradeAlert, setShowUpgradeAlert] = useState(false);
@@ -404,8 +405,9 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                               className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl pl-12 text-white"
                             />
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-500">
-                              ج.م
+                              {countryCode === '+966' ? 'ر.س' : 'ج.م'}
                             </div>
+
                           </div>
                         </FormControl>
                         <FormMessage />

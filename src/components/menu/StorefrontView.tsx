@@ -29,7 +29,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useOnClickOutside } from '@/hooks/use-click-outside';
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { CartProvider } from '@/components/cart/CartContext';
 import { useCart } from '@/components/cart/CartContext';
 import { CartDrawer } from '@/components/cart/CartDrawer';
@@ -99,15 +99,8 @@ function flattenMenuItems(categories: CategoryWithSubcategories[]): MenuItem[] {
   return items;
 }
 
-function formatPrice(value: MenuItem["price"]) {
-  if (value === null || value === undefined) return "—";
-  const numeric = typeof value === "number" ? value : Number(value);
-  if (Number.isNaN(numeric)) return `${value}`;
-  return `${numeric.toLocaleString("en-US", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  })} EGP`;
-}
+// Local formatPrice removed in favor of global helper in @/lib/utils.ts
+
 
 function isNewItem(item: MenuItem) {
   if (!item.created_at) return false;
@@ -132,6 +125,7 @@ type MenuItemCardProps = {
   viewMode: ViewMode;
   index: number;
   theme?: string | null;
+  countryCode?: string | null;
 };
 
 // Get card colors based on theme
@@ -150,7 +144,7 @@ const getCardColors = (theme?: string | null) => {
   }
 };
 
-function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme }: MenuItemCardProps) {
+function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme, countryCode }: MenuItemCardProps) {
   const href = `/${catalogName}/item/${item.id}`;
   const isCompact = viewMode === "compact";
   const isList = viewMode === "list";
@@ -233,7 +227,7 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme 
             )}
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-[18px] font-black text-brand-primary">{formatPrice(item.price)}</p>
+            <p className="text-[18px] font-black text-brand-primary">{formatPrice(item.price, countryCode)}</p>
           </div>
         </div>
       </Link>
@@ -678,6 +672,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                         viewMode={viewMode}
                         index={index % cardLiftSteps.length}
                         theme={luxeCatalog.theme}
+                        countryCode={catalog.country_code}
                       />
                     ))
                   ) : (
@@ -701,6 +696,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                       viewMode={viewMode}
                       index={index % cardLiftSteps.length}
                       theme={luxeCatalog.theme}
+                      countryCode={catalog.country_code}
                     />
                   ))}
                 </div>
@@ -752,6 +748,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                                 categoryName={category.name}
                                 viewMode={viewMode}
                                 index={itemIndex}
+                                countryCode={catalog.country_code}
                               />
                             ))
                             : []}
@@ -807,6 +804,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                                         categoryName={sub.name}
                                         viewMode={viewMode}
                                         index={itemIndex}
+                                        countryCode={catalog.country_code}
                                       />
                                     ))}
                                   </div>

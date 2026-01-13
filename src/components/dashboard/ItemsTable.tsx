@@ -11,6 +11,8 @@ import {
 import type { Category, MenuItemWithDetails } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
+import { formatPrice } from '@/lib/utils';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,9 +37,11 @@ interface ItemsTableProps {
   catalogId: number;
   catalogPlan: string;
   categories: Category[];
+  countryCode?: string | null;
 }
 
-function ItemRow({ item, catalogId, catalogPlan, categories }: { item: ItemWithCategory, catalogId: number, catalogPlan: string, categories: Category[] }) {
+function ItemRow({ item, catalogId, catalogPlan, categories, countryCode }: { item: ItemWithCategory, catalogId: number, catalogPlan: string, categories: Category[], countryCode?: string | null }) {
+
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -79,7 +83,8 @@ function ItemRow({ item, catalogId, catalogPlan, categories }: { item: ItemWithC
       <TableCell className="hidden sm:table-cell p-5">
         <Badge variant="outline" className="bg-muted/50 text-sm px-3 py-1">{item.categories?.name || 'غير مصنف'}</Badge>
       </TableCell>
-      <TableCell className="font-mono text-[13px] sm:text-lg font-bold p-2 sm:p-5 whitespace-nowrap text-left sm:text-right text-brand-primary">{item.price} ج.م</TableCell>
+      <TableCell className="font-mono text-[13px] sm:text-lg font-bold p-2 sm:p-5 whitespace-nowrap text-left sm:text-right text-brand-primary">{formatPrice(item.price, countryCode)}</TableCell>
+
       <TableCell className="p-2 sm:p-5 text-left">
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <AlertDialog>
@@ -107,9 +112,10 @@ function ItemRow({ item, catalogId, catalogPlan, categories }: { item: ItemWithC
               </DialogHeader>
               <ItemForm
                 catalogId={catalogId}
-                catalogPlan={catalogPlan}
+                isPro={catalogPlan === 'pro' || catalogPlan === 'business'}
                 categories={categories}
                 item={item}
+                countryCode={countryCode}
                 onSuccess={() => setIsEditDialogOpen(false)}
                 onCancel={() => setIsEditDialogOpen(false)}
               />
@@ -125,8 +131,8 @@ function ItemRow({ item, catalogId, catalogPlan, categories }: { item: ItemWithC
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel disabled={isPending}>إلغاء</AlertDialogCancel>
-                <AlertDialogAction 
-                  onClick={() => handleDelete(item.id)} 
+                <AlertDialogAction
+                  onClick={() => handleDelete(item.id)}
                   disabled={isPending}
                   className="bg-destructive hover:bg-destructive/90"
                 >
@@ -142,7 +148,7 @@ function ItemRow({ item, catalogId, catalogPlan, categories }: { item: ItemWithC
   )
 }
 
-export function ItemsTable({ items, catalogId, catalogPlan, categories }: ItemsTableProps) {
+export function ItemsTable({ items, catalogId, catalogPlan, categories, countryCode }: ItemsTableProps) {
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/25 bg-muted/10 py-16 text-center">
@@ -175,8 +181,9 @@ export function ItemsTable({ items, catalogId, catalogPlan, categories }: ItemsT
         </TableHeader>
         <TableBody>
           {items.map((item) => (
-            <ItemRow key={item.id} item={item} catalogId={catalogId} catalogPlan={catalogPlan} categories={categories} />
+            <ItemRow key={item.id} item={item} catalogId={catalogId} catalogPlan={catalogPlan} categories={categories} countryCode={countryCode} />
           ))}
+
         </TableBody>
       </Table>
     </div>

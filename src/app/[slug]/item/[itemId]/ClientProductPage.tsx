@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ProductActions } from "@/components/menu/ProductActions";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { ArrowRight, Sparkles } from "lucide-react";
 import RelatedProductImage from "@/components/RelatedProductImage";
 import { ProductGallery } from "@/components/menu/ProductGallery";
@@ -184,8 +184,9 @@ export default function ClientProductPage() {
                         />
 
                         <div className="pointer-events-none absolute bottom-4 left-4 z-20 rounded-full bg-white/85 px-4 py-2 text-sm font-semibold text-brand-primary">
-                            {product.price} ج.م
+                            {formatPrice(product.price, catalog.country_code)}
                         </div>
+
                     </div>
 
                     <div className="flex flex-col gap-4">
@@ -214,7 +215,9 @@ export default function ClientProductPage() {
                             catalogName={catalog.display_name || catalog.name}
                             catalogPhone={catalog.whatsapp_number}
                             productUrl={productUrl}
+                            countryCode={catalog.country_code}
                         />
+
                     </div>
                 </section>
 
@@ -261,7 +264,8 @@ export default function ClientProductPage() {
                                         <p className="text-xs text-muted-foreground line-clamp-2">
                                             {item.description ?? "تفاصيل المنتج ستظهر هنا."}
                                         </p>
-                                        <p className="text-sm font-bold text-brand-primary">{item.price} ج.م</p>
+                                        <p className="text-sm font-bold text-brand-primary">{formatPrice(item.price, catalog.country_code)}</p>
+
                                     </div>
                                 </Link>
                             ))}

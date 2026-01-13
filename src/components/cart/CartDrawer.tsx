@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { useCart } from './CartContext'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Trash2, Minus, Plus, MessageCircle } from 'lucide-react'
+import { formatPrice } from '@/lib/utils'
 import type { Catalog } from '@/lib/types'
 
 export function CartDrawer({ catalog }: { catalog: Catalog }) {
@@ -15,11 +16,11 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
   const canOrder = items.length > 0 && !!whatsappNumber
 
   const message = React.useMemo(() => {
-    const lines = items.map((i) => `• ${i.name} × ${i.quantity} — ${(i.price * i.quantity).toLocaleString('en-US')} ج.م`)
-    const totalLine = `\nالإجمالي: ${total.toLocaleString('en-US')} ج.م`
+    const lines = items.map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity, catalog.country_code)}`)
+    const totalLine = `\nالإجمالي: ${formatPrice(total, catalog.country_code)}`
     const header = `طلب جديد من كتالوج ${catalog.display_name || catalog.name}:\n\n`
     return `${header}${lines.join('\n')}${totalLine}`
-  }, [items, total, catalog.display_name, catalog.name])
+  }, [items, total, catalog.display_name, catalog.name, catalog.country_code])
 
   const orderHref = `https://wa.me/${whatsappNumber.replace(/[^\d]/g, '')}?text=${encodeURIComponent(message)}`
 
@@ -41,7 +42,7 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
                   <div key={i.id} className="flex items-center justify-between rounded-lg border bg-background p-3">
                     <div className="flex min-w-0 flex-1 flex-col">
                       <span className="font-medium truncate">{i.name}</span>
-                      <span className="text-xs text-muted-foreground">{(i.price).toLocaleString('en-US')} ج.م</span>
+                      <span className="text-xs text-muted-foreground">{formatPrice(i.price, catalog.country_code)}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button variant="outline" size="icon" onClick={() => updateQuantity(i.id, i.quantity - 1)} aria-label="تقليل الكمية">
@@ -63,7 +64,7 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
         </div>
         <div className="mt-4 flex items-center justify-between rounded-xl border bg-muted/20 p-3">
           <span className="text-sm text-muted-foreground">الإجمالي</span>
-          <span className="text-lg font-bold text-brand-primary">{total.toLocaleString('en-US')} ج.م</span>
+          <span className="text-lg font-bold text-brand-primary">{formatPrice(total, catalog.country_code)}</span>
         </div>
         <SheetFooter className="mt-3">
           <div className="flex w-full flex-col gap-2">

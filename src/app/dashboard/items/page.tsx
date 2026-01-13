@@ -9,7 +9,7 @@ async function getData() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect('/login');
 
-    const { data: catalog } = await supabase.from('catalogs').select('id, name, plan').eq('user_id', user.id).single();
+    const { data: catalog } = await supabase.from('catalogs').select('id, name, plan, country_code').eq('user_id', user.id).single();
     if (!catalog) notFound();
 
     const { data: categories } = await supabase.from('categories').select('*').eq('catalog_id', catalog.id);
@@ -29,11 +29,11 @@ export default async function ItemsPage() {
                     <CardDescription className="text-xs sm:text-sm">إدارة المنتجات في المتجر الخاص بك.</CardDescription>
                 </div>
                 <div className="w-full sm:w-auto">
-                    <AddItemButton catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} />
+                    <AddItemButton catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} countryCode={catalog.country_code} />
                 </div>
             </CardHeader>
             <CardContent className="px-2 sm:px-6">
-                <ItemsTable items={items as any} catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} />
+                <ItemsTable items={items as any} catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} countryCode={catalog.country_code} />
             </CardContent>
             <div className="h-24" /> {/* مسافة إضافية في نهاية الصفحة لتجنب التداخل مع شريط التنقل السفلي */}
         </Card>

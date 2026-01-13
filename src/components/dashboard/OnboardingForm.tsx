@@ -139,7 +139,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
       if (field === 'whatsapp_number' && typeof value === 'string') {
         finalValue = convertArabicNumerals(value);
       }
-      
+
       const newData = { ...prev, [field]: finalValue };
 
       if (field === 'whatsapp_number' && typeof finalValue === 'string') {
@@ -510,7 +510,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
 
                   <AnimatePresence>
                     {!formData.logo && (
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
@@ -532,6 +532,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
         <input type="hidden" name="display_name" value={formData.display_name} />
         <input type="hidden" name="name" value={formData.name} />
         <input type="hidden" name="whatsapp_number" value={selectedCountry.code + formData.whatsapp_number} />
+        <input type="hidden" name="country_code" value={selectedCountry.code} />
 
         {/* Navigation */}
         <div className="flex gap-5 pt-8">
