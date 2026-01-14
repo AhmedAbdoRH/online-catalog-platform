@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -37,26 +38,38 @@ export function StorePreviewModal({ url, storeName }: StorePreviewModalProps) {
           عرض المتجر
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] w-full h-[90vh] p-0 overflow-hidden border-white/10 glass-surface flex flex-col">
+      <DialogContent className="max-w-[95vw] w-full h-[90vh] p-0 overflow-hidden border-white/10 glass-surface flex flex-col [&>button]:hidden">
         <DialogHeader className="p-4 border-b border-white/10 flex flex-row items-center justify-between space-y-0">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-brand-primary/20 text-brand-primary">
-              <Eye className="h-5 w-5" />
-            </div>
-            <div>
-              <DialogTitle className="text-right text-lg font-bold text-white">
-                معاينة المتجر: {storeName}
-              </DialogTitle>
-              <p className="text-xs text-slate-400 text-right">
-                هذه هي الطريقة التي يرى بها العملاء متجرك
-              </p>
+            <DialogClose asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all shadow-xl"
+                title="إغلاق"
+              >
+                <X className="h-6 w-6" />
+              </Button>
+            </DialogClose>
+            <div className="flex items-center gap-3 mr-2">
+              <div className="p-2 rounded-lg bg-brand-primary/20 text-brand-primary hidden sm:block">
+                <Eye className="h-5 w-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-right text-lg font-bold text-white">
+                  معاينة المتجر: {storeName}
+                </DialogTitle>
+                <p className="text-xs text-slate-400 text-right">
+                  هذه هي الطريقة التي يرى بها العملاء متجرك
+                </p>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 mr-auto ml-8">
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
+              className="h-9 w-9 rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
               onClick={reloadIframe}
               title="إعادة تحميل"
             >
@@ -65,7 +78,7 @@ export function StorePreviewModal({ url, storeName }: StorePreviewModalProps) {
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
+              className="h-9 w-9 rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
               onClick={() => window.open(url, '_blank')}
               title="فتح في نافذة جديدة"
             >
