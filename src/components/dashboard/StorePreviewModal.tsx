@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Eye, X, Maximize2, RotateCcw } from "lucide-react"
+import { Eye, X, RotateCcw } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -74,15 +74,6 @@ export function StorePreviewModal({ url, storeName }: StorePreviewModalProps) {
               title="إعادة تحميل"
             >
               <RotateCcw className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-9 w-9 rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
-              onClick={() => window.open(url, '_blank')}
-              title="فتح في نافذة جديدة"
-            >
-              <Maximize2 className="h-4 w-4" />
             </Button>
           </div>
         </DialogHeader>

@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { MessageCircle } from 'lucide-react';
 
 export default function Error({
     error,
@@ -22,12 +24,28 @@ export default function Error({
             {error.digest && (
                 <p className="text-xs text-gray-500 mb-4">Error ID: {error.digest}</p>
             )}
-            <button
-                onClick={() => reset()}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-            >
-                محاولة مرة أخرى
-            </button>
+            <div className="flex flex-wrap gap-3 justify-center">
+                <Button
+                    onClick={() => reset()}
+                    variant="default"
+                >
+                    محاولة مرة أخرى
+                </Button>
+                <Button
+                    asChild
+                    variant="outline"
+                    className="bg-[#25D366] hover:bg-[#20ba5a] text-white border-none gap-2 font-bold"
+                >
+                    <a
+                        href={`https://wa.me/201008116452?text=${encodeURIComponent(`مرحباً، واجهت مشكلة في صفحة المتجر. معرف الخطأ: ${error.digest || 'غير معروف'}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <MessageCircle className="h-4 w-4" />
+                        تواصل مع المطور
+                    </a>
+                </Button>
+            </div>
         </div>
     );
 }

@@ -29,19 +29,41 @@ export default function GlobalError({
                     <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px', marginBottom: '20px', textAlign: 'left', direction: 'ltr' }}>
                         <small>Digest: {error.digest}</small>
                     </div>
-                    <button
-                        onClick={() => reset()}
-                        style={{
-                            padding: '10px 20px',
-                            backgroundColor: '#000',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        حاول مرة أخرى
-                    </button>
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                        <button
+                            onClick={() => reset()}
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: '#000',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            حاول مرة أخرى
+                        </button>
+                        <a
+                            href="https://wa.me/201008116452?text=مرحباً، واجهت خطأ جسيماً في الموقع. كود الخطأ: "
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: '#25D366',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                textDecoration: 'none',
+                                fontWeight: 'bold',
+                                display: 'inline-flex',
+                                alignItems: 'center'
+                            }}
+                        >
+                            تواصل مع المطور
+                        </a>
+                    </div>
                 </div>
             </body>
         </html>
