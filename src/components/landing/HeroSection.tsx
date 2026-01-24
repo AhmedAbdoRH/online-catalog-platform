@@ -6,84 +6,98 @@ import { ArrowRight, Store } from 'lucide-react';
 
 export default function HeroSection() {
     return (
-        <section className="relative pt-12 sm:pt-14 md:pt-16 pb-12 sm:pb-20 md:pb-28 lg:pt-16 lg:pb-28 overflow-hidden bg-gradient-to-b from-brand-primary/10 via-background to-background">
-            {/* Background Decor */}
-            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-primary/10 rounded-full blur-3xl opacity-50" />
-            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-blue-500/10 rounded-full blur-3xl opacity-50" />
+        <section className="relative pt-12 sm:pt-14 md:pt-16 pb-12 sm:pb-20 md:pb-28 lg:pt-20 lg:pb-32 overflow-hidden bg-gradient-to-b from-brand-primary/10 via-background to-background">
+            {/* Enhanced Background Decor */}
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] bg-brand-accent/20 rounded-full blur-[120px] opacity-40 animate-pulse" />
+            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] bg-brand-primary/20 rounded-full blur-[120px] opacity-40 animate-pulse-slow" />
+            
+            {/* Grid Pattern Background */}
+            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-10 pointer-events-none" />
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-12 lg:gap-20 pt-0 sm:pt-1 md:pt-2 lg:pt-0">
+                <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-12 lg:gap-24">
 
-                    {/* Visuals - First on mobile/tablet */}
-                    <div className="flex-1 w-full max-w-[320px] sm:max-w-[480px] md:max-w-[580px] lg:max-w-none perspective-1000 order-1 lg:order-2">
-                        <div className="relative animate-float">
-                            {/* Main Hero Logo */}
-                            <div className="relative z-20 rounded-2xl bg-gradient-to-tr from-background to-secondary p-3 sm:p-4 shadow-2xl border border-border/50">
-                                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-muted/50 flex items-center justify-center">
+                    {/* Visuals - Right Side (Desktop) */}
+                    <div className="flex-1 w-full max-w-[320px] sm:max-w-[480px] md:max-w-[580px] lg:max-w-none order-1 lg:order-2">
+                        <div className="relative">
+                            {/* Main Hero Card */}
+                            <div className="relative z-20 rounded-3xl bg-gradient-to-tr from-background/80 to-secondary/30 p-4 sm:p-6 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/20">
+                                <div className="relative aspect-[4/3] w-full rounded-2xl bg-muted/30 flex items-center justify-center overflow-visible">
                                     <Image
-                                        src="/logo.png"
-                                        alt="Online Catalog Logo"
-                                        width={300}
-                                        height={300}
-                                        className="object-contain"
+                                        src="/caracter.png"
+                                        alt="Online Catalog Character"
+                                        width={500}
+                                        height={500}
+                                        className="object-contain scale-[1.15] -translate-y-6 drop-shadow-[0_25px_25px_rgba(0,0,0,0.15)] animate-float"
                                         priority
                                     />
                                 </div>
                             </div>
 
-                            {/* Floating UI Elements (Decorative) */}
-                            <div className="absolute -top-6 -right-6 sm:-top-8 sm:-right-8 md:-top-12 md:-right-12 z-10 bg-card p-2 sm:p-3 md:p-4 rounded-xl shadow-xl border border-border/50 w-24 sm:w-32 md:w-48 animate-pulse-slow">
-                                <div className="h-1.5 w-12 sm:w-16 md:w-20 bg-primary/20 rounded mb-1.5 sm:mb-2" />
-                                <div className="h-1.5 w-16 sm:w-20 md:w-24 bg-muted rounded" />
+                            {/* Decorative Floating Elements */}
+                            <div className="absolute -top-8 -right-8 z-30 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/20 w-32 md:w-44 animate-bounce-slow">
+                                <div className="flex flex-col gap-2">
+                                    <div className="h-2 w-16 bg-brand-accent/40 rounded-full" />
+                                    <div className="h-2 w-24 bg-muted rounded-full" />
+                                    <div className="flex gap-1 mt-1">
+                                        <div className="w-4 h-4 rounded-full bg-brand-primary/20" />
+                                        <div className="w-4 h-4 rounded-full bg-brand-accent/20" />
+                                    </div>
+                                </div>
                             </div>
-                            <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 md:-bottom-8 md:-left-8 z-30 bg-card p-2 sm:p-3 md:p-4 rounded-xl shadow-xl border border-border/50 w-28 sm:w-40 md:w-56 animate-bounce-slow">
-                                <div className="flex items-center gap-2 sm:gap-3">
-                                    <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xs sm:text-sm md:text-base">
-                                        ✓
+
+                            <div className="absolute -bottom-6 -left-6 z-30 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/20 w-40 md:w-60 animate-float-slow">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 shadow-inner">
+                                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                        </svg>
                                     </div>
                                     <div>
-                                        <div className="h-1.5 w-16 sm:w-20 md:w-24 bg-primary/20 rounded mb-1" />
-                                        <div className="text-[10px] sm:text-xs text-muted-foreground">تم إنشاء الرابط بنجاح</div>
+                                        <div className="h-2 w-20 bg-green-500/20 rounded-full mb-2" />
+                                        <div className="text-[10px] md:text-xs font-bold text-foreground">تم إطلاق المتجر بنجاح!</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Content - Second on mobile/tablet */}
-                    <div className="flex-1 text-center lg:text-right space-y-6 md:space-y-8 order-2 lg:order-1">
+                    {/* Content - Left Side (Desktop) */}
+                    <div className="flex-1 text-center lg:text-right space-y-8 md:space-y-10 order-2 lg:order-1">
                         
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight text-foreground leading-[1.3] sm:leading-[1.4]">
-                            متجرك الرقمي... <br className="block sm:hidden" />
-                            <span className="text-brand-accent bg-clip-text text-transparent bg-gradient-to-r from-brand-accent to-[#FF9500]">جاهز في دقائق.</span>
-                        </h1>
+                        <div className="space-y-4">
+                            <span className="inline-block px-4 py-1.5 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-bold tracking-wide animate-fade-in">
+                                🚀 أطلق متجرك في 3 خطوات بسيطة
+                            </span>
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-headline tracking-tight text-foreground leading-[1.2]">
+                                <span className="block mb-2 text-zinc-800 dark:text-zinc-100">متجرك الرقمي...</span>
+                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-accent via-[#FFC800] to-brand-primary block py-2">
+                                    جاهز في دقائق.
+                                </span>
+                            </h1>
+                        </div>
 
-                        <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed px-2 sm:px-0">
-                            سجّل، أضف منتجاتك، واحصل على رابط مخصص لمتجرك: <br className="hidden sm:block" />
-                            <span className="font-mono text-primary bg-primary/5 px-2 py-1 rounded mt-2 inline-block text-sm sm:text-base" dir="ltr">Online-Catalog.net/your-store</span>
+                        <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                            سجّل، أضف منتجاتك، وابدأ البيع فوراً برابط مخصص واحترافي. 
+                            <span className="block mt-4 text-brand-primary/80 text-base md:text-lg font-mono" dir="ltr">
+                                Online-Catalog.net/store-name
+                            </span>
                         </p>
 
-                        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 md:gap-6 justify-center lg:justify-start px-4 sm:px-0">
-                            <Button size="lg" className="h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-10 text-base sm:text-lg md:text-xl rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all font-bold group w-full sm:w-auto" asChild>
+                        <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 justify-center lg:justify-start">
+                            <Button size="lg" className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl shadow-[0_10px_30px_rgba(var(--brand-primary),0.3)] hover:shadow-brand-primary/40 transition-all font-bold group w-full sm:w-auto bg-brand-primary hover:scale-105 active:scale-95" asChild>
                                 <Link href="/">
-                                    <ArrowRight className="mr-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                                    ابدأ مجاناً
+                                    ابدأ رحلتك مجاناً
+                                    <ArrowRight className="mr-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 </Link>
                             </Button>
-                            <Button size="lg" variant="outline" className="h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-10 text-base sm:text-lg md:text-xl rounded-full border-2 border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 w-full sm:w-auto transition-all" asChild>
+                            <Button size="lg" variant="outline" className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl border-2 border-primary/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 w-full sm:w-auto transition-all font-bold" asChild>
                                 <Link href="https://online-catalog.net/elfath" target="_blank" rel="noopener noreferrer">
-                                    اعرض مثال
+                                    تصفح متجر تجريبي
                                 </Link>
                             </Button>
                         </div>
-
-                        {/* Trust Badges or Micro-copy */}
-                        <p className="text-xs sm:text-sm text-muted-foreground px-4 sm:px-0">
-                            لا حاجة لبطاقة ائتمان — تجربة مجانية بالكامل
-                        </p>
                     </div>
-
-                    
                 </div>
             </div>
         </section>

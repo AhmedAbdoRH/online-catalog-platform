@@ -207,7 +207,7 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
             </p>
             <div className="flex items-center gap-2 text-[11px] font-semibold">
               {newItem && (
-                <span className="inline-flex -rotate-2 items-center rounded-full bg-gradient-to-r from-[#ffb347] to-[#61ffd0] px-3 py-0.5 text-[10px] text-white shadow-lg">
+                <span className="inline-flex -rotate-2 items-center rounded-full bg-gradient-to-r from-[#FFC800] to-[#61ffd0] px-3 py-0.5 text-[10px] text-white shadow-lg">
                   جديد
                 </span>
               )}
@@ -586,7 +586,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                   className={cn(
                     "flex-shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all",
                     !selectedCategoryId
-                      ? "bg-gradient-to-r from-[#ffb347] to-[#61ffd0] text-white shadow-lg scale-[1.02]"
+                      ? "bg-gradient-to-r from-[#FFC800] to-[#61ffd0] text-white shadow-lg scale-[1.02]"
                       : "bg-white/15 text-foreground/80 hover:bg-white/20 hover:text-foreground"
                   )}
                 >
@@ -605,7 +605,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                       className={cn(
                         "flex items-center gap-2 flex-shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all",
                         selectedCategoryId === cat.id
-                          ? "bg-gradient-to-r from-[#ffb347] to-[#61ffd0] text-white shadow-lg scale-[1.02]"
+                          ? "bg-gradient-to-r from-[#FFC800] to-[#61ffd0] text-white shadow-lg scale-[1.02]"
                           : "bg-white/15 text-foreground/80 hover:bg-white/20 hover:text-foreground"
                       )}
                     >

@@ -10,7 +10,7 @@ import CTASection from '@/components/landing/CTASection';
 import LandingFooter from '@/components/landing/LandingFooter';
 import StickyCTA from '@/components/landing/StickyCTA';
 
-export default function LandingPage() {
+export default function GoPage() {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <LandingHeader />
