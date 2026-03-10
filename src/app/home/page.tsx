@@ -139,7 +139,7 @@ function UnifiedHomeContent() {
               متجرك جاهز للانطلاق.
             </h1>
             <p className="text-base text-gray-400">
-              امتلك متجر احترافي في 3 دقائق. <span className="text-[#2eb872] font-bold">مجاناً!</span>
+              امتلك متجرك في 3 دقائق. <span className="text-[#2eb872] font-bold">مجاناً!</span>
             </p>
           </div>
         </div>

@@ -20,7 +20,7 @@ function AuthCallbackContent() {
                 if (error) {
                     console.error('Auth callback error:', error.message);
                     // Silently redirect to home/login on PKCE error instead of showing technical message
-                    router.replace('/home');
+                    router.replace('/go');
                 } else {
                     router.replace(next);
                 }

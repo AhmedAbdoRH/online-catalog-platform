@@ -14,13 +14,10 @@ export async function middleware(request: NextRequest) {
     // Log for debugging
     // console.log(`Middleware: ${url.pathname}, User: ${!!user}`);
 
-    // 1. If at root, go to /home
-    if (url.pathname === '/') {
-      return NextResponse.redirect(new URL('/home', request.url))
-    }
+    // 1. If at root, rewrite serves /go content (handled in next.config)
 
-    // 2. If logged in and trying to access login/signup/home, go to dashboard
-    if (user && (url.pathname === '/login' || url.pathname === '/signup' || url.pathname === '/home')) {
+    // 2. If logged in and trying to access login/signup/home/go, go to dashboard
+    if (user && (url.pathname === '/login' || url.pathname === '/signup' || url.pathname === '/home' || url.pathname === '/go')) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 

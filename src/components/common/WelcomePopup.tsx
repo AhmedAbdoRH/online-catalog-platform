@@ -144,7 +144,7 @@ export function WelcomePopup() {
                   متجرك جاهز للانطلاق.
                 </h3>
                 <p className="text-white/80 text-sm leading-relaxed mb-4">
-                  امتلك متجر احترافي في 3 دقائق.
+                  امتلك متجرك في 3 دقائق.
                   <span className="text-[#4ade80] font-bold"> مجاناً!</span>
                 </p>
 

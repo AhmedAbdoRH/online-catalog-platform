@@ -30,7 +30,8 @@ import { useRouter } from 'next/navigation';
 import type { Catalog } from '@/lib/types';
 import NextImage from 'next/image';
 import { Capacitor } from '@capacitor/core';
-import { Loader2, Lock, Check, Crown, Palette, Sparkles, MessageCircle, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { ProUpgradeButton } from './ProUpgradeButton';
 import { Switch } from '../ui/switch';
 
 const countries = [
@@ -464,16 +465,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                               </div>
                             </div>
                           </div>
-                          <Button asChild className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                            <a
-                              href="https://wa.me/201008116452?text=مرحباً، أريد الترقية إلى باقة البرو لمتجري"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <MessageCircle className="h-4 w-4 ml-2" />
-                              طلب الترقية
-                            </a>
-                          </Button>
+                          <ProUpgradeButton className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
                         </div>
                       </DialogContent>
                     </Dialog>
@@ -551,16 +543,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                         </div>
                       </div>
                     </div>
-                    <Button asChild className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                      <a
-                        href="https://wa.me/201008116452?text=مرحباً، أريد الترقية إلى باقة البرو لمتجري"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <MessageCircle className="h-4 w-4 ml-2" />
-                        طلب الترقية
-                      </a>
-                    </Button>
+                    <ProUpgradeButton className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
                   </div>
                 </DialogContent>
               </Dialog>
@@ -675,16 +658,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                         </div>
                       </div>
                     </div>
-                    <Button asChild className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                      <a
-                        href="https://wa.me/201008116452?text=مرحباً، أريد الترقية إلى باقة البرو لمتجري"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <MessageCircle className="h-4 w-4 ml-2" />
-                        طلب الترقية
-                      </a>
-                    </Button>
+                    <ProUpgradeButton className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
                   </div>
                 </DialogContent>
               </Dialog>

@@ -16,7 +16,7 @@ export default function LandingFooter() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
                     {/* Brand Section */}
                     <div className="space-y-6">
-                        <Link href="/home" className="flex items-center gap-3 group">
+                        <Link href="/go" className="flex items-center gap-3 group">
                             <div className="relative h-10 w-10 bg-white/10 rounded-xl p-2 group-hover:bg-white/20 transition-colors">
                                 <Image
                                     src="/logo.png"
@@ -44,10 +44,10 @@ export default function LandingFooter() {
                     <div className="space-y-6">
                         <h4 className="text-white font-bold text-lg tracking-tight">المنتج</h4>
                         <ul className="space-y-4 text-sm">
-                            <li><Link href="/home#features" className="hover:text-brand-primary transition-colors">الميزات</Link></li>
-                            <li><Link href="/home#how-it-works" className="hover:text-brand-primary transition-colors">كيف تعمل</Link></li>
-                            <li><Link href="/home#pricing" className="hover:text-brand-primary transition-colors">الأسعار</Link></li>
-                            <li><Link href="/home#testimonials" className="hover:text-brand-primary transition-colors">تجارب العملاء</Link></li>
+                            <li><Link href="/go#features" className="hover:text-brand-primary transition-colors">الميزات</Link></li>
+                            <li><Link href="/go#how-it-works" className="hover:text-brand-primary transition-colors">كيف تعمل</Link></li>
+                            <li><Link href="/go#pricing" className="hover:text-brand-primary transition-colors">الأسعار</Link></li>
+                            <li><Link href="/go#testimonials" className="hover:text-brand-primary transition-colors">تجارب العملاء</Link></li>
                         </ul>
                     </div>
 
@@ -58,7 +58,7 @@ export default function LandingFooter() {
                             <li><Link href="/login" className="hover:text-brand-primary transition-colors">تسجيل الدخول</Link></li>
                             <li><Link href="/" className="hover:text-brand-primary transition-colors">إنشاء حساب</Link></li>
                             <li><a href="mailto:support@online-catalog.net" className="hover:text-brand-primary transition-colors">تواصل معنا</a></li>
-                            <li><Link href="/home#faq" className="hover:text-brand-primary transition-colors">الأسئلة الشائعة</Link></li>
+                            <li><Link href="/go#faq" className="hover:text-brand-primary transition-colors">الأسئلة الشائعة</Link></li>
                         </ul>
                     </div>
 

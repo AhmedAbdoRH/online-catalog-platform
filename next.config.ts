@@ -2,8 +2,11 @@ import type { NextConfig } from 'next';
 import type { RemotePattern } from 'next/dist/shared/lib/image-config';
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  /* output: 'export', */
+  async rewrites() {
+    return [
+      { source: '/', destination: '/go' },
+    ]
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb',

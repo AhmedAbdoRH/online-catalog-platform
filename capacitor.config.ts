@@ -6,7 +6,11 @@ const config: CapacitorConfig = {
   webDir: 'out',
   server: {
     url: 'https://online-catalog.net',
-    cleartext: true
+    cleartext: true,
+    allowNavigation: ['https://online-catalog.net/*', 'https://*.online-catalog.net/*']
+  },
+  android: {
+    allowMixedContent: true
   },
   plugins: {
       SplashScreen: {

@@ -5,8 +5,8 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Crown, Sparkles, Palette, MessageCircle } from "lucide-react";
+import { Crown, Sparkles, Palette } from "lucide-react";
+import { ProUpgradeButton } from "./ProUpgradeButton";
 
 interface UpgradeAlertProps {
     open: boolean;
@@ -53,16 +53,7 @@ export function UpgradeAlert({ open, onOpenChange, resourceType }: UpgradeAlertP
                             </div>
                         </div>
                     </div>
-                    <Button asChild className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                        <a
-                            href="https://wa.me/201008116452?text=مرحباً، أريد الترقية إلى باقة البرو لمتجري"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <MessageCircle className="h-4 w-4 ml-2" />
-                            طلب الترقية
-                        </a>
-                    </Button>
+                    <ProUpgradeButton className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
                 </div>
             </DialogContent>
         </Dialog>
