@@ -10,7 +10,18 @@ export const PRO_SUBSCRIPTION_ID = 'pro_yearly';
 export const PRO_BASE_PLAN_ID = 'yearly-plan'; // Base Plan ID من Google Play Console
 
 export function isNativeAndroid(): boolean {
-  return Capacitor.getPlatform() === 'android' && Capacitor.isNativePlatform();
+  if (typeof window === 'undefined') return false;
+  const urlParams = window.location.search;
+  if (urlParams.includes('native_android=1')) {
+    try { sessionStorage.setItem('native_android', '1'); } catch { /* ignore */ }
+    return true;
+  }
+  if (sessionStorage.getItem('native_android') === '1') return true;
+  try {
+    return Capacitor.getPlatform() === 'android' && Capacitor.isNativePlatform();
+  } catch {
+    return false;
+  }
 }
 
 async function getNativePurchases() {

@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'اونلاين كاتلوج',
   webDir: 'out',
   server: {
-    url: 'https://online-catalog.net',
+    url: 'https://online-catalog.net?native_android=1',
     cleartext: true,
     allowNavigation: ['https://online-catalog.net/*', 'https://*.online-catalog.net/*']
   },
