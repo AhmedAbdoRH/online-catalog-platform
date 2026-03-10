@@ -6,11 +6,13 @@ import { MessageCircle, CreditCard, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { isNativeAndroid, purchaseProSubscription } from "@/lib/billing";
 import { useToast } from "@/hooks/use-toast";
+import { verifyAndActivatePro } from "@/app/actions/billing";
 
 const WHATSAPP_UPGRADE_URL =
   "https://wa.me/201008116452?text=مرحباً، أريد الترقية إلى باقة البرو لمتجري";
 
 interface ProUpgradeButtonProps {
+  catalogId?: number;
   className?: string;
   size?: "default" | "sm" | "lg" | "icon";
   variant?: "default" | "outline" | "ghost" | "link" | "destructive" | "secondary";
@@ -18,6 +20,7 @@ interface ProUpgradeButtonProps {
 }
 
 export function ProUpgradeButton({
+  catalogId,
   className = "",
   size = "default",
   variant = "default",
@@ -33,21 +36,44 @@ export function ProUpgradeButton({
   const useBilling = isNativeAndroid();
 
   const handleBillingPurchase = async () => {
+    if (!catalogId) {
+      toast({ variant: "destructive", title: "خطأ", description: "معرف الكتالوج مطلوب" });
+      return;
+    }
     setIsLoading(true);
-    const { success, error } = await purchaseProSubscription();
-    setIsLoading(false);
-    if (success) {
-      toast({
-        title: "تم الاشتراك بنجاح",
-        description: "تم تفعيل باقة البرو لمتجرك",
-      });
-      window.location.reload();
-    } else if (error && !error.includes("تم إلغاء")) {
+    const { success, purchaseToken, error } = await purchaseProSubscription();
+    if (success && purchaseToken) {
+      const result = await verifyAndActivatePro(purchaseToken, catalogId);
+      setIsLoading(false);
+      if (result.ok) {
+        toast({
+          title: "تم الاشتراك بنجاح",
+          description: "تم تفعيل باقة البرو لمتجرك",
+        });
+        window.location.reload();
+      } else {
+        toast({
+          variant: "destructive",
+          title: "فشل التفعيل",
+          description: result.error,
+        });
+      }
+    } else if (success) {
       toast({
         variant: "destructive",
-        title: "فشل الشراء",
-        description: error,
+        title: "تم الشراء",
+        description: "لم يتوفر رمز التحقق، تواصل مع الدعم.",
       });
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+      if (error && !error.includes("تم إلغاء")) {
+        toast({
+          variant: "destructive",
+          title: "فشل الشراء",
+          description: error,
+        });
+      }
     }
   };
 

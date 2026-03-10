@@ -465,7 +465,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                               </div>
                             </div>
                           </div>
-                          <ProUpgradeButton className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
+                          <ProUpgradeButton catalogId={catalog.id} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
                         </div>
                       </DialogContent>
                     </Dialog>
@@ -543,7 +543,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                         </div>
                       </div>
                     </div>
-                    <ProUpgradeButton className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
+                    <ProUpgradeButton catalogId={catalog.id} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
                   </div>
                 </DialogContent>
               </Dialog>
@@ -658,7 +658,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                         </div>
                       </div>
                     </div>
-                    <ProUpgradeButton className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
+                    <ProUpgradeButton catalogId={catalog.id} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
                   </div>
                 </DialogContent>
               </Dialog>

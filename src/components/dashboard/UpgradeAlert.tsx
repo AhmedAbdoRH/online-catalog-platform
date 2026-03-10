@@ -12,9 +12,10 @@ interface UpgradeAlertProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     resourceType: 'product' | 'category';
+    catalogId: number;
 }
 
-export function UpgradeAlert({ open, onOpenChange, resourceType }: UpgradeAlertProps) {
+export function UpgradeAlert({ open, onOpenChange, resourceType, catalogId }: UpgradeAlertProps) {
     const limitText = resourceType === 'product' ? '50 منتج' : '5 تصنيفات';
 
     return (
@@ -53,7 +54,7 @@ export function UpgradeAlert({ open, onOpenChange, resourceType }: UpgradeAlertP
                             </div>
                         </div>
                     </div>
-                    <ProUpgradeButton className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
+                    <ProUpgradeButton catalogId={catalogId} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
                 </div>
             </DialogContent>
         </Dialog>

@@ -249,6 +249,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
         open={showUpgradeAlert}
         onOpenChange={setShowUpgradeAlert}
         resourceType="product"
+        catalogId={catalogId}
       />
       <Form {...form}>
         <form

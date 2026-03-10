@@ -162,6 +162,7 @@ export function CategoryForm({ catalogId, category, categories, defaultParentId,
                 open={showUpgradeAlert}
                 onOpenChange={setShowUpgradeAlert}
                 resourceType="category"
+                catalogId={catalogId}
             />
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

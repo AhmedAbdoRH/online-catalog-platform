@@ -54,7 +54,11 @@ export async function getProProduct() {
   }
 }
 
-export async function purchaseProSubscription(): Promise<{ success: boolean; error?: string }> {
+export async function purchaseProSubscription(): Promise<{
+  success: boolean;
+  purchaseToken?: string;
+  error?: string;
+}> {
   if (!isNativeAndroid()) {
     return { success: false, error: 'Billing متاح فقط في تطبيق Android' };
   }
@@ -65,14 +69,16 @@ export async function purchaseProSubscription(): Promise<{ success: boolean; err
       return { success: false, error: 'الدفع غير متاح على هذا الجهاز' };
     }
 
-    await NativePurchases.purchaseProduct({
+    const transaction = await NativePurchases.purchaseProduct({
       productIdentifier: PRO_SUBSCRIPTION_ID,
       planIdentifier: PRO_BASE_PLAN_ID,
       productType: PURCHASE_TYPE.SUBS,
       quantity: 1,
     });
 
-    return { success: true };
+    const purchaseToken =
+      (transaction as { purchaseToken?: string })?.purchaseToken ?? undefined;
+    return { success: true, purchaseToken };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     if (msg.includes('cancelled') || msg.includes('canceled') || msg.includes('USER_CANCELED')) {
