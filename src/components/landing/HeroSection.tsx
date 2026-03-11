@@ -2,7 +2,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Store } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+
+const PLAY_STORE_URL = 'https://play.google.com/apps/testing/com.nextcatalog.app';
+const GOOGLE_PLAY_ICON = 'https://res.cloudinary.com/dvikey3wc/image/upload/v1773216706/Online_Catalog_pmlblb.png';
 
 export default function HeroSection() {
     return (
@@ -84,18 +87,26 @@ export default function HeroSection() {
                             </span>
                         </p>
 
-                        <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 justify-center lg:justify-start">
-                            <Button size="lg" className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl shadow-[0_10px_30px_rgba(var(--brand-primary),0.3)] hover:shadow-brand-primary/40 transition-all font-bold group w-full sm:w-auto bg-brand-primary hover:scale-105 active:scale-95" asChild>
-                                <Link href="/">
-                                    ابدأ رحلتك مجاناً
-                                    <ArrowRight className="mr-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        <div className="flex flex-col items-center gap-4 md:gap-5 justify-center lg:justify-start">
+                            <Button size="lg" className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl bg-gradient-to-r from-[#3DDC84] via-[#34A853] to-[#4285F4] hover:from-[#34C76F] hover:via-[#2D9249] hover:to-[#3B7AE4] text-white font-bold w-full sm:w-auto transition-all duration-300 shadow-[0_8px_30px_rgba(61,220,132,0.35)] hover:shadow-[0_12px_40px_rgba(61,220,132,0.45)] hover:scale-105 active:scale-95 border-0 group" asChild>
+                                <Link href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3">
+                                    <Image src={GOOGLE_PLAY_ICON} alt="Google Play" width={36} height={36} className="rounded-lg shadow-sm w-9 h-9 object-contain" />
+                                    حمل التطبيق الآن
                                 </Link>
                             </Button>
-                            <Button size="lg" variant="outline" className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl border-2 border-primary/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 w-full sm:w-auto transition-all font-bold" asChild>
-                                <Link href="https://online-catalog.net/elfath" target="_blank" rel="noopener noreferrer">
-                                    تصفح متجر تجريبي
-                                </Link>
-                            </Button>
+                            <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full sm:w-auto justify-center lg:justify-start">
+                                <Button size="lg" className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl shadow-[0_10px_30px_rgba(var(--brand-primary),0.3)] hover:shadow-brand-primary/40 transition-all font-bold group w-full sm:w-auto bg-brand-primary hover:scale-105 active:scale-95" asChild>
+                                    <Link href="/home">
+                                        ابدأ رحلتك مجاناً
+                                        <ArrowRight className="mr-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    </Link>
+                                </Button>
+                                <Button size="lg" variant="outline" className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl border-2 border-primary/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 w-full sm:w-auto transition-all font-bold" asChild>
+                                    <Link href="https://online-catalog.net/elfath" target="_blank" rel="noopener noreferrer">
+                                        تصفح متجر تجريبي
+                                    </Link>
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>

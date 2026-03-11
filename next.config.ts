@@ -37,6 +37,11 @@ const nextConfig: NextConfig = {
           hostname: 'picsum.photos',
           pathname: '/**',
         },
+        {
+          protocol: 'https',
+          hostname: 'res.cloudinary.com',
+          pathname: '/**',
+        },
       ];
 
       // If a Supabase URL is configured in env, add its hostname so storage URLs are allowed

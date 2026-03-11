@@ -79,7 +79,7 @@ export default function LandingHeader() {
                         <Link href="/login">تسجيل دخول</Link>
                     </Button>
                     <Button asChild className="font-bold text-sm bg-brand-primary hover:bg-brand-primary/90 shadow-lg shadow-brand-primary/20 rounded-xl px-6">
-                        <Link href="/">ابدأ مجاناً</Link>
+                        <Link href="/home">ابدأ مجاناً</Link>
                     </Button>
                 </div>
 
@@ -117,7 +117,7 @@ export default function LandingHeader() {
                                     <Link href="/login">تسجيل دخول</Link>
                                 </Button>
                                 <Button asChild className="w-full h-12">
-                                    <Link href="/">ابدأ مجاناً</Link>
+                                    <Link href="/home">ابدأ مجاناً</Link>
                                 </Button>
                             </div>
                         </div>
