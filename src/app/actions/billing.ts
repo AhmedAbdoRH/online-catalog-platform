@@ -14,10 +14,14 @@ export async function verifyAndActivatePro(
   catalogId: number
 ): Promise<VerifyResult> {
   const email = process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_EMAIL;
-  const key = process.env.GOOGLE_PLAY_PRIVATE_KEY;
+  let key = process.env.GOOGLE_PLAY_PRIVATE_KEY;
 
   if (!email || !key) {
     return { ok: false, error: "لم يتم إعداد التحقق من Google Play" };
+  }
+  // تصحيح المفتاح: بعض المنصات تخزن \n كنص، نحولها لأسطر فعلية
+  if (key.includes("\\n")) {
+    key = key.replace(/\\n/g, "\n");
   }
 
   try {
@@ -66,7 +70,19 @@ export async function verifyAndActivatePro(
     }
     return { ok: true };
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
+    let msg = "حدث خطأ أثناء التحقق";
+    if (err instanceof Error) {
+      msg = err.message;
+    } else if (err && typeof err === "object") {
+      const o = err as Record<string, unknown>;
+      msg =
+        (o.errorMessage as string) ??
+        (o.message as string) ??
+        (o.error as string) ??
+        JSON.stringify(o);
+    } else if (typeof err === "string") {
+      msg = err;
+    }
     return { ok: false, error: msg || "حدث خطأ أثناء التحقق" };
   }
 }

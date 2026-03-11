@@ -52,10 +52,16 @@ export function ProUpgradeButton({
         });
         window.location.reload();
       } else {
+        const errMsg =
+          typeof result.error === "string"
+            ? result.error
+            : (result.error && typeof result.error === "object" && "message" in result.error
+                ? (result.error as { message: string }).message
+                : "حدث خطأ غير متوقع. تواصل مع الدعم.");
         toast({
           variant: "destructive",
           title: "فشل التفعيل",
-          description: result.error,
+          description: errMsg,
         });
       }
     } else if (success) {
