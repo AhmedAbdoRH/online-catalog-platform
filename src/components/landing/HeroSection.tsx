@@ -81,7 +81,7 @@ export default function HeroSection() {
                         </div>
 
                         <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
-                            سجّل، أضف منتجاتك، وابدأ البيع فوراً برابط مخصص واحترافي. 
+                            سجّل، أضف منتجاتك، وابدأ البيع فوراً برابط مخصص لمتجرك. 
                             <span className="block mt-4 text-brand-primary/80 text-base md:text-lg font-mono" dir="ltr">
                                 Online-Catalog.net/store-name
                             </span>
