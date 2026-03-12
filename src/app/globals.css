@@ -235,6 +235,15 @@
     animation: loading-bar 1.5s ease-in-out infinite;
   }
 
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
   /* Store Theme Gradients */
   .bg-gradient-default {
     background:

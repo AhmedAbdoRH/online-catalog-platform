@@ -152,6 +152,7 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
   const newItem = isNewItem(item);
   const popular = isPopularItem(item);
   const { addItem, openCart } = useCart();
+  const [isLoading, setIsLoading] = useState(false);
 
   const cardColors = getCardColors(theme);
   const hasGradient = theme && theme !== 'default';
@@ -161,7 +162,10 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
     e.preventDefault();
     e.stopPropagation();
     
-    // Navigate to product page
+    // Show loading state
+    setIsLoading(true);
+    
+    // Navigate to product page with loading state
     window.location.href = href;
   };
 
@@ -256,6 +260,21 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
         <div className="absolute inset-y-4 right-4 w-9 rounded-full bg-brand-primary/20 blur-2xl" />
         <div className="absolute inset-y-4 left-4 w-9 rounded-full bg-brand-primary/10 blur-2xl" />
       </div>
+
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="relative">
+            <div className="w-8 h-8 border-2 border-white/20 rounded-full bg-white/10">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-4 h-4 border border border-transparent border-t-brand-primary rounded-full animate-spin">
+                  <div className="w-2 h-2 border-2 border-t-brand-primary rounded-full border-r-transparent"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="pointer-events-none absolute bottom-4 left-4">
         <Button
