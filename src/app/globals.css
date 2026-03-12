@@ -111,6 +111,10 @@
   body {
     @apply bg-background text-foreground;
     font-size: 17px;
+    font-family: 'Tajawal', 'system-ui', 'sans-serif';
+    font-display: swap;
+    unicode-bidi: plaintext;
+    direction: rtl;
   }
 
   @media (min-width: 1024px) {
