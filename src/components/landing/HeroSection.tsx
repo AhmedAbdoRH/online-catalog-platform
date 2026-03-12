@@ -16,25 +16,36 @@ const TEAL_LIGHT = '#155e58';
 // ─── Keyframes ────────────────────────────────────────────────────────────────
 const productCardStyles = `
   @keyframes floatMain {
-    0%,100% { transform: translateY(0px) rotate(-1deg); filter: drop-shadow(0 14px 28px rgba(0,0,0,0.45)); }
-    50%      { transform: translateY(-14px) rotate(0.6deg); filter: drop-shadow(0 26px 40px rgba(0,0,0,0.55)); }
-  }
-  @keyframes floatSec {
-    0%,100% { transform: translateY(0px) rotate(2deg) scale(0.87); }
-    50%      { transform: translateY(-10px) rotate(-1.2deg) scale(0.87); }
-  }
-  @keyframes floatThird {
-    0%,100% { transform: translateY(0px) rotate(-2.5deg) scale(0.76); }
-    50%      { transform: translateY(-7px) rotate(1.5deg) scale(0.76); }
+    0%,100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg) rotateZ(-1deg); filter: drop-shadow(0 14px 28px rgba(0,0,0,0.45)); }
+    50%      { transform: translateY(-14px) rotateX(5deg) rotateY(-8deg) rotateZ(0.6deg); filter: drop-shadow(0 26px 40px rgba(0,0,0,0.55)); }
   }
   
-  @keyframes cardRotateIn {
-    0%   { opacity: 0; transform: rotateY(90deg) translateX(20px); }
-    100% { opacity: 1; transform: rotateY(0deg) translateX(0); }
+  @keyframes orbit3D {
+    0%   { transform: rotateZ(0deg) rotateX(15deg) rotateY(0deg) translateZ(120px) translateY(0px); opacity: 0.3; }
+    25%  { transform: rotateZ(90deg) rotateX(15deg) rotateY(90deg) translateZ(120px) translateY(-10px); opacity: 0.6; }
+    50%  { transform: rotateZ(180deg) rotateX(15deg) rotateY(180deg) translateZ(120px) translateY(0px); opacity: 0.9; }
+    75%  { transform: rotateZ(270deg) rotateX(15deg) rotateY(270deg) translateZ(120px) translateY(-10px); opacity: 0.6; }
+    100% { transform: rotateZ(360deg) rotateX(15deg) rotateY(360deg) translateZ(120px) translateY(0px); opacity: 0.3; }
   }
-  @keyframes cardRotateOut {
-    0%   { opacity: 1; transform: rotateY(0deg) translateX(0); }
-    100% { opacity: 0; transform: rotateY(-90deg) translateX(-20px); }
+  
+  @keyframes orbit3DBack {
+    0%   { transform: rotateZ(180deg) rotateX(15deg) rotateY(180deg) translateZ(120px) translateY(0px); opacity: 0.25; }
+    25%  { transform: rotateZ(270deg) rotateX(15deg) rotateY(270deg) translateZ(120px) translateY(-8px); opacity: 0.5; }
+    50%  { transform: rotateZ(360deg) rotateX(15deg) rotateY(360deg) translateZ(120px) translateY(0px); opacity: 0.8; }
+    75%  { transform: rotateZ(90deg) rotateX(15deg) rotateY(90deg) translateZ(120px) translateY(-8px); opacity: 0.5; }
+    100% { transform: rotateZ(180deg) rotateX(15deg) rotateY(180deg) translateZ(120px) translateY(0px); opacity: 0.25; }
+  }
+
+  @keyframes cardFlip3D {
+    0%   { opacity: 0; transform: perspective(1200px) rotateY(90deg) rotateX(20deg) translateX(20px) scale(0.8); }
+    50%  { opacity: 1; }
+    100% { opacity: 1; transform: perspective(1200px) rotateY(0deg) rotateX(0deg) translateX(0) scale(1); }
+  }
+  
+  @keyframes glowDynamic {
+    0%   { box-shadow: 0 0 30px rgba(255, 193, 7, 0.3), inset 0 1px 0 rgba(255,255,255,0.06); }
+    50%  { box-shadow: 0 0 50px rgba(255, 193, 7, 0.6), inset 0 1px 0 rgba(255,255,255,0.06); }
+    100% { box-shadow: 0 0 30px rgba(255, 193, 7, 0.3), inset 0 1px 0 rgba(255,255,255,0.06); }
   }
   
   @keyframes shimmerPrice {
@@ -90,12 +101,13 @@ const productCardStyles = `
     100% { opacity:0; transform: translateY(-28px) scale(0.5); }
   }
 
-  .pc-main  { animation: floatMain  5.5s ease-in-out infinite; }
-  .pc-sec   { animation: floatSec   6.8s ease-in-out infinite 0.9s; }
-  .pc-third { animation: floatThird 5.2s ease-in-out infinite 1.7s; }
+  .pc-main  { animation: floatMain  5.5s ease-in-out infinite; perspective: 1200px; transform-style: preserve-3d; }
   
-  .card-enter { animation: cardRotateIn 0.6s ease-out; }
-  .card-exit  { animation: cardRotateOut 0.6s ease-in; }
+  .card-orbit-front   { animation: orbit3D  7.2s ease-in-out infinite; perspective: 1200px; transform-style: preserve-3d; }
+  .card-orbit-back    { animation: orbit3DBack 7.2s ease-in-out infinite 0.4s; perspective: 1200px; transform-style: preserve-3d; }
+  
+  .card-enter { animation: cardFlip3D 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55); perspective: 1200px; }
+  .glow-pulse { animation: glowDynamic 3s ease-in-out infinite; }
 `;
 
 // ─── Products data ─────────────────────────────────────────────────────────────
@@ -111,24 +123,24 @@ const products = [
     bgTop: 'linear-gradient(135deg, #1a2a4e 0%, #0d47a1 100%)',
   },
   {
-    emoji: '👗',
-    name: 'فستان سهرة أسود',
-    sub: 'حجم M، حرير طبيعي',
+    emoji: '�',
+    name: 'تيشيرت رجالي كلاسيكي',
+    sub: 'حجم L، قطن 100%',
     category: 'ملابس',
-    desc: 'فستان أنيق ومريح مناسب للسهرات والمناسبات...',
-    price: '450',
-    color: '#d4af37',
-    bgTop: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+    desc: 'تيشيرت مريح وعملي مناسب للاستخدام اليومي...',
+    price: '95',
+    color: '#e53935',
+    bgTop: 'linear-gradient(135deg, #3d1a1a 0%, #8b0000 100%)',
   },
   {
-    emoji: '⚡',
-    name: 'مروحة كهربائية ذكية',
-    sub: 'قدرة 60 وات، 3 سرعات',
+    emoji: '🎧',
+    name: 'سماعات رأس لاسلكية',
+    sub: 'بلوتوث 5.0، بطارية 30 ساعة',
     category: 'أجهزة',
-    desc: 'مروحة حديثة بتحكم ذكي وتوفير طاقة فعال...',
-    price: '285',
-    color: '#ff9800',
-    bgTop: 'linear-gradient(135deg, #3d3d00 0%, #5a4a00 100%)',
+    desc: 'سماعات احترافية بصوت عالي الجودة وراحة فائقة...',
+    price: '385',
+    color: '#ffc107',
+    bgTop: 'linear-gradient(135deg, #4a3a00 0%, #8b7500 100%)',
   },
 ];
 
@@ -181,8 +193,18 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
         borderRadius: 14 * size,
         border: '1px solid rgba(255,255,255,0.10)',
         overflow: 'hidden',
-        boxShadow: `0 ${16 * size}px ${40 * size}px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)`,
+        boxShadow: `0 ${16 * size}px ${40 * size}px rgba(0,0,0,0.5), 
+                    0 0 ${30 * size}px rgba(${parseInt(p.color.slice(1,3), 16)}, ${parseInt(p.color.slice(3,5), 16)}, ${parseInt(p.color.slice(5,7), 16)}, 0.15),
+                    inset 0 1px 0 rgba(255,255,255,0.06)`,
+        transition: 'box-shadow 0.6s ease',
       }}>
+
+        {/* Dynamic light reflection */}
+        <div style={{
+          position: 'absolute', inset: 0, borderRadius: 14 * size,
+          background: `radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)`,
+          pointerEvents: 'none', zIndex: 1,
+        }} />
 
         {/* Scan line */}
         <div style={{
@@ -207,7 +229,7 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
             position: 'absolute', inset: 0,
             background: `radial-gradient(ellipse at 60% 30%, ${p.color}30 0%, transparent 65%)`,
           }} />
-          <span style={{ position: 'relative', zIndex: 1 }}>{p.emoji}</span>
+          <span style={{ position: 'relative', zIndex: 1, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>{p.emoji}</span>
 
           {/* Flying item animation when adding */}
           {activeStage === 'adding' && (
@@ -357,7 +379,7 @@ function AnimatedProductCards() {
         (prev[1] + 1) % products.length,
         (prev[2] + 1) % products.length,
       ]);
-    }, 6000); // تبديل كل 6 ثواني
+    }, 7200); // تبديل مع الأنيميشن
     return () => clearInterval(interval);
   }, []);
 
@@ -367,14 +389,27 @@ function AnimatedProductCards() {
 
       <div
         className="absolute -top-10 -right-10 z-30"
-        style={{ width: 190, height: 260, perspective: '1000px' }}
+        style={{ 
+          width: 190, 
+          height: 260, 
+          perspective: '1500px',
+          transformStyle: 'preserve-3d'
+        }}
       >
-        {/* Ambient glow */}
+        {/* Central glow container */}
+        <div style={{
+          position: 'absolute', inset: '-40px', borderRadius: '50%',
+          background: `radial-gradient(ellipse, ${TEAL_LIGHT}80 0%, transparent 75%)`,
+          animation: 'glowPulseCard 5s ease-in-out infinite',
+          filter: 'blur(30px)', pointerEvents: 'none', zIndex: 0,
+        }} />
+
+        {/* Rotating light effect */}
         <div style={{
           position: 'absolute', inset: '-24px', borderRadius: '50%',
-          background: `radial-gradient(ellipse, ${TEAL_LIGHT}50 0%, transparent 70%)`,
-          animation: 'glowPulseCard 6s ease-in-out infinite',
-          filter: 'blur(20px)', pointerEvents: 'none',
+          background: `conic-gradient(from 0deg, ${GOLD}80, ${TEAL_LIGHT}40, ${GOLD}80)`,
+          animation: 'orbitDot 12s linear infinite',
+          filter: 'blur(25px)', pointerEvents: 'none', zIndex: 0, opacity: 0.4,
         }} />
 
         {/* Grid texture */}
@@ -388,34 +423,70 @@ function AnimatedProductCards() {
         }} />
 
         {/* Orbiting dot */}
-        <div style={{ position: 'absolute', top: '48%', left: '42%', width: 0, height: 0 }}>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', width: 0, height: 0 }}>
           <div style={{
-            width: 6, height: 6, borderRadius: '50%',
-            background: GOLD, boxShadow: `0 0 10px ${GOLD}`,
-            animation: 'orbitDot 9s linear infinite',
-            marginTop: -3, marginLeft: -3,
+            width: 8, height: 8, borderRadius: '50%',
+            background: `linear-gradient(135deg, ${GOLD}, #FFE57A)`,
+            boxShadow: `0 0 15px ${GOLD}, 0 0 30px ${GOLD}80`,
+            animation: 'orbitDot 8s linear infinite',
+            marginTop: -4, marginLeft: -4,
           }} />
         </div>
 
-        {/* Card 3 — back */}
-        <div key={`card-3-${cardIndices[2]}`} className="pc-third card-enter" style={{
-          position: 'absolute', top: 24, left: -44, zIndex: 1,
-          filter: 'brightness(0.5) blur(0.4px)',
+        {/* 3D Card Container */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          perspective: '1500px',
+          transformStyle: 'preserve-3d',
         }}>
-          <MiniProductCard p={products[cardIndices[2]]} size={0.76} scanDelay="2.8s" showOrder={false} />
-        </div>
 
-        {/* Card 2 — middle */}
-        <div key={`card-2-${cardIndices[1]}`} className="pc-sec card-enter" style={{
-          position: 'absolute', top: 12, left: -22, zIndex: 2,
-          filter: 'brightness(0.72)',
-        }}>
-          <MiniProductCard p={products[cardIndices[1]]} size={0.87} scanDelay="2s" showOrder={false} />
-        </div>
+          {/* Card 3 — back orbit */}
+          <div 
+            key={`card-3-${cardIndices[2]}`} 
+            className="card-orbit-back card-enter" 
+            style={{
+              position: 'absolute', 
+              width: '100%',
+              height: '100%',
+              zIndex: 1,
+              transformStyle: 'preserve-3d',
+            }}
+          >
+            <div style={{ filter: 'brightness(0.4) blur(0.5px)' }}>
+              <MiniProductCard p={products[cardIndices[2]]} size={0.76} scanDelay="2.8s" showOrder={false} />
+            </div>
+          </div>
 
-        {/* Card 1 — front (with order animation) */}
-        <div key={`card-1-${cardIndices[0]}`} className="pc-main card-enter" style={{ position: 'relative', zIndex: 3 }}>
-          <MiniProductCard p={products[cardIndices[0]]} size={1} scanDelay="1.1s" showOrder={true} />
+          {/* Card 2 — middle orbit */}
+          <div 
+            key={`card-2-${cardIndices[1]}`} 
+            className="card-orbit-front card-enter" 
+            style={{
+              position: 'absolute', 
+              width: '100%',
+              height: '100%',
+              zIndex: 2,
+              transformStyle: 'preserve-3d',
+            }}
+          >
+            <div style={{ filter: 'brightness(0.65)' }}>
+              <MiniProductCard p={products[cardIndices[1]]} size={0.87} scanDelay="2s" showOrder={false} />
+            </div>
+          </div>
+
+          {/* Card 1 — front (with order animation) */}
+          <div 
+            key={`card-1-${cardIndices[0]}`} 
+            className="pc-main card-enter" 
+            style={{ 
+              position: 'relative', 
+              zIndex: 3,
+              transformStyle: 'preserve-3d',
+            }}
+          >
+            <MiniProductCard p={products[cardIndices[0]]} size={1} scanDelay="1.1s" showOrder={true} />
+          </div>
         </div>
       </div>
     </>
