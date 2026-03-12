@@ -151,10 +151,30 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
   const lift = cardLiftSteps[index % cardLiftSteps.length];
   const newItem = isNewItem(item);
   const popular = isPopularItem(item);
-  const { addItem, openCart } = useCart()
+  const { addItem, openCart } = useCart();
 
   const cardColors = getCardColors(theme);
   const hasGradient = theme && theme !== 'default';
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Prevent double-click with debouncing
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Navigate to product page
+    window.location.href = href;
+  };
+
+  // Debounce function to prevent double-click
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  const debouncedHandleClick = debounce(handleClick, 300);
 
   const imageWrapperClasses = cn(
     "relative overflow-hidden rounded-[1.5rem]",
@@ -177,7 +197,7 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
         isList || isCompact ? "flex gap-4" : "flex flex-col gap-4"
       )}
     >
-      <Link href={href} className={cn("flex flex-col gap-4", isList || isCompact ? "flex-1" : "")}>
+      <div onClick={debouncedHandleClick} className={cn("flex flex-col gap-4 cursor-pointer", isList || isCompact ? "flex-1" : "")}>
         <div className={imageWrapperClasses}>
           {item.image_url ? (
             <Image
@@ -230,7 +250,7 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
             <p className="text-[18px] font-black text-brand-primary">{formatPrice(item.price, countryCode)}</p>
           </div>
         </div>
-      </Link>
+      </div>
 
       <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
         <div className="absolute inset-y-4 right-4 w-9 rounded-full bg-brand-primary/20 blur-2xl" />
