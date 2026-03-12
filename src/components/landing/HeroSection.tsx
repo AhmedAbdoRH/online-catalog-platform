@@ -20,20 +20,28 @@ const productCardStyles = `
     50%      { transform: translateY(-14px) rotateX(5deg) rotateY(-8deg) rotateZ(0.6deg); filter: drop-shadow(0 26px 40px rgba(0,0,0,0.55)); }
   }
   
-  @keyframes orbit3D {
-    0%   { transform: rotateZ(0deg) rotateX(15deg) rotateY(0deg) translateZ(120px) translateY(0px); opacity: 0.3; }
-    25%  { transform: rotateZ(90deg) rotateX(15deg) rotateY(90deg) translateZ(120px) translateY(-10px); opacity: 0.6; }
-    50%  { transform: rotateZ(180deg) rotateX(15deg) rotateY(180deg) translateZ(120px) translateY(0px); opacity: 0.9; }
-    75%  { transform: rotateZ(270deg) rotateX(15deg) rotateY(270deg) translateZ(120px) translateY(-10px); opacity: 0.6; }
-    100% { transform: rotateZ(360deg) rotateX(15deg) rotateY(360deg) translateZ(120px) translateY(0px); opacity: 0.3; }
+  @keyframes orbitRight {
+    0%   { transform: translateX(140px) rotateY(0deg) rotateZ(-5deg) translateY(-20px) scale(0.75); opacity: 0.2; }
+    25%  { transform: translateX(0px) rotateY(90deg) rotateZ(0deg) translateY(0px) scale(0.85); opacity: 0.7; }
+    50%  { transform: translateX(-140px) rotateY(180deg) rotateZ(5deg) translateY(-20px) scale(0.9); opacity: 1; }
+    75%  { transform: translateX(0px) rotateY(270deg) rotateZ(0deg) translateY(20px) scale(0.85); opacity: 0.7; }
+    100% { transform: translateX(140px) rotateY(360deg) rotateZ(-5deg) translateY(-20px) scale(0.75); opacity: 0.2; }
   }
   
-  @keyframes orbit3DBack {
-    0%   { transform: rotateZ(180deg) rotateX(15deg) rotateY(180deg) translateZ(120px) translateY(0px); opacity: 0.25; }
-    25%  { transform: rotateZ(270deg) rotateX(15deg) rotateY(270deg) translateZ(120px) translateY(-8px); opacity: 0.5; }
-    50%  { transform: rotateZ(360deg) rotateX(15deg) rotateY(360deg) translateZ(120px) translateY(0px); opacity: 0.8; }
-    75%  { transform: rotateZ(90deg) rotateX(15deg) rotateY(90deg) translateZ(120px) translateY(-8px); opacity: 0.5; }
-    100% { transform: rotateZ(180deg) rotateX(15deg) rotateY(180deg) translateZ(120px) translateY(0px); opacity: 0.25; }
+  @keyframes orbitLeft {
+    0%   { transform: translateX(-140px) rotateY(180deg) rotateZ(5deg) translateY(-20px) scale(0.9); opacity: 1; }
+    25%  { transform: translateX(0px) rotateY(270deg) rotateZ(0deg) translateY(20px) scale(0.85); opacity: 0.7; }
+    50%  { transform: translateX(140px) rotateY(360deg) rotateZ(-5deg) translateY(-20px) scale(0.75); opacity: 0.2; }
+    75%  { transform: translateX(0px) rotateY(90deg) rotateZ(0deg) translateY(0px) scale(0.85); opacity: 0.7; }
+    100% { transform: translateX(-140px) rotateY(180deg) rotateZ(5deg) translateY(-20px) scale(0.9); opacity: 1; }
+  }
+  
+  @keyframes orbitBack {
+    0%   { transform: translateX(0px) rotateY(90deg) rotateZ(0deg) translateY(0px) scale(0.85); opacity: 0.7; }
+    25%  { transform: translateX(-140px) rotateY(180deg) rotateZ(5deg) translateY(-20px) scale(0.9); opacity: 1; }
+    50%  { transform: translateX(0px) rotateY(270deg) rotateZ(0deg) translateY(20px) scale(0.85); opacity: 0.7; }
+    75%  { transform: translateX(140px) rotateY(360deg) rotateZ(-5deg) translateY(-20px) scale(0.75); opacity: 0.2; }
+    100% { transform: translateX(0px) rotateY(90deg) rotateZ(0deg) translateY(0px) scale(0.85); opacity: 0.7; }
   }
 
   @keyframes cardFlip3D {
@@ -103,11 +111,11 @@ const productCardStyles = `
 
   .pc-main  { animation: floatMain  5.5s ease-in-out infinite; perspective: 1200px; transform-style: preserve-3d; }
   
-  .card-orbit-front   { animation: orbit3D  7.2s ease-in-out infinite; perspective: 1200px; transform-style: preserve-3d; }
-  .card-orbit-back    { animation: orbit3DBack 7.2s ease-in-out infinite 0.4s; perspective: 1200px; transform-style: preserve-3d; }
+  .card-orbit-right  { animation: orbitRight  7.2s ease-in-out infinite; transform-style: preserve-3d; }
+  .card-orbit-left   { animation: orbitLeft   7.2s ease-in-out infinite; transform-style: preserve-3d; }
+  .card-orbit-back   { animation: orbitBack   7.2s ease-in-out infinite; transform-style: preserve-3d; }
   
   .card-enter { animation: cardFlip3D 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55); perspective: 1200px; }
-  .glow-pulse { animation: glowDynamic 3s ease-in-out infinite; }
 `;
 
 // ─── Products data ─────────────────────────────────────────────────────────────
@@ -392,7 +400,7 @@ function AnimatedProductCards() {
         style={{ 
           width: 190, 
           height: 260, 
-          perspective: '1500px',
+          perspective: '1200px',
           transformStyle: 'preserve-3d'
         }}
       >
@@ -433,59 +441,78 @@ function AnimatedProductCards() {
           }} />
         </div>
 
-        {/* 3D Card Container */}
+        {/* 3D Cards Orbit Container */}
         <div style={{
           position: 'absolute',
           inset: 0,
-          perspective: '1500px',
+          perspective: '1200px',
           transformStyle: 'preserve-3d',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}>
 
-          {/* Card 3 — back orbit */}
+          {/* Card on Left (going back) */}
           <div 
-            key={`card-3-${cardIndices[2]}`} 
+            key={`card-left-${cardIndices[1]}`} 
+            className="card-orbit-left card-enter" 
+            style={{
+              position: 'absolute',
+              transformStyle: 'preserve-3d',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              filter: 'brightness(0.65)',
+            }}
+          >
+            <MiniProductCard p={products[cardIndices[1]]} size={0.87} scanDelay="2s" showOrder={false} />
+          </div>
+
+          {/* Card in Back (hidden) */}
+          <div 
+            key={`card-back-${cardIndices[2]}`} 
             className="card-orbit-back card-enter" 
             style={{
-              position: 'absolute', 
-              width: '100%',
-              height: '100%',
-              zIndex: 1,
+              position: 'absolute',
               transformStyle: 'preserve-3d',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              filter: 'brightness(0.4) blur(0.5px)',
             }}
           >
-            <div style={{ filter: 'brightness(0.4) blur(0.5px)' }}>
-              <MiniProductCard p={products[cardIndices[2]]} size={0.76} scanDelay="2.8s" showOrder={false} />
-            </div>
+            <MiniProductCard p={products[cardIndices[2]]} size={0.76} scanDelay="2.8s" showOrder={false} />
           </div>
 
-          {/* Card 2 — middle orbit */}
+          {/* Card in Front (hero card) */}
           <div 
-            key={`card-2-${cardIndices[1]}`} 
-            className="card-orbit-front card-enter" 
-            style={{
-              position: 'absolute', 
-              width: '100%',
-              height: '100%',
-              zIndex: 2,
-              transformStyle: 'preserve-3d',
-            }}
-          >
-            <div style={{ filter: 'brightness(0.65)' }}>
-              <MiniProductCard p={products[cardIndices[1]]} size={0.87} scanDelay="2s" showOrder={false} />
-            </div>
-          </div>
-
-          {/* Card 1 — front (with order animation) */}
-          <div 
-            key={`card-1-${cardIndices[0]}`} 
+            key={`card-front-${cardIndices[0]}`} 
             className="pc-main card-enter" 
             style={{ 
-              position: 'relative', 
-              zIndex: 3,
+              position: 'absolute',
               transformStyle: 'preserve-3d',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             <MiniProductCard p={products[cardIndices[0]]} size={1} scanDelay="1.1s" showOrder={true} />
+          </div>
+
+          {/* Card on Right (coming forward) */}
+          <div 
+            key={`card-right-${cardIndices[0]}`} 
+            className="card-orbit-right card-enter" 
+            style={{
+              position: 'absolute',
+              transformStyle: 'preserve-3d',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              filter: 'brightness(0.7)',
+            }}
+          >
+            <MiniProductCard p={products[cardIndices[0]]} size={0.8} scanDelay="1.8s" showOrder={false} />
           </div>
         </div>
       </div>
