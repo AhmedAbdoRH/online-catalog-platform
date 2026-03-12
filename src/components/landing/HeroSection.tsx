@@ -16,44 +16,26 @@ const TEAL_LIGHT = '#155e58';
 // ─── Keyframes ────────────────────────────────────────────────────────────────
 const productCardStyles = `
   @keyframes floatMain {
-    0%,100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg) rotateZ(-1deg); filter: drop-shadow(0 14px 28px rgba(0,0,0,0.45)); }
-    50%      { transform: translateY(-14px) rotateX(5deg) rotateY(-8deg) rotateZ(0.6deg); filter: drop-shadow(0 26px 40px rgba(0,0,0,0.55)); }
+    0%,100% { transform: translateY(0px) rotateZ(-1deg) rotateX(0deg); filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
+    50%      { transform: translateY(-16px) rotateZ(0.8deg) rotateX(2deg); filter: drop-shadow(0 30px 60px rgba(0,0,0,0.65)); }
+  }
+  @keyframes floatSec {
+    0%,100% { transform: translateY(0px) rotateZ(2.5deg) rotateX(0deg) scale(0.88); }
+    50%      { transform: translateY(-12px) rotateZ(-1.5deg) rotateX(-2deg) scale(0.88); }
+  }
+  @keyframes floatThird {
+    0%,100% { transform: translateY(0px) rotateZ(-2deg) rotateX(0deg) scale(0.76); }
+    50%      { transform: translateY(-8px) rotateZ(1.8deg) rotateX(2deg) scale(0.76); }
   }
   
-  @keyframes orbitRight {
-    0%   { transform: translateX(140px) rotateY(0deg) rotateZ(-5deg) translateY(-20px) scale(0.75); opacity: 0.2; }
-    25%  { transform: translateX(0px) rotateY(90deg) rotateZ(0deg) translateY(0px) scale(0.85); opacity: 0.7; }
-    50%  { transform: translateX(-140px) rotateY(180deg) rotateZ(5deg) translateY(-20px) scale(0.9); opacity: 1; }
-    75%  { transform: translateX(0px) rotateY(270deg) rotateZ(0deg) translateY(20px) scale(0.85); opacity: 0.7; }
-    100% { transform: translateX(140px) rotateY(360deg) rotateZ(-5deg) translateY(-20px) scale(0.75); opacity: 0.2; }
-  }
-  
-  @keyframes orbitLeft {
-    0%   { transform: translateX(-140px) rotateY(180deg) rotateZ(5deg) translateY(-20px) scale(0.9); opacity: 1; }
-    25%  { transform: translateX(0px) rotateY(270deg) rotateZ(0deg) translateY(20px) scale(0.85); opacity: 0.7; }
-    50%  { transform: translateX(140px) rotateY(360deg) rotateZ(-5deg) translateY(-20px) scale(0.75); opacity: 0.2; }
-    75%  { transform: translateX(0px) rotateY(90deg) rotateZ(0deg) translateY(0px) scale(0.85); opacity: 0.7; }
-    100% { transform: translateX(-140px) rotateY(180deg) rotateZ(5deg) translateY(-20px) scale(0.9); opacity: 1; }
-  }
-  
-  @keyframes orbitBack {
-    0%   { transform: translateX(0px) rotateY(90deg) rotateZ(0deg) translateY(0px) scale(0.85); opacity: 0.7; }
-    25%  { transform: translateX(-140px) rotateY(180deg) rotateZ(5deg) translateY(-20px) scale(0.9); opacity: 1; }
-    50%  { transform: translateX(0px) rotateY(270deg) rotateZ(0deg) translateY(20px) scale(0.85); opacity: 0.7; }
-    75%  { transform: translateX(140px) rotateY(360deg) rotateZ(-5deg) translateY(-20px) scale(0.75); opacity: 0.2; }
-    100% { transform: translateX(0px) rotateY(90deg) rotateZ(0deg) translateY(0px) scale(0.85); opacity: 0.7; }
-  }
-
-  @keyframes cardFlip3D {
-    0%   { opacity: 0; transform: perspective(1200px) rotateY(90deg) rotateX(20deg) translateX(20px) scale(0.8); }
+  @keyframes cardFlip {
+    0%   { opacity: 0; transform: perspective(1200px) rotateY(100deg) rotateX(10deg) translateZ(30px); }
     50%  { opacity: 1; }
-    100% { opacity: 1; transform: perspective(1200px) rotateY(0deg) rotateX(0deg) translateX(0) scale(1); }
+    100% { opacity: 1; transform: perspective(1200px) rotateY(0deg) rotateX(0deg) translateZ(0px); }
   }
-  
-  @keyframes glowDynamic {
-    0%   { box-shadow: 0 0 30px rgba(255, 193, 7, 0.3), inset 0 1px 0 rgba(255,255,255,0.06); }
-    50%  { box-shadow: 0 0 50px rgba(255, 193, 7, 0.6), inset 0 1px 0 rgba(255,255,255,0.06); }
-    100% { box-shadow: 0 0 30px rgba(255, 193, 7, 0.3), inset 0 1px 0 rgba(255,255,255,0.06); }
+  @keyframes cardFlipOut {
+    0%   { opacity: 1; transform: perspective(1200px) rotateY(0deg) rotateX(0deg) translateZ(0px); }
+    100% { opacity: 0; transform: perspective(1200px) rotateY(-100deg) rotateX(-10deg) translateZ(30px); }
   }
   
   @keyframes shimmerPrice {
@@ -67,8 +49,8 @@ const productCardStyles = `
     100% { left:115%; opacity:0; }
   }
   @keyframes glowPulseCard {
-    0%,100% { opacity:0.18; }
-    50%     { opacity:0.5; }
+    0%,100% { opacity:0.22; }
+    50%     { opacity:0.6; }
   }
   @keyframes gridMove {
     0%   { background-position: 0 0; }
@@ -110,45 +92,44 @@ const productCardStyles = `
   }
 
   .pc-main  { animation: floatMain  5.5s ease-in-out infinite; perspective: 1200px; transform-style: preserve-3d; }
+  .pc-sec   { animation: floatSec   6.8s ease-in-out infinite 0.9s; perspective: 1200px; transform-style: preserve-3d; }
+  .pc-third { animation: floatThird 5.2s ease-in-out infinite 1.7s; perspective: 1200px; transform-style: preserve-3d; }
   
-  .card-orbit-right  { animation: orbitRight  7.2s ease-in-out infinite; transform-style: preserve-3d; }
-  .card-orbit-left   { animation: orbitLeft   7.2s ease-in-out infinite; transform-style: preserve-3d; }
-  .card-orbit-back   { animation: orbitBack   7.2s ease-in-out infinite; transform-style: preserve-3d; }
-  
-  .card-enter { animation: cardFlip3D 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55); perspective: 1200px; }
+  .card-flip-in  { animation: cardFlip 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); perspective: 1200px; transform-style: preserve-3d; }
+  .card-flip-out { animation: cardFlipOut 0.6s ease-in; perspective: 1200px; transform-style: preserve-3d; }
 `;
 
 // ─── Products data ─────────────────────────────────────────────────────────────
 const products = [
   {
+    emoji: '🍔',
+    name: 'برجر بيف فريمিوم',
+    sub: 'لحم بقري 200 جرام',
+    category: 'مواد غذائية',
+    desc: 'برجر طازة من لحم بقري عالي الجودة مع الخضار الطازة...',
+    price: '65',
+    color: '#d2691e',
+    bgTop: 'linear-gradient(135deg, #3d2817 0%, #5a3a22 100%)',
+  },
+  {
     emoji: '👕',
-    name: 'قميص كتان أزرق فاتح',
-    sub: 'حجم Large، 100% كتان',
+    name: 'تي شيرت كتان رجالي',
+    sub: 'حجم XL، 100% كتان',
     category: 'ملابس',
-    desc: 'قميص صيفي مريح وأنيق من كتان عالي الجودة...',
-    price: '185',
-    color: '#3b9dd9',
-    bgTop: 'linear-gradient(135deg, #1a2a4e 0%, #0d47a1 100%)',
+    desc: 'تيشيرت صيفي مريح وعصري بتصميم كلاسيكي أنيق...',
+    price: '145',
+    color: '#1e5a96',
+    bgTop: 'linear-gradient(135deg, #0d2a4d 0%, #1a4d7a 100%)',
   },
   {
-    emoji: '�',
-    name: 'تيشيرت رجالي كلاسيكي',
-    sub: 'حجم L، قطن 100%',
-    category: 'ملابس',
-    desc: 'تيشيرت مريح وعملي مناسب للاستخدام اليومي...',
-    price: '95',
-    color: '#e53935',
-    bgTop: 'linear-gradient(135deg, #3d1a1a 0%, #8b0000 100%)',
-  },
-  {
-    emoji: '🎧',
-    name: 'سماعات رأس لاسلكية',
-    sub: 'بلوتوث 5.0، بطارية 30 ساعة',
-    category: 'أجهزة',
-    desc: 'سماعات احترافية بصوت عالي الجودة وراحة فائقة...',
-    price: '385',
-    color: '#ffc107',
-    bgTop: 'linear-gradient(135deg, #4a3a00 0%, #8b7500 100%)',
+    emoji: '💻',
+    name: 'مروحة USB ذكية',
+    sub: 'قدرة 12 وات، 3 سرعات',
+    category: 'أجهزة كهربائية',
+    desc: 'مروحة حديثة متصلة بـ USB مع تحكم ذكي وتوفير طاقة...',
+    price: '195',
+    color: '#ff6b35',
+    bgTop: 'linear-gradient(135deg, #4d2817 0%, #8b4513 100%)',
   },
 ];
 
@@ -201,18 +182,8 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
         borderRadius: 14 * size,
         border: '1px solid rgba(255,255,255,0.10)',
         overflow: 'hidden',
-        boxShadow: `0 ${16 * size}px ${40 * size}px rgba(0,0,0,0.5), 
-                    0 0 ${30 * size}px rgba(${parseInt(p.color.slice(1,3), 16)}, ${parseInt(p.color.slice(3,5), 16)}, ${parseInt(p.color.slice(5,7), 16)}, 0.15),
-                    inset 0 1px 0 rgba(255,255,255,0.06)`,
-        transition: 'box-shadow 0.6s ease',
+        boxShadow: `0 ${16 * size}px ${40 * size}px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)`,
       }}>
-
-        {/* Dynamic light reflection */}
-        <div style={{
-          position: 'absolute', inset: 0, borderRadius: 14 * size,
-          background: `radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)`,
-          pointerEvents: 'none', zIndex: 1,
-        }} />
 
         {/* Scan line */}
         <div style={{
@@ -237,7 +208,7 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
             position: 'absolute', inset: 0,
             background: `radial-gradient(ellipse at 60% 30%, ${p.color}30 0%, transparent 65%)`,
           }} />
-          <span style={{ position: 'relative', zIndex: 1, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>{p.emoji}</span>
+          <span style={{ position: 'relative', zIndex: 1 }}>{p.emoji}</span>
 
           {/* Flying item animation when adding */}
           {activeStage === 'adding' && (
@@ -379,15 +350,20 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
 // ─── Animated stacked cards widget ────────────────────────────────────────────
 function AnimatedProductCards() {
   const [cardIndices, setCardIndices] = useState([0, 1, 2]);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCardIndices(prev => [
-        (prev[0] + 1) % products.length,
-        (prev[1] + 1) % products.length,
-        (prev[2] + 1) % products.length,
-      ]);
-    }, 7200); // تبديل مع الأنيميشن
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCardIndices(prev => [
+          (prev[0] + 1) % products.length,
+          (prev[1] + 1) % products.length,
+          (prev[2] + 1) % products.length,
+        ]);
+        setIsTransitioning(false);
+      }, 400);
+    }, 7000); // تبديل كل 7 ثواني مع مدة الأنيميشن
     return () => clearInterval(interval);
   }, []);
 
@@ -397,123 +373,64 @@ function AnimatedProductCards() {
 
       <div
         className="absolute -top-10 -right-10 z-30"
-        style={{ 
-          width: 190, 
-          height: 260, 
-          perspective: '1200px',
-          transformStyle: 'preserve-3d'
-        }}
+        style={{ width: 190, height: 260, perspective: '1200px' }}
       >
-        {/* Central glow container */}
+        {/* Ambient glow - محسّنة */}
         <div style={{
-          position: 'absolute', inset: '-40px', borderRadius: '50%',
-          background: `radial-gradient(ellipse, ${TEAL_LIGHT}80 0%, transparent 75%)`,
-          animation: 'glowPulseCard 5s ease-in-out infinite',
-          filter: 'blur(30px)', pointerEvents: 'none', zIndex: 0,
+          position: 'absolute', inset: '-30px', borderRadius: '50%',
+          background: `radial-gradient(ellipse 140% 120% at 50% 40%, ${TEAL_LIGHT}60 0%, rgba(21,94,88,0.2) 50%, transparent 85%)`,
+          animation: 'glowPulseCard 5.5s ease-in-out infinite',
+          filter: 'blur(30px)', pointerEvents: 'none',
+          boxShadow: `0 0 80px ${TEAL_LIGHT}40`,
         }} />
 
-        {/* Rotating light effect */}
+        {/* Grid texture محسّنة */}
         <div style={{
-          position: 'absolute', inset: '-24px', borderRadius: '50%',
-          background: `conic-gradient(from 0deg, ${GOLD}80, ${TEAL_LIGHT}40, ${GOLD}80)`,
-          animation: 'orbitDot 12s linear infinite',
-          filter: 'blur(25px)', pointerEvents: 'none', zIndex: 0, opacity: 0.4,
-        }} />
-
-        {/* Grid texture */}
-        <div style={{
-          position: 'absolute', inset: '-28px', opacity: 0.045,
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px),
-                             linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)`,
+          position: 'absolute', inset: '-35px', opacity: 0.08,
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)`,
           backgroundSize: '28px 28px',
-          animation: 'gridMove 7s linear infinite',
+          animation: 'gridMove 8s linear infinite',
           borderRadius: 18, pointerEvents: 'none',
         }} />
 
-        {/* Orbiting dot */}
-        <div style={{ position: 'absolute', top: '50%', left: '50%', width: 0, height: 0 }}>
+        {/* Orbiting dot محسّن */}
+        <div style={{ position: 'absolute', top: '48%', left: '42%', width: 0, height: 0 }}>
           <div style={{
             width: 8, height: 8, borderRadius: '50%',
-            background: `linear-gradient(135deg, ${GOLD}, #FFE57A)`,
-            boxShadow: `0 0 15px ${GOLD}, 0 0 30px ${GOLD}80`,
-            animation: 'orbitDot 8s linear infinite',
+            background: GOLD, 
+            boxShadow: `0 0 20px ${GOLD}, 0 0 40px ${GOLD}80`,
+            animation: 'orbitDot 10s linear infinite',
             marginTop: -4, marginLeft: -4,
+            filter: 'drop-shadow(0 0 6px rgba(255,200,0,0.8))',
           }} />
         </div>
 
-        {/* 3D Cards Orbit Container */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          perspective: '1200px',
+        {/* Card 3 — back */}
+        <div key={`card-3-${cardIndices[2]}`} className={`pc-third ${!isTransitioning ? 'card-flip-in' : ''}`} style={{
+          position: 'absolute', top: 24, left: -44, zIndex: 1,
+          filter: 'brightness(0.6) blur(0.5px)',
           transformStyle: 'preserve-3d',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
         }}>
+          <MiniProductCard p={products[cardIndices[2]]} size={0.76} scanDelay="2.8s" showOrder={false} />
+        </div>
 
-          {/* Card on Left (going back) */}
-          <div 
-            key={`card-left-${cardIndices[1]}`} 
-            className="card-orbit-left card-enter" 
-            style={{
-              position: 'absolute',
-              transformStyle: 'preserve-3d',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              filter: 'brightness(0.65)',
-            }}
-          >
-            <MiniProductCard p={products[cardIndices[1]]} size={0.87} scanDelay="2s" showOrder={false} />
-          </div>
+        {/* Card 2 — middle */}
+        <div key={`card-2-${cardIndices[1]}`} className={`pc-sec ${!isTransitioning ? 'card-flip-in' : ''}`} style={{
+          position: 'absolute', top: 12, left: -22, zIndex: 2,
+          filter: 'brightness(0.75)',
+          transformStyle: 'preserve-3d',
+        }}>
+          <MiniProductCard p={products[cardIndices[1]]} size={0.87} scanDelay="2s" showOrder={false} />
+        </div>
 
-          {/* Card in Back (hidden) */}
-          <div 
-            key={`card-back-${cardIndices[2]}`} 
-            className="card-orbit-back card-enter" 
-            style={{
-              position: 'absolute',
-              transformStyle: 'preserve-3d',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              filter: 'brightness(0.4) blur(0.5px)',
-            }}
-          >
-            <MiniProductCard p={products[cardIndices[2]]} size={0.76} scanDelay="2.8s" showOrder={false} />
-          </div>
-
-          {/* Card in Front (hero card) */}
-          <div 
-            key={`card-front-${cardIndices[0]}`} 
-            className="pc-main card-enter" 
-            style={{ 
-              position: 'absolute',
-              transformStyle: 'preserve-3d',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <MiniProductCard p={products[cardIndices[0]]} size={1} scanDelay="1.1s" showOrder={true} />
-          </div>
-
-          {/* Card on Right (coming forward) */}
-          <div 
-            key={`card-right-${cardIndices[0]}`} 
-            className="card-orbit-right card-enter" 
-            style={{
-              position: 'absolute',
-              transformStyle: 'preserve-3d',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              filter: 'brightness(0.7)',
-            }}
-          >
-            <MiniProductCard p={products[cardIndices[0]]} size={0.8} scanDelay="1.8s" showOrder={false} />
-          </div>
+        {/* Card 1 — front (مع أنيميشن الطلب) */}
+        <div key={`card-1-${cardIndices[0]}`} className={`pc-main ${!isTransitioning ? 'card-flip-in' : ''}`} style={{ 
+          position: 'relative', 
+          zIndex: 3,
+          transformStyle: 'preserve-3d',
+        }}>
+          <MiniProductCard p={products[cardIndices[0]]} size={1} scanDelay="1.1s" showOrder={true} />
         </div>
       </div>
     </>
