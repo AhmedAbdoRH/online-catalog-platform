@@ -52,12 +52,26 @@ export function ProUpgradeButton({
         });
         window.location.reload();
       } else {
-        const errMsg =
-          typeof result.error === "string"
-            ? result.error
-            : (result.error && typeof result.error === "object" && "message" in result.error
-                ? (result.error as { message: string }).message
-                : "حدث خطأ غير متوقع. تواصل مع الدعم.");
+        // معالجة متقدمة لرسالة الخطأ
+        let errMsg = "حدث خطأ غير متوقع. تواصل مع الدعم.";
+        
+        if (typeof result.error === "string" && result.error.length > 0) {
+          errMsg = result.error;
+        } else if (result.error && typeof result.error === "object") {
+          if ("message" in result.error && typeof result.error.message === "string") {
+            errMsg = result.error.message;
+          } else if ("errorMessage" in result.error && typeof result.error.errorMessage === "string") {
+            errMsg = result.error.errorMessage;
+          } else {
+            errMsg = JSON.stringify(result.error).substring(0, 200);
+          }
+        }
+        
+        // تجنب عرض [object Object]
+        if (errMsg === "[object Object]" || !errMsg || errMsg.includes("[object")) {
+          errMsg = "حدث خطأ في التفعيل. يرجى المحاولة لاحقاً.";
+        }
+        
         toast({
           variant: "destructive",
           title: "فشل التفعيل",
