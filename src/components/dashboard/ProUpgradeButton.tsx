@@ -41,10 +41,14 @@ export function ProUpgradeButton({
       return;
     }
     setIsLoading(true);
+    console.log("🔄 بدء عملية الشراء...");
     const { success, purchaseToken, error } = await purchaseProSubscription();
+    console.log("📱 نتيجة الشراء:", { success, hasPurchaseToken: !!purchaseToken, error });
     if (success && purchaseToken) {
+      console.log("🔄 جاري التحقق من الاشتراك...", { purchaseToken: purchaseToken.substring(0, 20) + "...", catalogId });
       const result = await verifyAndActivatePro(purchaseToken, catalogId);
       setIsLoading(false);
+      console.log("✅ نتيجة التحقق:", result);
       if (result.ok) {
         toast({
           title: "تم الاشتراك بنجاح",
@@ -79,6 +83,7 @@ export function ProUpgradeButton({
         });
       }
     } else if (success) {
+      console.error("⚠️ تم الشراء لكن لا يوجد purchaseToken");
       toast({
         variant: "destructive",
         title: "تم الشراء",
@@ -88,6 +93,7 @@ export function ProUpgradeButton({
     } else {
       setIsLoading(false);
       if (error && !error.includes("تم إلغاء")) {
+        console.error("❌ خطأ في الشراء:", error);
         toast({
           variant: "destructive",
           title: "فشل الشراء",
