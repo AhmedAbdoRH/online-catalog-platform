@@ -45,19 +45,19 @@ const getPlanDetails = (plan: string) => {
     case 'pro':
       return {
         label: 'الباقة الاحترافية',
-        className: 'relative overflow-hidden bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 text-white shadow-lg border-0',
+        className: 'relative overflow-hidden bg-amber-500 text-white shadow-lg border-0',
         icon: Zap,
       };
     case 'business':
       return {
         label: 'باقة الأعمال',
-        className: 'relative overflow-hidden bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 text-white shadow-lg border-0',
+        className: 'relative overflow-hidden bg-purple-600 text-white shadow-lg border-0',
         icon: Building,
       };
     default:
       return {
         label: 'الباقة الأساسية',
-        className: 'relative overflow-hidden bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-lg border-0',
+        className: 'relative overflow-hidden bg-cyan-500 text-white shadow-lg border-0',
         icon: PackageIcon,
       };
   }

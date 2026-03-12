@@ -111,9 +111,9 @@ export function BottomNav() {
       transition={{ type: "spring", damping: 30, stiffness: 150 }}
       className="fixed bottom-0 left-0 right-0 z-50 block sm:hidden"
     >
-      <div className="relative flex h-24 w-full items-center justify-center border-t border-white/20 bg-gradient-to-b from-brand-primary to-brand-primary/90 px-4 pb-8 shadow-[0_-10px_40px_rgba(0,0,0,0.9)]">
+      <div className="relative flex h-24 w-full items-center justify-center border-t border-white/20 bg-brand-primary px-4 pb-8 shadow-[0_-10px_40px_rgba(0,0,0,0.9)]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,179,0,0.05),_transparent)]" />
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-accent/40 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-brand-accent/40" />
         
         {/* Floating Home Button - Above the bar, centered, circular, neutral */}
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex flex-col items-center translate-y-1">
@@ -167,7 +167,7 @@ export function BottomNav() {
 
           {/* Vertical Separator under Home Button */}
           <div className="relative flex h-12 w-16 items-center justify-center">
-            <div className="h-8 w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+            <div className="h-8 w-[1px] bg-white/20" />
           </div>
 
           {/* Right Side Items */}
@@ -265,7 +265,7 @@ export function BottomNav() {
               transition={{ repeat: Infinity, duration: 2 }}
               className="absolute -inset-1 rounded-full bg-amber-400/10 blur-md" 
             />
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#FCD34D] via-[#F59E0B] to-[#D97706] text-white shadow-[0_15px_35px_rgba(245,158,11,0.25)] ring-1 ring-white/40">
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-amber-400 text-white shadow-[0_15px_35px_rgba(245,158,11,0.25)] ring-1 ring-white/40">
               <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.4),_transparent_70%)] opacity-50" />
               <div className="absolute inset-0.5 rounded-full ring-1 ring-white/20" />
               <Plus className="relative h-10 w-10 stroke-[1.5px]" />

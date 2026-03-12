@@ -29,16 +29,16 @@ const getThemeClass = (theme: string) => {
 
 const getCardColors = (theme: string) => {
     switch (theme) {
-        case 'gradient-1': return 'from-purple-900/60 to-purple-950/30';
-        case 'gradient-2': return 'from-red-900/60 to-red-950/30';
-        case 'gradient-3': return 'from-orange-900/60 to-orange-950/30';
-        case 'gradient-4': return 'from-green-900/60 to-green-950/30';
-        case 'gradient-5': return 'from-blue-900/60 to-blue-950/30';
-        case 'gradient-6': return 'from-pink-900/60 to-pink-950/30';
-        case 'gradient-7': return 'from-amber-900/60 to-amber-950/30';
-        case 'gradient-8': return 'from-teal-900/60 to-teal-950/30';
-        case 'gradient-9': return 'from-gray-800/60 to-gray-900/30';
-        default: return 'from-slate-900/60 to-slate-900/30';
+        case 'gradient-1': return 'bg-purple-900/60';
+        case 'gradient-2': return 'bg-red-900/60';
+        case 'gradient-3': return 'bg-orange-900/60';
+        case 'gradient-4': return 'bg-green-900/60';
+        case 'gradient-5': return 'bg-blue-900/60';
+        case 'gradient-6': return 'bg-pink-900/60';
+        case 'gradient-7': return 'bg-amber-900/60';
+        case 'gradient-8': return 'bg-teal-900/60';
+        case 'gradient-9': return 'bg-gray-800/60';
+        default: return 'bg-slate-900/60';
     }
 };
 
@@ -168,8 +168,8 @@ export default function ClientProductPage() {
                 </div>
 
                 <section className="glass-surface grid gap-6 rounded-3xl bg-white/10 p-4 shadow-2xl backdrop-blur-2xl md:grid-cols-[1.15fr_0.85fr] md:p-6">
-                    <div className={cn("relative aspect-square overflow-hidden rounded-[1.5rem] border border-white/30 bg-gradient-to-br text-white shadow-[0_20px_55px_rgba(15,23,42,0.4)] md:aspect-auto md:h-[400px]", cardColors)}>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent pointer-events-none z-10" />
+                    <div className={cn("relative aspect-square overflow-hidden rounded-[1.5rem] border border-white/30 bg-white/10 text-white shadow-[0_20px_55px_rgba(15,23,42,0.4)] md:aspect-auto md:h-[400px]", cardColors)}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent pointer-events-none z-10" />
 
                         <ProductGallery
                             images={images}
