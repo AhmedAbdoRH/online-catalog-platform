@@ -30,14 +30,13 @@ export default function LandingHeader() {
     };
 
     const navLinks = [
-        { name: "الميزات", href: "/go#features" },
-        { name: "كيف تعمل", href: "/go#how-it-works" },
-        { name: "الأسعار", href: "/go#pricing" },
-        { name: "الأسئلة", href: "/go#faq" },
+        { name: "??????????????", href: "/go#benefits" },
+        { name: "??????????", href: "/go#features" },
+        { name: "??????????????", href: "/go#pricing" },
     ];
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/40">
+        <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
                 {/* Logo */}
                 <Link 
@@ -45,7 +44,7 @@ export default function LandingHeader() {
                     className="flex items-center gap-3 hover:opacity-90 transition-all active:scale-95 group"
                     onClick={handleLogoClick}
                 >
-                    <div className="relative h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-brand-primary/20 to-brand-accent/20 rounded-xl p-2 group-hover:rotate-3 transition-transform duration-300">
+                    <div className="relative h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-brand-primary/30 to-brand-accent/30 rounded-xl p-2 group-hover:rotate-3 transition-transform duration-300 shadow-[0_0_18px_rgba(85,249,230,0.18)]">
                             <Image
                                 src="/logo.png"
                                 alt="منصة اونلاين كاتلوج"
@@ -56,7 +55,7 @@ export default function LandingHeader() {
                         </div>
                     <div className="flex flex-col">
                         <span className="text-lg sm:text-xl font-black text-foreground tracking-tighter leading-none">اونلاين كاتلوج</span>
-                        <span className="text-[10px] sm:text-xs text-brand-primary font-bold tracking-widest uppercase opacity-80">Online Catalog</span>
+                        <span className="text-[10px] sm:text-xs text-brand-accent font-bold tracking-widest uppercase opacity-80">Online Catalog</span>
                     </div>
                 </Link>
 
@@ -66,19 +65,19 @@ export default function LandingHeader() {
                         <Link
                             key={link.name}
                             href={link.href}
-                            className="text-sm font-bold text-muted-foreground hover:text-brand-primary transition-all relative group py-2"
+                            className="text-sm font-bold text-muted-foreground hover:text-brand-accent transition-all relative group py-2"
                         >
                             {link.name}
-                            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-primary transition-all group-hover:w-full" />
+                            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-accent transition-all group-hover:w-full shadow-[0_0_14px_rgba(85,249,230,0.6)]" />
                         </Link>
                     ))}
                 </nav>
 
                 <div className="hidden lg:flex items-center gap-4">
-                    <Button variant="ghost" asChild className="font-bold text-sm hover:bg-brand-primary/10 hover:text-brand-primary rounded-xl">
+                    <Button variant="ghost" asChild className="font-bold text-sm hover:bg-brand-accent/10 hover:text-brand-accent rounded-xl">
                         <Link href="/login">تسجيل دخول</Link>
                     </Button>
-                    <Button asChild className="font-bold text-sm bg-brand-primary hover:bg-brand-primary/90 shadow-lg shadow-brand-primary/20 rounded-xl px-6">
+                    <Button asChild className="font-bold text-sm bg-brand-accent text-[#043832] hover:bg-brand-accent/90 shadow-lg shadow-brand-accent/30 rounded-xl px-6">
                         <Link href="/home">ابدأ مجاناً</Link>
                     </Button>
                 </div>
@@ -107,16 +106,16 @@ export default function LandingHeader() {
                                 <Link
                                     key={link.name}
                                     href={link.href}
-                                    className="text-lg font-medium hover:text-primary transition-colors py-2 px-4 rounded-lg hover:bg-secondary/50"
+                                    className="text-lg font-medium hover:text-brand-accent transition-colors py-2 px-4 rounded-lg hover:bg-white/5"
                                 >
                                     {link.name}
                                 </Link>
                             ))}
                             <div className="flex flex-col gap-3 mt-6 px-4">
-                                <Button variant="outline" asChild className="w-full h-12">
+                                <Button variant="outline" asChild className="w-full h-12 border-white/20 bg-white/5">
                                     <Link href="/login">تسجيل دخول</Link>
                                 </Button>
-                                <Button asChild className="w-full h-12">
+                                <Button asChild className="w-full h-12 bg-brand-accent text-[#043832]">
                                     <Link href="/home">ابدأ مجاناً</Link>
                                 </Button>
                             </div>

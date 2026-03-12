@@ -31,7 +31,7 @@ const faqs = [
 
 export default function FAQ() {
     return (
-        <section id="faq" className="py-24 bg-background">
+        <section id="faq" className="py-24 bg-aurora">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-16 space-y-4">
                     <h2 className="text-3xl md:text-5xl font-bold font-headline">أسئلة متكررة</h2>

@@ -50,7 +50,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#00D1C9',
+  themeColor: '#0E343C',
 };
 
 export default function RootLayout({
@@ -91,11 +91,11 @@ export default function RootLayout({
       <body
         className={cn(
           "font-tajawal antialiased min-h-screen bg-background text-foreground",
-          "selection:bg-brand-primary/10 selection:text-brand-primary"
+          "selection:bg-brand-accent/20 selection:text-brand-accent"
         )}
       >
         <NextTopLoader
-          color="#2299DD"
+          color="#55F9E6"
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}
@@ -103,7 +103,7 @@ export default function RootLayout({
           showSpinner={false}
           easing="ease"
           speed={200}
-          shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+          shadow="0 0 10px #55F9E6,0 0 5px #55F9E6"
         />
         <ClientProviders>
           <ThemeProvider

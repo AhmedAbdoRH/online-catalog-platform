@@ -21,7 +21,7 @@ const values = [
 
 export default function ValueProps() {
     return (
-        <section className="py-20 sm:py-24 bg-background relative overflow-hidden">
+        <section className="py-20 sm:py-24 bg-aurora relative overflow-hidden">
             {/* Background Decoration */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(var(--brand-primary),0.03)_0%,transparent_70%)] pointer-events-none" />
             

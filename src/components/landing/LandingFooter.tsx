@@ -8,9 +8,9 @@ export default function LandingFooter() {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-zinc-950 text-zinc-400 py-16 sm:py-20 border-t border-white/5 relative overflow-hidden">
+        <footer className="bg-[#0e343c] text-zinc-200/80 py-16 sm:py-20 border-t border-white/5 relative overflow-hidden">
             {/* Background Decoration */}
-            <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-[120px] -mb-64 -mr-32 pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-accent/10 rounded-full blur-[120px] -mb-64 -mr-32 pointer-events-none" />
             
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
@@ -31,11 +31,11 @@ export default function LandingFooter() {
                             المنصة الأسرع والأسهل لإنشاء متجرك الرقمي وعرض منتجاتك باحترافية تامة في دقائق معدودة.
                         </p>
                         <div className="flex gap-4 pt-2">
-                            <Link href="https://www.facebook.com/OnlineCatalog" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-primary/20 hover:border-brand-primary/50 transition-all cursor-pointer group">
-                                <Facebook className="w-5 h-5 group-hover:text-brand-primary transition-colors" />
+                            <Link href="https://www.facebook.com/OnlineCatalog" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-accent/20 hover:border-brand-accent/50 transition-all cursor-pointer group">
+                                <Facebook className="w-5 h-5 group-hover:text-brand-accent transition-colors" />
                             </Link>
-                            <Link href="https://www.instagram.com/onlinecatalog.ecommerce/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-primary/20 hover:border-brand-primary/50 transition-all cursor-pointer group">
-                                <Instagram className="w-5 h-5 group-hover:text-brand-primary transition-colors" />
+                            <Link href="https://www.instagram.com/onlinecatalog.ecommerce/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-accent/20 hover:border-brand-accent/50 transition-all cursor-pointer group">
+                                <Instagram className="w-5 h-5 group-hover:text-brand-accent transition-colors" />
                             </Link>
                         </div>
                     </div>
@@ -44,10 +44,9 @@ export default function LandingFooter() {
                     <div className="space-y-6">
                         <h4 className="text-white font-bold text-lg tracking-tight">المنتج</h4>
                         <ul className="space-y-4 text-sm">
-                            <li><Link href="/go#features" className="hover:text-brand-primary transition-colors">الميزات</Link></li>
-                            <li><Link href="/go#how-it-works" className="hover:text-brand-primary transition-colors">كيف تعمل</Link></li>
-                            <li><Link href="/go#pricing" className="hover:text-brand-primary transition-colors">الأسعار</Link></li>
-                            <li><Link href="/go#testimonials" className="hover:text-brand-primary transition-colors">تجارب العملاء</Link></li>
+                            <li><Link href="/go#benefits" className="hover:text-brand-accent transition-colors">??????????????</Link></li>
+                            <li><Link href="/go#features" className="hover:text-brand-accent transition-colors">??????????</Link></li>
+                            <li><Link href="/go#pricing" className="hover:text-brand-accent transition-colors">??????????????</Link></li>
                         </ul>
                     </div>
 
@@ -55,10 +54,9 @@ export default function LandingFooter() {
                     <div className="space-y-6">
                         <h4 className="text-white font-bold text-lg tracking-tight">الدعم</h4>
                         <ul className="space-y-4 text-sm">
-                            <li><Link href="/login" className="hover:text-brand-primary transition-colors">تسجيل الدخول</Link></li>
-                            <li><Link href="/" className="hover:text-brand-primary transition-colors">إنشاء حساب</Link></li>
-                            <li><a href="mailto:support@online-catalog.net" className="hover:text-brand-primary transition-colors">تواصل معنا</a></li>
-                            <li><Link href="/go#faq" className="hover:text-brand-primary transition-colors">الأسئلة الشائعة</Link></li>
+                            <li><Link href="/login" className="hover:text-brand-accent transition-colors">تسجيل الدخول</Link></li>
+                            <li><Link href="/" className="hover:text-brand-accent transition-colors">إنشاء حساب</Link></li>
+                            <li><a href="mailto:support@online-catalog.net" className="hover:text-brand-accent transition-colors">تواصل معنا</a></li>
                         </ul>
                     </div>
 
@@ -70,7 +68,7 @@ export default function LandingFooter() {
                             href="https://wa.me/201008116452"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-green-500/10 text-green-500 hover:bg-green-500/20 transition-all text-sm font-bold border border-green-500/20"
+                            className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-brand-accent/15 text-brand-accent hover:bg-brand-accent/25 transition-all text-sm font-bold border border-brand-accent/30"
                         >
                             <MessageCircle className="w-5 h-5" />
                             تواصل عبر واتساب

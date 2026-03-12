@@ -25,7 +25,7 @@ const testimonials = [
 
 export default function Testimonials() {
     return (
-        <section id="testimonials" className="py-24 bg-gradient-to-t from-secondary/20 to-background">
+        <section id="testimonials" className="py-24 bg-aurora">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16 space-y-4">
                     <h2 className="text-3xl md:text-5xl font-bold font-headline">قصص نجاح تجارنا</h2>
@@ -36,7 +36,7 @@ export default function Testimonials() {
                     {testimonials.map((item, index) => (
                         <div key={index} className="bg-card p-8 rounded-2xl shadow-sm border border-border/50 hover:shadow-md transition-all">
                             <div className="flex gap-1 mb-4">
-                                {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}
+                                {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="w-4 h-4 fill-brand-accent text-brand-accent" />)}
                             </div>
 
                             <p className="text-lg mb-6 leading-relaxed">

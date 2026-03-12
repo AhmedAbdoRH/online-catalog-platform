@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,23 +9,23 @@ import { useEffect, useState } from 'react';
 const PLAY_STORE_URL = 'https://play.google.com/apps/testing/com.nextcatalog.app';
 const GOOGLE_PLAY_ICON = 'https://res.cloudinary.com/dvikey3wc/image/upload/v1773216706/Online_Catalog_pmlblb.png';
 
-const GOLD = '#FFC800';
-const GREEN_ACCENT = '#3DDC84';
-const TEAL_LIGHT = '#155e58';
+const NEON = '#55F9E6';
+const NEON_DARK = '#1BB7A4';
+const TEAL_LIGHT = '#55F9E6';
 
 // ─── Keyframes ────────────────────────────────────────────────────────────────
 const productCardStyles = `
   @keyframes floatMain {
-    0%,100% { transform: translateY(0px) rotateZ(-1deg) rotateX(0deg); filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
-    50%      { transform: translateY(-16px) rotateZ(0.8deg) rotateX(2deg); filter: drop-shadow(0 30px 60px rgba(0,0,0,0.65)); }
+    0%,100% { transform: translateY(0px) translateX(0px) rotateZ(-1deg) rotateX(0deg) rotateY(-1deg); filter: drop-shadow(0 18px 38px rgba(0,0,0,0.45)); }
+    50%      { transform: translateY(-18px) translateX(4px) rotateZ(0.8deg) rotateX(2deg) rotateY(1.5deg); filter: drop-shadow(0 28px 58px rgba(0,0,0,0.6)); }
   }
   @keyframes floatSec {
-    0%,100% { transform: translateY(0px) rotateZ(2.5deg) rotateX(0deg) scale(0.88); }
-    50%      { transform: translateY(-12px) rotateZ(-1.5deg) rotateX(-2deg) scale(0.88); }
+    0%,100% { transform: translateY(0px) translateX(0px) rotateZ(2.5deg) rotateX(0deg) rotateY(0.8deg) scale(0.88); }
+    50%      { transform: translateY(-12px) translateX(-3px) rotateZ(-1.5deg) rotateX(-2deg) rotateY(-1deg) scale(0.88); }
   }
   @keyframes floatThird {
-    0%,100% { transform: translateY(0px) rotateZ(-2deg) rotateX(0deg) scale(0.76); }
-    50%      { transform: translateY(-8px) rotateZ(1.8deg) rotateX(2deg) scale(0.76); }
+    0%,100% { transform: translateY(0px) translateX(0px) rotateZ(-2deg) rotateX(0deg) rotateY(-0.6deg) scale(0.76); }
+    50%      { transform: translateY(-9px) translateX(2px) rotateZ(1.8deg) rotateX(2deg) rotateY(1deg) scale(0.76); }
   }
   
   @keyframes cardFlip {
@@ -36,6 +36,19 @@ const productCardStyles = `
   @keyframes cardFlipOut {
     0%   { opacity: 1; transform: perspective(1200px) rotateY(0deg) rotateX(0deg) translateZ(0px); }
     100% { opacity: 0; transform: perspective(1200px) rotateY(-100deg) rotateX(-10deg) translateZ(30px); }
+  }
+  @keyframes deckFrontToBack {
+    0%   { transform: translateY(0) translateX(0) rotateZ(-1deg) rotateY(0deg) translateZ(30px) scale(1); opacity: 1; }
+    60%  { transform: translateY(10px) translateX(6px) rotateZ(-8deg) rotateY(-12deg) translateZ(-30px) scale(0.92); opacity: 0.55; }
+    100% { transform: translateY(18px) translateX(10px) rotateZ(-12deg) rotateY(-18deg) translateZ(-60px) scale(0.86); opacity: 0.35; }
+  }
+  @keyframes deckMidToFront {
+    0%   { transform: translateY(10px) translateX(6px) rotateZ(3deg) rotateY(6deg) translateZ(-10px) scale(0.92); opacity: 0.7; }
+    100% { transform: translateY(0) translateX(0) rotateZ(-1deg) rotateY(0deg) translateZ(30px) scale(1); opacity: 1; }
+  }
+  @keyframes deckBackToMid {
+    0%   { transform: translateY(18px) translateX(10px) rotateZ(-6deg) rotateY(-8deg) translateZ(-60px) scale(0.86); opacity: 0.4; }
+    100% { transform: translateY(10px) translateX(6px) rotateZ(3deg) rotateY(6deg) translateZ(-10px) scale(0.92); opacity: 0.7; }
   }
   
   @keyframes shimmerPrice {
@@ -63,8 +76,8 @@ const productCardStyles = `
 
   /* Order animation states */
   @keyframes btnPulse {
-    0%,100% { transform: scale(1); box-shadow: 0 4px 14px rgba(61,220,132,0.4); }
-    50%      { transform: scale(1.08); box-shadow: 0 6px 22px rgba(61,220,132,0.65); }
+    0%,100% { transform: scale(1); box-shadow: 0 4px 14px rgba(85,249,230,0.4); }
+    50%      { transform: scale(1.08); box-shadow: 0 6px 22px rgba(85,249,230,0.65); }
   }
   @keyframes spin {
     to { transform: rotate(360deg); }
@@ -91,12 +104,29 @@ const productCardStyles = `
     100% { opacity:0; transform: translateY(-28px) scale(0.5); }
   }
 
-  .pc-main  { animation: floatMain  5.5s ease-in-out infinite; perspective: 1200px; transform-style: preserve-3d; }
-  .pc-sec   { animation: floatSec   6.8s ease-in-out infinite 0.9s; perspective: 1200px; transform-style: preserve-3d; }
-  .pc-third { animation: floatThird 5.2s ease-in-out infinite 1.7s; perspective: 1200px; transform-style: preserve-3d; }
+  .pc-main  { animation: floatMain  6.2s ease-in-out infinite; perspective: 1200px; transform-style: preserve-3d; will-change: transform; }
+  .pc-sec   { animation: floatSec   7.6s ease-in-out infinite 0.9s; perspective: 1200px; transform-style: preserve-3d; will-change: transform; }
+  .pc-third { animation: floatThird 6.6s ease-in-out infinite 1.7s; perspective: 1200px; transform-style: preserve-3d; will-change: transform; }
+
+  @media (max-width: 640px) {
+    .hero-cards-wrapper { width: 140px !important; height: 200px !important; top: 0 !important; right: 0 !important; }
+    .hero-cards-wrapper .pc-third { top: 12px !important; left: -12px !important; }
+    .hero-cards-wrapper .pc-sec { top: 6px !important; left: -6px !important; }
+    .hero-cards-wrapper .pc-main { top: 0 !important; left: 0 !important; }
+  }
   
   .card-flip-in  { animation: cardFlip 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); perspective: 1200px; transform-style: preserve-3d; }
   .card-flip-out { animation: cardFlipOut 0.6s ease-in; perspective: 1200px; transform-style: preserve-3d; }
+
+  .deck-swapping .pc-main,
+  .deck-swapping .pc-sec,
+  .deck-swapping .pc-third {
+    animation: none;
+  }
+
+  .deck-front-to-back { animation: deckFrontToBack 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+  .deck-mid-to-front  { animation: deckMidToFront 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+  .deck-back-to-mid   { animation: deckBackToMid 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 `;
 
 // ─── Products data ─────────────────────────────────────────────────────────────
@@ -106,7 +136,7 @@ const products = [
     name: 'برطمان عسل طبيعي',
     sub: 'عسل نقي، 500 جرام',
     category: 'مواد غذائية',
-    desc: 'عسل طبيعي 100% من أجود أنواع النحل، طعمه غني ومتوازن مناسب لجميع الاستخدامات.',
+    desc: 'عسل طبيعي 100% من أجود أنواع النحل، طعم غني ومتوازن.',
     price: '115',
     color: '#d4a574',
     bgTop: 'linear-gradient(135deg, #5a4a34 0%, #8b7355 100%)',
@@ -116,7 +146,7 @@ const products = [
     name: 'تي شيرت رجالي كتان',
     sub: 'حجم XL، 100% كتان',
     category: 'ملابس',
-    desc: 'تيشيرت صيفي مريح وعصري بتصميم كلاسيكي أنيق، نسج طبيعي يمتص الرطوبة.',
+    desc: 'تيشيرت صيفي مريح وعصري بتصميم كلاسيكي أنيق.',
     price: '145',
     color: '#1e5a96',
     bgTop: 'linear-gradient(135deg, #0d2a4d 0%, #1a4d7a 100%)',
@@ -126,7 +156,7 @@ const products = [
     name: 'شاحن USB-C سريع',
     sub: '65W PD، شحن سريع',
     category: 'أجهزة كهربائية',
-    desc: 'شاحن USB-C عالي الأداء يدعم Power Delivery للشحن السريع وآمن للأجهزة الحديثة.',
+    desc: 'شاحن USB-C عالي الأداء يدعم Power Delivery للشحن السريع.',
     price: '195',
     color: '#ff6b35',
     bgTop: 'linear-gradient(135deg, #4d3420 0%, #8b5a2b 100%)',
@@ -233,7 +263,6 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
           {/* Product name */}
           <div style={{ fontSize: 11 * size, color: 'rgba(255,255,255,0.92)', fontWeight: 700, lineHeight: 1.3, marginBottom: 3 * size }}>
             {p.name}
-            <span style={{ display: 'block', fontWeight: 500, color: 'rgba(255,255,255,0.6)', fontSize: 9.5 * size }}>{p.sub}</span>
           </div>
 
           {/* Description */}
@@ -249,7 +278,7 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
           {/* Price */}
           <div style={{
             fontSize: 14 * size, fontWeight: 900,
-            background: `linear-gradient(90deg, ${GOLD}, #FFE57A, ${GOLD})`,
+            background: `linear-gradient(90deg, ${NEON}, #CFFFF8, ${NEON})`,
             backgroundSize: '200% auto',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             animation: 'shimmerPrice 2.5s linear infinite',
@@ -270,7 +299,7 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
               }}>
                 <div style={{
                   height: '100%', borderRadius: 99,
-                  background: `linear-gradient(90deg, ${GREEN_ACCENT}, #2ab56d)`,
+                  background: `linear-gradient(90deg, #86EFAC, #22C55E)`,
                   animation: 'progressFill 1.3s ease forwards',
                 }} />
               </div>
@@ -280,8 +309,8 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
               height: 26 * size,
               borderRadius: 8 * size,
               background: activeStage === 'success'
-                ? 'linear-gradient(135deg, #2ab56d, #1d8f55)'
-                : `linear-gradient(135deg, ${GREEN_ACCENT}, #2ab56d)`,
+                ? `linear-gradient(135deg, #86EFAC, #4ADE80)`
+                : `linear-gradient(135deg, #86EFAC, #22C55E)`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               gap: 5 * size,
               cursor: 'pointer',
@@ -289,8 +318,8 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
               transition: 'background 0.4s ease',
               animation: activeStage === 'idle' ? 'btnPulse 3s ease-in-out infinite' : 'none',
               boxShadow: activeStage === 'success'
-                ? '0 4px 16px rgba(42,181,109,0.55)'
-                : '0 4px 14px rgba(61,220,132,0.4)',
+                ? '0 4px 16px rgba(74,222,128,0.55)'
+                : '0 4px 14px rgba(134,239,172,0.4)',
             }}>
 
               {/* Ripple on adding */}
@@ -330,7 +359,7 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
               <div style={{
                 position: 'absolute', top: -22 * size, left: '50%',
                 transform: 'translateX(-50%)',
-                background: 'rgba(42,181,109,0.95)',
+                background: 'rgba(17,167,152,0.95)',
                 color: '#fff', fontSize: 7 * size, fontWeight: 700,
                 padding: `${2 * size}px ${6 * size}px`,
                 borderRadius: 99, whiteSpace: 'nowrap',
@@ -350,20 +379,20 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
 // ─── Animated stacked cards widget ────────────────────────────────────────────
 function AnimatedProductCards() {
   const [cardIndices, setCardIndices] = useState([0, 1, 2]);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isSwapping, setIsSwapping] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsTransitioning(true);
+      setIsSwapping(true);
       setTimeout(() => {
         setCardIndices(prev => [
           (prev[0] + 1) % products.length,
           (prev[1] + 1) % products.length,
           (prev[2] + 1) % products.length,
         ]);
-        setIsTransitioning(false);
-      }, 400);
-    }, 7000); // تبديل كل 7 ثواني مع مدة الأنيميشن
+        setIsSwapping(false);
+      }, 700);
+    }, 6200); // تبديل كل ~6.2 ثواني مع مدة الأنيميشن
     return () => clearInterval(interval);
   }, []);
 
@@ -372,7 +401,7 @@ function AnimatedProductCards() {
       <style>{productCardStyles}</style>
 
       <div
-        className="absolute -top-10 -right-10 z-30"
+        className={`hero-cards-wrapper absolute -top-12 -right-12 sm:-top-16 sm:-right-16 md:-top-20 md:-right-20 z-[999] scale-[0.5] sm:scale-[0.6] md:scale-[0.7] origin-top-right ${isSwapping ? 'deck-swapping' : ''}`}
         style={{ width: 190, height: 260, perspective: '1200px' }}
       >
         {/* Ambient glow - محسّنة */}
@@ -398,16 +427,16 @@ function AnimatedProductCards() {
         <div style={{ position: 'absolute', top: '48%', left: '42%', width: 0, height: 0 }}>
           <div style={{
             width: 8, height: 8, borderRadius: '50%',
-            background: GOLD, 
-            boxShadow: `0 0 20px ${GOLD}, 0 0 40px ${GOLD}80`,
+            background: NEON, 
+            boxShadow: `0 0 20px ${NEON}, 0 0 40px ${NEON}80`,
             animation: 'orbitDot 10s linear infinite',
             marginTop: -4, marginLeft: -4,
-            filter: 'drop-shadow(0 0 6px rgba(255,200,0,0.8))',
+            filter: 'drop-shadow(0 0 6px rgba(85,249,230,0.8))',
           }} />
         </div>
 
         {/* Card 3 — back */}
-        <div key={`card-3-${cardIndices[2]}`} className={`pc-third ${!isTransitioning ? 'card-flip-in' : ''}`} style={{
+        <div key={`card-3-${cardIndices[2]}`} className={`pc-third ${isSwapping ? 'deck-back-to-mid' : ''}`} style={{
           position: 'absolute', top: 24, left: -44, zIndex: 1,
           filter: 'brightness(0.6) blur(0.5px)',
           transformStyle: 'preserve-3d',
@@ -416,7 +445,7 @@ function AnimatedProductCards() {
         </div>
 
         {/* Card 2 — middle */}
-        <div key={`card-2-${cardIndices[1]}`} className={`pc-sec ${!isTransitioning ? 'card-flip-in' : ''}`} style={{
+        <div key={`card-2-${cardIndices[1]}`} className={`pc-sec ${isSwapping ? 'deck-mid-to-front' : ''}`} style={{
           position: 'absolute', top: 12, left: -22, zIndex: 2,
           filter: 'brightness(0.75)',
           transformStyle: 'preserve-3d',
@@ -425,7 +454,7 @@ function AnimatedProductCards() {
         </div>
 
         {/* Card 1 — front (مع أنيميشن الطلب) */}
-        <div key={`card-1-${cardIndices[0]}`} className={`pc-main ${!isTransitioning ? 'card-flip-in' : ''}`} style={{ 
+        <div key={`card-1-${cardIndices[0]}`} className={`pc-main ${isSwapping ? 'deck-front-to-back' : ''}`} style={{ 
           position: 'relative', 
           zIndex: 3,
           transformStyle: 'preserve-3d',
@@ -440,12 +469,12 @@ function AnimatedProductCards() {
 // ─── HeroSection ──────────────────────────────────────────────────────────────
 export default function HeroSection() {
   return (
-    <section className="relative pt-12 sm:pt-14 md:pt-16 pb-12 sm:pb-20 md:pb-28 lg:pt-20 lg:pb-32 overflow-hidden bg-gradient-to-b from-brand-primary/10 via-background to-background">
+    <section className="relative pt-14 sm:pt-16 md:pt-20 pb-16 sm:pb-24 md:pb-32 lg:pt-24 lg:pb-36 overflow-hidden bg-aurora">
 
       {/* Background Decor */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] bg-brand-accent/20 rounded-full blur-[120px] opacity-40 animate-pulse" />
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] bg-brand-primary/20 rounded-full blur-[120px] opacity-40 animate-pulse-slow" />
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-10 pointer-events-none" />
+      <div className="absolute -top-24 right-[-120px] w-[360px] h-[360px] sm:w-[520px] sm:h-[520px] landing-glow opacity-70" />
+      <div className="absolute bottom-0 left-[-160px] w-[420px] h-[420px] sm:w-[560px] sm:h-[560px] landing-glow opacity-50" />
+      <div className="absolute inset-0 landing-grid opacity-30 pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-12 lg:gap-24">
@@ -455,14 +484,14 @@ export default function HeroSection() {
             <div className="relative">
 
               {/* Main Hero Card */}
-              <div className="relative z-20 rounded-3xl bg-gradient-to-tr from-background/80 to-secondary/30 p-4 sm:p-6 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/20">
-                <div className="relative aspect-[4/3] w-full rounded-2xl bg-muted/30 flex items-center justify-center overflow-visible">
+              <div className="relative z-20 rounded-3xl p-6 sm:p-8 landing-card landing-sheen">
+                <div className="relative aspect-[4/3] w-full rounded-2xl bg-black/20 flex items-center justify-center overflow-visible p-2">
                   <Image
                     src="/caracter.png"
                     alt="Online Catalog Character"
                     width={500}
                     height={500}
-                    className="object-contain scale-[1.15] -translate-y-6 drop-shadow-[0_25px_25px_rgba(0,0,0,0.15)] animate-float"
+                    className="relative z-20 object-contain scale-[1.05] -translate-y-4 drop-shadow-[0_25px_25px_rgba(0,0,0,0.15)] animate-float"
                     priority
                   />
                 </div>
@@ -472,15 +501,15 @@ export default function HeroSection() {
               <AnimatedProductCards />
 
               {/* Bottom Left — Success Card */}
-              <div className="absolute -bottom-6 -left-6 z-30 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/20 w-40 md:w-60 animate-float-slow">
+              <div className="absolute -bottom-6 -left-6 z-30 bg-black/40 backdrop-blur-md p-4 rounded-2xl shadow-[0_30px_80px_rgba(4,20,18,0.45)] border border-white/10 w-40 md:w-60 animate-float-slow">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 shadow-inner">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-brand-accent/15 flex items-center justify-center text-brand-accent shadow-inner">
                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div>
-                    <div className="h-2 w-20 bg-green-500/20 rounded-full mb-2" />
+                    <div className="h-2 w-20 bg-brand-accent/20 rounded-full mb-2" />
                     <div className="text-[10px] md:text-xs font-bold text-foreground">تم إطلاق المتجر بنجاح!</div>
                   </div>
                 </div>
@@ -493,20 +522,20 @@ export default function HeroSection() {
           <div className="flex-1 text-center lg:text-right space-y-8 md:space-y-10 order-2 lg:order-1">
 
             <div className="space-y-4">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-bold tracking-wide animate-fade-in">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-brand-accent/15 text-brand-accent text-sm font-bold tracking-wide animate-fade-in ring-1 ring-brand-accent/30 shadow-[0_0_18px_rgba(85,249,230,0.35)]">
                 🚀 أطلق متجرك في 3 خطوات بسيطة
               </span>
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-headline tracking-tight text-foreground leading-[1.2]">
-                <span className="block mb-2 text-zinc-800 dark:text-zinc-100">متجرك الرقمي...</span>
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-accent via-[#FFC800] to-brand-primary block py-2">
+                <span className="block mb-2 text-foreground/90">متجرك الرقمي...</span>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF9F1C] via-[#FFC800] to-[#34D399] block py-2 text-gradient-anim">
                   جاهز في دقائق.
                 </span>
               </h1>
             </div>
 
-            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
               سجّل، أضف منتجاتك، وابدأ البيع فوراً برابط مخصص لمتجرك.
-              <span className="block mt-4 text-brand-primary/80 text-base md:text-lg font-mono" dir="ltr">
+              <span className="block mt-4 text-brand-accent/90 text-base md:text-lg font-mono" dir="ltr">
                 Online-Catalog.net/store-name
               </span>
             </p>
@@ -514,11 +543,11 @@ export default function HeroSection() {
             <div className="flex flex-col items-center gap-4 md:gap-5 justify-center lg:justify-start">
 
               {/* Google Play Button */}
-              <Button
-                size="lg"
-                className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl bg-gradient-to-r from-[#3DDC84] via-[#34A853] to-[#4285F4] hover:from-[#34C76F] hover:via-[#2D9249] hover:to-[#3B7AE4] text-white font-bold w-full sm:w-auto transition-all duration-300 shadow-[0_8px_30px_rgba(61,220,132,0.35)] hover:shadow-[0_12px_40px_rgba(61,220,132,0.45)] hover:scale-105 active:scale-95 border-0 group"
-                asChild
-              >
+                <Button
+                  size="lg"
+                  className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl bg-white text-[#0b3c35] font-bold w-full sm:w-auto transition-all duration-300 shadow-[0_18px_45px_rgba(4,20,18,0.25)] hover:shadow-[0_20px_60px_rgba(85,249,230,0.25)] hover:scale-[1.02] active:scale-95 border border-white/60 group"
+                  asChild
+                >
                 <Link href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3">
                   <Image src={GOOGLE_PLAY_ICON} alt="Google Play" width={36} height={36} className="rounded-lg shadow-sm w-9 h-9 object-contain" />
                   حمل التطبيق الآن
@@ -530,7 +559,7 @@ export default function HeroSection() {
                 {/* Start Free Button */}
                 <Button
                   size="lg"
-                  className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl shadow-[0_10px_30px_rgba(var(--brand-primary),0.3)] hover:shadow-brand-primary/40 transition-all font-bold group w-full sm:w-auto bg-brand-primary hover:scale-105 active:scale-95"
+                  className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl shadow-[0_16px_45px_rgba(85,249,230,0.35)] hover:shadow-[0_20px_60px_rgba(85,249,230,0.45)] transition-all font-bold group w-full sm:w-auto bg-brand-accent text-[#043832] hover:scale-105 active:scale-95"
                   asChild
                 >
                   <Link href="/home">
@@ -543,7 +572,7 @@ export default function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl border-2 border-primary/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 w-full sm:w-auto transition-all font-bold"
+                  className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl border border-brand-accent/40 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-brand-accent w-full sm:w-auto transition-all font-bold"
                   asChild
                 >
                   <Link href="https://online-catalog.net/elfath" target="_blank" rel="noopener noreferrer">

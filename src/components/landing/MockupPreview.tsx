@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function MockupPreview() {
     return (
-        <section id="mockup" className="py-24 bg-gradient-to-b from-background to-secondary/10 overflow-hidden">
+        <section id="mockup" className="py-24 bg-aurora overflow-hidden">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16 space-y-4">
                     <h2 className="text-3xl md:text-5xl font-bold font-headline">كيف يظهر متجرك للعملاء</h2>
@@ -28,7 +28,7 @@ export default function MockupPreview() {
                             </div>
 
                             {/* Header/Cover */}
-                            <div className="relative h-40 bg-gradient-to-r from-[#FFC800] to-[#61ffd0] flex-shrink-0">
+                            <div className="relative h-40 bg-gradient-to-r from-[#55F9E6] to-[#61ffd0] flex-shrink-0">
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/50 text-4xl font-bold opacity-20">Cover</div>
                             </div>
 
