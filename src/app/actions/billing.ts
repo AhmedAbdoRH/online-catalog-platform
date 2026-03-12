@@ -1,7 +1,6 @@
 "use server";
 
 import Verifier from "google-play-billing-validator";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 const PACKAGE_NAME = "com.nextcatalog.app";
@@ -52,7 +51,6 @@ export async function verifyAndActivatePro(
       return { ok: false, error: result?.errorMessage || "فشل التحقق من الاشتراك" };
     }
 
-    const supabaseAdmin = createAdminClient();
     const supabase = await createClient();
     const {
       data: { user },
@@ -61,7 +59,7 @@ export async function verifyAndActivatePro(
       return { ok: false, error: "يجب تسجيل الدخول" };
     }
 
-    const { data: catalog } = await supabaseAdmin
+    const { data: catalog } = await supabase
       .from("catalogs")
       .select("id, user_id")
       .eq("id", catalogId)
@@ -74,7 +72,8 @@ export async function verifyAndActivatePro(
       return { ok: false, error: "غير مصرح بتحديث هذا الكتالوج" };
     }
 
-    const { error } = await supabaseAdmin
+    // تحديث الخطة باستخدام authenticated user (يملك صلاحيات RLS)
+    const { error } = await supabase
       .from("catalogs")
       .update({ plan: "pro" })
       .eq("id", catalogId);
