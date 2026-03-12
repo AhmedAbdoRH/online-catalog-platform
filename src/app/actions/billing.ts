@@ -78,6 +78,8 @@ export async function verifyAndActivatePro(
       .eq("id", catalogId)
       .single();
 
+    console.log("📊 نتيجة جلب الكتالوج:", { catalog, catalogError });
+
     if (catalogError) {
       console.error("❌ خطأ في جلب الكتالوج:", catalogError);
       return { ok: false, error: "خطأ في الوصول للكتالوج: " + catalogError.message };
@@ -88,7 +90,13 @@ export async function verifyAndActivatePro(
       return { ok: false, error: "الكتالوج غير موجود" };
     }
     
-    console.log("✅ تم جلب الكتالوج:", { id: catalog.id, currentPlan: catalog.plan });
+    console.log("✅ تم جلب الكتالوج:", { id: catalog.id, currentPlan: catalog.plan, hasPlanColumn: 'plan' in catalog });
+
+    // تحقق من وجود حقل plan
+    if (!('plan' in catalog)) {
+      console.error("❌ حقل plan غير موجود في الكتالوج:", catalog);
+      return { ok: false, error: "حقل الباقة غير موجود في قاعدة البيانات" };
+    }
 
     if (catalog.user_id !== user.id) {
       console.error("❌ المستخدم لا يمتلك هذا الكتالوج:", { catalogUserId: catalog.user_id, currentUserId: user.id });
@@ -98,17 +106,25 @@ export async function verifyAndActivatePro(
     console.log("🔄 جاري تحديث الخطة إلى Pro...");
 
     // تحديث الخطة باستخدام authenticated user (يملك صلاحيات RLS)
-    const { error } = await supabase
+    const { data: updateData, error } = await supabase
       .from("catalogs")
       .update({ plan: "pro" })
-      .eq("id", catalogId);
+      .eq("id", catalogId)
+      .select();
+
+    console.log("📊 نتيجة تحديث قاعدة البيانات:", { updateData, error });
 
     if (error) {
       console.error("❌ فشل تحديث الخطة:", error);
       return { ok: false, error: "فشل تحديث الخطة: " + (error.message || error.code) };
     }
+
+    if (!updateData || updateData.length === 0) {
+      console.error("❌ لم يتم تحديث أي سجل:", { catalogId, updateData });
+      return { ok: false, error: "لم يتم العثور على الكتالوج للتحديث" };
+    }
     
-    console.log("✅ تم تحديث الخطة بنجاح!");
+    console.log("✅ تم تحديث الخطة بنجاح!", { updatedCatalog: updateData[0] });
     return { ok: true };
   } catch (err: unknown) {
     console.error("❌ خطأ عام في verifyAndActivatePro:", err);
