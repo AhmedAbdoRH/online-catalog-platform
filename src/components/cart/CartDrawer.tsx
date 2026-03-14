@@ -42,7 +42,7 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
                   <div key={i.id} className="flex items-center justify-between rounded-lg border bg-background p-3">
                     <div className="flex min-w-0 flex-1 flex-col">
                       <span className="font-medium truncate">{i.name}</span>
-                      <span className="text-xs text-muted-foreground">{formatPrice(i.price, catalog.country_code)}</span>
+                      <span className="text-sm font-bold text-brand-accent">{formatPrice(i.price, catalog.country_code)}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button variant="outline" size="icon" onClick={() => updateQuantity(i.id, i.quantity - 1)} aria-label="تقليل الكمية">
@@ -63,8 +63,8 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
           )}
         </div>
         <div className="mt-4 flex items-center justify-between rounded-xl border bg-muted/20 p-3">
-          <span className="text-sm text-muted-foreground">الإجمالي</span>
-          <span className="text-lg font-bold text-brand-primary">{formatPrice(total, catalog.country_code)}</span>
+          <span className="text-sm text-muted-foreground font-bold italic">الإجمالي</span>
+          <span className="text-xl font-black text-brand-accent drop-shadow-sm">{formatPrice(total, catalog.country_code)}</span>
         </div>
         <SheetFooter className="mt-3">
           <div className="flex w-full flex-col gap-2">

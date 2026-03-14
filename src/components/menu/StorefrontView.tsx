@@ -37,6 +37,7 @@ import { CartButton } from '@/components/cart/CartButton';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Footer } from '@/components/layout/Footer';
+import { PageLoader } from '@/components/common/PageLoader';
 import type { Catalog, CategoryWithSubcategories, MenuItem } from '@/lib/types';
 
 type ViewMode = "masonry" | "grid" | "list" | "compact";
@@ -160,7 +161,7 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
     // Prevent double-click with debouncing
     e.preventDefault();
     e.stopPropagation();
-    
+
     // Navigate to product page
     window.location.href = href;
   };
@@ -220,9 +221,9 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
           </div>
         </div>
 
-        <div className={cn("flex flex-col gap-3", contentPadding)}>
+        <div className={cn("flex flex-col gap-2 flex-1", contentPadding)}>
           <div className="flex items-center justify-between gap-2">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
               {categoryName ?? "منتج"}
             </p>
             <div className="flex items-center gap-2 text-[11px] font-semibold">
@@ -238,16 +239,18 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
               )}
             </div>
           </div>
-          <div>
-            <h3 className="text-lg font-bold text-foreground md:text-xl">{item.name}</h3>
+
+          <div className="flex-1 flex flex-col gap-2">
+            <h3 className="text-base font-extrabold text-foreground md:text-xl leading-tight">{item.name}</h3>
             {item.description && (
-              <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-foreground/80">
+              <p className="line-clamp-2 text-[12px] md:text-[13px] leading-relaxed text-foreground/70">
                 {item.description}
               </p>
             )}
           </div>
-          <div className="flex items-center justify-between">
-            <p className="text-[18px] font-black text-brand-primary">{formatPrice(item.price, countryCode)}</p>
+
+          <div className="mt-auto pt-2 flex items-center justify-between border-t border-white/5">
+            <p className="text-[16px] md:text-[18px] font-black text-brand-accent drop-shadow-sm">{formatPrice(item.price, countryCode)}</p>
           </div>
         </div>
       </div>
@@ -332,84 +335,6 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
   const catalogSlogan = luxeCatalog.slogan ?? "";
   const isCatalogClosed = luxeCatalog.is_open === false || luxeCatalog.status === "closed";
 
-  if (!mounted) {
-    return (
-      <div className={cn("fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-gradient-default")}>
-        {/* Decorative background elements */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-primary/10 rounded-full blur-[120px] animate-pulse-slow" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-luxury/10 rounded-full blur-[120px] animate-pulse-slow" />
-
-        <div className="relative flex flex-col items-center gap-8 px-6 text-center">
-          {/* Logo Container with Animation */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              transition: { duration: 0.8, ease: "easeOut" }
-            }}
-            className="relative"
-          >
-            <div className="absolute inset-0 rounded-full bg-brand-primary/20 blur-2xl animate-pulse" />
-            <div className="relative h-28 w-28 overflow-hidden rounded-full border-2 border-white/20 bg-background/50 p-1.5 backdrop-blur-md shadow-2xl">
-              {catalog.logo_url ? (
-                <Image
-                  src={catalog.logo_url}
-                  alt={catalog.name}
-                  width={112}
-                  height={112}
-                  className="h-full w-full rounded-full object-cover"
-                  priority
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-white/10 to-white/5">
-                  <Sparkles className="h-10 w-10 text-brand-primary opacity-50" />
-                </div>
-              )}
-            </div>
-          </motion.div>
-
-          {/* Store Name & Loading Text */}
-          <div className="space-y-3">
-            <motion.h2
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-2xl font-bold text-foreground md:text-3xl"
-            >
-              {catalog.display_name || catalog.name}
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="text-sm font-medium tracking-widest text-muted-foreground uppercase"
-            >
-              جاري تحميل المتجر...
-            </motion.p>
-          </div>
-
-          {/* Elegant Loading Bar */}
-          <div className="relative mt-4 h-1.5 w-48 overflow-hidden rounded-full bg-white/10">
-            <div className="absolute inset-y-0 bg-gradient-to-r from-brand-primary via-brand-luxury to-brand-primary animate-loading-bar shadow-[0_0_15px_rgba(0,209,201,0.5)]" />
-          </div>
-
-          {/* Slogan if available */}
-          {catalog.slogan && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7, duration: 0.8 }}
-              className="mt-4 max-w-xs text-xs italic text-muted-foreground/60"
-            >
-              "{catalog.slogan}"
-            </motion.p>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   // Get theme class based on catalog theme
   const getThemeClass = () => {
     switch (luxeCatalog.theme) {
@@ -425,6 +350,15 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
       default: return 'bg-gradient-default';
     }
   };
+
+  if (!mounted) {
+    return (
+      <div className={cn("fixed inset-0 z-[100]", getThemeClass())}>
+        <PageLoader logoUrl={catalog.logo_url} fullScreen={true} />
+      </div>
+    );
+  }
+
 
   return (
     <CartProvider storageKey={`oc_cart_${catalog.name}`}>
@@ -730,7 +664,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                       key={category.id}
                       initial={{ opacity: 0, y: 30 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.3 }}
+                      viewport={{ once: true, amount: 0.01 }}
                       transition={{ duration: 0.6, delay: categoryIndex * 0.08 }}
                       className="space-y-4"
                     >

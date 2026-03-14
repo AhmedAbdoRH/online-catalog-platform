@@ -30,9 +30,9 @@ export default function LandingHeader() {
     };
 
     const navLinks = [
-        { name: "??????????????", href: "/go#benefits" },
-        { name: "??????????", href: "/go#features" },
-        { name: "??????????????", href: "/go#pricing" },
+        { name: "المميزات", href: "/go#benefits" },
+        { name: "الخصائص", href: "/go#features" },
+        { name: "باقات الأسعار", href: "/go#pricing" },
     ];
 
     return (

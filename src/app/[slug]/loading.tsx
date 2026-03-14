@@ -2,10 +2,26 @@
 
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { Head } from '@/components/common/Head';
 
 export default function Loading() {
+    const params = useParams();
+    const slug = params?.slug as string;
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && slug) {
+            const cachedLogo = sessionStorage.getItem(`store_logo_${slug}`);
+            if (cachedLogo) {
+                setLogoUrl(cachedLogo);
+            }
+        }
+    }, [slug]);
     return (
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-[#0F172A]">
+            <Head faviconUrl={logoUrl || undefined} />
             {/* Decorative background elements */}
             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#00D1C9]/10 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#A855F7]/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
@@ -23,7 +39,11 @@ export default function Loading() {
                 >
                     <div className="absolute inset-0 rounded-full bg-[#00D1C9]/20 blur-2xl animate-pulse" />
                     <div className="relative h-28 w-28 overflow-hidden rounded-full border-2 border-white/20 bg-white/5 p-1.5 backdrop-blur-md shadow-2xl flex items-center justify-center">
-                        <Sparkles className="h-10 w-10 text-[#00D1C9] animate-pulse" />
+                        {logoUrl ? (
+                            <img src={logoUrl} alt="Store Loading" className="w-full h-full object-contain filter drop-shadow-md p-2" />
+                        ) : (
+                            <Sparkles className="h-10 w-10 text-[#00D1C9] animate-pulse" />
+                        )}
                     </div>
                 </motion.div>
 

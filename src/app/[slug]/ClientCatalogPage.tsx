@@ -7,6 +7,7 @@ import type { Catalog, CategoryWithSubcategories } from "@/lib/types";
 import { StorefrontView } from "@/components/menu/StorefrontView";
 import { Head } from "@/components/common/Head";
 import { InstallPrompt } from "@/components/common/InstallPrompt";
+import { PageLoader } from "@/components/common/PageLoader";
 
 type CatalogPageData = Catalog & {
     categories: CategoryWithSubcategories[];
@@ -18,6 +19,17 @@ export default function ClientCatalogPage() {
     const [data, setData] = useState<CatalogPageData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
+
+    // Fast initial logo before fetching
+    useState(() => {
+        if (typeof window !== 'undefined') {
+            const cachedLogo = sessionStorage.getItem(`store_logo_${slug}`);
+            if (cachedLogo) {
+                setLogoUrl(cachedLogo);
+            }
+        }
+    });
 
     useEffect(() => {
         async function fetchData() {
@@ -35,6 +47,11 @@ export default function ClientCatalogPage() {
                     setError(true);
                     setLoading(false);
                     return;
+                }
+
+                if (catalog.logo_url) {
+                    sessionStorage.setItem(`store_logo_${slug}`, catalog.logo_url);
+                    setLogoUrl(catalog.logo_url);
                 }
 
                 const { data: categories, error: categoriesError } = await supabase
@@ -58,7 +75,7 @@ export default function ClientCatalogPage() {
                     const sortedItems = (category.menu_items || []).sort((a: any, b: any) => {
                         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
                     });
-                    
+
                     categoriesMap.set(category.id, {
                         ...category,
                         subcategories: [],
@@ -87,7 +104,7 @@ export default function ClientCatalogPage() {
         fetchData();
     }, [slug]);
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    if (loading) return <PageLoader logoUrl={logoUrl} />;
     if (error || !data) return <div className="min-h-screen flex items-center justify-center">Store not found</div>;
 
     const storeName = data.display_name || data.name;

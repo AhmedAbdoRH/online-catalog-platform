@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { PageLoader } from '@/components/common/PageLoader';
 
 function AuthCallbackContent() {
     const router = useRouter();
@@ -33,24 +34,17 @@ function AuthCallbackContent() {
 
         handleCallback();
     }, [router, searchParams]);
-/*
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-*/
-    return (
-        <div className="flex items-center justify-center min-h-screen">
-            <div className="text-center">
-                <h2 className="text-lg font-semibold mb-2">جاري التحقق...</h2>
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            </div>
-        </div>
-    );
+    /*
+        if (error) {
+            return <div>Error: {error}</div>;
+        }
+    */
+    return <PageLoader />;
 }
 
 export default function AuthCallbackPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<PageLoader />}>
             <AuthCallbackContent />
         </Suspense>
     );

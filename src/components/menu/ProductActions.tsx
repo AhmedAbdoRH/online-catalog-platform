@@ -67,8 +67,8 @@ export function ProductActions({
     const renderPriceDisplay = () => {
         return (
             <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">السعر</span>
-                <span className="font-semibold text-brand-primary text-xl">
+                <span className="text-muted-foreground font-bold italic">السعر</span>
+                <span className="font-black text-brand-accent text-2xl drop-shadow-sm">
                     {formatPrice(currentPrice, countryCode)}
                 </span>
 

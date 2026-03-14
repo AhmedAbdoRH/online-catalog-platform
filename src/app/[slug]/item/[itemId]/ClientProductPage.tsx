@@ -10,6 +10,8 @@ import RelatedProductImage from "@/components/RelatedProductImage";
 import { ProductGallery } from "@/components/menu/ProductGallery";
 import { useEffect, useState } from "react";
 import { Catalog, MenuItem, ItemVariant } from "@/lib/types";
+import { PageLoader } from "@/components/common/PageLoader";
+import { Head } from "@/components/common/Head";
 
 // Helper Functions
 const getThemeClass = (theme: string) => {
@@ -56,6 +58,17 @@ export default function ClientProductPage() {
     const itemId = params?.itemId as string;
     const [data, setData] = useState<ProductPageData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
+
+    // Fast initial logo before fetching
+    useState(() => {
+        if (typeof window !== 'undefined') {
+            const cachedLogo = sessionStorage.getItem(`store_logo_${slug}`);
+            if (cachedLogo) {
+                setLogoUrl(cachedLogo);
+            }
+        }
+    });
 
     useEffect(() => {
         async function fetchData() {
@@ -73,6 +86,11 @@ export default function ClientProductPage() {
             if (!catalog) {
                 setLoading(false);
                 return;
+            }
+
+            if (catalog.logo_url) {
+                sessionStorage.setItem(`store_logo_${slug}`, catalog.logo_url);
+                setLogoUrl(catalog.logo_url);
             }
 
             // 2. Get Product
@@ -143,7 +161,7 @@ export default function ClientProductPage() {
         fetchData();
     }, [slug, itemId]);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <PageLoader logoUrl={logoUrl} />;
     if (!data) return <div className="min-h-screen flex items-center justify-center">المنتج غير موجود</div>;
 
     const { catalog, product, categoryName, related, images } = data;
@@ -156,6 +174,10 @@ export default function ClientProductPage() {
 
     return (
         <div className={cn("relative min-h-screen pb-24", themeClass)}>
+            <Head
+                faviconUrl={catalog.logo_url || undefined}
+                storeName={`${product.name} | ${catalog.display_name || catalog.name}`}
+            />
             <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 pt-10 md:px-6">
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                     <Link
@@ -182,11 +204,6 @@ export default function ClientProductPage() {
                                 </div>
                             }
                         />
-
-                        <div className="pointer-events-none absolute bottom-4 left-4 z-20 rounded-full bg-white/85 px-4 py-2 text-sm font-semibold text-brand-primary">
-                            {formatPrice(product.price, catalog.country_code)}
-                        </div>
-
                     </div>
 
                     <div className="flex flex-col gap-4">
@@ -264,7 +281,7 @@ export default function ClientProductPage() {
                                         <p className="text-xs text-muted-foreground line-clamp-2">
                                             {item.description ?? "تفاصيل المنتج ستظهر هنا."}
                                         </p>
-                                        <p className="text-sm font-bold text-brand-primary">{formatPrice(item.price, catalog.country_code)}</p>
+                                        <p className="text-base font-black text-brand-accent drop-shadow-sm">{formatPrice(item.price, catalog.country_code)}</p>
 
                                     </div>
                                 </Link>

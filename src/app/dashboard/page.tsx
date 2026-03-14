@@ -72,7 +72,7 @@ export default async function DashboardPage() {
           <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-brand-luxury/10 rounded-full blur-[100px] pointer-events-none hidden md:block" />
 
           <Card className="glass-surface border-0 md:border border-white/10 overflow-hidden shadow-none md:shadow-2xl flex-1 flex flex-col bg-transparent md:bg-white/5">
-            <div className="p-0 flex-1 flex flex-col"> 
+            <div className="p-0 flex-1 flex flex-col">
               <div className="px-4 py-6 md:px-12 md:py-12 flex-1 flex flex-col">
                 <AutoCatalogCreator
                   userPhone={userPhone}
@@ -129,7 +129,7 @@ export default async function DashboardPage() {
               <QRCodeButton url={qrCodeUrl} storeName={catalog.name} />
             </div>
             <div className="flex gap-2 w-full sm:w-auto">
-              <StorePreviewModal url={catalogUrl} storeName={catalog.display_name || catalog.name} />
+              <StorePreviewModal url={catalogUrl} storeName={catalog.display_name || catalog.name} logoUrl={catalog.logo_url} />
               <CopyLinkButton url={catalogUrl} />
             </div>
           </CardContent>
