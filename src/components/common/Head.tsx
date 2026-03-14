@@ -12,7 +12,7 @@ export function Head({ faviconUrl, storeName }: HeadProps) {
     // Remove existing favicons and manifest
     const existingFavicons = document.querySelectorAll('link[rel*="icon"]');
     existingFavicons.forEach(favicon => favicon.remove());
-    
+
     // Remove existing manifest
     const existingManifest = document.querySelectorAll('link[rel="manifest"]');
     existingManifest.forEach(manifest => manifest.remove());
@@ -31,22 +31,22 @@ export function Head({ faviconUrl, storeName }: HeadProps) {
 
       // Create optimized favicon URLs with different sizes
       const baseUrl = faviconUrl.split('?')[0]; // Remove existing query params
-      
+
       // Standard favicon (32x32)
       createFavicon('icon', `${baseUrl}?w=32&h=32&fit=crop&q=80`, '32x32', 'image/png');
-      
+
       // Small favicon (16x16)
       createFavicon('icon', `${baseUrl}?w=16&h=16&fit=crop&q=80`, '16x16', 'image/png');
-      
+
       // Apple touch icon (180x180)
       createFavicon('apple-touch-icon', `${baseUrl}?w=180&h=180&fit=crop&q=90`, '180x180', 'image/png');
-      
+
       // Android Chrome icon (192x192)
       createFavicon('icon', `${baseUrl}?w=192&h=192&fit=crop&q=90`, '192x192', 'image/png');
-      
+
       // Large icon for high-resolution displays
       createFavicon('icon', `${baseUrl}?w=512&h=512&fit=crop&q=90`, '512x512', 'image/png');
-      
+
       // Set dynamic manifest for PWA
       const manifest = document.createElement('link');
       manifest.rel = 'manifest';

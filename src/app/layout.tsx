@@ -20,11 +20,7 @@ export const metadata: Metadata = {
     template: '%s | أونلاين كاتلوج'
   },
     description: 'منصة اونلاين كاتلوج: منصة إنشاء المتجر الرقمي للمحال والمتاجر. سجل مجاناً وأنشئ متجرك خلال دقائق.',
-  icons: {
-    icon: '/logo.png',
-    shortcut: '/logo.png',
-    apple: '/logo.png',
-  },
+  icons: {},
   openGraph: {
     type: 'website',
     locale: 'ar_SA',
