@@ -15,6 +15,7 @@ import {
   Zap,
   Package as PackageIcon,
   Building,
+  Heart,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Catalog } from '@/lib/types';
@@ -158,8 +159,8 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
             <TooltipTrigger asChild>
               <Dialog open={isThankYouModalOpen} onOpenChange={setIsThankYouModalOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-9 w-9 md:h-8 md:w-8 text-muted-foreground transition-colors hover:text-foreground">
-                    <MessageCircle className="h-5 w-5" />
+                  <Button variant="ghost" size="icon" className="h-9 w-9 md:h-8 md:w-8 text-muted-foreground transition-colors hover:text-foreground opacity-0 group-hover:opacity-100">
+                    <Heart className="h-5 w-5" />
                     <span className="sr-only">لائحة الشكر</span>
                   </Button>
                 </DialogTrigger>
@@ -286,14 +287,26 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
                 <Settings className="h-5 w-5" />
                 الإعدادات
               </Link>
+              <form action={logout}>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                  onClick={closeSheet}
+                >
+                  <LogOut className="h-5 w-5" />
+                  تسجيل الخروج
+                </Button>
+              </form>
+            </nav>
+            <div className="mt-8 mb-6 flex justify-center">
               <Dialog open={isThankYouModalOpen} onOpenChange={setIsThankYouModalOpen}>
                 <DialogTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                    className="text-xs text-muted-foreground hover:text-foreground"
                     onClick={closeSheet}
                   >
-                    <MessageCircle className="h-5 w-5" />
+                    <Heart className="h-4 w-4 mr-1" />
                     لائحة الشكر
                   </Button>
                 </DialogTrigger>
@@ -310,17 +323,7 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
                   </div>
                 </DialogContent>
               </Dialog>
-              <form action={logout}>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                  onClick={closeSheet}
-                >
-                  <LogOut className="h-5 w-5" />
-                  تسجيل الخروج
-                </Button>
-              </form>
-            </nav>
+            </div>
           </SheetContent>
         </Sheet>
 

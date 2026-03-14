@@ -147,11 +147,18 @@ function UnifiedHomeContent() {
         {/* Dynamic Content Based on Step */}
         <div className="space-y-6">
           {isLoading && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-              <div className="bg-[#1a1a1a] p-6 rounded-2xl border border-white/10 w-full max-w-[280px] space-y-4 text-center">
-                <div className="flex flex-col items-center gap-3">
-                  <div className="w-10 h-10 border-4 border-[#2eb872]/20 border-t-[#2eb872] rounded-full animate-spin" />
-                  <span className="text-[#2eb872] font-medium">جاري تسجيل الدخول...</span>
+            <div className="fixed inset-x-0 bottom-0 z-50 animate-in slide-in-from-bottom-full duration-300">
+              <div className="bg-[#1a1a1a]/95 backdrop-blur-md border-t border-white/10 p-4 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+                <div className="max-w-sm mx-auto space-y-3">
+                  <div className="flex items-center justify-between text-sm font-medium">
+                    <span className="text-[#2eb872] animate-pulse">
+                      {step === 'registration' ? 'جاري إنشاء متجرك...' : 'جاري تسجيل الدخول...'}
+                    </span>
+                    <span className="text-gray-400">يرجى الانتظار قليلاً</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-[#2eb872]/50 via-[#2eb872] to-[#2eb872]/50 w-full animate-progress-indeterminate" />
+                  </div>
                 </div>
               </div>
             </div>
