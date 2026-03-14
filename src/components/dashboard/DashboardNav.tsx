@@ -298,15 +298,15 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
                 </Button>
               </form>
             </nav>
-            <div className="mt-8 mb-1 flex flex-col items-center gap-1">
-              <div className="text-[9px] text-muted-foreground">
+            <div className="mt-12 mb-1 flex flex-col items-center gap-1">
+              <div className="text-[10px] text-muted-foreground">
                 v1.0.10
               </div>
               <Dialog open={isThankYouModalOpen} onOpenChange={setIsThankYouModalOpen}>
                 <DialogTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="text-[10px] text-muted-foreground hover:text-foreground px-2 py-1"
+                    className="text-[10px] text-muted-foreground hover:text-foreground px-2 py-1 underline"
                     onClick={closeSheet}
                   >
                     لائحة الشكر
