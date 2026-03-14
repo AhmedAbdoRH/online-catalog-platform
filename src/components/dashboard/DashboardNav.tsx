@@ -26,6 +26,13 @@ import {
 } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { logout } from '@/app/actions/auth';
 import type { User } from '@supabase/supabase-js';
 import { usePathname } from 'next/navigation';
@@ -68,6 +75,22 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
   const router = useRouter();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isThankYouModalOpen, setIsThankYouModalOpen] = useState(false);
+
+  const defaultNames = [
+    "أحمد محمد",
+    "فاطمة علي",
+    "عبدالله خالد",
+    "مريم سعيد",
+    "يوسف عمر",
+    "نورا حسن",
+    "خالد أحمد",
+    "سارة محمود",
+    "عمر عبدالرحمن",
+    "ليلى إبراهيم",
+    "حسن ناصر",
+    "منى صالح"
+  ];
 
   const closeSheet = () => setIsSheetOpen(false);
 
@@ -130,6 +153,32 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
         </nav>
         <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5 relative">
           <ThemeToggle />
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Dialog open={isThankYouModalOpen} onOpenChange={setIsThankYouModalOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 md:h-8 md:w-8 text-muted-foreground transition-colors hover:text-foreground">
+                    <MessageCircle className="h-5 w-5" />
+                    <span className="sr-only">لائحة الشكر</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="text-right">لائحة الشكر</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                    {defaultNames.map((name, index) => (
+                      <div key={index} className="p-3 bg-muted/50 rounded-lg text-right">
+                        <span className="text-sm font-medium">{name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </TooltipTrigger>
+            <TooltipContent side="left">لائحة الشكر</TooltipContent>
+          </Tooltip>
           
           <Tooltip>
             <TooltipTrigger asChild>
@@ -237,6 +286,30 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
                 <Settings className="h-5 w-5" />
                 الإعدادات
               </Link>
+              <Dialog open={isThankYouModalOpen} onOpenChange={setIsThankYouModalOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                    onClick={closeSheet}
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    لائحة الشكر
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="text-right">لائحة الشكر</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                    {defaultNames.map((name, index) => (
+                      <div key={index} className="p-3 bg-muted/50 rounded-lg text-right">
+                        <span className="text-sm font-medium">{name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
               <form action={logout}>
                 <Button
                   variant="ghost"
