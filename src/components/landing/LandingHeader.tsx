@@ -80,6 +80,13 @@ export default function LandingHeader() {
                     <Button asChild className="font-bold text-sm bg-brand-accent text-[#043832] hover:bg-brand-accent/90 shadow-lg shadow-brand-accent/30 rounded-xl px-6">
                         <Link href="/home">ابدأ مجاناً</Link>
                     </Button>
+                    <Button 
+                        variant="ghost" 
+                        asChild 
+                        className="font-bold text-xs border border-white/10 bg-white/5/50 text-white/60 hover:bg-white/10 hover:text-white/80 rounded-xl px-4"
+                    >
+                        <Link href="/thank-you">لائحة الشكر</Link>
+                    </Button>
                 </div>
 
                 {/* Mobile Menu */}
@@ -117,6 +124,13 @@ export default function LandingHeader() {
                                 </Button>
                                 <Button asChild className="w-full h-12 bg-brand-accent text-[#043832]">
                                     <Link href="/home">ابدأ مجاناً</Link>
+                                </Button>
+                                <Button 
+                                    variant="ghost" 
+                                    asChild 
+                                    className="w-full h-10 border border-white/10 bg-white/5/50 text-white/60 hover:bg-white/10 hover:text-white/80 text-xs font-medium"
+                                >
+                                    <Link href="/thank-you">لائحة الشكر</Link>
                                 </Button>
                             </div>
                         </div>
