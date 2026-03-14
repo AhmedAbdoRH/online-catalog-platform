@@ -27,15 +27,15 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
   const [password, setPassword] = useState("Anaahmedgedo1001")
   const [error, setError] = useState("")
 
-          useEffect(() => {
-            if (Capacitor.isNativePlatform()) {
-              GoogleAuth.initialize({
-                clientId: '471992011728-n051jite6n017emj40qm5nht9a999jn6.apps.googleusercontent.com',
-                scopes: ['profile', 'email'],
-                grantOfflineAccess: true,
-              });
-            }
-          }, []);
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      GoogleAuth.initialize({
+        clientId: '471992011728-n051jite6n017emj40qm5nht9a999jn6.apps.googleusercontent.com',
+        scopes: ['profile', 'email'],
+        grantOfflineAccess: true,
+      });
+    }
+  }, []);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -101,7 +101,7 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
                 console.log('Starting native Google login...');
                 const user = await GoogleAuth.signIn();
                 console.log('Native Google User obtained');
-                
+
                 const { data, error } = await supabase.auth.signInWithIdToken({
                   provider: 'google',
                   token: user.authentication.idToken,
@@ -135,7 +135,7 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
               });
 
               let friendlyMessage = 'حدث خطأ أثناء تسجيل الدخول بجوجل. يرجى التأكد من إعدادات Google Cloud و SHA-1.';
-              
+
               if (errorMessage.includes('10:')) {
                 friendlyMessage = 'خطأ في الإعدادات (Developer Error). يرجى التأكد من إضافة SHA-1 الصحيح في Firebase Console.';
               } else if (errorMessage.includes('7:')) {
@@ -143,9 +143,9 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
               } else if (errorMessage.includes('12501')) {
                 friendlyMessage = 'تم إلغاء تسجيل الدخول.';
               }
-              
+
               const finalErrorMsg = `${friendlyMessage}\nSHA-1 المطلوب: 15:23:C5:5A:95:79:49:07:36:9E:34:92:A5:DF:37:15:0D:83:A2:D2`;
-              
+
               toast({
                 variant: "destructive",
                 title: "عطل في تسجيل الدخول",
