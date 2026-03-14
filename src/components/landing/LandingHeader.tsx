@@ -10,13 +10,6 @@ import {
     SheetContent,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -24,22 +17,6 @@ import { useRouter } from 'next/navigation';
 export default function LandingHeader() {
     const router = useRouter();
     const [lastTap, setLastTap] = useState(0);
-    const [isThankYouModalOpen, setIsThankYouModalOpen] = useState(false);
-
-    const defaultNames = [
-        "أحمد محمد",
-        "فاطمة علي",
-        "عبدالله خالد",
-        "مريم سعيد",
-        "يوسف عمر",
-        "نورا حسن",
-        "خالد أحمد",
-        "سارة محمود",
-        "عمر عبدالرحمن",
-        "ليلى إبراهيم",
-        "حسن ناصر",
-        "منى صالح"
-    ];
 
     const handleLogoClick = (e: React.MouseEvent) => {
         const now = Date.now();
@@ -103,28 +80,6 @@ export default function LandingHeader() {
                     <Button asChild className="font-bold text-sm bg-brand-accent text-[#043832] hover:bg-brand-accent/90 shadow-lg shadow-brand-accent/30 rounded-xl px-6">
                         <Link href="/home">ابدأ مجاناً</Link>
                     </Button>
-                    <Dialog open={isThankYouModalOpen} onOpenChange={setIsThankYouModalOpen}>
-                        <DialogTrigger asChild>
-                            <Button 
-                                variant="ghost" 
-                                className="font-bold text-xs bg-white/5/50 text-white/60 hover:bg-white/10 hover:text-white/80 rounded-xl px-4"
-                            >
-                                لائحة الشكر
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-md">
-                            <DialogHeader>
-                                <DialogTitle className="text-right">لائحة الشكر</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-2 max-h-96 overflow-y-auto">
-                                {defaultNames.map((name, index) => (
-                                    <div key={index} className="p-3 bg-muted/50 rounded-lg text-right">
-                                        <span className="text-sm font-medium">{name}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </DialogContent>
-                    </Dialog>
                 </div>
 
                 {/* Mobile Menu */}
@@ -163,30 +118,6 @@ export default function LandingHeader() {
                                 <Button asChild className="w-full h-12 bg-brand-accent text-[#043832]">
                                     <Link href="/home">ابدأ مجاناً</Link>
                                 </Button>
-                            </div>
-                            <div className="mt-8 mb-2 px-4">
-                                <Dialog open={isThankYouModalOpen} onOpenChange={setIsThankYouModalOpen}>
-                                    <DialogTrigger asChild>
-                                        <Button 
-                                            variant="ghost" 
-                                            className="w-full h-10 bg-white/5/50 text-white/60 hover:bg-white/10 hover:text-white/80 text-xs font-medium"
-                                        >
-                                            لائحة الشكر
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="max-w-md">
-                                        <DialogHeader>
-                                            <DialogTitle className="text-right">لائحة الشكر</DialogTitle>
-                                        </DialogHeader>
-                                        <div className="space-y-2 max-h-96 overflow-y-auto">
-                                            {defaultNames.map((name, index) => (
-                                                <div key={index} className="p-3 bg-muted/50 rounded-lg text-right">
-                                                    <span className="text-sm font-medium">{name}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </DialogContent>
-                                </Dialog>
                             </div>
                         </div>
                     </SheetContent>
