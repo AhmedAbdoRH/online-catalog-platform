@@ -298,7 +298,7 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
                 </Button>
               </form>
             </nav>
-            <div className="mt-auto mb-1 flex flex-col items-center gap-1">
+            <div className="mt-8 mb-1 flex flex-col items-center gap-1">
               <div className="text-[9px] text-muted-foreground">
                 v0.1.0
               </div>
