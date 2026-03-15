@@ -93,6 +93,62 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
   const [mainPreview, setMainPreview] = useState<string | null>(item?.image_url || null);
   const [additionalPreviews, setAdditionalPreviews] = useState<string[]>(item?.images?.map((img: any) => img.image_url) || []);
 
+  const getCategoryTree = () => {
+    const map = new Map<number, any>();
+    const roots: any[] = [];
+
+    categories.forEach((cat) => {
+      map.set(cat.id, { ...cat, subcategories: [] });
+    });
+
+    categories.forEach((cat) => {
+      const node = map.get(cat.id);
+      if (!node) return;
+      if (cat.parent_category_id !== null && cat.parent_category_id !== undefined) {
+        const parent = map.get(cat.parent_category_id);
+        if (parent) {
+          parent.subcategories.push(node);
+        } else {
+          roots.push(node);
+        }
+      } else {
+        roots.push(node);
+      }
+    });
+
+    return roots;
+  };
+
+  const renderCategoryOptions = (cats: any[], level = 0): JSX.Element[] => {
+    const options: JSX.Element[] = [];
+
+    cats.forEach((cat) => {
+      const indent = '\u00A0\u00A0\u00A0\u00A0'.repeat(level);
+      const prefix = level > 0 ? '┘─ ' : '• ';
+
+      options.push(
+        <SelectItem
+          key={cat.id}
+          value={cat.id.toString()}
+          className="relative py-3 mb-2 focus:bg-brand-primary focus:text-white cursor-pointer transition-colors pr-8 pl-4 group border-r-4 border-brand-primary bg-brand-primary/5 dark:bg-brand-primary/10"
+        >
+          <span className="font-bold text-right block w-full">
+            {indent}
+            <span className={level > 0 ? "text-slate-300" : "text-white"}>
+              {prefix}{cat.name}
+            </span>
+          </span>
+        </SelectItem>
+      );
+
+      if (cat.subcategories && cat.subcategories.length > 0) {
+        options.push(...renderCategoryOptions(cat.subcategories, level + 1));
+      }
+    });
+
+    return options;
+  };
+
   const generatePreview = (file: File | Blob, callback: (url: string) => void) => {
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -297,15 +353,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             </button>
                           </div>
 
-                          {categories.map((category) => (
-                            <SelectItem
-                              key={category.id}
-                              value={category.id.toString()}
-                              className="relative py-3 mb-2 focus:bg-brand-primary focus:text-white cursor-pointer transition-colors pr-8 pl-4 group border-r-4 border-brand-primary bg-brand-primary/5 dark:bg-brand-primary/10"
-                            >
-                              <span className="font-bold text-right block w-full">{category.name}</span>
-                            </SelectItem>
-                          ))}
+                          {renderCategoryOptions(getCategoryTree())}
                         </SelectContent>
                       </Select>
                       <FormMessage />

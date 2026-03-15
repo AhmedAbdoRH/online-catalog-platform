@@ -1,10 +1,11 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import ScrollAnimation from './ScrollAnimation';
 
 const PLAY_STORE_URL = 'https://play.google.com/apps/testing/com.nextcatalog.app';
 const GOOGLE_PLAY_ICON = 'https://res.cloudinary.com/dvikey3wc/image/upload/v1773216706/Online_Catalog_pmlblb.png';
@@ -168,11 +169,22 @@ const products = [
 const ORDER_CYCLE = ['idle', 'adding', 'loading', 'success', 'idle'];
 const ORDER_DURATIONS = { idle: 2800, adding: 1100, loading: 1400, success: 2000 };
 
+interface Product {
+  emoji: string;
+  name: string;
+  sub: string;
+  category: string;
+  desc: string;
+  price: string;
+  color: string;
+  bgTop: string;
+}
+
 function useOrderCycle() {
-  const [stage, setStage] = useState('idle');
+  const [stage, setStage] = useState<string>('idle');
   useEffect(() => {
-    let timeout;
-    function next(current) {
+    let timeout: NodeJS.Timeout;
+    function next(current: string) {
       const idx = ORDER_CYCLE.indexOf(current);
       const nextStage = ORDER_CYCLE[(idx + 1) % ORDER_CYCLE.length];
       timeout = setTimeout(() => {
@@ -185,7 +197,7 @@ function useOrderCycle() {
             next('adding');
           }, ORDER_DURATIONS.idle);
         }
-      }, ORDER_DURATIONS[current]);
+      }, ORDER_DURATIONS[current as keyof typeof ORDER_DURATIONS]);
     }
     timeout = setTimeout(() => {
       setStage('adding');
@@ -197,7 +209,7 @@ function useOrderCycle() {
 }
 
 // ─── Single product card matching screenshot layout ────────────────────────────
-function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }) {
+function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }: { p: Product, size?: number, scanDelay?: string, showOrder?: boolean }) {
   const stage = useOrderCycle();
   const activeStage = showOrder ? stage : 'idle';
 
@@ -484,18 +496,20 @@ export default function HeroSection() {
             <div className="relative">
 
               {/* Main Hero Card */}
-              <div className="relative z-20 rounded-3xl p-6 sm:p-8 landing-card landing-sheen">
-                <div className="relative aspect-[4/3] w-full rounded-2xl bg-black/20 flex items-center justify-center overflow-visible p-2">
-                  <Image
-                    src="/caracter.png"
-                    alt="Online Catalog Character"
-                    width={500}
-                    height={500}
-                    className="relative z-20 object-contain scale-[1.05] -translate-y-4 drop-shadow-[0_25px_25px_rgba(0,0,0,0.15)] animate-float"
-                    priority
-                  />
+              <ScrollAnimation animation="reveal-3d-up" duration={1} delay={0.2}>
+                <div className="relative z-20 rounded-3xl p-6 sm:p-8 landing-card landing-sheen">
+                  <div className="relative aspect-[4/3] w-full rounded-2xl bg-black/20 flex items-center justify-center overflow-visible p-2">
+                    <Image
+                      src="/caracter.png"
+                      alt="Online Catalog Character"
+                      width={500}
+                      height={500}
+                      className="relative z-20 object-contain scale-[1.05] -translate-y-4 drop-shadow-[0_25px_25px_rgba(0,0,0,0.15)] animate-float"
+                      priority
+                    />
+                  </div>
                 </div>
-              </div>
+              </ScrollAnimation>
 
               {/* ✅ Animated Product Cards — Top Right */}
               <AnimatedProductCards />
@@ -522,63 +536,76 @@ export default function HeroSection() {
           <div className="flex-1 text-center lg:text-right space-y-8 md:space-y-10 order-2 lg:order-1">
 
             <div className="space-y-4">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-brand-accent/15 text-brand-accent text-sm font-bold tracking-wide animate-fade-in ring-1 ring-brand-accent/30 shadow-[0_0_18px_rgba(85,249,230,0.35)]">
-                🚀 أطلق متجرك في 3 خطوات بسيطة
-              </span>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-headline tracking-tight text-foreground leading-[1.2]">
-                <span className="block mb-2 text-foreground/90">متجرك الرقمي...</span>
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF9F1C] via-[#FFC800] to-[#34D399] block py-2 text-gradient-anim">
-                  جاهز في دقائق.
+              <ScrollAnimation animation="blur-in" delay={0.1}>
+                <span className="inline-block px-4 py-1.5 rounded-full bg-brand-accent/15 text-brand-accent text-sm font-bold tracking-wide animate-fade-in ring-1 ring-brand-accent/30 shadow-[0_0_18px_rgba(85,249,230,0.35)]">
+                  🚀 أطلق متجرك في 3 خطوات بسيطة
                 </span>
-              </h1>
+              </ScrollAnimation>
+              
+              <ScrollAnimation animation="reveal-3d-up" delay={0.2}>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-headline tracking-tight text-foreground leading-[1.2]">
+                  <span className="block mb-2 text-foreground/90">متجرك الرقمي...</span>
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF9F1C] via-[#FFC800] to-[#34D399] block py-2 text-gradient-anim">
+                    جاهز في دقائق.
+                  </span>
+                </h1>
+              </ScrollAnimation>
             </div>
 
-            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
-              سجّل، أضف منتجاتك، وابدأ البيع فوراً برابط مخصص لمتجرك.
-              <span className="block mt-4 text-brand-accent/90 text-base md:text-lg font-mono" dir="ltr">
-                Online-Catalog.net/store-name
-              </span>
-            </p>
+            <ScrollAnimation animation="fade-up" delay={0.4}>
+              <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                سجّل، أضف منتجاتك، وابدأ البيع فوراً برابط مخصص لمتجرك.
+                <span className="block mt-4 text-brand-accent/90 text-base md:text-lg font-mono" dir="ltr">
+                  Online-Catalog.net/store-name
+                </span>
+              </p>
+            </ScrollAnimation>
 
             <div className="flex flex-col items-center gap-4 md:gap-5 justify-center lg:justify-start">
 
               {/* Google Play Button */}
+              <ScrollAnimation animation="scale-up" delay={0.6}>
                 <Button
                   size="lg"
                   className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl bg-white text-[#0b3c35] font-bold w-full sm:w-auto transition-all duration-300 shadow-[0_18px_45px_rgba(4,20,18,0.25)] hover:shadow-[0_20px_60px_rgba(85,249,230,0.25)] hover:scale-[1.02] active:scale-95 border border-white/60 group"
                   asChild
                 >
-                <Link href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3">
-                  <Image src={GOOGLE_PLAY_ICON} alt="Google Play" width={36} height={36} className="rounded-lg shadow-sm w-9 h-9 object-contain" />
-                  حمل التطبيق الآن
-                </Link>
-              </Button>
+                  <Link href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3">
+                    <Image src={GOOGLE_PLAY_ICON} alt="Google Play" width={36} height={36} className="rounded-lg shadow-sm w-9 h-9 object-contain" />
+                    حمل التطبيق الآن
+                  </Link>
+                </Button>
+              </ScrollAnimation>
 
               <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full sm:w-auto justify-center lg:justify-start">
 
                 {/* Start Free Button */}
-                <Button
-                  size="lg"
-                  className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl shadow-[0_16px_45px_rgba(85,249,230,0.35)] hover:shadow-[0_20px_60px_rgba(85,249,230,0.45)] transition-all font-bold group w-full sm:w-auto bg-brand-accent text-[#043832] hover:scale-105 active:scale-95"
-                  asChild
-                >
-                  <Link href="/home">
-                    ابدأ رحلتك مجاناً
-                    <ArrowRight className="mr-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
+                <ScrollAnimation animation="fade-right" delay={0.7}>
+                  <Button
+                    size="lg"
+                    className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl shadow-[0_16px_45px_rgba(85,249,230,0.35)] hover:shadow-[0_20px_60px_rgba(85,249,230,0.45)] transition-all font-bold group w-full sm:w-auto bg-brand-accent text-[#043832] hover:scale-105 active:scale-95"
+                    asChild
+                  >
+                    <Link href="/home">
+                      ابدأ رحلتك مجاناً
+                      <ArrowRight className="mr-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
+                </ScrollAnimation>
 
                 {/* Demo Store Button */}
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl border border-brand-accent/40 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-brand-accent w-full sm:w-auto transition-all font-bold"
-                  asChild
-                >
-                  <Link href="https://online-catalog.net/elfath" target="_blank" rel="noopener noreferrer">
-                    تصفح متجر تجريبي
-                  </Link>
-                </Button>
+                <ScrollAnimation animation="fade-left" delay={0.8}>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl border border-brand-accent/40 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-brand-accent w-full sm:w-auto transition-all font-bold"
+                    asChild
+                  >
+                    <Link href="https://online-catalog.net/elfath" target="_blank" rel="noopener noreferrer">
+                      تصفح متجر تجريبي
+                    </Link>
+                  </Button>
+                </ScrollAnimation>
               </div>
             </div>
 

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
+import { motion } from 'framer-motion';
 import {
     Sheet,
     SheetContent,
@@ -37,7 +38,12 @@ export default function LandingHeader() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+            <motion.div 
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between"
+            >
                 {/* Logo */}
                 <Link 
                     href="/go" 
@@ -122,7 +128,7 @@ export default function LandingHeader() {
                         </div>
                     </SheetContent>
                 </Sheet>
-            </div>
+            </motion.div>
         </header>
     );
 }
