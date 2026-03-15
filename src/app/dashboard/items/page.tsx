@@ -13,9 +13,23 @@ async function getData() {
     if (!catalog) notFound();
 
     const { data: categories } = await supabase.from('categories').select('*').eq('catalog_id', catalog.id);
-    const { data: items } = await supabase.from('menu_items').select('*, categories(name), product_images(*)').eq('catalog_id', catalog.id).order('created_at', { ascending: false });
+    const { data: items } = await supabase
+        .from('menu_items')
+        .select('*, categories(name, parent_category_id, parent:parent_category_id(name)), product_images(*)')
+        .eq('catalog_id', catalog.id)
+        .order('created_at', { ascending: false });
 
-    return { catalog, categories: categories || [], items: items || [] };
+    const normalizedItems = (items || []).map((item: any) => ({
+        ...item,
+        categories: item.categories
+            ? {
+                ...item.categories,
+                parent_category_name: item.categories.parent?.name || null,
+            }
+            : item.categories,
+    }));
+
+    return { catalog, categories: categories || [], items: normalizedItems };
 }
 
 export default async function ItemsPage() {

@@ -178,7 +178,7 @@ export type UpdateItemVariant = Database['public']['Tables']['item_variants']['U
 export type MenuItemWithDetails = MenuItem & {
   product_images: ProductImage[];
   item_variants: ItemVariant[];
-  categories: { name: string } | null;
+  categories: { name: string; parent_category_id?: number | null; parent_category_name?: string | null } | null;
 };
 
 export type CatalogData = Catalog & {

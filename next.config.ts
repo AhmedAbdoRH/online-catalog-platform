@@ -52,17 +52,12 @@ const nextConfig: NextConfig = {
           const protocol = u.protocol.replace(':', '') as 'http' | 'https';
           patterns.push({ protocol, hostname: u.hostname, pathname: '/**' });
         }
-      } catch (e) {
+      } catch {
         // ignore malformed env
       }
 
       return patterns;
     })(),
-  },
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '10mb',
-    },
   },
 };
 

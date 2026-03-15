@@ -39,7 +39,6 @@ import type { User } from '@supabase/supabase-js';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { APP_NAME } from '@/lib/constants';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { SupportButton } from './SupportButton';
 
 const navItems = [
@@ -153,8 +152,6 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
           ))}
         </nav>
         <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5 relative">
-          <ThemeToggle />
-          
           <Tooltip>
             <TooltipTrigger asChild>
               <Dialog open={isThankYouModalOpen} onOpenChange={setIsThankYouModalOpen}>
@@ -255,7 +252,6 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
                 </div>
                 <span className="sr-only">{APP_NAME}</span>
               </Link>
-              <ThemeToggle />
             </div>
             <nav className="grid gap-6 text-lg font-medium">
               {navItems.map((item) => (

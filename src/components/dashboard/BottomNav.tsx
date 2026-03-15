@@ -283,7 +283,7 @@ export function BottomNav() {
             {catalog && (
               <ItemForm
                 catalogId={catalog.id}
-                catalogPlan={catalog.plan}
+                isPro={catalog.plan === "pro" || catalog.plan === "business"}
                 categories={categories}
                 onSuccess={() => setIsAddItemOpen(false)}
                 onCancel={() => setIsAddItemOpen(false)}

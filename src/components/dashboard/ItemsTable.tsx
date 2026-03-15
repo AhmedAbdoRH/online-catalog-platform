@@ -45,6 +45,7 @@ function ItemRow({ item, catalogId, catalogPlan, categories, countryCode }: { it
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const parentCategoryName = item.categories?.parent_category_name || null;
 
   const handleDelete = async (itemId: number) => {
     startTransition(async () => {
@@ -74,14 +75,28 @@ function ItemRow({ item, catalogId, catalogPlan, categories, countryCode }: { it
         <div className="flex flex-col gap-1 min-w-0">
           <span className="truncate block font-bold text-foreground" title={item.name}>{item.name}</span>
           <div className="sm:hidden">
-            <Badge variant="outline" className="text-[11px] px-2 py-0.5 h-5 bg-muted/50 whitespace-nowrap">
-              {item.categories?.name || 'غير مصنف'}
+            <Badge variant="outline" className="text-[11px] px-2 py-0.5 bg-muted/50 whitespace-normal leading-tight">
+              <span>{item.categories?.name || 'غير مصنف'}</span>
+              {!!item.categories?.parent_category_id && !!parentCategoryName && (
+                <span className="mr-1 inline-block">
+                  <span className="text-muted-foreground font-normal"> فرعي من </span>
+                  <span className="font-bold text-foreground">{parentCategoryName}</span>
+                </span>
+              )}
             </Badge>
           </div>
         </div>
       </TableCell>
       <TableCell className="hidden sm:table-cell p-5">
-        <Badge variant="outline" className="bg-muted/50 text-sm px-3 py-1">{item.categories?.name || 'غير مصنف'}</Badge>
+        <Badge variant="outline" className="bg-muted/50 text-sm px-3 py-1 whitespace-normal leading-tight">
+          <span>{item.categories?.name || 'غير مصنف'}</span>
+          {!!item.categories?.parent_category_id && !!parentCategoryName && (
+            <span className="mr-2 inline-block">
+              <span className="text-muted-foreground font-normal"> فرعي من </span>
+              <span className="font-bold text-foreground">{parentCategoryName}</span>
+            </span>
+          )}
+        </Badge>
       </TableCell>
       <TableCell className="font-mono text-[13px] sm:text-lg font-bold p-2 sm:p-5 whitespace-nowrap text-left sm:text-right text-brand-primary">{formatPrice(item.price, countryCode)}</TableCell>
 
