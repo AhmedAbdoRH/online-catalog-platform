@@ -1,13 +1,13 @@
 import imageCompression from 'browser-image-compression';
 
 export async function compressImage(file: File): Promise<File> {
-  // Simple, robust configuration for maximum compatibility
+  // WebP format with 250KB limit for smaller uploads and faster loading
   const options = {
-    maxSizeMB: 1, // 1MB limit - good quality, safe for server (5MB limit)
+    maxSizeMB: 0.25, // 250KB limit
     maxWidthOrHeight: 1280, // HD standard - efficient for mobile
     useWebWorker: false, // Avoid worker issues on some Android viewports
-    fileType: 'image/jpeg', // JPEG is safer/faster than WebP on older devices
-    initialQuality: 0.8,
+    fileType: 'image/webp', // WebP for better compression and quality
+    initialQuality: 0.85,
   };
 
   if (!file || (typeof file.size !== 'number') || file.size === 0) {
@@ -18,12 +18,12 @@ export async function compressImage(file: File): Promise<File> {
   try {
     const compressedBlob = await imageCompression(file, options);
 
-    // Construct new filename
+    // Construct new filename with .webp extension
     const baseName = file.name ? file.name.replace(/\.[^/.]+$/, "") : "image";
-    const newFileName = `${baseName}.jpg`;
+    const newFileName = `${baseName}.webp`;
 
     return new File([compressedBlob], newFileName, {
-      type: 'image/jpeg',
+      type: 'image/webp',
       lastModified: Date.now(),
     });
 
