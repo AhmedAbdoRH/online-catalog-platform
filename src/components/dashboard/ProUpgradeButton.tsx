@@ -17,6 +17,7 @@ interface ProUpgradeButtonProps {
   size?: "default" | "sm" | "lg" | "icon";
   variant?: "default" | "outline" | "ghost" | "link" | "destructive" | "secondary";
   children?: React.ReactNode;
+  planType?: "monthly" | "yearly";
 }
 
 export function ProUpgradeButton({
@@ -24,6 +25,7 @@ export function ProUpgradeButton({
   className = "",
   size = "default",
   variant = "default",
+  planType = "yearly",
   children = (
     <>
       <MessageCircle className="h-4 w-4 ml-2" />
@@ -41,15 +43,56 @@ export function ProUpgradeButton({
       return;
     }
     setIsLoading(true);
-    console.log("🔄 بدء عملية الشراء...");
-    const { success, purchaseToken, error } = await purchaseProSubscription();
+    console.log(`🔄 بدء عملية الشراء (${planType})...`);
+    const { success, purchaseToken, error } = await purchaseProSubscription(planType);
     console.log("📱 نتيجة الشراء:", { success, hasPurchaseToken: !!purchaseToken, error });
     if (success && purchaseToken) {
       console.log("🔄 جاري التحقق من الاشتراك...", { purchaseToken: purchaseToken.substring(0, 20) + "...", catalogId });
-      const result = await verifyAndActivatePro(purchaseToken, catalogId);
+      const productId = planType === 'yearly' ? 'pro_yearly' : 'pro_monthly';
+      const result = await verifyAndActivatePro(purchaseToken, catalogId, productId);
       setIsLoading(false);
       console.log("✅ نتيجة التحقق:", result);
       if (result.ok) {
+        // Log Facebook Purchase event
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+          let value = 0;
+          let currency = 'SAR';
+          
+          if (planType === 'yearly') {
+            if (result.country_code === '+20') {
+              value = 2200;
+              currency = 'EGP';
+            } else if (result.country_code === '+971') {
+              value = 399;
+              currency = 'AED';
+            } else {
+              value = 399;
+              currency = 'SAR';
+            }
+          } else {
+            // Monthly
+            if (result.country_code === '+20') {
+              value = 350;
+              currency = 'EGP';
+            } else if (result.country_code === '+971') {
+              value = 49;
+              currency = 'AED';
+            } else {
+              value = 49;
+              currency = 'SAR';
+            }
+          }
+          
+          (window as any).fbq('track', 'Purchase', {
+            value: value,
+            currency: currency,
+            content_name: planType === 'yearly' ? 'Pro Yearly Subscription' : 'Pro Monthly Subscription',
+            content_category: 'Subscription',
+            content_ids: [planType === 'yearly' ? 'pro_yearly' : 'pro_monthly'],
+          });
+          console.log(`✅ تم تسجيل حدث الشراء في فيسبوك: ${value} ${currency} (${planType})`);
+        }
+
         toast({
           title: "تم الاشتراك بنجاح",
           description: "تم تفعيل باقة البرو لمتجرك",
@@ -99,7 +142,7 @@ export function ProUpgradeButton({
         ) : (
           <CreditCard className="h-4 w-4 ml-2" />
         )}
-        {isLoading ? "جاري المعالجة..." : "الاشتراك عبر Google"}
+        {isLoading ? "جاري المعالجة..." : `اشتراك ${planType === 'yearly' ? 'سنوي' : 'شهري'} عبر Google`}
       </Button>
     );
   }

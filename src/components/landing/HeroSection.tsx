@@ -7,7 +7,7 @@ import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import ScrollAnimation from './ScrollAnimation';
 
-const PLAY_STORE_URL = 'https://play.google.com/apps/testing/com.nextcatalog.app';
+const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.nextcatalog.app';
 const GOOGLE_PLAY_ICON = 'https://res.cloudinary.com/dvikey3wc/image/upload/v1773216706/Online_Catalog_pmlblb.png';
 
 const NEON = '#55F9E6';
@@ -128,6 +128,16 @@ const productCardStyles = `
   .deck-front-to-back { animation: deckFrontToBack 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
   .deck-mid-to-front  { animation: deckMidToFront 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
   .deck-back-to-mid   { animation: deckBackToMid 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+  @keyframes playBtnGlow {
+    0%, 100% { box-shadow: 0 18px 45px rgba(4,20,18,0.25), 0 0 0 0 rgba(255,255,255,0); }
+    50%       { box-shadow: 0 22px 55px rgba(85,249,230,0.35), 0 0 28px 6px rgba(255,255,255,0.18); }
+  }
+  @keyframes playBtnSubtlePulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    70% { transform: scale(1.08); opacity: 0; }
+    100% { transform: scale(1.08); opacity: 0; }
+  }
 `;
 
 // ─── Products data ─────────────────────────────────────────────────────────────
@@ -565,33 +575,27 @@ export default function HeroSection() {
 
               {/* Google Play Button */}
               <ScrollAnimation animation="scale-up" delay={0.6}>
-                <Button
-                  size="lg"
-                  className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl bg-white text-[#0b3c35] font-bold w-full sm:w-auto transition-all duration-300 shadow-[0_18px_45px_rgba(4,20,18,0.25)] hover:shadow-[0_20px_60px_rgba(85,249,230,0.25)] hover:scale-[1.02] active:scale-95 border border-white/60 group"
-                  asChild
-                >
-                  <Link href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3">
-                    <Image src={GOOGLE_PLAY_ICON} alt="Google Play" width={36} height={36} className="rounded-lg shadow-sm w-9 h-9 object-contain" />
-                    حمل التطبيق الآن
-                  </Link>
-                </Button>
+                <div className="relative inline-flex w-full sm:w-auto">
+                  {/* Pulsing ring layers - Custom Subtle Pulse */}
+                  <span className="absolute inset-0 rounded-2xl bg-white/20" style={{ animation: 'playBtnSubtlePulse 2s cubic-bezier(0, 0, 0.2, 1) infinite' }} />
+                  <span className="absolute inset-0 rounded-2xl bg-white/10" style={{ animation: 'playBtnSubtlePulse 2s cubic-bezier(0, 0, 0.2, 1) infinite 0.5s' }} />
+                  <Button
+                    size="lg"
+                    className="relative h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl bg-white text-[#0b3c35] font-bold w-full sm:w-auto transition-all duration-300 shadow-[0_18px_45px_rgba(4,20,18,0.25)] hover:shadow-[0_20px_60px_rgba(85,249,230,0.4)] hover:scale-[1.02] active:scale-95 border border-white/60 group"
+                    style={{ animation: 'playBtnGlow 2s ease-in-out infinite' }}
+                    asChild
+                  >
+                    <Link href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3">
+                      <Image src={GOOGLE_PLAY_ICON} alt="Google Play" width={36} height={36} className="rounded-lg shadow-sm w-9 h-9 object-contain" />
+                      حمل التطبيق الآن
+                    </Link>
+                  </Button>
+                </div>
               </ScrollAnimation>
 
               <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full sm:w-auto justify-center lg:justify-start">
 
-                {/* Start Free Button */}
-                <ScrollAnimation animation="fade-right" delay={0.7}>
-                  <Button
-                    size="lg"
-                    className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl shadow-[0_16px_45px_rgba(85,249,230,0.35)] hover:shadow-[0_20px_60px_rgba(85,249,230,0.45)] transition-all font-bold group w-full sm:w-auto bg-brand-accent text-[#043832] hover:scale-105 active:scale-95"
-                    asChild
-                  >
-                    <Link href="/home">
-                      ابدأ رحلتك مجاناً
-                      <ArrowRight className="mr-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </Button>
-                </ScrollAnimation>
+
 
                 {/* Demo Store Button */}
                 <ScrollAnimation animation="fade-left" delay={0.8}>

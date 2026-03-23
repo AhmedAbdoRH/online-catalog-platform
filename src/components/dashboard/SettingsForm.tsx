@@ -465,7 +465,19 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                               </div>
                             </div>
                           </div>
-                          <ProUpgradeButton catalogId={catalog.id} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
+                          <div className="flex flex-col gap-3">
+                            <ProUpgradeButton 
+                              catalogId={catalog.id} 
+                              planType="yearly"
+                              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
+                            />
+                            <ProUpgradeButton 
+                              catalogId={catalog.id} 
+                              planType="monthly"
+                              variant="outline"
+                              className="w-full border-amber-500 text-amber-500 hover:bg-amber-500/10"
+                            />
+                          </div>
                         </div>
                       </DialogContent>
                     </Dialog>
@@ -543,7 +555,19 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                         </div>
                       </div>
                     </div>
-                    <ProUpgradeButton catalogId={catalog.id} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
+                    <div className="flex flex-col gap-3">
+                      <ProUpgradeButton 
+                        catalogId={catalog.id} 
+                        planType="yearly"
+                        className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
+                      />
+                      <ProUpgradeButton 
+                        catalogId={catalog.id} 
+                        planType="monthly"
+                        variant="outline"
+                        className="w-full border-amber-500 text-amber-500 hover:bg-amber-500/10"
+                      />
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -658,7 +682,19 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                         </div>
                       </div>
                     </div>
-                    <ProUpgradeButton catalogId={catalog.id} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
+                    <div className="flex flex-col gap-3">
+                      <ProUpgradeButton 
+                        catalogId={catalog.id} 
+                        planType="yearly"
+                        className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
+                      />
+                      <ProUpgradeButton 
+                        catalogId={catalog.id} 
+                        planType="monthly"
+                        variant="outline"
+                        className="w-full border-amber-500 text-amber-500 hover:bg-amber-500/10"
+                      />
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>

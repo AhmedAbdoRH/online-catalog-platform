@@ -31,9 +31,9 @@ export default function LandingHeader() {
     };
 
     const navLinks = [
-        { name: "المميزات", href: "/go#benefits" },
-        { name: "الخصائص", href: "/go#features" },
-        { name: "باقات الأسعار", href: "/go#pricing" },
+        { name: "المميزات", href: "/#benefits" },
+        { name: "الخصائص", href: "/#features" },
+        { name: "باقات الأسعار", href: "/#pricing" },
     ];
 
     return (
@@ -46,7 +46,7 @@ export default function LandingHeader() {
             >
                 {/* Logo */}
                 <Link 
-                    href="/go" 
+                    href="/" 
                     className="flex items-center gap-3 hover:opacity-90 transition-all active:scale-95 group"
                     onClick={handleLogoClick}
                 >
@@ -97,7 +97,7 @@ export default function LandingHeader() {
                     </SheetTrigger>
                     <SheetContent side="right" className="w-80 sm:w-96">
                         <div className="flex flex-col gap-6 mt-8">
-                            <Link href="/go" className="flex items-center gap-3 mx-auto hover:opacity-80 transition-opacity">
+                            <Link href="/" className="flex items-center gap-3 mx-auto hover:opacity-80 transition-opacity">
                                 <div className="relative h-12 w-12">
                                         <Image
                                             src="/logo.png"

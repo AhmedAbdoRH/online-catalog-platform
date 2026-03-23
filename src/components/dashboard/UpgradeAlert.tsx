@@ -54,7 +54,19 @@ export function UpgradeAlert({ open, onOpenChange, resourceType, catalogId }: Up
                             </div>
                         </div>
                     </div>
-                    <ProUpgradeButton catalogId={catalogId} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" />
+                    <div className="flex flex-col gap-3">
+                        <ProUpgradeButton 
+                            catalogId={catalogId} 
+                            planType="yearly"
+                            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
+                        />
+                        <ProUpgradeButton 
+                            catalogId={catalogId} 
+                            planType="monthly"
+                            variant="outline"
+                            className="w-full border-amber-500 text-amber-500 hover:bg-amber-500/10"
+                        />
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>

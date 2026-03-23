@@ -7,7 +7,12 @@ import { Capacitor } from '@capacitor/core';
 
 // معرف المنتج في Google Play Console - قم بتعديله بعد إنشاء الاشتراك
 export const PRO_SUBSCRIPTION_ID = 'pro_yearly';
-export const PRO_BASE_PLAN_ID = 'yearly-plan'; // Base Plan ID من Google Play Console
+export const PRO_BASE_PLAN_ID = 'yearly-plan'; 
+
+export const PRO_MONTHLY_ID = 'pro_monthly';
+export const PRO_MONTHLY_BASE_PLAN_ID = 'monthly-plan'; 
+
+export type SubscriptionType = 'monthly' | 'yearly';
 
 export function isNativeAndroid(): boolean {
   if (typeof window === 'undefined') return false;
@@ -54,7 +59,7 @@ export async function getProProduct() {
   }
 }
 
-export async function purchaseProSubscription(): Promise<{
+export async function purchaseProSubscription(type: SubscriptionType = 'yearly'): Promise<{
   success: boolean;
   purchaseToken?: string;
   error?: string;
@@ -69,9 +74,12 @@ export async function purchaseProSubscription(): Promise<{
       return { success: false, error: 'الدفع غير متاح على هذا الجهاز' };
     }
 
+    const productId = type === 'yearly' ? PRO_SUBSCRIPTION_ID : PRO_MONTHLY_ID;
+    const planId = type === 'yearly' ? PRO_BASE_PLAN_ID : PRO_MONTHLY_BASE_PLAN_ID;
+
     const transaction = await NativePurchases.purchaseProduct({
-      productIdentifier: PRO_SUBSCRIPTION_ID,
-      planIdentifier: PRO_BASE_PLAN_ID,
+      productIdentifier: productId,
+      planIdentifier: planId,
       productType: PURCHASE_TYPE.SUBS,
       quantity: 1,
     });

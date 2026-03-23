@@ -23,8 +23,9 @@ const plans = [
     },
     {
         name: "Pro",
-        price: "2500 ج.م",
+        price: "2200 ج.م",
         period: "/ سنوياً",
+        secondaryPrice: "أو 350 ج.م / شهرياً",
         description: "للمتاجر المتنامية التي تحتاج المزيد",
         icon: Zap,
         features: [
@@ -34,7 +35,7 @@ const plans = [
             { text: "دعم فني أولوية", included: true },
         ],
         cta: "اشترك الآن",
-        ctaLink: "https://wa.me/201008116452?text=أرغب%20في%20الاشتراك%20في%20باقة%20البرو%20المهنية%20(2500%20ج.م%20سنوياً)",
+        ctaLink: "https://wa.me/201008116452?text=أرغب%20في%20الاشتراك%20في%20باقة%20البرو%20(2200%20ج.م%20سنوياً)",
         popular: false
     },
     {
@@ -89,6 +90,7 @@ export default function Pricing() {
                                             <span className="text-4xl font-black">{plan.price}</span>
                                             {plan.period && <span className="text-muted-foreground">{plan.period}</span>}
                                         </div>
+                                        {plan.secondaryPrice && <div className="text-sm text-brand-accent font-bold mt-1 bg-brand-accent/10 px-3 py-1 rounded-full">{plan.secondaryPrice}</div>}
                                     </div>
                                 </div>
 

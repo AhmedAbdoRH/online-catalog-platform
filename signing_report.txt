@@ -1,0 +1,126 @@
+Starting a Gradle Daemon, 3 busy and 2 incompatible Daemons could not be reused, use --status for details
+
+> Configure project :app
+WARNING: The option setting 'android.overridePathCheck=true' is experimental.
+The current default is 'false'.
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Configure project :capacitor-cordova-android-plugins
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Task :app:signingReport
+Variant: debug
+Config: debug
+Store: C:\Users\Ahmed\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 20:F4:61:48:B7:2D:8E:5E:5C:A2:3D:37:A4:F4:14:90
+SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+SHA-256: FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C
+Valid until: ÇáÃÑÈÚÇÁ¡ ? ãÇíæ ????
+----------
+Variant: release
+Config: release
+Store: D:\online-catalog-platform-5\android\app\my-release-key.jks
+Alias: my-key-alias
+MD5: F3:F4:FD:BB:DA:49:8F:D9:DA:37:28:9E:5E:6F:EE:A9
+SHA1: 15:23:C5:5A:95:79:49:07:36:9E:34:92:A5:DF:37:15:0D:83:A2:D2
+SHA-256: 32:F8:4B:8C:B8:C1:F6:92:CC:C3:E2:35:90:FA:1B:74:CF:89:BA:24:55:C3:65:B1:01:29:C6:80:43:63:62:32
+Valid until: ÇáÃÑÈÚÇÁ¡ ?? ãÇíæ ????
+----------
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Ahmed\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 20:F4:61:48:B7:2D:8E:5E:5C:A2:3D:37:A4:F4:14:90
+SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+SHA-256: FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C
+Valid until: ÇáÃÑÈÚÇÁ¡ ? ãÇíæ ????
+----------
+
+> Task :capacitor-android:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Ahmed\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 20:F4:61:48:B7:2D:8E:5E:5C:A2:3D:37:A4:F4:14:90
+SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+SHA-256: FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C
+Valid until: ÇáÃÑÈÚÇÁ¡ ? ãÇíæ ????
+----------
+
+> Task :capacitor-camera:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Ahmed\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 20:F4:61:48:B7:2D:8E:5E:5C:A2:3D:37:A4:F4:14:90
+SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+SHA-256: FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C
+Valid until: ÇáÃÑÈÚÇÁ¡ ? ãÇíæ ????
+----------
+
+> Task :capacitor-cordova-android-plugins:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Ahmed\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 20:F4:61:48:B7:2D:8E:5E:5C:A2:3D:37:A4:F4:14:90
+SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+SHA-256: FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C
+Valid until: ÇáÃÑÈÚÇÁ¡ ? ãÇíæ ????
+----------
+
+> Task :capacitor-filesystem:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Ahmed\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 20:F4:61:48:B7:2D:8E:5E:5C:A2:3D:37:A4:F4:14:90
+SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+SHA-256: FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C
+Valid until: ÇáÃÑÈÚÇÁ¡ ? ãÇíæ ????
+----------
+
+> Task :capacitor-share:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Ahmed\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 20:F4:61:48:B7:2D:8E:5E:5C:A2:3D:37:A4:F4:14:90
+SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+SHA-256: FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C
+Valid until: ÇáÃÑÈÚÇÁ¡ ? ãÇíæ ????
+----------
+
+> Task :capgo-native-purchases:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Ahmed\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 20:F4:61:48:B7:2D:8E:5E:5C:A2:3D:37:A4:F4:14:90
+SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+SHA-256: FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C
+Valid until: ÇáÃÑÈÚÇÁ¡ ? ãÇíæ ????
+----------
+
+> Task :codetrix-studio-capacitor-google-auth:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Ahmed\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 20:F4:61:48:B7:2D:8E:5E:5C:A2:3D:37:A4:F4:14:90
+SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+SHA-256: FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C
+Valid until: ÇáÃÑÈÚÇÁ¡ ? ãÇíæ ????
+----------
+
+[Incubating] Problems report is available at: file:///D:/online-catalog-platform-5/android/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 16s
+? actionable tasks: ? executed
