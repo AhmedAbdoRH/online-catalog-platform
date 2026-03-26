@@ -468,7 +468,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                           <div className="flex flex-col gap-3">
                             <ProUpgradeButton 
                               catalogId={catalog.id} 
-                              planType="yearly"
+                              planType="monthly"
                               className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
                             />
                             <ProUpgradeButton 
@@ -558,7 +558,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                     <div className="flex flex-col gap-3">
                       <ProUpgradeButton 
                         catalogId={catalog.id} 
-                        planType="yearly"
+                        planType="monthly"
                         className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
                       />
                       <ProUpgradeButton 
@@ -685,7 +685,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                     <div className="flex flex-col gap-3">
                       <ProUpgradeButton 
                         catalogId={catalog.id} 
-                        planType="yearly"
+                        planType="monthly"
                         className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
                       />
                       <ProUpgradeButton 

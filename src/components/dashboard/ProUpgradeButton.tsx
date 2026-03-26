@@ -25,7 +25,7 @@ export function ProUpgradeButton({
   className = "",
   size = "default",
   variant = "default",
-  planType = "yearly",
+  planType = "monthly",
   children = (
     <>
       <MessageCircle className="h-4 w-4 ml-2" />

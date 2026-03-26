@@ -59,7 +59,7 @@ export async function getProProduct() {
   }
 }
 
-export async function purchaseProSubscription(type: SubscriptionType = 'yearly'): Promise<{
+export async function purchaseProSubscription(type: SubscriptionType = 'monthly'): Promise<{
   success: boolean;
   purchaseToken?: string;
   error?: string;
