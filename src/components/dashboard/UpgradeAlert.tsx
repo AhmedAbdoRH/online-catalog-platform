@@ -60,12 +60,6 @@ export function UpgradeAlert({ open, onOpenChange, resourceType, catalogId }: Up
                             planType="monthly"
                             className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
                         />
-                        <ProUpgradeButton 
-                            catalogId={catalogId} 
-                            planType="monthly"
-                            variant="outline"
-                            className="w-full border-amber-500 text-amber-500 hover:bg-amber-500/10"
-                        />
                     </div>
                 </div>
             </DialogContent>

@@ -6,12 +6,11 @@ import { createClient } from "@/lib/supabase/server";
 const PACKAGE_NAME = "com.nextcatalog.app";
 const PRODUCT_ID = "pro_yearly";
 
-export type VerifyResult = { ok: true; country_code?: string } | { ok: false; error: string };
+export type VerifyResult = { ok: true } | { ok: false; error: string };
 
 export async function verifyAndActivatePro(
   purchaseToken: string,
-  catalogId: number,
-  productId: string = "pro_yearly"
+  catalogId: number
 ): Promise<VerifyResult> {
   const email = process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_EMAIL;
   let key = process.env.GOOGLE_PLAY_PRIVATE_KEY;
@@ -37,10 +36,10 @@ export async function verifyAndActivatePro(
     try {
       result = await verifier.verifySub({
         packageName: PACKAGE_NAME,
-        productId: productId,
+        productId: PRODUCT_ID,
         purchaseToken,
       });
-      console.log("✅ نتيجة التحقق من Google Play:", { isSuccessful: result?.isSuccessful, errorMessage: result?.errorMessage, productId });
+      console.log("✅ نتيجة التحقق من Google Play:", { isSuccessful: result?.isSuccessful, errorMessage: result?.errorMessage });
     } catch (verifyErr: unknown) {
       // معالجة الأخطاء من Verifier مباشرة
       console.error("❌ فشل التحقق من Google Play:", verifyErr);
@@ -75,7 +74,7 @@ export async function verifyAndActivatePro(
 
     const { data: catalog, error: catalogError } = await supabase
       .from("catalogs")
-      .select("id, user_id, plan, country_code")
+      .select("id, user_id, plan")
       .eq("id", catalogId)
       .single();
 
@@ -126,7 +125,7 @@ export async function verifyAndActivatePro(
     }
     
     console.log("✅ تم تحديث الخطة بنجاح!", { updatedCatalog: updateData[0] });
-    return { ok: true, country_code: catalog.country_code };
+    return { ok: true };
   } catch (err: unknown) {
     console.error("❌ خطأ عام في verifyAndActivatePro:", err);
     let msg = "حدث خطأ أثناء التحقق";

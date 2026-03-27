@@ -22,7 +22,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { updateCatalog } from '@/app/actions/catalog';
 import { useToast } from '@/hooks/use-toast';
@@ -78,6 +77,9 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showTooltips, setShowTooltips] = useState(false);
+  const [isSlugUpgradeOpen, setIsSlugUpgradeOpen] = useState(false);
+  const [isThemeUpgradeOpen, setIsThemeUpgradeOpen] = useState(false);
+  const [isFooterUpgradeOpen, setIsFooterUpgradeOpen] = useState(false);
 
   // File states for previews and actual files
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -123,6 +125,16 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
   };
 
   const isPro = catalog.plan === 'pro' || catalog.plan === 'business';
+
+  const handleLockedSectionKeyDown = (
+    event: React.KeyboardEvent<HTMLElement>,
+    onOpen: () => void
+  ) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onOpen();
+    }
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -424,13 +436,15 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                 <div className="flex items-center justify-between">
                   <FormLabel>تخصيص رابط المتجر</FormLabel>
                   {!isPro && (
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <button className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer">
-                          <Lock className="h-3 w-3" />
-                          باقة البرو
-                        </button>
-                      </DialogTrigger>
+                    <Dialog open={isSlugUpgradeOpen} onOpenChange={setIsSlugUpgradeOpen}>
+                      <button
+                        type="button"
+                        onClick={() => setIsSlugUpgradeOpen(true)}
+                        className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
+                      >
+                        <Lock className="h-3 w-3" />
+                        باقة البرو
+                      </button>
                       <DialogContent className="sm:max-w-md">
                         <DialogHeader className="text-center">
                           <DialogTitle className="flex items-center justify-center gap-2 text-2xl">
@@ -471,12 +485,6 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                               planType="monthly"
                               className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
                             />
-                            <ProUpgradeButton 
-                              catalogId={catalog.id} 
-                              planType="monthly"
-                              variant="outline"
-                              className="w-full border-amber-500 text-amber-500 hover:bg-amber-500/10"
-                            />
                           </div>
                         </div>
                       </DialogContent>
@@ -484,11 +492,17 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                   )}
                 </div>
                 <FormControl>
-                  <div className="relative">
+                  <div
+                    className={`relative ${!isPro ? 'cursor-pointer' : ''}`}
+                    role={!isPro ? 'button' : undefined}
+                    tabIndex={!isPro ? 0 : undefined}
+                    onClick={!isPro ? () => setIsSlugUpgradeOpen(true) : undefined}
+                    onKeyDown={!isPro ? (event) => handleLockedSectionKeyDown(event, () => setIsSlugUpgradeOpen(true)) : undefined}
+                  >
                     <Input
                       {...field}
                       disabled={isSubmitting || !isPro}
-                      className={`bg-white text-[#1e3a5f] text-lg ${!isPro ? 'opacity-60 cursor-not-allowed' : ''}`}
+                      className={`bg-white text-[#1e3a5f] text-lg ${!isPro ? 'opacity-60 cursor-not-allowed pointer-events-none' : ''}`}
                     />
                     {!isPro && (
                       <div className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -514,13 +528,15 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
           <div className="flex items-center justify-between">
             <FormLabel className="text-lg font-semibold">تخصيص خلفية المتجر</FormLabel>
             {!isPro && (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer">
-                    <Lock className="h-3 w-3" />
-                    باقة البرو
-                  </button>
-                </DialogTrigger>
+              <Dialog open={isThemeUpgradeOpen} onOpenChange={setIsThemeUpgradeOpen}>
+                <button
+                  type="button"
+                  onClick={() => setIsThemeUpgradeOpen(true)}
+                  className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
+                >
+                  <Lock className="h-3 w-3" />
+                  باقة البرو
+                </button>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader className="text-center">
                     <DialogTitle className="flex items-center justify-center gap-2 text-2xl">
@@ -561,12 +577,6 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                         planType="monthly"
                         className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
                       />
-                      <ProUpgradeButton 
-                        catalogId={catalog.id} 
-                        planType="monthly"
-                        variant="outline"
-                        className="w-full border-amber-500 text-amber-500 hover:bg-amber-500/10"
-                      />
                     </div>
                   </div>
                 </DialogContent>
@@ -586,12 +596,13 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                 <div key={theme.id} className={`flex flex-col items-center gap-1 ${isLocked ? 'opacity-60' : ''}`}>
                   <button
                     type="button"
-                    disabled={isLocked || isSubmitting}
-                    onClick={() => !isLocked && setSelectedTheme(theme.id)}
+                    disabled={isSubmitting}
+                    aria-disabled={isLocked}
+                    onClick={() => (isLocked ? setIsThemeUpgradeOpen(true) : setSelectedTheme(theme.id))}
                     className={`relative h-16 w-full rounded-lg ${theme.gradient} border-2 transition-all ${selectedTheme === theme.id
                       ? 'border-brand-primary ring-2 ring-brand-primary/50'
                       : 'border-transparent hover:border-white/30'
-                      } ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                      } cursor-pointer`}
                     title={theme.name}
                   >
                     {selectedTheme === theme.id && (
@@ -641,13 +652,15 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
         <div className="pt-6 border-t relative">
           {!isPro && (
             <div className="absolute top-1 left-0">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="flex items-center gap-1 text-[10px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer">
-                    <Lock className="h-2.5 w-2.5" />
-                    باقة البرو
-                  </button>
-                </DialogTrigger>
+              <Dialog open={isFooterUpgradeOpen} onOpenChange={setIsFooterUpgradeOpen}>
+                <button
+                  type="button"
+                  onClick={() => setIsFooterUpgradeOpen(true)}
+                  className="flex items-center gap-1 text-[10px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
+                >
+                  <Lock className="h-2.5 w-2.5" />
+                  باقة البرو
+                </button>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader className="text-center">
                     <DialogTitle className="flex items-center justify-center gap-2 text-2xl">
@@ -688,19 +701,19 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                         planType="monthly"
                         className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
                       />
-                      <ProUpgradeButton 
-                        catalogId={catalog.id} 
-                        planType="monthly"
-                        variant="outline"
-                        className="w-full border-amber-500 text-amber-500 hover:bg-amber-500/10"
-                      />
                     </div>
                   </div>
                 </DialogContent>
               </Dialog>
             </div>
           )}
-          <div className="flex items-center justify-between">
+          <div
+            className={`flex items-center justify-between ${!isPro ? 'cursor-pointer rounded-md' : ''}`}
+            role={!isPro ? 'button' : undefined}
+            tabIndex={!isPro ? 0 : undefined}
+            onClick={!isPro ? () => setIsFooterUpgradeOpen(true) : undefined}
+            onKeyDown={!isPro ? (event) => handleLockedSectionKeyDown(event, () => setIsFooterUpgradeOpen(true)) : undefined}
+          >
             <div className="flex flex-col">
               <FormLabel className="text-base cursor-pointer" onClick={() => isPro && setHideFooter(!hideFooter)}>
                 إخفاء فوتر "أونلاين كتالوج"
@@ -709,7 +722,7 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                 إزالة شعار المنصة من أسفل صفحة المتجر
               </FormDescription>
             </div>
-            <div className="flex items-center gap-3">
+            <div className={`flex items-center gap-3 ${!isPro ? 'pointer-events-none' : ''}`}>
               <Switch
                 checked={hideFooter}
                 onCheckedChange={setHideFooter}
