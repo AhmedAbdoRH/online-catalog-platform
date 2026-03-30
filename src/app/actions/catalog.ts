@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB — images are compressed to ~110KB before upload
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const catalogSchema = z.object({
@@ -217,7 +217,7 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     console.log('Uploading logo:', logo.name, 'Size:', logo.size);
 
     if (logo.size > MAX_FILE_SIZE) {
-      return { message: `الحد الأقصى لحجم الشعار 5 ميغابايت.` };
+      return { message: `حجم الشعار كبير جداً. يتم الضغط تلقائياً قبل الرفع.` };
     }
     if (!ACCEPTED_IMAGE_TYPES.includes(logo.type)) {
       return { message: `.jpg, .jpeg, .png و .webp هي الملفات المقبولة للشعار.` };
@@ -243,7 +243,7 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     console.log('Uploading cover:', cover.name, 'Size:', cover.size);
 
     if (cover.size > MAX_FILE_SIZE) {
-      return { message: `الحد الأقصى لحجم صورة الغلاف 5 ميغابايت.` };
+      return { message: `حجم صورة الغلاف كبير جداً. يتم الضغط تلقائياً قبل الرفع.` };
     }
     if (!ACCEPTED_IMAGE_TYPES.includes(cover.type)) {
       return { message: `.jpg, .jpeg, .png و .webp هي الملفات المقبولة لصورة الغلاف.` };

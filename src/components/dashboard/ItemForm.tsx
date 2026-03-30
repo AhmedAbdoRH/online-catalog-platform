@@ -200,7 +200,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
 
       formData.append('category_id', values.category_id);
 
-      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+      const MAX_FALLBACK_SIZE = 1 * 1024 * 1024; // 1MB fallback if compression fails
       currentStep = 'ضغط ومعالجة الصور';
 
       if (values.main_image) {
@@ -210,10 +210,10 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
           const compressedMain = await compressImage(values.main_image);
           console.log('Main image compression result:', { size: compressedMain.size, type: compressedMain.type });
 
-          if (compressedMain.size > MAX_FILE_SIZE) {
+          if (compressedMain.size > MAX_FALLBACK_SIZE) {
             toast({
               title: "حجم الصورة كبير جداً",
-              description: "تعذر ضغط الصورة الأساسية لحجم مقبول (أقل من 5 ميجابايت). حاول اختيار صورة أصغر.",
+              description: "تعذر ضغط الصورة الأساسية. حاول اختيار صورة أخرى.",
               variant: "destructive",
             });
             return;
@@ -223,10 +223,10 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
         } catch (compError) {
           console.error('Main image compression failed:', compError);
           // Fallback to original, but check size
-          if (values.main_image.size > MAX_FILE_SIZE) {
+          if (values.main_image.size > MAX_FALLBACK_SIZE) {
             toast({
               title: "حجم الصورة كبير جداً",
-              description: "حدث خطأ أثناء ضغط الصورة، والصورة الأصلية أكبر من 5 ميجابايت.",
+              description: "حدث خطأ أثناء ضغط الصورة، والصورة الأصلية كبيرة جداً.",
               variant: "destructive",
             });
             return;
@@ -243,10 +243,10 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
             console.log(`Compressing additional image ${i + 1}...`);
             const compressedImg = await compressImage(img);
 
-            if (compressedImg.size > MAX_FILE_SIZE) {
+            if (compressedImg.size > MAX_FALLBACK_SIZE) {
               toast({
                 title: "حجم الصورة كبير جداً",
-                description: `تعذر ضغط الصورة رقم ${i + 1} لحجم مقبول.`,
+                description: `تعذر ضغط الصورة رقم ${i + 1}.`,
                 variant: "destructive",
               });
               return;
@@ -255,7 +255,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
             formData.append('images', compressedImg, compressedImg.name);
           } catch (compError) {
             console.error(`Additional image ${i + 1} compression failed:`, compError);
-            if (img.size > MAX_FILE_SIZE) {
+            if (img.size > MAX_FALLBACK_SIZE) {
               toast({
                 title: "حجم الصورة كبير جداً",
                 description: `الصورة رقم ${i + 1} كبيرة جداً وتعذر ضغطها.`,

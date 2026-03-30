@@ -32,6 +32,7 @@ import { Capacitor } from '@capacitor/core';
 import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { ProUpgradeButton } from './ProUpgradeButton';
 import { Switch } from '../ui/switch';
+import { compressImage } from '@/lib/image-utils';
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -150,37 +151,53 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
 
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('SettingsForm: handleLogoChange called', e?.target?.files);
-    const file = e.target.files?.[0];
-    if (file) {
-      setLogoFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    const rawFile = e.target.files?.[0];
+    if (rawFile) {
+      try {
+        // Show preview immediately from original
+        const reader = new FileReader();
+        reader.onloadend = () => setLogoPreview(reader.result as string);
+        reader.readAsDataURL(rawFile);
 
-      // Auto-submit after state updates
-      setTimeout(() => {
-        form.handleSubmit((values) => onSubmit(values, undefined, file, coverFile))();
-      }, 100);
+        // Compress to 110KB WebP before storing/uploading
+        const compressed = await compressImage(rawFile);
+        setLogoFile(compressed);
+
+        setTimeout(() => {
+          form.handleSubmit((values) => onSubmit(values, undefined, compressed, coverFile))();
+        }, 100);
+      } catch {
+        setLogoFile(rawFile);
+        setTimeout(() => {
+          form.handleSubmit((values) => onSubmit(values, undefined, rawFile, coverFile))();
+        }, 100);
+      }
     }
   };
 
   const handleCoverChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('SettingsForm: handleCoverChange called', e?.target?.files);
-    const file = e.target.files?.[0];
-    if (file) {
-      setCoverFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCoverPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    const rawFile = e.target.files?.[0];
+    if (rawFile) {
+      try {
+        // Show preview immediately from original
+        const reader = new FileReader();
+        reader.onloadend = () => setCoverPreview(reader.result as string);
+        reader.readAsDataURL(rawFile);
 
-      // Auto-submit after state updates
-      setTimeout(() => {
-        form.handleSubmit((values) => onSubmit(values, undefined, logoFile, file))();
-      }, 100);
+        // Compress to 110KB WebP before storing/uploading
+        const compressed = await compressImage(rawFile);
+        setCoverFile(compressed);
+
+        setTimeout(() => {
+          form.handleSubmit((values) => onSubmit(values, undefined, logoFile, compressed))();
+        }, 100);
+      } catch {
+        setCoverFile(rawFile);
+        setTimeout(() => {
+          form.handleSubmit((values) => onSubmit(values, undefined, logoFile, rawFile))();
+        }, 100);
+      }
     }
   };
 
@@ -482,7 +499,6 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
                           <div className="flex flex-col gap-3">
                             <ProUpgradeButton 
                               catalogId={catalog.id} 
-                              planType="monthly"
                               className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
                             />
                           </div>
