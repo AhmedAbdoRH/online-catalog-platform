@@ -1,18 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { MessageCircle, CreditCard, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { isNativeAndroid, purchaseProSubscription } from "@/lib/billing";
-import { useToast } from "@/hooks/use-toast";
+import { CreditCard, Loader2, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { verifyAndActivatePro } from "@/app/actions/billing";
+import { isNativeAndroid, purchaseProSubscription, type SubscriptionType } from "@/lib/billing";
+import { useToast } from "@/hooks/use-toast";
+import {
+  formatPlanPrice,
+  getProPlanLabel,
+  getProPlanPrice,
+  getProWhatsAppText,
+} from "@/lib/plans";
 
-const WHATSAPP_UPGRADE_URL =
-  "https://wa.me/201008116452?text=مرحباً، أريد الترقية إلى باقة البرو لمتجري";
+function buildWhatsAppUpgradeUrl(planType: SubscriptionType): string {
+  return `https://wa.me/201008116452?text=${encodeURIComponent(getProWhatsAppText(planType))}`;
+}
 
 interface ProUpgradeButtonProps {
   catalogId?: number;
+  planType?: SubscriptionType;
   className?: string;
   size?: "default" | "sm" | "lg" | "icon";
   variant?: "default" | "outline" | "ghost" | "link" | "destructive" | "secondary";
@@ -21,85 +29,83 @@ interface ProUpgradeButtonProps {
 
 export function ProUpgradeButton({
   catalogId,
+  planType = "monthly",
   className = "",
   size = "default",
   variant = "default",
-  children = (
-    <>
-      <MessageCircle className="h-4 w-4 ml-2" />
-      طلب الترقية
-    </>
-  ),
+  children,
 }: ProUpgradeButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const useBilling = isNativeAndroid();
+  const periodLabel = getProPlanLabel(planType);
+  const priceLabel = formatPlanPrice(getProPlanPrice(planType));
+
+  const defaultChildren = (
+    <>
+      <MessageCircle className="h-4 w-4 ml-2" />
+      {`اطلب باقة البرو ${periodLabel}`}
+    </>
+  );
 
   const handleBillingPurchase = async () => {
     if (!catalogId) {
-      toast({ variant: "destructive", title: "خطأ", description: "معرف الكتالوج مطلوب" });
+      toast({
+        variant: "destructive",
+        title: "خطأ",
+        description: "معرف الكتالوج مطلوب",
+      });
       return;
     }
+
     setIsLoading(true);
-    console.log("🔄 بدء عملية الشراء...");
-    const { success, purchaseToken, error } = await purchaseProSubscription();
-    console.log("📱 نتيجة الشراء:", { success, hasPurchaseToken: !!purchaseToken, error });
+
+    const { success, purchaseToken, error } = await purchaseProSubscription(planType);
+
     if (success && purchaseToken) {
-      console.log("🔄 جاري التحقق من الاشتراك...", { purchaseToken: purchaseToken.substring(0, 20) + "...", catalogId });
-      const result = await verifyAndActivatePro(purchaseToken, catalogId);
+      const result = await verifyAndActivatePro(purchaseToken, catalogId, planType);
       setIsLoading(false);
-      console.log("✅ نتيجة التحقق:", result);
+
       if (result.ok) {
         toast({
           title: "تم الاشتراك بنجاح",
-          description: "تم تفعيل باقة البرو لمتجرك",
+          description: `تم تفعيل باقة البرو ${periodLabel} بسعر ${priceLabel}`,
         });
         window.location.reload();
-      } else {
-        // معالجة متقدمة لرسالة الخطأ
-        let errMsg = "حدث خطأ غير متوقع. تواصل مع الدعم.";
-        
-        if (typeof result.error === "string" && result.error.length > 0) {
-          errMsg = result.error;
-        } else if (result.error && typeof result.error === "object") {
-          if ("message" in result.error && typeof result.error.message === "string") {
-            errMsg = result.error.message;
-          } else if ("errorMessage" in result.error && typeof result.error.errorMessage === "string") {
-            errMsg = result.error.errorMessage;
-          } else {
-            errMsg = JSON.stringify(result.error).substring(0, 200);
-          }
-        }
-        
-        // تجنب عرض [object Object]
-        if (errMsg === "[object Object]" || !errMsg || errMsg.includes("[object")) {
-          errMsg = "حدث خطأ في التفعيل. يرجى المحاولة لاحقاً.";
-        }
-        
-        toast({
-          variant: "destructive",
-          title: "فشل التفعيل",
-          description: errMsg,
-        });
+        return;
       }
-    } else if (success) {
-      console.error("⚠️ تم الشراء لكن لا يوجد purchaseToken");
+
+      let errMsg = result.error || "حدث خطأ غير متوقع. تواصل مع الدعم.";
+
+      if (errMsg === "[object Object]" || !errMsg || errMsg.includes("[object")) {
+        errMsg = "حدث خطأ في التفعيل. يرجى المحاولة لاحقاً.";
+      }
+
+      toast({
+        variant: "destructive",
+        title: "فشل التفعيل",
+        description: errMsg,
+      });
+      return;
+    }
+
+    setIsLoading(false);
+
+    if (success) {
       toast({
         variant: "destructive",
         title: "تم الشراء",
         description: "لم يتوفر رمز التحقق، تواصل مع الدعم.",
       });
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-      if (error && !error.includes("تم إلغاء")) {
-        console.error("❌ خطأ في الشراء:", error);
-        toast({
-          variant: "destructive",
-          title: "فشل الشراء",
-          description: error,
-        });
-      }
+      return;
+    }
+
+    if (error && !error.includes("تم إلغاء")) {
+      toast({
+        variant: "destructive",
+        title: "فشل الشراء",
+        description: error,
+      });
     }
   };
 
@@ -117,15 +123,15 @@ export function ProUpgradeButton({
         ) : (
           <CreditCard className="h-4 w-4 ml-2" />
         )}
-        {isLoading ? "جاري المعالجة..." : "الاشتراك عبر Google"}
+        {isLoading ? "جاري المعالجة..." : `الاشتراك ${periodLabel} عبر Google`}
       </Button>
     );
   }
 
   return (
     <Button asChild className={className} size={size} variant={variant}>
-      <Link href={WHATSAPP_UPGRADE_URL} target="_blank" rel="noopener noreferrer">
-        {children}
+      <Link href={buildWhatsAppUpgradeUrl(planType)} target="_blank" rel="noopener noreferrer">
+        {children ?? defaultChildren}
       </Link>
     </Button>
   );

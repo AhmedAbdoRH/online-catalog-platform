@@ -14,6 +14,14 @@ export const PRO_MONTHLY_BASE_PLAN_ID = 'monthly-plan';
 
 export type SubscriptionType = 'monthly' | 'yearly';
 
+function getSubscriptionProductIdentifier(type: SubscriptionType): string {
+  return type === 'yearly' ? PRO_SUBSCRIPTION_ID : PRO_MONTHLY_ID;
+}
+
+function getSubscriptionBasePlanIdentifier(type: SubscriptionType): string {
+  return type === 'yearly' ? PRO_BASE_PLAN_ID : PRO_MONTHLY_BASE_PLAN_ID;
+}
+
 export function isNativeAndroid(): boolean {
   if (typeof window === 'undefined') return false;
   const urlParams = window.location.search;
@@ -45,12 +53,12 @@ export async function isBillingSupported(): Promise<boolean> {
   }
 }
 
-export async function getProProduct() {
+export async function getProProduct(type: SubscriptionType = 'monthly') {
   if (!isNativeAndroid()) return null;
   try {
     const { NativePurchases, PURCHASE_TYPE } = await getNativePurchases();
     const { products } = await NativePurchases.getProducts({
-      productIdentifiers: [PRO_SUBSCRIPTION_ID],
+      productIdentifiers: [getSubscriptionProductIdentifier(type)],
       productType: PURCHASE_TYPE.SUBS,
     });
     return products?.[0] ?? null;
@@ -74,8 +82,8 @@ export async function purchaseProSubscription(type: SubscriptionType = 'monthly'
       return { success: false, error: 'الدفع غير متاح على هذا الجهاز' };
     }
 
-    const productId = type === 'yearly' ? PRO_SUBSCRIPTION_ID : PRO_MONTHLY_ID;
-    const planId = type === 'yearly' ? PRO_BASE_PLAN_ID : PRO_MONTHLY_BASE_PLAN_ID;
+    const productId = getSubscriptionProductIdentifier(type);
+    const planId = getSubscriptionBasePlanIdentifier(type);
 
     const transaction = await NativePurchases.purchaseProduct({
       productIdentifier: productId,
@@ -104,9 +112,10 @@ export async function restorePurchases(): Promise<{ hasPro: boolean }> {
     const { purchases } = await NativePurchases.getPurchases({
       productType: PURCHASE_TYPE.SUBS,
     });
+    const activeProductIdentifiers = [PRO_SUBSCRIPTION_ID, PRO_MONTHLY_ID];
     const hasPro = purchases.some(
       (p) =>
-        p.productIdentifier === PRO_SUBSCRIPTION_ID &&
+        activeProductIdentifiers.includes(p.productIdentifier) &&
         (p.isActive || ['PURCHASED', '1'].includes(p.purchaseState ?? '')) &&
         p.isAcknowledged
     );

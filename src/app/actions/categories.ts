@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { Category, CategoryWithSubcategories } from "@/lib/types";
+import { FREE_PLAN_MAX_CATEGORIES } from "@/lib/plans";
 
 const categorySchema = z.object({
   catalog_id: z.coerce.number(),
@@ -88,14 +89,14 @@ export async function createCategory(prevState: any, formData: FormData) {
     const currentCount = count || 0;
     const newItemsCount = 1 + (parsedSubcategories ? parsedSubcategories.length : 0);
 
-    // Enforce limit: Max 5 categories total
+    // Enforce limit for the free plan
     // If already at or over limit, block new additions
-    if (currentCount >= 5) {
+    if (currentCount >= FREE_PLAN_MAX_CATEGORIES) {
       return { message: 'LIMIT_REACHED' };
     }
 
     // Also check if adding subcategories pushes over limit
-    if (currentCount + newItemsCount > 5) {
+    if (currentCount + newItemsCount > FREE_PLAN_MAX_CATEGORIES) {
       return { message: 'LIMIT_REACHED' };
     }
   }

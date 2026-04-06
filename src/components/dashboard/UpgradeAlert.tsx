@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Crown, Sparkles, Palette } from "lucide-react";
 import { ProUpgradeButton } from "./ProUpgradeButton";
+import { FREE_PLAN_MAX_CATEGORIES, FREE_PLAN_MAX_PRODUCTS, formatPlanPrice, PRO_MONTHLY_PRICE_EGP } from "@/lib/plans";
 
 interface UpgradeAlertProps {
     open: boolean;
@@ -16,7 +17,9 @@ interface UpgradeAlertProps {
 }
 
 export function UpgradeAlert({ open, onOpenChange, resourceType, catalogId }: UpgradeAlertProps) {
-    const limitText = resourceType === 'product' ? '50 منتج' : '5 تصنيفات';
+    const limitText = resourceType === 'product'
+        ? `${FREE_PLAN_MAX_PRODUCTS} منتج`
+        : `${FREE_PLAN_MAX_CATEGORIES} تصنيفات`;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -31,6 +34,9 @@ export function UpgradeAlert({ open, onOpenChange, resourceType, catalogId }: Up
                     </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
+                    <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-semibold text-amber-900">
+                        الترقية إلى البرو تبدأ من {formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} شهرياً
+                    </div>
                     <div className="space-y-3">
                         <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
                             <Sparkles className="h-5 w-5 text-brand-primary mt-0.5" />

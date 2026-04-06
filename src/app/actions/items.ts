@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import type { NewMenuItem, UpdateMenuItem, NewProductImage } from '@/lib/types';
+import { FREE_PLAN_MAX_PRODUCTS } from '@/lib/plans';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -166,7 +167,7 @@ export async function createItem(formData: FormData) {
         .select('*', { count: 'exact', head: true })
         .eq('catalog_id', catalogId);
 
-      if (count !== null && count >= 50) {
+      if (count !== null && count >= FREE_PLAN_MAX_PRODUCTS) {
         return { error: 'LIMIT_REACHED' };
       }
 

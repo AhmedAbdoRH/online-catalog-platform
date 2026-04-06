@@ -2,16 +2,23 @@
 
 import Verifier from "google-play-billing-validator";
 import { createClient } from "@/lib/supabase/server";
+import type { SubscriptionType } from "@/lib/billing";
+import { PRO_MONTHLY_ID, PRO_SUBSCRIPTION_ID } from "@/lib/billing";
 
 const PACKAGE_NAME = "com.nextcatalog.app";
-const PRODUCT_ID = "pro_yearly";
 
 export type VerifyResult = { ok: true } | { ok: false; error: string };
 
+function getProductId(type: SubscriptionType): string {
+  return type === "yearly" ? PRO_SUBSCRIPTION_ID : PRO_MONTHLY_ID;
+}
+
 export async function verifyAndActivatePro(
   purchaseToken: string,
-  catalogId: number
+  catalogId: number,
+  type: SubscriptionType = "monthly"
 ): Promise<VerifyResult> {
+  const productId = getProductId(type);
   const email = process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_EMAIL;
   let key = process.env.GOOGLE_PLAY_PRIVATE_KEY;
 
@@ -26,7 +33,7 @@ export async function verifyAndActivatePro(
   }
 
   try {
-    console.log("🔄 بدء التحقق من الشراء:", { catalogId, packageName: PACKAGE_NAME, productId: PRODUCT_ID });
+    console.log("🔄 بدء التحقق من الشراء:", { catalogId, packageName: PACKAGE_NAME, productId, type });
     
     // Support both default and direct export from CJS package
     const Ctor = (Verifier as { default?: typeof Verifier }).default ?? Verifier;
@@ -36,7 +43,7 @@ export async function verifyAndActivatePro(
     try {
       result = await verifier.verifySub({
         packageName: PACKAGE_NAME,
-        productId: PRODUCT_ID,
+        productId,
         purchaseToken,
       });
       console.log("✅ نتيجة التحقق من Google Play:", { isSuccessful: result?.isSuccessful, errorMessage: result?.errorMessage });
