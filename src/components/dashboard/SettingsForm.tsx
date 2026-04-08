@@ -123,8 +123,8 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
 
   // Sync previews with server data when catalog prop updates (after router.refresh())
   useEffect(() => {
-    if (catalog.logo_url) setLogoPreview(catalog.logo_url);
-    if (catalog.cover_url) setCoverPreview(catalog.cover_url);
+    setLogoPreview(catalog.logo_url || null);
+    setCoverPreview(catalog.cover_url || null);
   }, [catalog.logo_url, catalog.cover_url]);
 
   const dismissTooltips = () => {

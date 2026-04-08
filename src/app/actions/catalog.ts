@@ -324,7 +324,8 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     return { message: `فشل تحديث الكتالوج: ${dbError.message}` };
   }
 
-  revalidatePath('/dashboard');
-  revalidatePath(`/${name}`);
+  revalidatePath('/dashboard', 'layout');
+  revalidatePath('/dashboard/settings', 'page');
+  revalidatePath(`/${validatedName}`);
   return { message: 'تم تحديث الإعدادات بنجاح!' };
 }
