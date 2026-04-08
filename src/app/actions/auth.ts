@@ -96,7 +96,7 @@ export async function signUpWithEmail(email: string, password: string) {
 export async function logout() {
     const supabase = await createClient();
     await supabase.auth.signOut();
-    return redirect("/");
+    return redirect("/login");
 }
 
 export async function resetPassword(formData: FormData) {
