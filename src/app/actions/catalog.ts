@@ -5,8 +5,33 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB — images are compressed to ~110KB before upload
+const MAX_FILE_SIZE = 300 * 1024; // 300KB target for compressed SaaS images
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+/**
+ * Extracts the storage path from a Supabase public URL
+ */
+function extractStoragePath(url: string, bucket: string): string | null {
+  if (!url) return null;
+  const separator = `/${bucket}/`;
+  const parts = url.split(separator);
+  if (parts.length < 2) return null;
+  return parts[1];
+}
+
+async function deleteImageFromStorage(url: string, bucket: string) {
+  const path = extractStoragePath(url, bucket);
+  if (!path) return;
+
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.storage.from(bucket).remove([path]);
+    if (error) console.error(`Error removing file from ${bucket}:`, error, path);
+    else console.log(`Successfully removed orphaned image from ${bucket}:`, path);
+  } catch (err) {
+    console.error(`Failed to remove file from ${bucket}:`, err);
+  }
+}
 
 const catalogSchema = z.object({
   name: z.string()
@@ -176,11 +201,14 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   const logoFile = formData.get('logo') as File | null;
   const coverFile = formData.get('cover') as File | null;
   const rawWhatsappUpdate = formData.get('whatsapp_number');
-
   const whatsappUpdateCandidate = typeof rawWhatsappUpdate === 'string' && rawWhatsappUpdate.trim()
     ? rawWhatsappUpdate.trim()
-    : (currentCatalog.whatsapp_number ?? '');
-  const whatsappUpdateValidated = whatsappUpdateCandidate ? whatsappUpdateCandidate : undefined;
+    : null;
+
+  // If the number is just a country code (e.g. "+20" or "+966"), treat it as empty/undefined
+  // to avoid validation errors when the user only wants to update images.
+  const isJustPrefix = whatsappUpdateCandidate && /^\+[0-9]{1,4}$/.test(whatsappUpdateCandidate);
+  const whatsappUpdateValidated = (whatsappUpdateCandidate && !isJustPrefix) ? whatsappUpdateCandidate : (currentCatalog.whatsapp_number || undefined);
 
   const validatedFields = catalogSchema.safeParse({
     name,
@@ -233,6 +261,11 @@ export async function updateCatalog(prevState: any, formData: FormData) {
       return { message: `فشل تحميل الشعار: ${uploadError.message}` };
     }
 
+    // Delete old logo if it exists
+    if (currentCatalog.logo_url) {
+      await deleteImageFromStorage(currentCatalog.logo_url, 'logos');
+    }
+
     const { data: { publicUrl } } = supabase.storage.from('logos').getPublicUrl(uploadData.path);
     updateData.logo_url = publicUrl;
     console.log('Logo uploaded successfully:', publicUrl);
@@ -257,6 +290,11 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     if (coverUploadError) {
       console.error('Cover upload error:', coverUploadError);
       return { message: `فشل تحميل صورة الغلاف: ${coverUploadError.message}` };
+    }
+
+    // Delete old cover if it exists
+    if (currentCatalog.cover_url) {
+      await deleteImageFromStorage(currentCatalog.cover_url, 'covers');
     }
 
     const { data: { publicUrl: coverPublicUrl } } = supabase.storage.from('covers').getPublicUrl(coverUploadData.path);

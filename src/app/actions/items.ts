@@ -6,8 +6,34 @@ import { z } from 'zod';
 import type { NewMenuItem, UpdateMenuItem, NewProductImage } from '@/lib/types';
 import { FREE_PLAN_MAX_PRODUCTS } from '@/lib/plans';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 300 * 1024; // 300KB target for compressed SaaS images
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+/**
+ * Extracts the storage path from a Supabase public URL
+ * Example: https://.../storage/v1/object/public/menu_images/user-id/file.webp 
+ * Returns: user-id/file.webp
+ */
+function extractStoragePath(url: string): string | null {
+  if (!url) return null;
+  const parts = url.split('/menu_images/');
+  if (parts.length < 2) return null;
+  return parts[1];
+}
+
+async function deleteImageFromStorage(url: string) {
+  const path = extractStoragePath(url);
+  if (!path) return;
+
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.storage.from('menu_images').remove([path]);
+    if (error) console.error('Error removing file from storage:', error, path);
+    else console.log('Successfully removed orphaned image:', path);
+  } catch (err) {
+    console.error('Failed to remove file from storage:', err);
+  }
+}
 
 const itemSchema = z.object({
   catalogId: z.coerce.number(),
@@ -317,16 +343,32 @@ export async function updateItem(itemId: number, formData: FormData) {
     }
 
     if (uploadedUrls.length > 0) {
-      // We can get current item image_url to check
-      const { data: currentItem } = await supabase.from('menu_items').select('image_url').eq('id', itemId).single();
-      if (!currentItem?.image_url) {
+      // If plan is NOT PRO, and they upload 1 image, they are REPLACING the main image.
+      if (!isPro) {
+        const { data: currentItem } = await supabase.from('menu_items').select('image_url').eq('id', itemId).single();
+        
+        // Remove old main image from storage
+        if (currentItem?.image_url) {
+          await deleteImageFromStorage(currentItem.image_url);
+        }
+        
+        // Remove all old secondary images from storage (non-pro shouldn't have many, but just in case)
+        const { data: altImages } = await supabase.from('product_images').select('image_url').eq('menu_item_id', itemId);
+        if (altImages && altImages.length > 0) {
+          for (const alt of altImages) {
+            await deleteImageFromStorage(alt.image_url);
+          }
+        }
+        
+        // Delete rows from DB (we will re-insert the new one below)
+        await supabase.from('product_images').delete().eq('menu_item_id', itemId);
+        
         updatePayload.image_url = uploadedUrls[0];
       } else {
-        // If plan is NOT PRO, and they upload 1 image, maybe they want to REPLACE the main image?
-        // Since non-pro has only 1 image.
-        if (!isPro) {
+        // PRO Plan: If we have no main image yet, set the first new one as main
+        const { data: currentItem } = await supabase.from('menu_items').select('image_url').eq('id', itemId).single();
+        if (!currentItem?.image_url) {
           updatePayload.image_url = uploadedUrls[0];
-          // Should delete old one? Ideally yes but let's skip for safety.
         }
       }
 
@@ -342,6 +384,7 @@ export async function updateItem(itemId: number, formData: FormData) {
 
       if (imagesError) console.error('Error inserting product images:', imagesError);
     }
+
 
     const { error: dbError } = await supabase
       .from('menu_items')
@@ -388,6 +431,19 @@ export async function deleteItem(itemId: number) {
       return { error: 'فشل الاتصال بقاعدة البيانات' };
     }
 
+    // 1. Fetch all images to be deleted
+    const { data: item } = await supabase
+      .from('menu_items')
+      .select('image_url')
+      .eq('id', itemId)
+      .single();
+    
+    const { data: productImages } = await supabase
+      .from('product_images')
+      .select('image_url')
+      .eq('menu_item_id', itemId);
+
+    // 2. Delete from DB
     const { error } = await supabase
       .from('menu_items')
       .delete()
@@ -395,6 +451,16 @@ export async function deleteItem(itemId: number) {
 
     if (error) {
       return { error: 'فشل حذف المنتج.' };
+    }
+
+    // 3. Delete from Storage (Silent cleanup)
+    if (item?.image_url) {
+      await deleteImageFromStorage(item.image_url);
+    }
+    if (productImages && productImages.length > 0) {
+      for (const img of productImages) {
+        await deleteImageFromStorage(img.image_url);
+      }
     }
 
     revalidatePath('/dashboard/items');

@@ -227,7 +227,7 @@ export default async function DashboardPage() {
       >
         <Card className="glass-surface border-white/10 overflow-hidden">
           <CardContent className="p-4 sm:p-6">
-            <SettingsForm catalog={catalog} />
+            <SettingsForm catalog={catalog} userPhone={userPhone} />
           </CardContent>
         </Card>
       </motion.div>

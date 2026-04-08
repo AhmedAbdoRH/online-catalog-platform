@@ -88,15 +88,19 @@ export default function LandingHeader() {
                     </Button>
                 </div>
 
-                {/* Mobile Menu */}
-                <Sheet>
-                    <SheetTrigger asChild className="md:hidden">
-                        <Button variant="ghost" size="icon" className="h-9 w-9">
-                            <Menu className="h-5 w-5" />
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent side="right" className="w-80 sm:w-96">
-                        <div className="flex flex-col gap-6 mt-8">
+                {/* Mobile Menu & Login */}
+                <div className="flex lg:hidden items-center gap-2">
+                    <Button variant="outline" asChild className="font-bold text-sm h-9 px-4 border-white/20 bg-white/5 hover:bg-white/10 hover:text-white rounded-md">
+                        <Link href="/login">تسجيل دخول</Link>
+                    </Button>
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-9 w-9">
+                                <Menu className="h-5 w-5" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="right" className="w-80 sm:w-96">
+                            <div className="flex flex-col gap-6 mt-8">
                             <Link href="/" className="flex items-center gap-3 mx-auto hover:opacity-80 transition-opacity">
                                 <div className="relative h-12 w-12">
                                         <Image
@@ -128,6 +132,7 @@ export default function LandingHeader() {
                         </div>
                     </SheetContent>
                 </Sheet>
+                </div>
             </motion.div>
         </header>
     );

@@ -73,7 +73,7 @@ const formSchema = z.object({
   country_code: z.string().optional(),
 });
 
-export function SettingsForm({ catalog }: { catalog: Catalog }) {
+export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPhone?: string }) {
   const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -137,15 +137,38 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
     }
   };
 
+  // Calculate initial values for phone and country code
+  const getInitialPhoneValues = () => {
+    let countryCode = catalog.country_code || '+20';
+    let phone = catalog.whatsapp_number?.replace(countryCode, '') || '';
+
+    // If no phone in catalog, try to use user's registration phone
+    if (!phone && userPhone) {
+      for (const country of countries) {
+        if (userPhone.startsWith(country.code)) {
+          countryCode = country.code;
+          phone = userPhone.replace(country.code, '');
+          break;
+        }
+      }
+      // If it's a phone but didn't match our country prefixes, just use it as the phone
+      if (!phone) phone = userPhone;
+    }
+    
+    return { countryCode, phone };
+  };
+
+  const { countryCode: initialCC, phone: initialPhone } = getInitialPhoneValues();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: catalog.name,
       display_name: catalog.display_name || catalog.name,
       slogan: catalog.slogan || '',
-      whatsapp_number: catalog.whatsapp_number?.replace(catalog.country_code || '+20', '') || '',
+      whatsapp_number: initialPhone,
       theme: catalog.theme || 'default',
-      country_code: catalog.country_code || '+20',
+      country_code: initialCC,
     },
   });
 
@@ -159,8 +182,8 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
         reader.onloadend = () => setLogoPreview(reader.result as string);
         reader.readAsDataURL(rawFile);
 
-        // Compress to 110KB WebP before storing/uploading
-        const compressed = await compressImage(rawFile);
+        // Compress to 20KB WebP before storing/uploading
+        const compressed = await compressImage(rawFile, 'logo');
         setLogoFile(compressed);
 
         setTimeout(() => {
@@ -185,8 +208,8 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
         reader.onloadend = () => setCoverPreview(reader.result as string);
         reader.readAsDataURL(rawFile);
 
-        // Compress to 110KB WebP before storing/uploading
-        const compressed = await compressImage(rawFile);
+        // Compress to 80KB WebP before storing/uploading
+        const compressed = await compressImage(rawFile, 'cover');
         setCoverFile(compressed);
 
         setTimeout(() => {
@@ -211,8 +234,11 @@ export function SettingsForm({ catalog }: { catalog: Catalog }) {
       formData.append('display_name', values.display_name);
       formData.append('slogan', values.slogan || '');
 
-      formData.append('whatsapp_number', (values.country_code || '+20') + values.whatsapp_number);
+      const phoneValue = values.whatsapp_number?.trim();
+      const fullPhone = phoneValue ? (values.country_code || '+20') + phoneValue : '';
+      formData.append('whatsapp_number', fullPhone);
       formData.append('country_code', values.country_code || '+20');
+
       formData.append('theme', selectedTheme);
       formData.append('hide_footer', hideFooter.toString());
 

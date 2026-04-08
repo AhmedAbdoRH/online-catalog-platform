@@ -207,7 +207,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
         console.log('Main image details:', { name: values.main_image.name, size: values.main_image.size, type: values.main_image.type });
         try {
           console.log('Compressing main image...');
-          const compressedMain = await compressImage(values.main_image);
+          const compressedMain = await compressImage(values.main_image, 'product');
           console.log('Main image compression result:', { size: compressedMain.size, type: compressedMain.type });
 
           if (compressedMain.size > MAX_FALLBACK_SIZE) {
@@ -241,7 +241,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
           const img = values.additional_images[i];
           try {
             console.log(`Compressing additional image ${i + 1}...`);
-            const compressedImg = await compressImage(img);
+            const compressedImg = await compressImage(img, 'product');
 
             if (compressedImg.size > MAX_FALLBACK_SIZE) {
               toast({

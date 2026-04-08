@@ -31,6 +31,8 @@ function SlideImage({ src, alt, priority }: { src: string; alt: string; priority
             alt={alt}
             className="absolute inset-0 h-full w-full object-cover"
             loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchPriority={priority ? 'high' : 'low'}
             onError={() => {
                 console.error('ProductGallery image failed to load:', src);
                 setHasError(true);
