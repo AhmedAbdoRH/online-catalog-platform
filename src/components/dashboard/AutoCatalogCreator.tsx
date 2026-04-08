@@ -36,9 +36,11 @@ export function AutoCatalogCreator({
 
         formData.append('country_code', countryCode);
 
-        // Ensure whatsapp starts with +
+        // Ensure whatsapp is properly saved
         if (!whatsapp.startsWith('+')) {
-            formData.set('whatsapp_number', '+20' + whatsapp);
+            formData.set('whatsapp_number', countryCode + whatsapp);
+        } else {
+            formData.set('whatsapp_number', whatsapp);
         }
 
         try {
