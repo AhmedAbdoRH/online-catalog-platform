@@ -198,8 +198,14 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   const name = (formData.get('name') as string || currentCatalog.name || '').toString();
   const display_name = (formData.get('display_name') as string || currentCatalog.display_name || currentCatalog.name || '').toString();
   const slogan = (formData.get('slogan') as string || currentCatalog.slogan || '').toString();
-  const logoFile = formData.get('logo') as File | null;
-  const coverFile = formData.get('cover') as File | null;
+  const logoFile = formData.get('logo');
+  const coverFile = formData.get('cover');
+  
+  console.log('--- DEBUG UPLOAD START ---');
+  console.log('Catalog ID:', catalogId);
+  console.log('logoFile:', logoFile ? { type: typeof logoFile, name: (logoFile as any).name, size: (logoFile as any).size } : 'null');
+  console.log('coverFile:', coverFile ? { type: typeof coverFile, name: (coverFile as any).name, size: (coverFile as any).size } : 'null');
+  
   const rawWhatsappUpdate = formData.get('whatsapp_number');
   const whatsappUpdateCandidate = typeof rawWhatsappUpdate === 'string' && rawWhatsappUpdate.trim()
     ? rawWhatsappUpdate.trim()
@@ -235,10 +241,11 @@ export async function updateCatalog(prevState: any, formData: FormData) {
 
   const { name: validatedName, display_name: validatedDisplayName } = validatedFields.data;
 
-  // Validate images if provided (robust check since compressed files might lose File prototype across boundary)
-  const isRobustFile = (f: any) => typeof f === 'object' && f !== null && 'size' in f && 'name' in f && f.size > 0;
-  const logo = isRobustFile(logoFile) ? (logoFile as File) : null;
-  const cover = isRobustFile(coverFile) ? (coverFile as File) : null;
+  // Validate images if provided
+  // Using a more inclusive check for File/Blob objects from Next.js Form Data
+  const isImageFile = (f: any) => f && typeof f === 'object' && 'size' in f && f.size > 0;
+  const logo = isImageFile(logoFile) ? (logoFile as File) : null;
+  const cover = isImageFile(coverFile) ? (coverFile as File) : null;
 
   const theme = formData.get('theme') as string | null;
   const hideFooterStr = formData.get('hide_footer') as string | null;
@@ -315,8 +322,14 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     console.log('Cover uploaded successfully:', coverPublicUrl);
   }
 
-  console.log('Updating catalog with data:', updateData);
-  const { error: dbError } = await supabase.from('catalogs').update(updateData).eq('id', catalogId);
+  console.log('--- FINAL UPDATE DATA ---');
+  console.log(JSON.stringify(updateData, null, 2));
+
+  // Use both ID and UserID for maximum security and to ensure the correct row is hit
+  const { error: dbError } = await supabase
+    .from('catalogs')
+    .update(updateData)
+    .match({ id: Number(catalogId), user_id: user.id });
 
   if (dbError) {
     console.error('Database update error:', dbError);

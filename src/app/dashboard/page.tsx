@@ -49,8 +49,10 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Extract phone number from user email (format: phone@catalog.app)
-  const userPhone = user.email?.replace('@catalog.app', '') || '';
+  // Extract phone number ONLY if it's a phone-based login (format: phone@catalog.app)
+  const userPhone = user.email?.endsWith('@catalog.app') 
+    ? user.email.replace('@catalog.app', '') 
+    : '';
 
   const { data: catalog } = await supabase
     .from("catalogs")

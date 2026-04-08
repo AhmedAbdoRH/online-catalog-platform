@@ -188,7 +188,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
       formData.append('country_code', catalog.country_code || '+20');
       formData.append('theme', selectedTheme);
       formData.append('hide_footer', hideFooter.toString());
-      formData.append(imageType, file);
+      formData.append(imageType, file, file.name || 'image.webp');
 
       const result = await updateCatalog(null, formData);
 
