@@ -156,8 +156,6 @@ export async function createCatalog(prevState: any, formData: FormData) {
   });
 
   if (dbError) {
-    console.error('DB Error:', dbError);
-    // Clean up uploaded logo if db insert fails
     if (logoFileName) {
       await supabase.storage.from('logos').remove([logoFileName]);
     }
@@ -200,12 +198,6 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   const slogan = (formData.get('slogan') as string || currentCatalog.slogan || '').toString();
   const logoFile = formData.get('logo');
   const coverFile = formData.get('cover');
-  
-  console.log('--- DEBUG UPLOAD START ---');
-  console.log('Catalog ID:', catalogId);
-  console.log('logoFile:', logoFile ? { type: typeof logoFile, name: (logoFile as any).name, size: (logoFile as any).size } : 'null');
-  console.log('coverFile:', coverFile ? { type: typeof coverFile, name: (coverFile as any).name, size: (coverFile as any).size } : 'null');
-  
   const rawWhatsappUpdate = formData.get('whatsapp_number');
   const whatsappUpdateCandidate = typeof rawWhatsappUpdate === 'string' && rawWhatsappUpdate.trim()
     ? rawWhatsappUpdate.trim()
@@ -322,10 +314,6 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     console.log('Cover uploaded successfully:', coverPublicUrl);
   }
 
-  console.log('--- FINAL UPDATE DATA ---');
-  console.log(JSON.stringify(updateData, null, 2));
-
-  // Use both ID and UserID for maximum security and to ensure the correct row is hit
   const { error: dbError } = await supabase
     .from('catalogs')
     .update(updateData)
@@ -336,8 +324,7 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     return { message: `فشل تحديث الكتالوج: ${dbError.message}` };
   }
 
-  console.log('Catalog updated successfully');
-  revalidatePath('/dashboard/settings');
+  revalidatePath('/dashboard');
   revalidatePath(`/${name}`);
   return { message: 'تم تحديث الإعدادات بنجاح!' };
 }

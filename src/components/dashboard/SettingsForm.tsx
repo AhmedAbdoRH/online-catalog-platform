@@ -121,6 +121,12 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
     }
   }, [catalog.logo_url, catalog.cover_url, logoFile, coverFile]);
 
+  // Sync previews with server data when catalog prop updates (after router.refresh())
+  useEffect(() => {
+    if (catalog.logo_url) setLogoPreview(catalog.logo_url);
+    if (catalog.cover_url) setCoverPreview(catalog.cover_url);
+  }, [catalog.logo_url, catalog.cover_url]);
+
   const dismissTooltips = () => {
     setShowTooltips(false);
   };
