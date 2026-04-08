@@ -172,28 +172,54 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
     },
   });
 
+  // Upload image directly WITHOUT form validation - completely decoupled from WhatsApp field
+  const uploadImageDirectly = async (imageType: 'logo' | 'cover', file: File) => {
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append('catalogId', catalog.id.toString());
+      // Use current form values or fall back to catalog values for required fields
+      formData.append('name', (form.getValues('name') || catalog.name).toLowerCase());
+      formData.append('display_name', form.getValues('display_name') || catalog.display_name || catalog.name);
+      formData.append('slogan', form.getValues('slogan') || catalog.slogan || '');
+      // Use existing WhatsApp DIRECTLY from catalog - no validation, no form field
+      formData.append('whatsapp_number', catalog.whatsapp_number || '');
+      formData.append('country_code', catalog.country_code || '+20');
+      formData.append('theme', selectedTheme);
+      formData.append('hide_footer', hideFooter.toString());
+      formData.append(imageType, file);
+
+      const result = await updateCatalog(null, formData);
+
+      if (result.message.includes('بنجاح')) {
+        toast({ title: 'تم رفع الصورة', description: result.message });
+        router.refresh();
+      } else {
+        toast({ title: 'خطأ', description: result.message, variant: 'destructive' });
+      }
+    } catch {
+      toast({ title: 'خطأ', description: 'حدث خطأ في رفع الصورة', variant: 'destructive' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('SettingsForm: handleLogoChange called', e?.target?.files);
     const rawFile = e.target.files?.[0];
     if (rawFile) {
-      try {
-        // Show preview immediately from original
-        const reader = new FileReader();
-        reader.onloadend = () => setLogoPreview(reader.result as string);
-        reader.readAsDataURL(rawFile);
+      // Show preview immediately
+      const reader = new FileReader();
+      reader.onloadend = () => setLogoPreview(reader.result as string);
+      reader.readAsDataURL(rawFile);
 
-        // Compress to 20KB WebP before storing/uploading
+      try {
         const compressed = await compressImage(rawFile, 'logo');
         setLogoFile(compressed);
-
-        setTimeout(() => {
-          form.handleSubmit((values) => onSubmit(values, undefined, compressed, coverFile))();
-        }, 100);
+        await uploadImageDirectly('logo', compressed);
       } catch {
         setLogoFile(rawFile);
-        setTimeout(() => {
-          form.handleSubmit((values) => onSubmit(values, undefined, rawFile, coverFile))();
-        }, 100);
+        await uploadImageDirectly('logo', rawFile);
       }
     }
   };
@@ -202,24 +228,18 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
     console.log('SettingsForm: handleCoverChange called', e?.target?.files);
     const rawFile = e.target.files?.[0];
     if (rawFile) {
-      try {
-        // Show preview immediately from original
-        const reader = new FileReader();
-        reader.onloadend = () => setCoverPreview(reader.result as string);
-        reader.readAsDataURL(rawFile);
+      // Show preview immediately
+      const reader = new FileReader();
+      reader.onloadend = () => setCoverPreview(reader.result as string);
+      reader.readAsDataURL(rawFile);
 
-        // Compress to 80KB WebP before storing/uploading
+      try {
         const compressed = await compressImage(rawFile, 'cover');
         setCoverFile(compressed);
-
-        setTimeout(() => {
-          form.handleSubmit((values) => onSubmit(values, undefined, logoFile, compressed))();
-        }, 100);
+        await uploadImageDirectly('cover', compressed);
       } catch {
         setCoverFile(rawFile);
-        setTimeout(() => {
-          form.handleSubmit((values) => onSubmit(values, undefined, logoFile, rawFile))();
-        }, 100);
+        await uploadImageDirectly('cover', rawFile);
       }
     }
   };

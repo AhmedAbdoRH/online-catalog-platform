@@ -205,19 +205,27 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     ? rawWhatsappUpdate.trim()
     : null;
 
-  // If the number is just a country code (e.g. "+20" or "+966"), treat it as empty/undefined
-  // to avoid validation errors when the user only wants to update images.
+  // Determine the final WhatsApp number to use:
+  // 1. If a valid number was submitted, use it
+  // 2. Otherwise, silently keep the catalog's existing number (never block on WhatsApp)
   const isJustPrefix = whatsappUpdateCandidate && /^\+[0-9]{1,4}$/.test(whatsappUpdateCandidate);
-  const whatsappUpdateValidated = (whatsappUpdateCandidate && !isJustPrefix) ? whatsappUpdateCandidate : (currentCatalog.whatsapp_number || undefined);
+  const isValidWhatsapp = whatsappUpdateCandidate && !isJustPrefix && /^\+?[0-9]{7,15}$/.test(whatsappUpdateCandidate);
+  const whatsappToSave = isValidWhatsapp
+    ? whatsappUpdateCandidate
+    : (currentCatalog.whatsapp_number ?? null);
 
-  const validatedFields = catalogSchema.safeParse({
-    name,
-    display_name,
-    slogan,
-    logo: logoFile instanceof File && logoFile.size > 0 ? logoFile : undefined,
-    cover: coverFile instanceof File && coverFile.size > 0 ? coverFile : undefined,
-    whatsapp_number: whatsappUpdateValidated,
+  // Validate only name and display_name (the truly required fields)
+  const nameDisplaySchema = z.object({
+    name: z.string()
+      .min(3, 'يجب أن يكون الاسم 3 أحرف على الأقل')
+      .max(50)
+      .regex(/^[a-z0-9-]+$/, 'يجب أن يحتوي الاسم على أحرف إنجليزية صغيرة وأرقام وشرطات فقط'),
+    display_name: z.string()
+      .min(3, 'يجب أن يكون اسم العرض 3 أحرف على الأقل')
+      .max(50, 'يجب أن يكون اسم العرض 50 حرفًا على الأكثر'),
   });
+
+  const validatedFields = nameDisplaySchema.safeParse({ name, display_name });
 
   if (!validatedFields.success) {
     console.error("Validation failed:", validatedFields.error.flatten().fieldErrors);
@@ -225,7 +233,11 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     return { message: firstError };
   }
 
-  const { name: validatedName, display_name: validatedDisplayName, logo, cover, whatsapp_number: validatedWhatsappNumber, slogan: validatedSlogan } = validatedFields.data;
+  const { name: validatedName, display_name: validatedDisplayName } = validatedFields.data;
+
+  // Validate images if provided
+  const logo = logoFile instanceof File && logoFile.size > 0 ? logoFile : null;
+  const cover = coverFile instanceof File && coverFile.size > 0 ? coverFile : null;
 
   const theme = formData.get('theme') as string | null;
   const hideFooterStr = formData.get('hide_footer') as string | null;
@@ -234,8 +246,8 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   let updateData: any = {
     name: validatedName,
     display_name: validatedDisplayName,
-    whatsapp_number: validatedWhatsappNumber ?? null,
-    slogan: validatedSlogan,
+    whatsapp_number: whatsappToSave,
+    slogan: slogan,
     theme: theme || null,
     hide_footer: hideFooter,
   };
