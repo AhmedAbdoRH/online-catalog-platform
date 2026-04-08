@@ -137,7 +137,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
     setFormData(prev => {
       let finalValue = value;
       if (field === 'whatsapp_number' && typeof value === 'string') {
-        finalValue = convertArabicNumerals(value);
+        finalValue = convertArabicNumerals(value).replace(/[^\d]/g, '');
       }
 
       const newData = { ...prev, [field]: finalValue };

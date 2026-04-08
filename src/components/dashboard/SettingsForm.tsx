@@ -33,6 +33,7 @@ import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload,
 import { ProUpgradeButton } from './ProUpgradeButton';
 import { Switch } from '../ui/switch';
 import { compressImage } from '@/lib/image-utils';
+import { convertArabicNumerals } from '@/lib/utils';
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -146,7 +147,10 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
   // Calculate initial values for phone and country code
   const getInitialPhoneValues = () => {
     let countryCode = catalog.country_code || '+20';
-    let phone = catalog.whatsapp_number?.replace(countryCode, '') || '';
+    let rawPhone = catalog.whatsapp_number?.replace(countryCode, '') || '';
+    
+    // Cleanup: if the phone number in DB contains non-numeric characters (like an email), strip them
+    let phone = rawPhone.replace(/[^\d]/g, '');
 
     // If no phone in catalog, try to use user's registration phone
     // Make sure it contains only digits (with optional +), NOT an email address
@@ -154,12 +158,12 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
       for (const country of countries) {
         if (userPhone.startsWith(country.code)) {
           countryCode = country.code;
-          phone = userPhone.replace(country.code, '');
+          phone = userPhone.replace(country.code, '').replace(/[^\d]/g, '');
           break;
         }
       }
       // If it's a phone but didn't match our country prefixes, just use it as the phone
-      if (!phone) phone = userPhone;
+      if (!phone) phone = userPhone.replace(/[^\d]/g, '');
     }
     
     return { countryCode, phone };
@@ -468,6 +472,11 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                   <FormControl>
                     <Input
                       {...field}
+                      onChange={(e) => {
+                        const converted = convertArabicNumerals(e.target.value);
+                        const cleaned = converted.replace(/[^\d]/g, '');
+                        field.onChange(cleaned);
+                      }}
                       disabled={isSubmitting}
                       placeholder="رقم الواتساب بدون كود الدولة"
                       className="bg-white text-[#1e3a5f] text-lg flex-1 h-12"
