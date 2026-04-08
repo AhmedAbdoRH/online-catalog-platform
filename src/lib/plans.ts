@@ -3,8 +3,8 @@ export type PlanBillingType = 'monthly' | 'yearly';
 export const FREE_PLAN_MAX_PRODUCTS = 25;
 export const FREE_PLAN_MAX_CATEGORIES = 5;
 
-export const PRO_MONTHLY_PRICE_EGP = 250;
-export const PRO_YEARLY_PRICE_EGP = 2500;
+export const PRO_MONTHLY_PRICE_EGP = 350;
+export const PRO_YEARLY_PRICE_EGP = 3200;
 
 export function formatPlanPrice(price: number): string {
   return `${price} ج.م`;
