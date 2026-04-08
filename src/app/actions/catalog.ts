@@ -235,9 +235,10 @@ export async function updateCatalog(prevState: any, formData: FormData) {
 
   const { name: validatedName, display_name: validatedDisplayName } = validatedFields.data;
 
-  // Validate images if provided
-  const logo = logoFile instanceof File && logoFile.size > 0 ? logoFile : null;
-  const cover = coverFile instanceof File && coverFile.size > 0 ? coverFile : null;
+  // Validate images if provided (robust check since compressed files might lose File prototype across boundary)
+  const isRobustFile = (f: any) => typeof f === 'object' && f !== null && 'size' in f && 'name' in f && f.size > 0;
+  const logo = isRobustFile(logoFile) ? (logoFile as File) : null;
+  const cover = isRobustFile(coverFile) ? (coverFile as File) : null;
 
   const theme = formData.get('theme') as string | null;
   const hideFooterStr = formData.get('hide_footer') as string | null;

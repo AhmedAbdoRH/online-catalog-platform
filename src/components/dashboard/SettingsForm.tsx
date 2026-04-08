@@ -143,7 +143,8 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
     let phone = catalog.whatsapp_number?.replace(countryCode, '') || '';
 
     // If no phone in catalog, try to use user's registration phone
-    if (!phone && userPhone) {
+    // Make sure it contains only digits (with optional +), NOT an email address
+    if (!phone && userPhone && /^[\+0-9]+$/.test(userPhone)) {
       for (const country of countries) {
         if (userPhone.startsWith(country.code)) {
           countryCode = country.code;
