@@ -16,8 +16,8 @@ export default async function SettingsPage() {
     }
 
     return (
-        <Card className="max-w-2xl mx-auto">
-            <CardContent className="pt-6">
+        <Card className="w-full max-w-2xl mx-auto border-0 sm:border">
+            <CardContent className="pt-6 px-4 sm:px-6">
                 <SettingsForm 
                     catalog={catalog} 
                     userPhone={user.phone || (user.user_metadata?.phone as string)} 

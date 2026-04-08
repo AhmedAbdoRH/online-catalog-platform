@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/table';
 import type { Category, MenuItemWithDetails } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Package } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 
 import {
@@ -168,7 +168,7 @@ export function ItemsTable({ items, catalogId, catalogPlan, categories, countryC
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/25 bg-muted/10 py-16 text-center">
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-          <div className="h-8 w-8 text-muted-foreground/50" />
+          <Package className="h-8 w-8 text-muted-foreground/50" />
         </div>
         <h3 className="mb-1 text-lg font-semibold">لا توجد منتجات</h3>
         <p className="mb-6 max-w-sm text-sm text-muted-foreground">
@@ -179,8 +179,8 @@ export function ItemsTable({ items, catalogId, catalogPlan, categories, countryC
   }
 
   return (
-    <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-x-auto">
-      <Table className="w-full table-fixed min-w-[350px]">
+    <div className="rounded-xl border bg-card text-card-foreground shadow-sm w-full max-w-full overflow-hidden overflow-x-auto">
+      <Table className="w-full table-fixed min-w-[320px]">
         <TableHeader className="bg-muted/50">
           <TableRow>
             <TableHead className="w-[70px] sm:w-[120px] p-2 sm:p-5 text-right font-bold text-foreground">
@@ -188,7 +188,7 @@ export function ItemsTable({ items, catalogId, catalogPlan, categories, countryC
             </TableHead>
             <TableHead className="sm:w-auto p-2 sm:p-5 text-right font-bold text-foreground">الاسم</TableHead>
             <TableHead className="hidden sm:table-cell p-5 text-right font-bold text-foreground">التصنيف</TableHead>
-            <TableHead className="w-[90px] sm:w-[150px] p-2 sm:p-5 text-right font-bold text-foreground">السعر</TableHead>
+            <TableHead className="w-[90px] sm:w-[120px] p-2 sm:p-5 text-right font-bold text-foreground">السعر</TableHead>
             <TableHead className="w-[45px] sm:w-[60px] p-2 sm:p-5 text-left">
               <span className="sr-only">الإجراءات</span>
             </TableHead>
@@ -198,7 +198,6 @@ export function ItemsTable({ items, catalogId, catalogPlan, categories, countryC
           {items.map((item) => (
             <ItemRow key={item.id} item={item} catalogId={catalogId} catalogPlan={catalogPlan} categories={categories} countryCode={countryCode} />
           ))}
-
         </TableBody>
       </Table>
     </div>

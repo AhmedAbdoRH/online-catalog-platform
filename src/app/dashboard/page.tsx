@@ -225,8 +225,8 @@ export default async function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
-        <Card className="glass-surface border-white/10 overflow-hidden">
-          <CardContent className="p-4 sm:p-6">
+        <Card className="glass-surface border-white/10 overflow-hidden w-full max-w-full">
+          <CardContent className="p-4 sm:p-6 w-full max-w-full overflow-x-hidden">
             <SettingsForm catalog={catalog} userPhone={userPhone} />
           </CardContent>
         </Card>

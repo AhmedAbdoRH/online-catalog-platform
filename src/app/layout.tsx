@@ -86,7 +86,7 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "font-tajawal antialiased min-h-screen bg-background text-foreground",
+          "font-tajawal antialiased min-h-[100dvh] bg-background text-foreground overflow-x-hidden w-full",
           "selection:bg-brand-accent/20 selection:text-brand-accent"
         )}
       >

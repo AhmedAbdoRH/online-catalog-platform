@@ -36,20 +36,22 @@ export default async function ItemsPage() {
     const { catalog, categories, items } = await getData();
 
     return (
-        <Card className="border-none sm:border shadow-none sm:shadow-sm bg-transparent sm:bg-card">
-            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-6 py-4 sm:py-6">
-                <div>
-                    <CardTitle className="text-xl sm:text-2xl">المنتجات</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">إدارة المنتجات في المتجر الخاص بك.</CardDescription>
-                </div>
-                <div className="w-full sm:w-auto">
-                    <AddItemButton catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} countryCode={catalog.country_code} />
-                </div>
-            </CardHeader>
-            <CardContent className="px-2 sm:px-6">
-                <ItemsTable items={items as any} catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} countryCode={catalog.country_code} />
-            </CardContent>
-            <div className="h-24" /> {/* مسافة إضافية في نهاية الصفحة لتجنب التداخل مع شريط التنقل السفلي */}
-        </Card>
+        <div className="w-full max-w-full overflow-hidden">
+            <Card className="border-none sm:border shadow-none sm:shadow-sm bg-transparent sm:bg-card w-full max-w-full">
+                <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-6 py-4 sm:py-6">
+                    <div className="min-w-0">
+                        <CardTitle className="text-xl sm:text-2xl truncate">المنتجات</CardTitle>
+                        <CardDescription className="text-xs sm:text-sm">إدارة المنتجات في المتجر الخاص بك.</CardDescription>
+                    </div>
+                    <div className="w-full sm:w-auto">
+                        <AddItemButton catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} countryCode={catalog.country_code} />
+                    </div>
+                </CardHeader>
+                <CardContent className="px-2 sm:px-6 w-full max-w-full overflow-hidden">
+                    <ItemsTable items={items as any} catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} countryCode={catalog.country_code} />
+                </CardContent>
+                <div className="h-24" /> {/* مسافة إضافية في نهاية الصفحة لتجنب التداخل مع شريط التنقل السفلي */}
+            </Card>
+        </div>
     );
 }

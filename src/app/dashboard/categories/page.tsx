@@ -57,22 +57,22 @@ export default function CategoriesPage() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">التصنيفات</h1>
-                    <p className="text-muted-foreground">
+        <div className="space-y-6 w-full max-w-full overflow-x-hidden">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-1">
+                <div className="min-w-0">
+                    <h1 className="text-2xl font-bold tracking-tight truncate">التصنيفات</h1>
+                    <p className="text-muted-foreground text-sm sm:text-base">
                         إدارة هيكلية المتجر وتنظيم الأصناف في مجموعات.
                     </p>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="gap-2 shadow-lg bg-amber-500 hover:bg-amber-600 dark:bg-amber-500/20 dark:hover:bg-amber-500/30 text-white dark:text-amber-300 border-none font-black text-lg h-14 px-8 rounded-xl transition-all hover:scale-105 active:scale-95">
-                            <PlusCircle className="h-6 w-6 stroke-[3px]" />
+                        <Button className="gap-2 shadow-lg bg-amber-500 hover:bg-amber-600 dark:bg-amber-500/20 dark:hover:bg-amber-500/30 text-white dark:text-amber-300 border-none font-black text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 rounded-xl transition-all hover:scale-105 active:scale-95 w-full sm:w-auto">
+                            <PlusCircle className="h-5 w-5 sm:h-6 sm:w-6 stroke-[3px]" />
                             <span>إضافة تصنيف جديد</span>
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px]">
+                    <DialogContent className="sm:max-w-[500px] w-[95vw] rounded-2xl">
                         <DialogHeader>
                             <DialogTitle>إضافة تصنيف جديد</DialogTitle>
                             <DialogDescription>
@@ -91,35 +91,37 @@ export default function CategoriesPage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <Card>
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                <Card className="shadow-none border-border/50">
                     <CardHeader className="pb-2">
-                        <CardDescription>إجمالي التصنيفات الرئيسية</CardDescription>
-                        <CardTitle className="text-3xl">{totalCategories}</CardTitle>
+                        <CardDescription className="text-xs sm:text-sm">إجمالي التصنيفات الرئيسية</CardDescription>
+                        <CardTitle className="text-2xl sm:text-3xl">{totalCategories}</CardTitle>
                     </CardHeader>
                 </Card>
-                <Card>
+                <Card className="shadow-none border-border/50">
                     <CardHeader className="pb-2">
-                        <CardDescription>إجمالي التصنيفات الفرعية</CardDescription>
-                        <CardTitle className="text-3xl">{totalSubcategories}</CardTitle>
+                        <CardDescription className="text-xs sm:text-sm">إجمالي التصنيفات الفرعية</CardDescription>
+                        <CardTitle className="text-2xl sm:text-3xl">{totalSubcategories}</CardTitle>
                     </CardHeader>
                 </Card>
             </div>
 
-            <Card className="border-none shadow-none bg-transparent">
+            <Card className="border-none shadow-none bg-transparent w-full max-w-full overflow-hidden">
                 <CardHeader className="px-0 pt-0">
                     <CardTitle className="text-lg">هيكل القائمة</CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-xs sm:text-sm">
                         يمكنك سحب وإفلات التصنيفات لإعادة ترتيبها (قريباً).
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="px-0">
+                <CardContent className="px-0 w-full max-w-full overflow-hidden">
                     {catalog && (
-                        <CategoriesTable 
-                            categories={categories} 
-                            catalogId={catalog.id} 
-                            onSuccess={handleCategorySuccess}
-                        />
+                        <div className="w-full max-w-full overflow-x-hidden pb-4">
+                            <CategoriesTable 
+                                categories={categories} 
+                                catalogId={catalog.id} 
+                                onSuccess={handleCategorySuccess}
+                            />
+                        </div>
                     )}
                 </CardContent>
             </Card>

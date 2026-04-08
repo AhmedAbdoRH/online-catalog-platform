@@ -59,11 +59,11 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
         <>
           <div
             className="absolute -top-3 bottom-1/2 w-px bg-border/60"
-            style={{ right: -18 }}
+            style={{ right: -12 }}
           />
           <div
-            className="absolute top-1/2 h-px w-4 bg-border/60"
-            style={{ right: -18 }}
+            className="absolute top-1/2 h-px w-3 bg-border/60"
+            style={{ right: -12 }}
           />
         </>
       )}
@@ -170,11 +170,11 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="relative mr-4 sm:mr-10 flex flex-col gap-2 sm:gap-3 pt-2 sm:pt-3"
+            className="relative mr-2 sm:mr-10 flex flex-col gap-2 sm:gap-3 pt-2 sm:pt-3"
           >
             <div
               className="absolute bottom-4 top-0 w-px bg-border/60"
-              style={{ right: -18 }}
+              style={{ right: -12 }}
             />
 
             {category.subcategories.map((subCategory, index) => (
