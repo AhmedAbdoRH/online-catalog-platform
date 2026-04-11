@@ -34,6 +34,7 @@ import { ProUpgradeButton } from './ProUpgradeButton';
 import { Switch } from '../ui/switch';
 import { compressImage } from '@/lib/image-utils';
 import { convertArabicNumerals } from '@/lib/utils';
+import { UpgradeAlert } from './UpgradeAlert';
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -79,9 +80,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showTooltips, setShowTooltips] = useState(false);
-  const [isSlugUpgradeOpen, setIsSlugUpgradeOpen] = useState(false);
-  const [isThemeUpgradeOpen, setIsThemeUpgradeOpen] = useState(false);
-  const [isFooterUpgradeOpen, setIsFooterUpgradeOpen] = useState(false);
+  const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
   // File states for previews and actual files
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -338,7 +337,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
               </div>
             )}
 
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px] pointer-events-none group-hover:pointer-events-auto z-20">
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px] pointer-events-none group-hover:pointer-events-auto z-10">
               <div className="flex flex-col items-center gap-2 text-white">
                 <Camera className="h-8 w-8" />
                 <span className="text-xs font-bold">تغيير صورة الغلاف</span>
@@ -349,7 +348,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
               type="file"
               name="cover"
               accept="image/*"
-              className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-50 pointer-events-auto p-0 border-0 rounded-none"
+              className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-20 pointer-events-auto p-0 border-0 rounded-none"
               onClick={async (e) => {
                 console.log('SettingsForm: cover input clicked');
                 await requestPermissions();
@@ -359,7 +358,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
           </div>
 
           {/* Logo Upload Area */}
-          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 z-[60]">
+          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 z-30">
             <AnimatePresence>
               {showTooltips && (
                   <motion.div
@@ -374,7 +373,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                   transition={{
                     duration: 0.3
                   }}
-                  className="absolute left-1/2 bottom-full mb-6 z-[70] pointer-events-none w-max max-w-[85vw] sm:max-w-[280px]"
+                  className="absolute left-1/2 bottom-full mb-6 z-[35] pointer-events-none w-max max-w-[85vw] sm:max-w-[280px]"
                 >
                   <div className="bg-brand-primary text-white p-3 sm:p-4 rounded-2xl shadow-2xl flex flex-col items-center gap-2 border border-white/20 pointer-events-auto text-center relative mx-auto">
                     <div className="flex items-center gap-2 justify-center">
@@ -411,7 +410,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 </div>
               )}
 
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px] pointer-events-none group-hover:pointer-events-auto z-20">
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px] pointer-events-none group-hover:pointer-events-auto z-10">
                 <Camera className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
 
@@ -419,7 +418,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 type="file"
                 name="logo"
                 accept="image/*"
-                className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-[70] pointer-events-auto p-0 border-0 rounded-full"
+                className="absolute inset-0 h-full w-full opacity-0 cursor-pointer z-[35] pointer-events-auto p-0 border-0 rounded-full"
                 onClick={async (e) => {
                   console.log('SettingsForm: logo input clicked');
                   await requestPermissions();
@@ -516,58 +515,14 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 <div className="flex items-center justify-between">
                   <FormLabel>تخصيص رابط المتجر</FormLabel>
                   {!isPro && (
-                    <Dialog open={isSlugUpgradeOpen} onOpenChange={setIsSlugUpgradeOpen}>
-                      <button
-                        type="button"
-                        onClick={() => setIsSlugUpgradeOpen(true)}
-                        className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
-                      >
-                        <Lock className="h-3 w-3" />
-                        باقة البرو
-                      </button>
-                      <DialogContent className="sm:max-w-md">
-                        <DialogHeader className="text-center">
-                          <DialogTitle className="flex items-center justify-center gap-2 text-2xl">
-                            <Crown className="h-7 w-7 text-amber-500" />
-                            ترقية إلى باقة البرو
-                          </DialogTitle>
-                          <DialogDescription className="text-center text-base">
-                            احصل على إمكانية تعديل رابط متجرك
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4 py-4">
-                          <div className="space-y-3">
-                            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                              <Sparkles className="h-5 w-5 text-brand-primary mt-0.5" />
-                              <div>
-                                <p className="font-medium text-sm">تعديل رابط المتجر</p>
-                                <p className="text-xs text-muted-foreground">اختر رابطاً مخصصاً لمتجرك بدلاً من رقم الهاتف</p>
-                              </div>
-                            </div>
-                            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                              <Palette className="h-5 w-5 text-brand-primary mt-0.5" />
-                              <div>
-                                <p className="font-medium text-sm">أنماط مظهر متعددة</p>
-                                <p className="text-xs text-muted-foreground">اختر من بين 10 أنماط ألوان مختلفة لمتجرك</p>
-                              </div>
-                            </div>
-                            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                              <EyeOff className="h-5 w-5 text-brand-primary mt-0.5" />
-                              <div>
-                                <p className="font-medium text-sm">إخفاء فوتر المنصة</p>
-                                <p className="text-xs text-muted-foreground">إزالة شعار "أونلاين كتالوج" من متجرك</p>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex flex-col gap-3">
-                            <ProUpgradeButton 
-                              catalogId={catalog.id} 
-                              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
-                            />
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                    <button
+                      type="button"
+                      onClick={() => setIsUpgradeOpen(true)}
+                      className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
+                    >
+                      <Lock className="h-3 w-3" />
+                      باقة البرو
+                    </button>
                   )}
                 </div>
                 <FormControl>
@@ -575,8 +530,8 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                     className={`relative ${!isPro ? 'cursor-pointer' : ''}`}
                     role={!isPro ? 'button' : undefined}
                     tabIndex={!isPro ? 0 : undefined}
-                    onClick={!isPro ? () => setIsSlugUpgradeOpen(true) : undefined}
-                    onKeyDown={!isPro ? (event) => handleLockedSectionKeyDown(event, () => setIsSlugUpgradeOpen(true)) : undefined}
+                    onClick={!isPro ? () => setIsUpgradeOpen(true) : undefined}
+                    onKeyDown={!isPro ? (event) => handleLockedSectionKeyDown(event, () => setIsUpgradeOpen(true)) : undefined}
                   >
                     <Input
                       {...field}
@@ -607,59 +562,14 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
           <div className="flex items-center justify-between">
             <FormLabel className="text-lg font-semibold">تخصيص خلفية المتجر</FormLabel>
             {!isPro && (
-              <Dialog open={isThemeUpgradeOpen} onOpenChange={setIsThemeUpgradeOpen}>
-                <button
-                  type="button"
-                  onClick={() => setIsThemeUpgradeOpen(true)}
-                  className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
-                >
-                  <Lock className="h-3 w-3" />
-                  باقة البرو
-                </button>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader className="text-center">
-                    <DialogTitle className="flex items-center justify-center gap-2 text-2xl">
-                      <Crown className="h-7 w-7 text-amber-500" />
-                      ترقية إلى باقة البرو
-                    </DialogTitle>
-                    <DialogDescription className="text-center text-base">
-                      احصل على مميزات حصرية لمتجرك
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-3">
-                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                        <Sparkles className="h-5 w-5 text-brand-primary mt-0.5" />
-                        <div>
-                          <p className="font-medium text-sm">عدد غير محدود من المنتجات والتصنيفات</p>
-                          <p className="text-xs text-muted-foreground">أضف عدد لا نهائي من المنتجات والتصنيفات</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                        <Palette className="h-5 w-5 text-brand-primary mt-0.5" />
-                        <div>
-                          <p className="font-medium text-sm">أنماط مظهر متعددة</p>
-                          <p className="text-xs text-muted-foreground">اختر من بين 10 أنماط ألوان مختلفة لمتجرك</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                        <Crown className="h-5 w-5 text-brand-primary mt-0.5" />
-                        <div>
-                          <p className="font-medium text-sm">دعم فني مميز</p>
-                          <p className="text-xs text-muted-foreground">أولوية في الرد والدعم الفني</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <ProUpgradeButton 
-                        catalogId={catalog.id} 
-                        planType="monthly"
-                        className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
-                      />
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+              <button
+                type="button"
+                onClick={() => setIsUpgradeOpen(true)}
+                className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
+              >
+                <Lock className="h-3 w-3" />
+                باقة البرو
+              </button>
             )}
           </div>
           <FormDescription>
@@ -677,7 +587,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                     type="button"
                     disabled={isSubmitting}
                     aria-disabled={isLocked}
-                    onClick={() => (isLocked ? setIsThemeUpgradeOpen(true) : setSelectedTheme(theme.id))}
+                    onClick={() => (isLocked ? setIsUpgradeOpen(true) : setSelectedTheme(theme.id))}
                     className={`relative h-16 w-full rounded-lg ${theme.gradient} border-2 transition-all ${selectedTheme === theme.id
                       ? 'border-brand-primary ring-2 ring-brand-primary/50'
                       : 'border-transparent hover:border-white/30'
@@ -731,67 +641,22 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
         <div className="pt-6 border-t relative">
           {!isPro && (
             <div className="absolute top-1 left-0">
-              <Dialog open={isFooterUpgradeOpen} onOpenChange={setIsFooterUpgradeOpen}>
-                <button
-                  type="button"
-                  onClick={() => setIsFooterUpgradeOpen(true)}
-                  className="flex items-center gap-1 text-[10px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
-                >
-                  <Lock className="h-2.5 w-2.5" />
-                  باقة البرو
-                </button>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader className="text-center">
-                    <DialogTitle className="flex items-center justify-center gap-2 text-2xl">
-                      <Crown className="h-7 w-7 text-amber-500" />
-                      ترقية إلى باقة البرو
-                    </DialogTitle>
-                    <DialogDescription className="text-center text-base">
-                      احصل على مميزات حصرية لمتجرك
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-3">
-                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                        <Sparkles className="h-5 w-5 text-brand-primary mt-0.5" />
-                        <div>
-                          <p className="font-medium text-sm">عدد غير محدود من المنتجات والتصنيفات</p>
-                          <p className="text-xs text-muted-foreground">أضف عدد لا نهائي من المنتجات والتصنيفات</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                        <Palette className="h-5 w-5 text-brand-primary mt-0.5" />
-                        <div>
-                          <p className="font-medium text-sm">أنماط مظهر متعددة</p>
-                          <p className="text-xs text-muted-foreground">اختر من بين 10 أنماط ألوان مختلفة لمتجرك</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                        <EyeOff className="h-5 w-5 text-brand-primary mt-0.5" />
-                        <div>
-                          <p className="font-medium text-sm">إخفاء فوتر المنصة</p>
-                          <p className="text-xs text-muted-foreground">إزالة شعار "أونلاين كتالوج" من متجرك</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <ProUpgradeButton 
-                        catalogId={catalog.id} 
-                        planType="monthly"
-                        className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" 
-                      />
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+              <button
+                type="button"
+                onClick={() => setIsUpgradeOpen(true)}
+                className="flex items-center gap-1 text-[10px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
+              >
+                <Lock className="h-2.5 w-2.5" />
+                باقة البرو
+              </button>
             </div>
           )}
           <div
             className={`flex items-center justify-between ${!isPro ? 'cursor-pointer rounded-md' : ''}`}
             role={!isPro ? 'button' : undefined}
             tabIndex={!isPro ? 0 : undefined}
-            onClick={!isPro ? () => setIsFooterUpgradeOpen(true) : undefined}
-            onKeyDown={!isPro ? (event) => handleLockedSectionKeyDown(event, () => setIsFooterUpgradeOpen(true)) : undefined}
+            onClick={!isPro ? () => setIsUpgradeOpen(true) : undefined}
+            onKeyDown={!isPro ? (event) => handleLockedSectionKeyDown(event, () => setIsUpgradeOpen(true)) : undefined}
           >
             <div className="flex flex-col">
               <FormLabel className="text-base cursor-pointer" onClick={() => isPro && setHideFooter(!hideFooter)}>
@@ -815,6 +680,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isSubmitting ? 'جاري الحفظ...' : 'حفظ التغييرات'}
         </Button>
+        <UpgradeAlert open={isUpgradeOpen} onOpenChange={setIsUpgradeOpen} catalogId={catalog.id} />
       </form>
     </Form>
   );

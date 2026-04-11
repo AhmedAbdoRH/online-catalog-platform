@@ -2,6 +2,16 @@ import imageCompression from 'browser-image-compression';
 
 export type ImageProfile = 'product' | 'logo' | 'cover';
 
+/** Fetch a data URL or remote image URL into a File (for keeping sibling slots in sync when editing). */
+export async function imageUrlToFile(src: string, fileName: string): Promise<File> {
+  const res = await fetch(src);
+  if (!res.ok) {
+    throw new Error('تعذر تحميل الصورة');
+  }
+  const blob = await res.blob();
+  return new File([blob], fileName, { type: blob.type || 'image/jpeg', lastModified: Date.now() });
+}
+
 const PROFILES = {
   product: {
     maxSizeMB: 0.05, // 50KB

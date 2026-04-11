@@ -16,6 +16,7 @@ import {
   Package as PackageIcon,
   Building,
   Heart,
+  Crown,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Catalog } from '@/lib/types';
@@ -40,6 +41,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { APP_NAME } from '@/lib/constants';
 import { SupportButton } from './SupportButton';
+import { UpgradeAlert } from './UpgradeAlert';
 
 const navItems = [
   { href: '/dashboard', icon: Home, label: 'لوحة التحكم' },
@@ -76,6 +78,7 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isThankYouModalOpen, setIsThankYouModalOpen] = useState(false);
+  const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
   const defaultNames = [
     "أحمد محمد",
@@ -353,8 +356,28 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
           </div>
         )}
 
-        <div className="mr-auto">
-          <SupportButton />
+        <div className="mr-auto flex items-center gap-3 sm:gap-4 pl-4 sm:pl-0">
+          {catalog && catalog.plan !== 'pro' && catalog.plan !== 'business' && (
+            <>
+              <Button 
+                onClick={() => setIsUpgradeOpen(true)}
+                size="sm"
+                className="h-7 sm:h-9 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-[10px] sm:text-sm px-2.5 sm:px-4 shadow-lg shadow-amber-500/20"
+              >
+                <Crown className="h-3 w-3 sm:h-4 sm:w-4 ml-1 sm:ml-1.5" />
+                <span className="hidden sm:inline">ترقية المنصة</span>
+                <span className="sm:hidden">ترقية</span>
+              </Button>
+              <UpgradeAlert 
+                open={isUpgradeOpen} 
+                onOpenChange={setIsUpgradeOpen} 
+                catalogId={catalog.id} 
+              />
+            </>
+          )}
+          <div className="relative z-50">
+            <SupportButton />
+          </div>
         </div>
       </header>
     </TooltipProvider>

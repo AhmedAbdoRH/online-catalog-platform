@@ -44,7 +44,7 @@ export function ProUpgradeButton({
   const defaultChildren = (
     <>
       <MessageCircle className="h-4 w-4 ml-2" />
-      {`اطلب باقة البرو ${periodLabel}`}
+      {`الاشتراك في باقة البرو ${planType === "monthly" ? "الشهرية" : "السنوية"}`}
     </>
   );
 
@@ -69,7 +69,7 @@ export function ProUpgradeButton({
       if (result.ok) {
         toast({
           title: "تم الاشتراك بنجاح",
-          description: `تم تفعيل باقة البرو ${periodLabel} بسعر ${priceLabel}`,
+          description: `تم تفعيل باقة البرو ${planType === "monthly" ? "الشهرية" : "السنوية"} بسعر ${priceLabel}`,
         });
         window.location.reload();
         return;
@@ -114,7 +114,7 @@ export function ProUpgradeButton({
       <Button
         onClick={handleBillingPurchase}
         disabled={isLoading}
-        className={`bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 ${className}`}
+        className={`bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg shadow-amber-500/20 ${className}`}
         size={size}
         variant={variant}
       >
@@ -123,7 +123,7 @@ export function ProUpgradeButton({
         ) : (
           <CreditCard className="h-4 w-4 ml-2" />
         )}
-        {isLoading ? "جاري المعالجة..." : `الاشتراك ${periodLabel} عبر Google`}
+        {isLoading ? "جاري المعالجة..." : `الاشتراك في الباقة ${planType === "monthly" ? "الشهرية" : "السنوية"} عبر Google`}
       </Button>
     );
   }

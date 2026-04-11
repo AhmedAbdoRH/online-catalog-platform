@@ -119,8 +119,8 @@ function ItemRow({ item, catalogId, catalogPlan, categories, countryCode }: { it
               </DropdownMenuContent>
             </DropdownMenu >
 
-            {/* Edit Dialog */}
-            < DialogContent >
+            {/* Edit Dialog — scrollable body (matches AddItemButton) */}
+            <DialogContent className="max-w-full sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[1000px] max-h-[95vh] overflow-y-auto bg-emerald-950 border-slate-800">
               <DialogHeader>
                 <DialogTitle>تعديل المنتج</DialogTitle>
                 <DialogDescription>قم بتحديث تفاصيل المنتج.</DialogDescription>
@@ -134,7 +134,7 @@ function ItemRow({ item, catalogId, catalogPlan, categories, countryCode }: { it
                 onSuccess={() => setIsEditDialogOpen(false)}
                 onCancel={() => setIsEditDialogOpen(false)}
               />
-            </DialogContent >
+            </DialogContent>
 
             {/* Delete Dialog */}
             < AlertDialogContent >

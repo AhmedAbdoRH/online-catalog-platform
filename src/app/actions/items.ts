@@ -184,7 +184,7 @@ export async function createItem(formData: FormData) {
       return { error: 'الكتالوج غير موجود.' };
     }
 
-    const isPro = catalog.plan === 'pro';
+    const isPro = catalog.plan === 'pro' || catalog.plan === 'business';
 
     // Limit check for basic plan
     if (!isPro) {
@@ -297,7 +297,7 @@ export async function updateItem(itemId: number, formData: FormData) {
       .eq('id', existingItem.catalog_id)
       .single();
 
-    const isPro = catalog?.plan === 'pro';
+    const isPro = catalog?.plan === 'pro' || catalog?.plan === 'business';
 
     const rawImages = formData.getAll('images');
     const images = rawImages.filter((f): f is File => f instanceof File && f.size > 0);
@@ -343,44 +343,39 @@ export async function updateItem(itemId: number, formData: FormData) {
     }
 
     if (uploadedUrls.length > 0) {
-      // If plan is NOT PRO, and they upload 1 image, they are REPLACING the main image.
-      if (!isPro) {
-        const { data: currentItem } = await supabase.from('menu_items').select('image_url').eq('id', itemId).single();
-        
-        // Remove old main image from storage
-        if (currentItem?.image_url) {
-          await deleteImageFromStorage(currentItem.image_url);
-        }
-        
-        // Remove all old secondary images from storage (non-pro shouldn't have many, but just in case)
-        const { data: altImages } = await supabase.from('product_images').select('image_url').eq('menu_item_id', itemId);
-        if (altImages && altImages.length > 0) {
-          for (const alt of altImages) {
-            await deleteImageFromStorage(alt.image_url);
-          }
-        }
-        
-        // Delete rows from DB (we will re-insert the new one below)
-        await supabase.from('product_images').delete().eq('menu_item_id', itemId);
-        
-        updatePayload.image_url = uploadedUrls[0];
-      } else {
-        // PRO Plan: If we have no main image yet, set the first new one as main
-        const { data: currentItem } = await supabase.from('menu_items').select('image_url').eq('id', itemId).single();
-        if (!currentItem?.image_url) {
-          updatePayload.image_url = uploadedUrls[0];
+      const { data: currentItem } = await supabase
+        .from('menu_items')
+        .select('image_url')
+        .eq('id', itemId)
+        .single();
+
+      const { data: oldProductImages } = await supabase
+        .from('product_images')
+        .select('image_url')
+        .eq('menu_item_id', itemId);
+
+      const oldUrls = new Set<string>();
+      if (currentItem?.image_url) oldUrls.add(currentItem.image_url);
+      if (oldProductImages) {
+        for (const row of oldProductImages) {
+          if (row.image_url) oldUrls.add(row.image_url);
         }
       }
 
-      // Add all to product_images
-      const productImages: NewProductImage[] = uploadedUrls.map(url => ({
+      // Remove previous files from storage, then replace DB rows (first upload = main image)
+      for (const url of oldUrls) {
+        await deleteImageFromStorage(url);
+      }
+      await supabase.from('product_images').delete().eq('menu_item_id', itemId);
+
+      updatePayload.image_url = uploadedUrls[0];
+
+      const productImages: NewProductImage[] = uploadedUrls.map((url) => ({
         menu_item_id: itemId,
-        image_url: url
+        image_url: url,
       }));
 
-      const { error: imagesError } = await supabase
-        .from('product_images')
-        .insert(productImages);
+      const { error: imagesError } = await supabase.from('product_images').insert(productImages);
 
       if (imagesError) console.error('Error inserting product images:', imagesError);
     }

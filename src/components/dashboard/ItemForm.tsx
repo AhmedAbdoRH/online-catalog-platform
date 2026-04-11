@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Plus, Trash2, Image as ImageIcon, PlusCircle, X } from 'lucide-react';
+import { Plus, Trash2, Image as ImageIcon, PlusCircle, X, Eraser, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -28,7 +28,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { createItem, updateItem } from '@/app/actions/items';
-import { compressImage } from '@/lib/image-utils';
+import { compressImage, imageUrlToFile } from '@/lib/image-utils';
+import { removeProductBackground, preloadProductBackgroundRemoval } from '@/lib/background-removal';
 import { cn } from '@/lib/utils';
 import { UpgradeAlert } from '@/components/dashboard/UpgradeAlert';
 import { CategoryForm } from '@/components/dashboard/CategoryForm';
@@ -92,6 +93,15 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
   const [showUpgradeAlert, setShowUpgradeAlert] = useState(false);
   const [mainPreview, setMainPreview] = useState<string | null>(item?.image_url || null);
   const [additionalPreviews, setAdditionalPreviews] = useState<string[]>(item?.images?.map((img: any) => img.image_url) || []);
+  const [bgRemovalTarget, setBgRemovalTarget] = useState<'main' | number | null>(null);
+  const [bgRemovalProgress, setBgRemovalProgress] = useState(0);
+
+  useEffect(() => {
+    if (!isPro) return;
+    void preloadProductBackgroundRemoval().catch(() => {
+      /* يُحمَّل تلقائياً عند أول استخدام */
+    });
+  }, [isPro]);
 
   const getCategoryTree = () => {
     const map = new Map<number, any>();
@@ -169,6 +179,124 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
     },
   } as any);
 
+  const handleRemoveMainBackground = async () => {
+    if (!isPro) {
+      setShowUpgradeAlert(true);
+      return;
+    }
+    const currentFile = form.getValues('main_image');
+    const source = currentFile || mainPreview;
+    if (!source) {
+      toast({ title: 'لا توجد صورة', variant: 'destructive' });
+      return;
+    }
+    setBgRemovalTarget('main');
+    setBgRemovalProgress(0);
+
+    // Smooth asymptotic progress animation since compute doesn't emit progress
+    const progressInterval = setInterval(() => {
+      setBgRemovalProgress(prev => {
+        const next = prev + (95 - prev) * 0.15;
+        return next >= 94 ? 95 : next;
+      });
+    }, 100);
+
+    try {
+      const raw = await removeProductBackground(source);
+      const compressed = await compressImage(raw, 'product');
+      form.setValue('main_image', compressed);
+      generatePreview(compressed, setMainPreview);
+      setBgRemovalProgress(100);
+      toast({
+        title: 'تمت إزالة الخلفية',
+        description: 'راجع الصورة ثم احفظ المنتج.',
+      });
+    } catch (e: unknown) {
+      console.error(e);
+      const message = e instanceof Error ? e.message : 'حاول مرة أخرى أو استخدم صورة أصغر.';
+      toast({
+        title: 'تعذرت إزالة الخلفية',
+        description: message,
+        variant: 'destructive',
+      });
+    } finally {
+      clearInterval(progressInterval);
+      setTimeout(() => {
+        setBgRemovalTarget(null);
+        setBgRemovalProgress(0);
+      }, 500);
+    }
+  };
+
+  const handleRemoveAdditionalBackground = async (
+    index: number,
+    onChange: (files: File[]) => void,
+    currentFiles: File[] | undefined
+  ) => {
+    if (!isPro) {
+      setShowUpgradeAlert(true);
+      return;
+    }
+    const files = currentFiles || [];
+    const source = files[index] || additionalPreviews[index];
+    if (!source) {
+      toast({ title: 'لا توجد صورة', variant: 'destructive' });
+      return;
+    }
+    setBgRemovalTarget(index);
+    setBgRemovalProgress(0);
+
+    // Smooth asymptotic progress animation since compute doesn't emit progress
+    const progressInterval = setInterval(() => {
+      setBgRemovalProgress(prev => {
+        const next = prev + (95 - prev) * 0.15;
+        return next >= 94 ? 95 : next;
+      });
+    }, 100);
+
+    try {
+      const raw = await removeProductBackground(source);
+      const compressed = await compressImage(raw, 'product');
+      const len = additionalPreviews.length;
+      const next: File[] = [];
+      for (let j = 0; j < len; j++) {
+        if (j === index) {
+          next.push(compressed);
+        } else if (files[j]) {
+          next.push(files[j]);
+        } else {
+          const keep = await imageUrlToFile(additionalPreviews[j], `product-extra-${j}.webp`);
+          next.push(keep);
+        }
+      }
+      onChange(next);
+      setAdditionalPreviews((prev) => {
+        const copy = [...prev];
+        copy[index] = URL.createObjectURL(compressed);
+        return copy;
+      });
+      setBgRemovalProgress(100);
+      toast({
+        title: 'تمت إزالة الخلفية',
+        description: 'راجع الصورة ثم احفظ المنتج.',
+      });
+    } catch (e: unknown) {
+      console.error(e);
+      const message = e instanceof Error ? e.message : 'حاول مرة أخرى أو استخدم صورة أصغر.';
+      toast({
+        title: 'تعذرت إزالة الخلفية',
+        description: message,
+        variant: 'destructive',
+      });
+    } finally {
+      clearInterval(progressInterval);
+      setTimeout(() => {
+        setBgRemovalTarget(null);
+        setBgRemovalProgress(0);
+      }, 500);
+    }
+  };
+
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "variants",
@@ -203,6 +331,27 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
       const MAX_FALLBACK_SIZE = 1 * 1024 * 1024; // 1MB fallback if compression fails
       currentStep = 'ضغط ومعالجة الصور';
 
+      const userTouchedImages =
+        !!values.main_image ||
+        !!(values.additional_images && values.additional_images.length > 0);
+
+      /** When editing Pro products, changing only the main image must still send existing extra images or updateItem drops them. */
+      let mergedAdditionalFiles: File[] = [];
+      if (item && isPro && userTouchedImages && additionalPreviews.length > 0) {
+        for (let i = 0; i < additionalPreviews.length; i++) {
+          const fromForm = values.additional_images?.[i];
+          if (fromForm) {
+            mergedAdditionalFiles.push(fromForm);
+          } else {
+            currentStep = `تحميل الصورة الإضافية ${i + 1}`;
+            const f = await imageUrlToFile(additionalPreviews[i], `product-extra-${i}.webp`);
+            mergedAdditionalFiles.push(await compressImage(f, 'product'));
+          }
+        }
+      } else if (values.additional_images && values.additional_images.length > 0) {
+        mergedAdditionalFiles = [...values.additional_images];
+      }
+
       if (values.main_image) {
         console.log('Main image details:', { name: values.main_image.name, size: values.main_image.size, type: values.main_image.type });
         try {
@@ -235,10 +384,10 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
         }
       }
 
-      if (values.additional_images && values.additional_images.length > 0) {
-        console.log(`Processing ${values.additional_images.length} additional images...`);
-        for (let i = 0; i < values.additional_images.length; i++) {
-          const img = values.additional_images[i];
+      if (mergedAdditionalFiles.length > 0) {
+        console.log(`Processing ${mergedAdditionalFiles.length} additional images...`);
+        for (let i = 0; i < mergedAdditionalFiles.length; i++) {
+          const img = mergedAdditionalFiles[i];
           try {
             console.log(`Compressing additional image ${i + 1}...`);
             const compressedImg = await compressImage(img, 'product');
@@ -561,6 +710,29 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                               </div>
                             )}
                           </label>
+                          {mainPreview && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="w-full h-10 rounded-xl border-slate-600 bg-slate-800/80 text-slate-200 hover:bg-slate-700 hover:text-white gap-2 font-bold relative overflow-hidden"
+                              disabled={bgRemovalTarget === 'main'}
+                              onClick={handleRemoveMainBackground}
+                            >
+                              {bgRemovalTarget === 'main' && (
+                                <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-primary/80 transition-all duration-300" style={{ width: `${bgRemovalProgress}%` }} />
+                              )}
+                              {bgRemovalTarget === 'main' ? (
+                                <Loader2 className="h-4 w-4 animate-spin shrink-0" />
+                              ) : (
+                                <Eraser className="h-4 w-4 text-brand-primary shrink-0" />
+                              )}
+                              إزالة الخلفية
+                              {!isPro && (
+                                <span className="text-[10px] font-black uppercase text-amber-400 mr-1">Pro</span>
+                              )}
+                            </Button>
+                          )}
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -578,31 +750,52 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                           <PlusCircle className="h-5 w-5 text-brand-primary" />
                           صور إضافية
                         </div>
-                        {!isPro ? (
-                          <span className="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full font-black tracking-wide uppercase">باقة PRO فقط</span>
-                        ) : (
-                          <span className="text-xs font-medium text-slate-400 dark:text-slate-500">اختياري</span>
-                        )}
+                        <span className="text-xs font-medium text-slate-400 dark:text-slate-500">اختياري</span>
                       </FormLabel>
                       <FormControl>
-                        <div className={cn("grid grid-cols-3 gap-4", !isPro && "opacity-50 pointer-events-none")}>
+                        <div className={cn("grid grid-cols-3 gap-4", !isPro && "opacity-60")}>
                           {additionalPreviews.map((previewUrl, index) => (
-                            <div key={index} className="relative aspect-square rounded-xl overflow-hidden group border border-slate-200 dark:border-slate-700">
-                              <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                              <button
+                            <div key={index} className="flex flex-col gap-2 min-w-0">
+                              <div className="relative aspect-square rounded-xl overflow-hidden group border border-slate-200 dark:border-slate-700">
+                                <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newFiles = [...(value as File[])];
+                                    newFiles.splice(index, 1);
+                                    onChange(newFiles);
+                                    const newPreviews = [...additionalPreviews];
+                                    newPreviews.splice(index, 1);
+                                    setAdditionalPreviews(newPreviews);
+                                  }}
+                                  className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </div>
+                              <Button
                                 type="button"
-                                onClick={() => {
-                                  const newFiles = [...(value as File[])];
-                                  newFiles.splice(index, 1);
-                                  onChange(newFiles);
-                                  const newPreviews = [...additionalPreviews];
-                                  newPreviews.splice(index, 1);
-                                  setAdditionalPreviews(newPreviews);
-                                }}
-                                className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                variant="outline"
+                                size="sm"
+                                className="w-full h-8 text-xs rounded-lg border-slate-600 bg-slate-800/80 text-slate-200 hover:bg-slate-700 gap-1.5 px-1 font-bold relative overflow-hidden"
+                                disabled={bgRemovalTarget === index}
+                                onClick={() =>
+                                  handleRemoveAdditionalBackground(index, onChange, value as File[] | undefined)
+                                }
                               >
-                                <X className="h-3 w-3" />
-                              </button>
+                                {bgRemovalTarget === index && (
+                                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-primary/80 transition-all duration-300" style={{ width: `${bgRemovalProgress}%` }} />
+                                )}
+                                {bgRemovalTarget === index ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
+                                ) : (
+                                  <Eraser className="h-3.5 w-3.5 text-brand-primary shrink-0" />
+                                )}
+                                إزالة الخلفية
+                                {!isPro && (
+                                  <span className="text-[10px] font-black uppercase text-amber-400 mr-1">Pro</span>
+                                )}
+                              </Button>
                             </div>
                           ))}
                           <input
@@ -624,12 +817,27 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             }}
                             {...rest}
                           />
-                          <label
-                            htmlFor="additional-images-upload"
-                            className="flex flex-col items-center justify-center aspect-square rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-brand-primary/40 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all cursor-pointer group"
-                          >
-                            <Plus className="h-6 w-6 text-slate-300 dark:text-slate-600 group-hover:text-brand-primary transition-colors" />
-                          </label>
+                          <div className="flex flex-col gap-2 min-w-0">
+                            <label
+                              htmlFor={isPro ? "additional-images-upload" : ""}
+                              onClick={() => !isPro && setShowUpgradeAlert(true)}
+                              className="flex flex-col items-center justify-center aspect-square rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-brand-primary/40 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all cursor-pointer group"
+                            >
+                              <Plus className="h-6 w-6 text-slate-300 dark:text-slate-600 group-hover:text-brand-primary transition-colors" />
+                            </label>
+                            {!isPro && (
+                              <button 
+                                type="button"
+                                onClick={() => setShowUpgradeAlert(true)}
+                                className="w-full flex justify-center hover:scale-105 transition-transform"
+                              >
+                                <span className="text-[10px] bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-2 py-1.5 rounded-lg font-black tracking-wide uppercase w-full text-center border border-amber-200 dark:border-amber-700/50 flex items-center justify-center gap-1">
+                                  <span>باقة PRO</span>
+                                  <span className="text-xs">👑</span>
+                                </span>
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </FormControl>
                       <FormMessage />
