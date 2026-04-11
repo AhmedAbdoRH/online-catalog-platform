@@ -123,7 +123,7 @@ export function ProUpgradeButton({
         ) : (
           <CreditCard className="h-4 w-4 ml-2" />
         )}
-        {isLoading ? "جاري المعالجة..." : `الاشتراك في الباقة ${planType === "monthly" ? "الشهرية" : "السنوية"} عبر Google`}
+        {isLoading ? "جاري المعالجة..." : `الاشتراك في الباقة ${planType === "monthly" ? "الشهرية" : "السنوية"}`}
       </Button>
     );
   }

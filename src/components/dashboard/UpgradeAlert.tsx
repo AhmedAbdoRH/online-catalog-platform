@@ -42,7 +42,7 @@ export function UpgradeAlert({ open, onOpenChange, catalogId }: UpgradeAlertProp
                             </div>
                         </div>
 
-                        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 transition-all h-full">
+                        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/20 border-2 border-blue-200 dark:border-blue-900/40 transition-all h-full shadow-sm">
                             <LinkIcon className="h-5 w-5 text-blue-600 mt-1 shrink-0" />
                             <div className="flex flex-col gap-0.5">
                                 <p className="font-black text-sm sm:text-base text-blue-900 dark:text-blue-300 tracking-tight">رابط متجر مخصص</p>
@@ -82,11 +82,11 @@ export function UpgradeAlert({ open, onOpenChange, catalogId }: UpgradeAlertProp
                             </div>
                         </div>
 
-                        <div className="sm:col-span-2 flex items-start gap-3 p-3.5 rounded-xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 transition-all">
-                            <Crown className="h-5 w-5 text-amber-600 mt-1 shrink-0" />
+                        <div className="sm:col-span-2 flex items-start gap-3 p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/20 border-2 border-teal-100 dark:border-teal-900/30 transition-all shadow-sm">
+                            <Crown className="h-5 w-5 text-teal-600 mt-1 shrink-0" />
                             <div className="flex flex-col gap-0.5">
-                                <p className="font-black text-sm sm:text-base text-amber-900 dark:text-amber-300 tracking-tight">دعم فني وأولوية مميزة</p>
-                                <p className="text-[11px] font-medium text-amber-700/70 dark:text-amber-400/60 leading-tight">أولوية في الرد والدعم الفني لضمان استمرار أعمالك دائماً</p>
+                                <p className="font-black text-sm sm:text-base text-teal-900 dark:text-teal-300 tracking-tight">دعم فني وأولوية مميزة</p>
+                                <p className="text-[11px] font-medium text-teal-700/70 dark:text-teal-400/60 leading-tight">أولوية في الرد والدعم الفني لضمان استمرار أعمالك دائماً</p>
                             </div>
                         </div>
                     </div>
