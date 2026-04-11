@@ -24,7 +24,7 @@ export function UpgradeAlert({ open, onOpenChange, catalogId }: UpgradeAlertProp
                         <div className="bg-amber-100 dark:bg-amber-900/30 p-3 rounded-full">
                             <Crown className="h-8 w-8 text-amber-500" />
                         </div>
-                        ارتقِ لمتجرك مع باقة الـ PRO
+                        ارتقِ بمتجرك مع باقة الـ PRO
                     </DialogTitle>
                 </DialogHeader>
 
