@@ -233,6 +233,8 @@ export default function ClientProductPage() {
                             catalogPhone={catalog.whatsapp_number}
                             productUrl={productUrl}
                             countryCode={catalog.country_code}
+                            directOrderEnabled={catalog.direct_order_enabled ?? true}
+                            catalogId={catalog.id}
                         />
 
                     </div>

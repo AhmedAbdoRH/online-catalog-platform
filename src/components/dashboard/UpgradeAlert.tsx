@@ -4,7 +4,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Crown, Sparkles, Palette, Infinity, Link as LinkIcon, Image as ImageIcon, EyeOff } from "lucide-react";
+import { Crown, Sparkles, Palette, Infinity, Link as LinkIcon, Image as ImageIcon, EyeOff, Download } from "lucide-react";
 import { ProUpgradeButton } from "./ProUpgradeButton";
 import { formatPlanPrice, PRO_MONTHLY_PRICE_EGP } from "@/lib/plans";
 
@@ -33,7 +33,7 @@ export function UpgradeAlert({ open, onOpenChange, catalogId }: UpgradeAlertProp
                         استمتع بكل المزايا بسعر يبدأ من {formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} شهرياً فقط
                     </div>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-4 items-stretch">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-4 items-stretch max-w-2xl mx-auto">
                         <div className="flex items-start gap-3 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 transition-all h-full">
                             <Infinity className="h-5 w-5 text-amber-600 mt-1 shrink-0" />
                             <div className="flex flex-col gap-0.5">
@@ -66,6 +66,14 @@ export function UpgradeAlert({ open, onOpenChange, catalogId }: UpgradeAlertProp
                             </div>
                         </div>
 
+                        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/30 transition-all h-full">
+                            <Download className="h-5 w-5 text-indigo-600 mt-1 shrink-0" />
+                            <div className="flex flex-col gap-0.5">
+                                <p className="font-black text-sm sm:text-base text-indigo-900 dark:text-indigo-300 tracking-tight">جمع بيانات العملاء</p>
+                                <p className="text-[11px] font-medium text-indigo-700/70 dark:text-indigo-400/60 leading-tight">تصدير بيانات العملاء كملف CSV لإدارة أفضل</p>
+                            </div>
+                        </div>
+
                         <div className="flex items-start gap-3 p-3.5 rounded-xl bg-purple-50 dark:bg-purple-950/20 border border-purple-100 dark:border-purple-900/30 transition-all h-full">
                             <Sparkles className="h-5 w-5 text-purple-600 mt-1 shrink-0" />
                             <div className="flex flex-col gap-0.5">
@@ -74,19 +82,19 @@ export function UpgradeAlert({ open, onOpenChange, catalogId }: UpgradeAlertProp
                             </div>
                         </div>
 
+                        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/20 border-2 border-teal-100 dark:border-teal-900/30 transition-all shadow-sm">
+                            <Crown className="h-5 w-5 text-teal-600 mt-1 shrink-0" />
+                            <div className="flex flex-col gap-0.5">
+                                <p className="font-black text-sm sm:text-base text-teal-900 dark:text-teal-300 tracking-tight">دعم فني وأولوية مميزة</p>
+                                <p className="text-[11px] font-medium text-teal-700/70 dark:text-teal-400/60 leading-tight">أولوية في الرد والدعم الفني لضمان استمرار أعمالك دائماً</p>
+                            </div>
+                        </div>
+
                         <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 transition-all h-full">
                             <EyeOff className="h-5 w-5 text-slate-600 dark:text-slate-400 mt-1 shrink-0" />
                             <div className="flex flex-col gap-0.5">
                                 <p className="font-black text-sm sm:text-base text-slate-900 dark:text-slate-300 tracking-tight">هوية متجرك فقط</p>
                                 <p className="text-[11px] font-medium text-slate-700/70 dark:text-slate-400/60 leading-tight">إخفاء حقوق وشعار "أونلاين كتالوج" (الفوتر)</p>
-                            </div>
-                        </div>
-
-                        <div className="sm:col-span-2 flex items-start gap-3 p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/20 border-2 border-teal-100 dark:border-teal-900/30 transition-all shadow-sm">
-                            <Crown className="h-5 w-5 text-teal-600 mt-1 shrink-0" />
-                            <div className="flex flex-col gap-0.5">
-                                <p className="font-black text-sm sm:text-base text-teal-900 dark:text-teal-300 tracking-tight">دعم فني وأولوية مميزة</p>
-                                <p className="text-[11px] font-medium text-teal-700/70 dark:text-teal-400/60 leading-tight">أولوية في الرد والدعم الفني لضمان استمرار أعمالك دائماً</p>
                             </div>
                         </div>
                     </div>

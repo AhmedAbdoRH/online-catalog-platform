@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { cn, formatPrice } from "@/lib/utils";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { ItemVariant } from "@/lib/types";
 import { ShareButtons } from './ShareButtons';
+import { DirectOrderForm } from './DirectOrderForm';
+import { saveCustomerData } from '@/app/actions/customer';
 
 interface ProductActionsProps {
     basePrice: number;
@@ -16,6 +19,14 @@ interface ProductActionsProps {
     productUrl: string;
     themeClass?: string;
     countryCode?: string | null;
+    directOrderEnabled?: boolean;
+    catalogId?: number;
+}
+
+interface DirectOrderFormData {
+    name: string;
+    phone: string;
+    address: string;
 }
 
 export function ProductActions({
@@ -26,7 +37,9 @@ export function ProductActions({
     catalogPhone,
     productUrl,
     themeClass,
-    countryCode
+    countryCode,
+    directOrderEnabled = true,
+    catalogId
 }: ProductActionsProps) {
     // Sort variants by price just in case
     const sortedVariants = [...variants].sort((a, b) => a.price - b.price);
@@ -35,6 +48,9 @@ export function ProductActions({
     const [selectedVariant, setSelectedVariant] = useState<ItemVariant | null>(
         sortedVariants.length > 0 ? sortedVariants[0] : null
     );
+
+    const [showDirectOrderDialog, setShowDirectOrderDialog] = useState(false);
+    const [customerData, setCustomerData] = useState<DirectOrderFormData | null>(null);
 
     const currentPrice = selectedVariant ? selectedVariant.price : basePrice;
 
@@ -54,11 +70,49 @@ export function ProductActions({
         message += `.\nالسعر: ${formatPrice(currentPrice, countryCode)}`;
         message += `\nالتفاصيل: ${productUrl}`;
 
+        // Add customer data if available and has content
+        if (customerData && (customerData.name || customerData.phone || customerData.address)) {
+            message += `\n\n━━━━━━━━━━━━━━━━━━`;
+            message += `\n📋 بيانات العميل:`;
+            message += `\n━━━━━━━━━━━━━━━━━━`;
+            if (customerData.name) message += `\n👤 الاسم: ${customerData.name}`;
+            if (customerData.phone) message += `\n📱 رقم الهاتف: ${customerData.phone}`;
+            if (customerData.address) message += `\n📍 العنوان: ${customerData.address}`;
+            message += `\n━━━━━━━━━━━━━━━━━━`;
+        }
 
         const encodedMessage = encodeURIComponent(message);
         const cleanPhone = catalogPhone.replace(/[^\d]/g, '');
 
         return `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+    };
+
+    const handleDirectOrderSubmit = (data: DirectOrderFormData) => {
+        setCustomerData(data);
+        setShowDirectOrderDialog(false);
+
+        // Save customer data to database
+        if (catalogId && data.name && data.phone) {
+            saveCustomerData(catalogId, data.name, data.phone, data.address || '');
+        }
+
+        // Open WhatsApp after form submission
+        const link = getWhatsAppLink();
+        if (link) {
+            window.open(link, '_blank');
+        }
+    };
+
+    const handleInquiry = () => {
+        setShowDirectOrderDialog(false);
+        // Open WhatsApp with inquiry message
+        if (catalogPhone) {
+            const message = `استفسار بخصوص الطلب ..`;
+            const encodedMessage = encodeURIComponent(message);
+            const cleanPhone = catalogPhone.replace(/[^\d]/g, '');
+            const link = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+            window.open(link, '_blank');
+        }
     };
 
     const whatsappLink = getWhatsAppLink();
@@ -109,15 +163,25 @@ export function ProductActions({
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-3">
                 {whatsappLink ? (
-                    <Button
-                        asChild
-                        className="flex-1 rounded-full bg-[#25D366] text-sm font-semibold shadow-[0_18px_40px_rgba(37,211,102,0.35)] hover:bg-[#1fb55b] h-12"
-                    >
-                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                    directOrderEnabled ? (
+                        <Button
+                            onClick={() => setShowDirectOrderDialog(true)}
+                            className="flex-1 rounded-full bg-[#25D366] text-sm font-semibold shadow-[0_18px_40px_rgba(37,211,102,0.35)] hover:bg-[#1fb55b] h-12"
+                        >
                             <MessageCircle className="ml-2 h-5 w-5" />
                             {sortedVariants.length > 0 ? `اطلب (${selectedVariant?.name || 'الآن'})` : 'اطلب عبر واتساب'}
-                        </a>
-                    </Button>
+                        </Button>
+                    ) : (
+                        <Button
+                            asChild
+                            className="flex-1 rounded-full bg-[#25D366] text-sm font-semibold shadow-[0_18px_40px_rgba(37,211,102,0.35)] hover:bg-[#1fb55b] h-12"
+                        >
+                            <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                                <MessageCircle className="ml-2 h-5 w-5" />
+                                {sortedVariants.length > 0 ? `اطلب (${selectedVariant?.name || 'الآن'})` : 'اطلب عبر واتساب'}
+                            </a>
+                        </Button>
+                    )
                 ) : (
                     <div className="flex-1 rounded-full border border-dashed border-muted-foreground/30 bg-muted/20 px-4 py-3 text-center text-sm text-muted-foreground">
                         <MessageCircle className="ml-2 inline h-4 w-4" />
@@ -127,6 +191,22 @@ export function ProductActions({
             </div>
 
             <ShareButtons catalogName={catalogName} />
+
+            {/* Direct Order Dialog */}
+            <Dialog open={showDirectOrderDialog} onOpenChange={setShowDirectOrderDialog}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Package className="h-5 w-5" />
+                            بيانات التوصيل
+                        </DialogTitle>
+                    </DialogHeader>
+                    <DirectOrderForm
+                        onSubmit={handleDirectOrderSubmit}
+                        onInquiry={handleInquiry}
+                    />
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

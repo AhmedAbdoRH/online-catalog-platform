@@ -24,12 +24,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { updateCatalog } from '@/app/actions/catalog';
+import { exportCustomersToCSV } from '@/app/actions/customer';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import type { Catalog } from '@/lib/types';
 import NextImage from 'next/image';
 import { Capacitor } from '@capacitor/core';
-import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp, Download } from 'lucide-react';
 import { ProUpgradeButton } from './ProUpgradeButton';
 import { Switch } from '../ui/switch';
 import { compressImage } from '@/lib/image-utils';
@@ -90,7 +91,86 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
 
   const [selectedTheme, setSelectedTheme] = useState(catalog.theme || 'default');
   const [hideFooter, setHideFooter] = useState(catalog.hide_footer || false);
+  const [directOrderEnabled, setDirectOrderEnabled] = useState(catalog.direct_order_enabled ?? true);
   const [showAllThemes, setShowAllThemes] = useState(false);
+
+  // Auto-save direct_order_enabled when toggled
+  useEffect(() => {
+    const autoSaveDirectOrderEnabled = async () => {
+      if (directOrderEnabled !== catalog.direct_order_enabled) {
+        try {
+          const formData = new FormData();
+          formData.append('catalogId', catalog.id.toString());
+          formData.append('name', catalog.name);
+          formData.append('display_name', catalog.display_name || catalog.name);
+          formData.append('direct_order_enabled', directOrderEnabled.toString());
+
+          const result = await updateCatalog(null, formData);
+          if (result.message && result.message.includes('خطأ')) {
+            console.error('Error auto-saving direct_order_enabled:', result.message);
+            toast({
+              title: 'فشل الحفظ التلقائي',
+              description: result.message,
+              variant: 'destructive',
+            });
+            // Revert on error
+            setDirectOrderEnabled(catalog.direct_order_enabled ?? true);
+          } else if (result.message && result.message.includes('بنجاح')) {
+            toast({
+              title: 'تم الحفظ',
+              description: result.message,
+            });
+          }
+        } catch (error) {
+          console.error('Error auto-saving direct_order_enabled:', error);
+        }
+      }
+    };
+
+    // Debounce to avoid too many calls
+    const timeoutId = setTimeout(() => {
+      autoSaveDirectOrderEnabled();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [directOrderEnabled, catalog.direct_order_enabled]);
+
+  const handleDownloadCSV = async () => {
+    try {
+      const result = await exportCustomersToCSV(catalog.id);
+
+      if (result.success && result.data) {
+        // Create a blob from the CSV data
+        const blob = new Blob([result.data], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `customers_${catalog.name}_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        toast({
+          title: 'تم التحميل بنجاح',
+          description: 'تم تحميل ملف بيانات العملاء',
+        });
+      } else {
+        toast({
+          title: 'فشل التحميل',
+          description: result.error || 'لا يوجد عملاء للتصدير',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error downloading CSV:', error);
+      toast({
+        title: 'حدث خطأ',
+        description: 'فشل تحميل ملف CSV',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const requestPermissions = async () => {
     if (Capacitor.isNativePlatform()) {
@@ -197,6 +277,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
       formData.append('country_code', catalog.country_code || '+20');
       formData.append('theme', selectedTheme);
       formData.append('hide_footer', hideFooter.toString());
+      formData.append('direct_order_enabled', directOrderEnabled.toString());
       formData.append(imageType, file, file.name || 'image.webp');
 
       const result = await updateCatalog(null, formData);
@@ -271,6 +352,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
 
       formData.append('theme', selectedTheme);
       formData.append('hide_footer', hideFooter.toString());
+      formData.append('direct_order_enabled', directOrderEnabled.toString());
 
       // Use manually passed file or state file
       const finalLogo = manualLogo !== undefined ? manualLogo : logoFile;
@@ -515,15 +597,15 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 <div className="flex items-center justify-between">
                   <FormLabel>تخصيص رابط المتجر</FormLabel>
                   {!isPro && (
-                    <button
-                      type="button"
-                      onClick={() => setIsUpgradeOpen(true)}
-                      className="flex items-center gap-1 text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
-                    >
-                      <Lock className="h-3 w-3" />
-                      باقة البرو
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setIsUpgradeOpen(true)}
+                    className="flex items-center gap-0.5 text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
+                  >
+                    <Lock className="h-2.5 w-2.5" />
+                    باقة البرو
+                  </button>
+                )}
                 </div>
                 <FormControl>
                   <div
@@ -637,6 +719,52 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
           </Button>
         </div>
 
+        {/* قسم الطلب المباشر */}
+        <div className="pt-6 border-t">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <FormLabel className="text-base cursor-pointer" onClick={() => setDirectOrderEnabled(!directOrderEnabled)}>
+                جمع بيانات العميل قبل الطلب
+              </FormLabel>
+              <FormDescription className="text-[11px] leading-tight">
+                جمع بيانات العميل (الاسم، الهاتف، العنوان) قبل الطلب
+              </FormDescription>
+            </div>
+            <div className="flex items-center gap-3">
+              <Switch
+                checked={directOrderEnabled}
+                onCheckedChange={setDirectOrderEnabled}
+                disabled={isSubmitting}
+              />
+            </div>
+          </div>
+          {directOrderEnabled && (
+            <div className="mt-3 flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={isPro ? handleDownloadCSV : () => setIsUpgradeOpen(true)}
+                disabled={isSubmitting}
+                className="gap-2 flex-1"
+              >
+                <Download className="h-4 w-4" />
+                تحميل بيانات العملاء كملف CSV
+              </Button>
+              {!isPro && (
+                <button
+                  type="button"
+                  onClick={() => setIsUpgradeOpen(true)}
+                  className="flex items-center gap-0.5 text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
+                >
+                  <Lock className="h-2.5 w-2.5" />
+                  باقة البرو
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* قسم إخفاء الفوتر */}
         <div className="pt-6 border-t relative">
           {!isPro && (
@@ -680,6 +808,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isSubmitting ? 'جاري الحفظ...' : 'حفظ التغييرات'}
         </Button>
+
         <UpgradeAlert open={isUpgradeOpen} onOpenChange={setIsUpgradeOpen} catalogId={catalog.id} />
       </form>
     </Form>

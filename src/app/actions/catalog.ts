@@ -242,6 +242,8 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   const theme = formData.get('theme') as string | null;
   const hideFooterStr = formData.get('hide_footer') as string | null;
   const hideFooter = hideFooterStr === 'true';
+  const directOrderEnabledStr = formData.get('direct_order_enabled') as string | null;
+  const directOrderEnabled = directOrderEnabledStr === 'true';
 
   let updateData: any = {
     name: validatedName,
@@ -250,6 +252,7 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     slogan: slogan,
     theme: theme || null,
     hide_footer: hideFooter,
+    direct_order_enabled: directOrderEnabled,
   };
 
   // Upload logo if provided

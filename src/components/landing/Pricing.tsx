@@ -37,6 +37,7 @@ const plans = [
       { text: 'عدد غير محدود من المنتجات والتصنيفات', included: true },
       { text: 'أنماط مظهر متعددة للمتجر', included: true },
       { text: 'إزالة شعار المنصة', included: true },
+      { text: 'جمع بيانات العملاء وتصدير CSV', included: true },
       { text: 'دعم فني بأولوية', included: true },
     ],
     cta: 'اشترك الآن',

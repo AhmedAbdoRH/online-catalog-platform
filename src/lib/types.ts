@@ -19,6 +19,7 @@ interface Database {
           country_code: string | null;
           theme: string | null;
           hide_footer: boolean | null;
+          direct_order_enabled: boolean | null;
         };
         Insert: {
           id?: number;
@@ -35,6 +36,7 @@ interface Database {
           country_code?: string | null;
           theme?: string | null;
           hide_footer?: boolean | null;
+          direct_order_enabled?: boolean | null;
         };
         Update: {
           id?: number;
@@ -52,6 +54,7 @@ interface Database {
           country_code?: string | null;
           theme?: string | null;
           hide_footer?: boolean | null;
+          direct_order_enabled?: boolean | null;
         };
       };
       categories: {
@@ -189,6 +192,16 @@ export type CatalogData = Catalog & {
 
 // Hierarchical category type for storefront views
 export type CategoryWithSubcategories = Category & {
-  menu_items: MenuItem[];
   subcategories: CategoryWithSubcategories[];
+  menu_items: MenuItem[];
+};
+
+export type Customer = {
+  id: number;
+  catalog_id: number;
+  name: string;
+  phone: string;
+  address: string | null;
+  first_order_date: string;
+  created_at: string;
 };
