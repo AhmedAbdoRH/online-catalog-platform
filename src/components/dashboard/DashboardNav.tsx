@@ -227,7 +227,7 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
           </form>
         </nav>
       </aside>
-      <header className="sticky top-0 z-30 flex h-auto min-h-14 items-center gap-4 border-b bg-background px-4 pt-10 pb-2 sm:pt-0 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:pr-20">
+      <header className="sticky top-0 z-30 flex h-auto min-h-14 items-center gap-4 border-b bg-background px-4 pt-10 pb-2 sm:pt-0 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:pr-14">
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <Button size="icon" variant="ghost" className="sm:hidden text-foreground">
@@ -356,7 +356,7 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
           </div>
         )}
 
-        <div className="mr-auto flex items-center gap-3 sm:gap-4 pl-4 sm:pl-0">
+        <div className="mr-auto flex items-center gap-3 sm:gap-4 sm:pl-0">
           {catalog && catalog.plan !== 'pro' && catalog.plan !== 'business' && (
             <>
               <Button 

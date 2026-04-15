@@ -27,14 +27,14 @@ export default async function DashboardLayout({
     .single();
 
   return (
-    <div className="flex min-h-[100dvh] w-full max-w-[100vw] flex-col bg-background relative overflow-x-hidden">
+    <div className="flex min-h-[100dvh] w-full flex-col bg-background relative overflow-x-clip">
       {catalog && <DashboardNav user={user} catalog={catalog} />}
       <div className={cn(
-        "flex flex-col flex-1 w-full max-w-full overflow-x-hidden",
+        "flex flex-col flex-1 w-full max-w-full",
         catalog ? "sm:gap-4 sm:py-4 sm:pr-14 pb-24 sm:pb-0" : "items-center justify-center min-h-[100dvh]"
       )}>
         <main className={cn(
-          "grid flex-1 items-start gap-4 md:gap-8 w-full max-w-full overflow-x-hidden",
+          "grid flex-1 items-start gap-4 md:gap-8 w-full max-w-full",
           catalog ? "p-4 sm:px-6 sm:py-0" : "w-full animate-in fade-in duration-1000"
         )}>
           {children}

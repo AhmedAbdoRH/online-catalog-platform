@@ -47,6 +47,10 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: '#0E343C',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -86,7 +90,7 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "font-tajawal antialiased min-h-[100dvh] bg-background text-foreground overflow-x-hidden w-full",
+          "font-tajawal antialiased min-h-[100dvh] bg-background text-foreground w-full",
           "selection:bg-brand-accent/20 selection:text-brand-accent"
         )}
       >
