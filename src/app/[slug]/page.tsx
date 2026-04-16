@@ -8,6 +8,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const baseUrl = 'https://online-catalog.net';
   
   if (!slug || slug === '_') {
     return {
@@ -15,55 +16,69 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const supabase = await createClient();
-  const { data: catalog } = await supabase
-    .from("catalogs")
-    .select("display_name, name, slogan, logo_url")
-    .eq("name", slug)
-    .single();
+  try {
+    const supabase = await createClient();
+    const { data: catalog, error } = await supabase
+      .from("catalogs")
+      .select("display_name, name, slogan, logo_url")
+      .eq("name", slug)
+      .single();
 
-  if (!catalog) {
+    if (error || !catalog) {
+      return {
+        title: 'أونلاين كاتلوج',
+      };
+    }
+
+    const storeName = catalog.display_name || catalog.name;
+    const description = catalog.slogan || `تصفح المنتجات والخدمات في متجر ${storeName}. اطلب الآن عبر الواتساب.`;
+    
+    // Ensure absolute URL for social preview
+    let logoUrl = catalog.logo_url;
+    if (!logoUrl) {
+      logoUrl = `${baseUrl}/logo.png`;
+    } else if (!logoUrl.startsWith('http')) {
+      logoUrl = `${baseUrl}${logoUrl.startsWith('/') ? '' : '/'}${logoUrl}`;
+    }
+
     return {
-      title: 'الكتالوج غير موجود | اونلاين كاتلوج',
-    };
-  }
-
-  const storeName = catalog.display_name || catalog.name;
-  const description = catalog.slogan || `تصفح المنتجات والخدمات في متجر ${storeName}. يمكنك الطلب مباشرة عبر الواتساب.`;
-  const logoUrl = catalog.logo_url || 'https://online-catalog.net/logo.png'; // Fallback to platform logo
-
-  return {
-    title: {
+      title: {
         absolute: catalog.slogan ? `${storeName} | ${catalog.slogan}` : `${storeName} | اونلاين كاتلوج`,
-    },
-    description: description,
-    openGraph: {
-      title: storeName,
-      description: description,
-      url: `https://online-catalog.net/${slug}`,
-      siteName: 'اونلاين كاتلوج',
-      images: [
-        {
-          url: logoUrl,
-          width: 800,
-          height: 800,
-          alt: storeName,
-        },
-      ],
-      locale: 'ar_SA',
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: storeName,
-      description: description,
-      images: [logoUrl],
-    },
-    icons: {
+      },
+      description,
+      openGraph: {
+        title: storeName,
+        description,
+        url: `${baseUrl}/${slug}`,
+        siteName: 'اونلاين كاتلوج',
+        images: [
+          {
+            url: logoUrl,
+            width: 600,
+            height: 600,
+            alt: storeName,
+          },
+        ],
+        locale: 'ar_SA',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary',
+        title: storeName,
+        description,
+        images: [logoUrl],
+      },
+      icons: {
         icon: logoUrl,
         apple: logoUrl,
-    }
-  };
+      }
+    };
+  } catch (err) {
+    console.error("Metadata error:", err);
+    return {
+      title: 'أونلاين كاتلوج',
+    };
+  }
 }
 
 export async function generateStaticParams() {
