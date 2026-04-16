@@ -2,6 +2,8 @@ import LandingHeader from '@/components/landing/LandingHeader';
 import HeroSection from '@/components/landing/HeroSection';
 import ValueProps from '@/components/landing/ValueProps';
 import Features from '@/components/landing/Features';
+import ProFeaturesHighlight from '@/components/landing/ProFeaturesHighlight';
+
 import Pricing from '@/components/landing/Pricing';
 import CTASection from '@/components/landing/CTASection';
 import LandingFooter from '@/components/landing/LandingFooter';
@@ -15,6 +17,8 @@ export default function LandingPage() {
         <HeroSection />
         <ValueProps />
         <Features />
+        <ProFeaturesHighlight />
+
         <Pricing />
         <CTASection />
       </main>
