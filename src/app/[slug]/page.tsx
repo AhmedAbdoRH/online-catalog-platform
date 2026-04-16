@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import ClientCatalogPage from "./ClientCatalogPage";
 
 type Props = {
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data: catalog, error } = await supabase
       .from("catalogs")
       .select("display_name, name, slogan, logo_url")
