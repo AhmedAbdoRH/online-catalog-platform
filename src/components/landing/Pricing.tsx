@@ -5,6 +5,7 @@ import ScrollAnimation from './ScrollAnimation';
 import {
   FREE_PLAN_MAX_PRODUCTS,
   formatPlanPrice,
+  PRO_MONTHLY_ORIGINAL_PRICE_EGP,
   PRO_MONTHLY_PRICE_EGP,
   PRO_YEARLY_PRICE_EGP,
 } from '@/lib/plans';
@@ -30,7 +31,17 @@ const plans = [
     name: 'Pro',
     price: formatPlanPrice(PRO_YEARLY_PRICE_EGP),
     period: '/ سنوياً',
-    secondaryPrice: `أو ${formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} / شهرياً`,
+    secondaryPrice: (
+      <div className="flex flex-col items-center gap-1">
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground/60 line-through text-xs italic">السعر الأصلي: {formatPlanPrice(PRO_MONTHLY_ORIGINAL_PRICE_EGP)}</span>
+          <span className="text-brand-accent flex items-center gap-1">
+            الحالي: {formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} <span className="text-[10px]">✅</span>
+          </span>
+        </div>
+        <div className="text-[10px] text-amber-500 font-black animate-pulse">لفترة محدودة جداً ⏳</div>
+      </div>
+    ),
     description: 'للمتاجر المتنامية التي تحتاج المزيد',
     icon: Zap,
     features: [
@@ -104,7 +115,7 @@ export default function Pricing() {
                       {plan.period && <span className="text-muted-foreground">{plan.period}</span>}
                     </div>
                     {plan.secondaryPrice && (
-                      <div className="text-sm text-brand-accent font-bold mt-1 bg-brand-accent/10 px-3 py-1 rounded-full">
+                      <div className="text-sm font-bold mt-1 bg-brand-accent/5 px-3 py-2 rounded-2xl border border-brand-accent/10">
                         {plan.secondaryPrice}
                       </div>
                     )}

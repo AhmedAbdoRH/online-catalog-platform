@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { Crown, Sparkles, Palette, Infinity, Link as LinkIcon, Image as ImageIcon, EyeOff, Download } from "lucide-react";
 import { ProUpgradeButton } from "./ProUpgradeButton";
-import { formatPlanPrice, PRO_MONTHLY_PRICE_EGP } from "@/lib/plans";
+import { formatPlanPrice, PRO_MONTHLY_PRICE_EGP, PRO_MONTHLY_ORIGINAL_PRICE_EGP } from "@/lib/plans";
 
 interface UpgradeAlertProps {
     open: boolean;
@@ -29,8 +29,14 @@ export function UpgradeAlert({ open, onOpenChange, catalogId }: UpgradeAlertProp
                 </DialogHeader>
 
                 <div className="flex-1 overflow-y-auto px-6 py-2 space-y-5 custom-scrollbar">
-                    <div className="rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-900/10 dark:border-amber-900/30 px-4 py-2 text-center text-[11px] font-bold text-amber-900 dark:text-amber-400">
-                        استمتع بكل المزايا بسعر يبدأ من {formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} شهرياً فقط
+                    <div className="rounded-xl border-2 border-amber-200 bg-amber-50 dark:bg-amber-900/10 dark:border-amber-900/30 px-4 py-3 text-center flex flex-col items-center gap-1 shadow-sm">
+                        <div className="flex items-center gap-2">
+                             <span className="text-[10px] text-muted-foreground/60 line-through italic">السعر الأصلي: {formatPlanPrice(PRO_MONTHLY_ORIGINAL_PRICE_EGP)}</span>
+                             <span className="text-sm font-black text-amber-600 flex items-center gap-1">
+                                الحالي: {formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} ✅
+                             </span>
+                        </div>
+                        <p className="text-[11px] font-black text-red-500 animate-pulse">🔥 عرض لفترة محدودة جداً</p>
                     </div>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-4 items-stretch max-w-2xl mx-auto">
