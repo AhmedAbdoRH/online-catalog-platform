@@ -161,16 +161,10 @@ export default function ProFeaturesHighlight() {
             
             <div className="relative bg-background/95 backdrop-blur-xl rounded-[2.9rem] p-10 sm:p-20 flex flex-col items-center justify-center text-center">
               <Sparkles className="w-16 h-16 text-brand-accent mb-8 animate-pulse" />
-              
               <h3 className="text-3xl sm:text-5xl font-black mb-6 text-white font-headline leading-tight">
                 هل تريد أن يرى الجميع متجرك <br className="hidden sm:block" /> بالصورة التي <span className="text-brand-accent">يستحقها</span>؟
               </h3>
-              
-              <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-                باقة البرو هي استثمارك الأذكى لهذا العام. انضم لأكثر من 500 تاجر محترف يعتمدون علينا يومياً.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-6 w-full max-w-md">
+              <div className="flex flex-col sm:flex-row gap-6 w-full max-w-md mt-10">
                 <motion.a
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

@@ -5,7 +5,8 @@ export const FREE_PLAN_MAX_CATEGORIES = 5;
 
 export const PRO_MONTHLY_ORIGINAL_PRICE_EGP = 350;
 export const PRO_MONTHLY_PRICE_EGP = 250;
-export const PRO_YEARLY_PRICE_EGP = 3200;
+export const PRO_YEARLY_ORIGINAL_PRICE_EGP = 3200;
+export const PRO_YEARLY_PRICE_EGP = 3000;
 
 export function formatPlanPrice(price: number): string {
   return `${price} ج.م`;

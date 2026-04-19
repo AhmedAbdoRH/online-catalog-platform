@@ -9,6 +9,7 @@ import {
   formatPlanPrice,
   PRO_MONTHLY_ORIGINAL_PRICE_EGP,
   PRO_MONTHLY_PRICE_EGP,
+  PRO_YEARLY_ORIGINAL_PRICE_EGP,
   PRO_YEARLY_PRICE_EGP,
 } from "@/lib/plans";
 
@@ -27,7 +28,7 @@ const faqs = [
   },
   {
     q: "ما أسعار باقة البرو؟",
-    a: `باقة البرو متاحة حالياً بعرض لفترة محدودة بسعر ${formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} شهرياً بدلاً من ${formatPlanPrice(PRO_MONTHLY_ORIGINAL_PRICE_EGP)}، أو ${formatPlanPrice(PRO_YEARLY_PRICE_EGP)} سنوياً.`,
+    a: `باقة البرو متاحة حالياً بعرض لفترة محدودة بسعر ${formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} شهرياً بدلاً من ${formatPlanPrice(PRO_MONTHLY_ORIGINAL_PRICE_EGP)}، أو ${formatPlanPrice(PRO_YEARLY_PRICE_EGP)} سنوياً بدلاً من ${formatPlanPrice(PRO_YEARLY_ORIGINAL_PRICE_EGP)}.`,
   },
   {
     q: "هل يوجد دعم فني؟",

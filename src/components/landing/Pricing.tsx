@@ -7,6 +7,7 @@ import {
   formatPlanPrice,
   PRO_MONTHLY_ORIGINAL_PRICE_EGP,
   PRO_MONTHLY_PRICE_EGP,
+  PRO_YEARLY_ORIGINAL_PRICE_EGP,
   PRO_YEARLY_PRICE_EGP,
 } from '@/lib/plans';
 
@@ -111,7 +112,14 @@ export default function Pricing() {
                   <div className="flex flex-col gap-1 items-center">
                     {plan.prefix && <span className="text-sm text-muted-foreground">{plan.prefix}</span>}
                     <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-black">{plan.price}</span>
+                      {plan.name === 'Pro' ? (
+                        <div className="flex flex-col items-center">
+                           <span className="text-sm text-muted-foreground/50 line-through italic">{formatPlanPrice(PRO_YEARLY_ORIGINAL_PRICE_EGP)}</span>
+                           <span className="text-4xl font-black">{plan.price}</span>
+                        </div>
+                      ) : (
+                        <span className="text-4xl font-black">{plan.price}</span>
+                      )}
                       {plan.period && <span className="text-muted-foreground">{plan.period}</span>}
                     </div>
                     {plan.secondaryPrice && (
