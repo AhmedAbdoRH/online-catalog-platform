@@ -30,7 +30,7 @@ import { useRouter } from 'next/navigation';
 import type { Catalog } from '@/lib/types';
 import NextImage from 'next/image';
 import { Capacitor } from '@capacitor/core';
-import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp, Download } from 'lucide-react';
+import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp, Download, Facebook, Instagram, Twitter, Music2, Share2 } from 'lucide-react';
 import { ProUpgradeButton } from './ProUpgradeButton';
 import { Switch } from '../ui/switch';
 import { compressImage } from '@/lib/image-utils';
@@ -605,81 +605,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             )}
           />
 
-          <div className="pt-4 border-t space-y-4">
-            <FormLabel className="text-lg font-bold">روابط التواصل الاجتماعي</FormLabel>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="facebook_url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs">فيس بوك</FormLabel>
-                    <FormControl>
-                      <Input {...field} disabled={isSubmitting} placeholder="https://facebook.com/..." className="bg-white text-[#1e3a5f]" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              <FormField
-                control={form.control}
-                name="instagram_url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs">إنستجرام</FormLabel>
-                    <FormControl>
-                      <Input {...field} disabled={isSubmitting} placeholder="https://instagram.com/..." className="bg-white text-[#1e3a5f]" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="tiktok_url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs">تيك توك</FormLabel>
-                    <FormControl>
-                      <Input {...field} disabled={isSubmitting} placeholder="https://tiktok.com/@..." className="bg-white text-[#1e3a5f]" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="snapchat_url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs">سناب شات</FormLabel>
-                    <FormControl>
-                      <Input {...field} disabled={isSubmitting} placeholder="https://snapchat.com/add/..." className="bg-white text-[#1e3a5f]" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="twitter_url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs">تويتر / X</FormLabel>
-                    <FormControl>
-                      <Input {...field} disabled={isSubmitting} placeholder="https://twitter.com/..." className="bg-white text-[#1e3a5f]" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
 
 
           <FormField
@@ -892,6 +818,121 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 checked={hideFooter}
                 onCheckedChange={setHideFooter}
                 disabled={!isPro || isSubmitting}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* روابط التواصل الاجتماعي */}
+        <div className="pt-6 border-t">
+          <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-200/60 shadow-sm space-y-4">
+            <div className="flex flex-col">
+              <FormLabel className="text-base font-bold text-slate-800 flex items-center gap-2">
+                <Share2 className="h-4 w-4 text-brand-primary" />
+                روابط التواصل الاجتماعي
+              </FormLabel>
+              <FormDescription className="text-[11px]">أضف روابط حساباتك لتظهر في واجهة المتجر</FormDescription>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
+              <FormField
+                control={form.control}
+                name="facebook_url"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-slate-600">
+                      <Facebook className="h-3 w-3 text-blue-600" />
+                      فيس بوك
+                    </FormLabel>
+                    <div className="flex gap-1.5">
+                      <FormControl>
+                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://facebook.com/..." className="bg-white h-9 text-xs border-slate-200 focus:border-blue-400" />
+                      </FormControl>
+                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold">حفظ</Button>
+                    </div>
+                    <FormMessage className="text-[9px]" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="instagram_url"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-slate-600">
+                      <Instagram className="h-3 w-3 text-pink-600" />
+                      إنستجرام
+                    </FormLabel>
+                    <div className="flex gap-1.5">
+                      <FormControl>
+                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://instagram.com/..." className="bg-white h-9 text-xs border-slate-200 focus:border-pink-400" />
+                      </FormControl>
+                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 hover:opacity-90 text-white text-[10px] font-bold">حفظ</Button>
+                    </div>
+                    <FormMessage className="text-[9px]" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tiktok_url"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-slate-600">
+                      <Music2 className="h-3 w-3 text-black" />
+                      تيك توك
+                    </FormLabel>
+                    <div className="flex gap-1.5">
+                      <FormControl>
+                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://tiktok.com/@..." className="bg-white h-9 text-xs border-slate-200 focus:border-black" />
+                      </FormControl>
+                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-black hover:bg-gray-900 text-white text-[10px] font-bold">حفظ</Button>
+                    </div>
+                    <FormMessage className="text-[9px]" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="snapchat_url"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-slate-600">
+                      <svg className="h-3 w-3 fill-yellow-500" viewBox="0 0 24 24"><path d="M12 2.992c-5.116 0-7.228 3.518-7.228 6.556 0 1.341.488 2.378 1.157 3.167-.179.083-.348.192-.477.34-.351.401-.421 1.01-.174 1.483.251.481.821.72 1.365.612.062.277.202.528.421.724 1.132.969 2.502.535 3.167.311.231.781.851 1.403 1.769 1.403s1.538-.622 1.769-1.403c.665.224 2.035.658 3.167-.311.219-.196.359-.447.421-.724.544.108 1.114-.131 1.365-.612.247-.473.177-1.082-.174-1.483-.129-.148-.298-.257-.477-.34.669-.789 1.157-1.826 1.157-3.167 0-3.038-2.112-6.556-7.228-6.556z"/></svg>
+                      سناب شات
+                    </FormLabel>
+                    <div className="flex gap-1.5">
+                      <FormControl>
+                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://snapchat.com/add/..." className="bg-white h-9 text-xs border-slate-200 focus:border-yellow-400" />
+                      </FormControl>
+                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-[#FFFC00] hover:bg-[#E6E300] text-black text-[10px] font-bold">حفظ</Button>
+                    </div>
+                    <FormMessage className="text-[9px]" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="twitter_url"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-slate-600">
+                      <Twitter className="h-3 w-3 text-slate-900" />
+                      تويتر / X
+                    </FormLabel>
+                    <div className="flex gap-1.5">
+                      <FormControl>
+                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://x.com/..." className="bg-white h-9 text-xs border-slate-200 focus:border-slate-400" />
+                      </FormControl>
+                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-gray-800 hover:bg-gray-900 text-white text-[10px] font-bold">حفظ</Button>
+                    </div>
+                    <FormMessage className="text-[9px]" />
+                  </FormItem>
+                )}
               />
             </div>
           </div>
