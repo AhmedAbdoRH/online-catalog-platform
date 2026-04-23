@@ -245,6 +245,13 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   const directOrderEnabledStr = formData.get('direct_order_enabled') as string | null;
   const directOrderEnabled = directOrderEnabledStr === 'true';
 
+  // Social media links
+  const facebook_url = (formData.get('facebook_url') as string | null) || null;
+  const instagram_url = (formData.get('instagram_url') as string | null) || null;
+  const tiktok_url = (formData.get('tiktok_url') as string | null) || null;
+  const snapchat_url = (formData.get('snapchat_url') as string | null) || null;
+  const twitter_url = (formData.get('twitter_url') as string | null) || null;
+
   let updateData: any = {
     name: validatedName,
     display_name: validatedDisplayName,
@@ -253,6 +260,11 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     theme: theme || null,
     hide_footer: hideFooter,
     direct_order_enabled: directOrderEnabled,
+    facebook_url: facebook_url || null,
+    instagram_url: instagram_url || null,
+    tiktok_url: tiktok_url || null,
+    snapchat_url: snapchat_url || null,
+    twitter_url: twitter_url || null,
   };
 
   // Upload logo if provided

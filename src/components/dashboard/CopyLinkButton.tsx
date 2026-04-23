@@ -29,7 +29,7 @@ export function CopyLinkButton({ url }: CopyLinkButtonProps) {
       onClick={handleCopy}
     >
       <Clipboard className="h-4 w-4" />
-      {copied ? 'تم النسخ!' : 'نسخ الرابط'}
+      {copied ? 'تم النسخ!' : 'نسخ رابط المتجر'}
     </Button>
   );
 }

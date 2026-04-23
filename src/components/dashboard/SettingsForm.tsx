@@ -74,6 +74,11 @@ const formSchema = z.object({
   ),
   theme: z.string().optional(),
   country_code: z.string().optional(),
+  facebook_url: z.string().url('رابط فيس بوك غير صالح').optional().or(z.literal('')),
+  instagram_url: z.string().url('رابط إنستجرام غير صالح').optional().or(z.literal('')),
+  tiktok_url: z.string().url('رابط تيك توك غير صالح').optional().or(z.literal('')),
+  snapchat_url: z.string().url('رابط سناب شات غير صالح').optional().or(z.literal('')),
+  twitter_url: z.string().url('رابط تويتر غير صالح').optional().or(z.literal('')),
 });
 
 export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPhone?: string }) {
@@ -259,6 +264,11 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
       whatsapp_number: initialPhone,
       theme: catalog.theme || 'default',
       country_code: initialCC,
+      facebook_url: catalog.facebook_url || '',
+      instagram_url: catalog.instagram_url || '',
+      tiktok_url: catalog.tiktok_url || '',
+      snapchat_url: catalog.snapchat_url || '',
+      twitter_url: catalog.twitter_url || '',
     },
   });
 
@@ -353,6 +363,12 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
       formData.append('theme', selectedTheme);
       formData.append('hide_footer', hideFooter.toString());
       formData.append('direct_order_enabled', directOrderEnabled.toString());
+
+      formData.append('facebook_url', values.facebook_url || '');
+      formData.append('instagram_url', values.instagram_url || '');
+      formData.append('tiktok_url', values.tiktok_url || '');
+      formData.append('snapchat_url', values.snapchat_url || '');
+      formData.append('twitter_url', values.twitter_url || '');
 
       // Use manually passed file or state file
       const finalLogo = manualLogo !== undefined ? manualLogo : logoFile;
@@ -588,6 +604,83 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
               </FormItem>
             )}
           />
+
+          <div className="pt-4 border-t space-y-4">
+            <FormLabel className="text-lg font-bold">روابط التواصل الاجتماعي</FormLabel>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="facebook_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">فيس بوك</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={isSubmitting} placeholder="https://facebook.com/..." className="bg-white text-[#1e3a5f]" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="instagram_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">إنستجرام</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={isSubmitting} placeholder="https://instagram.com/..." className="bg-white text-[#1e3a5f]" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tiktok_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">تيك توك</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={isSubmitting} placeholder="https://tiktok.com/@..." className="bg-white text-[#1e3a5f]" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="snapchat_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">سناب شات</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={isSubmitting} placeholder="https://snapchat.com/add/..." className="bg-white text-[#1e3a5f]" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="twitter_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">تويتر / X</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={isSubmitting} placeholder="https://twitter.com/..." className="bg-white text-[#1e3a5f]" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
 
           <FormField
             control={form.control}

@@ -20,6 +20,11 @@ interface Database {
           theme: string | null;
           hide_footer: boolean | null;
           direct_order_enabled: boolean | null;
+          facebook_url: string | null;
+          instagram_url: string | null;
+          tiktok_url: string | null;
+          snapchat_url: string | null;
+          twitter_url: string | null;
         };
         Insert: {
           id?: number;
@@ -37,6 +42,11 @@ interface Database {
           theme?: string | null;
           hide_footer?: boolean | null;
           direct_order_enabled?: boolean | null;
+          facebook_url?: string | null;
+          instagram_url?: string | null;
+          tiktok_url?: string | null;
+          snapchat_url?: string | null;
+          twitter_url?: string | null;
         };
         Update: {
           id?: number;
@@ -55,6 +65,11 @@ interface Database {
           theme?: string | null;
           hide_footer?: boolean | null;
           direct_order_enabled?: boolean | null;
+          facebook_url?: string | null;
+          instagram_url?: string | null;
+          tiktok_url?: string | null;
+          snapchat_url?: string | null;
+          twitter_url?: string | null;
         };
       };
       categories: {

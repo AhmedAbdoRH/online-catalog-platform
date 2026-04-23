@@ -42,7 +42,7 @@ import { cn } from '@/lib/utils';
 import { APP_NAME } from '@/lib/constants';
 import { SupportButton } from './SupportButton';
 import { UpgradeAlert } from './UpgradeAlert';
-import { StoreLinkActions } from './StoreLinkActions';
+
 
 const navItems = [
   { href: '/dashboard', icon: Home, label: 'لوحة التحكم' },
@@ -358,7 +358,6 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
         )}
 
         <div className="mr-auto flex items-center gap-3 sm:gap-4 sm:pl-0 shrink-0">
-          {catalog && <StoreLinkActions storeId={catalog.id} />}
           {catalog && catalog.plan !== 'pro' && catalog.plan !== 'business' && (
             <>
               <Button 

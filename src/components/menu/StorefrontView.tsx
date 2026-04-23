@@ -23,7 +23,11 @@ import {
   Palette,
   Settings,
   Lock,
-  Crown
+  Crown,
+  Facebook,
+  Instagram,
+  Twitter,
+  Music2
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -472,7 +476,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                       duration: 0.5
                     }
                   }}
-                  className="mt-4"
+                  className="mt-4 flex flex-col items-center gap-4"
                 >
                   <Button
                     asChild
@@ -488,6 +492,77 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                       تواصل معنا عبر واتساب
                     </a>
                   </Button>
+
+                  {/* Social Media Links */}
+                  <div className="flex items-center gap-4">
+                    {luxeCatalog.facebook_url && (
+                      <motion.a
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        href={luxeCatalog.facebook_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                        title="Facebook"
+                      >
+                        <Facebook className="h-5 w-5" />
+                      </motion.a>
+                    )}
+                    {luxeCatalog.instagram_url && (
+                      <motion.a
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        href={luxeCatalog.instagram_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                        title="Instagram"
+                      >
+                        <Instagram className="h-5 w-5" />
+                      </motion.a>
+                    )}
+                    {luxeCatalog.tiktok_url && (
+                      <motion.a
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        href={luxeCatalog.tiktok_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                        title="TikTok"
+                      >
+                        <Music2 className="h-5 w-5" />
+                      </motion.a>
+                    )}
+                    {luxeCatalog.snapchat_url && (
+                      <motion.a
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        href={luxeCatalog.snapchat_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                        title="Snapchat"
+                      >
+                        <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M12 2.992c-5.116 0-7.228 3.518-7.228 6.556 0 1.341.488 2.378 1.157 3.167-.179.083-.348.192-.477.34-.351.401-.421 1.01-.174 1.483.251.481.821.72 1.365.612.062.277.202.528.421.724 1.132.969 2.502.535 3.167.311.231.781.851 1.403 1.769 1.403s1.538-.622 1.769-1.403c.665.224 2.035.658 3.167-.311.219-.196.359-.447.421-.724.544.108 1.114-.131 1.365-.612.247-.473.177-1.082-.174-1.483-.129-.148-.298-.257-.477-.34.669-.789 1.157-1.826 1.157-3.167 0-3.038-2.112-6.556-7.228-6.556z"/>
+                        </svg>
+                      </motion.a>
+                    )}
+                    {luxeCatalog.twitter_url && (
+                      <motion.a
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        href={luxeCatalog.twitter_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                        title="Twitter / X"
+                      >
+                        <Twitter className="h-5 w-5" />
+                      </motion.a>
+                    )}
+                  </div>
                 </motion.div>
               )}
             </div>
