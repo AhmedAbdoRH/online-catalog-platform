@@ -828,11 +828,11 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
           <div className="bg-gradient-to-br from-brand-primary/10 to-brand-luxury/5 rounded-xl p-4 border border-brand-primary/10 shadow-sm space-y-4 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-brand-primary/5 rounded-full blur-2xl -mr-12 -mt-12 pointer-events-none" />
             <div className="flex flex-col">
-              <FormLabel className="text-base font-bold text-slate-800 flex items-center gap-2">
-                <Share2 className="h-4 w-4 text-brand-primary" />
+              <FormLabel className="text-base font-bold text-white flex items-center gap-2">
+                <Share2 className="h-4 w-4 text-white" />
                 روابط التواصل الاجتماعي
               </FormLabel>
-              <FormDescription className="text-[11px]">أضف روابط حساباتك لتظهر في واجهة المتجر</FormDescription>
+              <FormDescription className="text-[11px] text-white/80">أضف روابط حساباتك لتظهر في واجهة المتجر</FormDescription>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
@@ -841,7 +841,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 name="facebook_url"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-slate-600">
+                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-white/90">
                       <Facebook className="h-3 w-3 text-blue-600" />
                       فيس بوك
                     </FormLabel>
@@ -861,7 +861,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 name="instagram_url"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-slate-600">
+                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-white/90">
                       <Instagram className="h-3 w-3 text-pink-600" />
                       إنستجرام
                     </FormLabel>
@@ -881,7 +881,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 name="tiktok_url"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-slate-600">
+                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-white/90">
                       <Music2 className="h-3 w-3 text-black" />
                       تيك توك
                     </FormLabel>
@@ -901,7 +901,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 name="snapchat_url"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-slate-600">
+                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-white/90">
                       <svg className="h-3 w-3 fill-yellow-500" viewBox="0 0 24 24"><path d="M12 2.992c-5.116 0-7.228 3.518-7.228 6.556 0 1.341.488 2.378 1.157 3.167-.179.083-.348.192-.477.34-.351.401-.421 1.01-.174 1.483.251.481.821.72 1.365.612.062.277.202.528.421.724 1.132.969 2.502.535 3.167.311.231.781.851 1.403 1.769 1.403s1.538-.622 1.769-1.403c.665.224 2.035.658 3.167-.311.219-.196.359-.447.421-.724.544.108 1.114-.131 1.365-.612.247-.473.177-1.082-.174-1.483-.129-.148-.298-.257-.477-.34.669-.789 1.157-1.826 1.157-3.167 0-3.038-2.112-6.556-7.228-6.556z"/></svg>
                       سناب شات
                     </FormLabel>
@@ -921,7 +921,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 name="twitter_url"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-slate-600">
+                    <FormLabel className="text-[10px] flex items-center gap-1 font-semibold text-white/90">
                       <Twitter className="h-3 w-3 text-slate-900" />
                       تويتر / X
                     </FormLabel>
