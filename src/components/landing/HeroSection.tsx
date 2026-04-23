@@ -593,24 +593,7 @@ export default function HeroSection() {
                 </div>
               </ScrollAnimation>
 
-              <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full sm:w-auto justify-center lg:justify-start">
 
-
-
-                {/* Demo Store Button */}
-                <ScrollAnimation animation="fade-left" delay={0.8}>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl border border-brand-accent/40 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-brand-accent w-full sm:w-auto transition-all font-bold"
-                    asChild
-                  >
-                    <Link href="https://online-catalog.net/elfath" target="_blank" rel="noopener noreferrer">
-                      تصفح متجر تجريبي
-                    </Link>
-                  </Button>
-                </ScrollAnimation>
-              </div>
             </div>
 
           </div>

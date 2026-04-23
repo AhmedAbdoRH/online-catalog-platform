@@ -42,6 +42,7 @@ import { cn } from '@/lib/utils';
 import { APP_NAME } from '@/lib/constants';
 import { SupportButton } from './SupportButton';
 import { UpgradeAlert } from './UpgradeAlert';
+import { StoreLinkActions } from './StoreLinkActions';
 
 const navItems = [
   { href: '/dashboard', icon: Home, label: 'لوحة التحكم' },
@@ -332,8 +333,8 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
         </Sheet>
 
         {catalog && (
-          <div className="flex items-center gap-3 flex-1 overflow-hidden">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 overflow-hidden">
+          <div className="flex items-center gap-3 flex-1 overflow-hidden min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 overflow-hidden min-w-0">
               <h1 className="text-base sm:text-xl font-bold tracking-tight text-foreground truncate">
                 {pathname === '/dashboard' ? 'لوحة التحكم' :
                   pathname === '/dashboard/categories' ? 'التصنيفات' :
@@ -356,7 +357,8 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
           </div>
         )}
 
-        <div className="mr-auto flex items-center gap-3 sm:gap-4 sm:pl-0">
+        <div className="mr-auto flex items-center gap-3 sm:gap-4 sm:pl-0 shrink-0">
+          {catalog && <StoreLinkActions storeId={catalog.id} />}
           {catalog && catalog.plan !== 'pro' && catalog.plan !== 'business' && (
             <>
               <Button 

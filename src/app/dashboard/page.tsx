@@ -124,11 +124,13 @@ export default async function DashboardPage() {
             <CardDescription className="hidden sm:block text-xs">شارك هذا الرابط مع عملائك للوصول إلى متجرك.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 z-10 relative py-4 px-4 sm:px-6 pt-0">
-            <div className="flex-1 bg-background/50 p-2 sm:p-3 rounded-lg border border-border/50 w-full font-mono text-xs sm:text-sm flex items-center justify-between gap-2">
-              <Link href={catalogUrl} target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary transition-colors truncate">
+            <div className="flex-1 bg-background/50 p-2 sm:p-3 rounded-lg border border-border/50 w-full font-mono text-xs sm:text-sm flex items-center justify-between gap-2 min-w-0">
+              <Link href={catalogUrl} target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary transition-colors truncate min-w-0">
                 {catalogUrl}
               </Link>
-              <QRCodeButton url={qrCodeUrl} storeName={catalog.name} />
+              <div className="shrink-0">
+                <QRCodeButton url={qrCodeUrl} storeName={catalog.name} />
+              </div>
             </div>
             <div className="flex gap-2 w-full sm:w-auto">
               <StorePreviewModal url={catalogUrl} storeName={catalog.display_name || catalog.name} logoUrl={catalog.logo_url} />
