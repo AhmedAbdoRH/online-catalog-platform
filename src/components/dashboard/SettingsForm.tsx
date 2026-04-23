@@ -825,7 +825,8 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
 
         {/* روابط التواصل الاجتماعي */}
         <div className="pt-6 border-t">
-          <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-200/60 shadow-sm space-y-4">
+          <div className="bg-gradient-to-br from-brand-primary/10 to-brand-luxury/5 rounded-xl p-4 border border-brand-primary/10 shadow-sm space-y-4 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-brand-primary/5 rounded-full blur-2xl -mr-12 -mt-12 pointer-events-none" />
             <div className="flex flex-col">
               <FormLabel className="text-base font-bold text-slate-800 flex items-center gap-2">
                 <Share2 className="h-4 w-4 text-brand-primary" />
@@ -846,7 +847,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                     </FormLabel>
                     <div className="flex gap-1.5">
                       <FormControl>
-                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://facebook.com/..." className="bg-white h-9 text-xs border-slate-200 focus:border-blue-400" />
+                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://..." className="bg-white/80 h-9 text-xs border-slate-200 focus:border-brand-primary text-black font-medium" />
                       </FormControl>
                       <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold">حفظ</Button>
                     </div>
@@ -866,7 +867,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                     </FormLabel>
                     <div className="flex gap-1.5">
                       <FormControl>
-                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://instagram.com/..." className="bg-white h-9 text-xs border-slate-200 focus:border-pink-400" />
+                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://..." className="bg-white/80 h-9 text-xs border-slate-200 focus:border-brand-primary text-black font-medium" />
                       </FormControl>
                       <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 hover:opacity-90 text-white text-[10px] font-bold">حفظ</Button>
                     </div>
@@ -886,7 +887,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                     </FormLabel>
                     <div className="flex gap-1.5">
                       <FormControl>
-                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://tiktok.com/@..." className="bg-white h-9 text-xs border-slate-200 focus:border-black" />
+                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://..." className="bg-white/80 h-9 text-xs border-slate-200 focus:border-brand-primary text-black font-medium" />
                       </FormControl>
                       <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-black hover:bg-gray-900 text-white text-[10px] font-bold">حفظ</Button>
                     </div>
@@ -906,7 +907,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                     </FormLabel>
                     <div className="flex gap-1.5">
                       <FormControl>
-                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://snapchat.com/add/..." className="bg-white h-9 text-xs border-slate-200 focus:border-yellow-400" />
+                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://..." className="bg-white/80 h-9 text-xs border-slate-200 focus:border-brand-primary text-black font-medium" />
                       </FormControl>
                       <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-[#FFFC00] hover:bg-[#E6E300] text-black text-[10px] font-bold">حفظ</Button>
                     </div>
@@ -926,7 +927,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                     </FormLabel>
                     <div className="flex gap-1.5">
                       <FormControl>
-                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://x.com/..." className="bg-white h-9 text-xs border-slate-200 focus:border-slate-400" />
+                        <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://..." className="bg-white/80 h-9 text-xs border-slate-200 focus:border-brand-primary text-black font-medium" />
                       </FormControl>
                       <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-gray-800 hover:bg-gray-900 text-white text-[10px] font-bold">حفظ</Button>
                     </div>
