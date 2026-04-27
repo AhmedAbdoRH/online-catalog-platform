@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/table';
 import type { Category, MenuItemWithDetails } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Package } from 'lucide-react';
+import { MoreHorizontal, Package, Share2 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 
 import {
@@ -35,12 +35,13 @@ type ItemWithCategory = MenuItemWithDetails;
 interface ItemsTableProps {
   items: ItemWithCategory[];
   catalogId: number;
+  catalogName: string;
   catalogPlan: string;
   categories: Category[];
   countryCode?: string | null;
 }
 
-function ItemRow({ item, catalogId, catalogPlan, categories, countryCode }: { item: ItemWithCategory, catalogId: number, catalogPlan: string, categories: Category[], countryCode?: string | null }) {
+function ItemRow({ item, catalogId, catalogName, catalogPlan, categories, countryCode }: { item: ItemWithCategory, catalogId: number, catalogName: string, catalogPlan: string, categories: Category[], countryCode?: string | null }) {
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -98,72 +99,87 @@ function ItemRow({ item, catalogId, catalogPlan, categories, countryCode }: { it
           )}
         </Badge>
       </TableCell>
-      <TableCell className="font-mono text-[13px] sm:text-lg font-bold p-2 sm:p-5 whitespace-nowrap text-left sm:text-right text-brand-primary">{formatPrice(item.price, countryCode)}</TableCell>
-
+      <TableCell className="font-mono text-[15px] sm:text-xl font-black p-2 sm:p-5 whitespace-nowrap text-left sm:text-right text-brand-accent drop-shadow-sm">{formatPrice(item.price, countryCode)}</TableCell>
       <TableCell className="p-2 sm:p-5 text-left">
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <AlertDialog>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button aria-haspopup="true" size="icon" variant="ghost" className="h-7 w-7 sm:h-8 sm:w-8">
-                  <MoreHorizontal className="h-4 w-4" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
-                <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)} className="cursor-pointer">تعديل</DropdownMenuItem>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer" onSelect={(e) => e.preventDefault()}>حذف</DropdownMenuItem>
-                </AlertDialogTrigger>
-              </DropdownMenuContent>
-            </DropdownMenu >
+        <div className="flex flex-col items-center gap-1 justify-center">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-7 w-7 sm:h-8 sm:w-8 text-brand-primary"
+            title="نسخ رابط المنتج"
+            onClick={(e) => {
+              e.stopPropagation();
+              const url = `${window.location.origin}/${catalogName}/item/${item.id}`;
+              navigator.clipboard.writeText(url);
+              toast({ title: 'نجاح', description: 'تم نسخ رابط المنتج.' });
+            }}
+          >
+            <Share2 className="h-4 w-4" />
+          </Button>
 
-            {/* Edit Dialog — scrollable body (matches AddItemButton) */}
-            <DialogContent className="max-w-full sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[1000px] max-h-[95vh] overflow-y-auto bg-emerald-950 border-slate-800">
-              <DialogHeader>
-                <DialogTitle>تعديل المنتج</DialogTitle>
-                <DialogDescription>قم بتحديث تفاصيل المنتج.</DialogDescription>
-              </DialogHeader>
-              <ItemForm
-                catalogId={catalogId}
-                isPro={catalogPlan === 'pro' || catalogPlan === 'business'}
-                categories={categories}
-                item={item}
-                countryCode={countryCode}
-                onSuccess={() => setIsEditDialogOpen(false)}
-                onCancel={() => setIsEditDialogOpen(false)}
-              />
-            </DialogContent>
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <AlertDialog>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button aria-haspopup="true" size="icon" variant="ghost" className="h-7 w-7 sm:h-8 sm:w-8">
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="sr-only">Toggle menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
+                  <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)} className="cursor-pointer">تعديل</DropdownMenuItem>
+                  <AlertDialogTrigger asChild>
+                    <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer" onSelect={(e) => e.preventDefault()}>حذف</DropdownMenuItem>
+                  </AlertDialogTrigger>
+                </DropdownMenuContent>
+              </DropdownMenu >
 
-            {/* Delete Dialog */}
-            < AlertDialogContent >
-              <AlertDialogHeader>
-                <AlertDialogTitle>هل أنت متأكد تماماً؟</AlertDialogTitle>
-                <AlertDialogDescription>
-                  سيتم حذف هذا المنتج بشكل دائم. لا يمكن التراجع عن هذا الإجراء.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel disabled={isPending}>إلغاء</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => handleDelete(item.id)}
-                  disabled={isPending}
-                  className="bg-destructive hover:bg-destructive/90"
-                >
-                  {isPending ? 'جاري الحذف...' : 'نعم، احذف المنتج'}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent >
+              {/* Edit Dialog — scrollable body (matches AddItemButton) */}
+              <DialogContent className="max-w-full sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[1000px] max-h-[95vh] overflow-y-auto bg-emerald-950 border-slate-800">
+                <DialogHeader>
+                  <DialogTitle>تعديل المنتج</DialogTitle>
+                  <DialogDescription>قم بتحديث تفاصيل المنتج.</DialogDescription>
+                </DialogHeader>
+                <ItemForm
+                  catalogId={catalogId}
+                  isPro={catalogPlan === 'pro' || catalogPlan === 'business'}
+                  categories={categories}
+                  item={item}
+                  countryCode={countryCode}
+                  onSuccess={() => setIsEditDialogOpen(false)}
+                  onCancel={() => setIsEditDialogOpen(false)}
+                />
+              </DialogContent>
 
-          </AlertDialog >
-        </Dialog >
-      </TableCell >
+              {/* Delete Dialog */}
+              < AlertDialogContent >
+                <AlertDialogHeader>
+                  <AlertDialogTitle>هل أنت متأكد تماماً؟</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    سيتم حذف هذا المنتج بشكل دائم. لا يمكن التراجع عن هذا الإجراء.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={isPending}>إلغاء</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => handleDelete(item.id)}
+                    disabled={isPending}
+                    className="bg-destructive hover:bg-destructive/90"
+                  >
+                    {isPending ? 'جاري الحذف...' : 'نعم، احذف المنتج'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent >
+            </AlertDialog >
+          </Dialog >
+        </div>
+      </TableCell>
     </TableRow >
   )
 }
 
-export function ItemsTable({ items, catalogId, catalogPlan, categories, countryCode }: ItemsTableProps) {
+export function ItemsTable({ items, catalogId, catalogName, catalogPlan, categories, countryCode }: ItemsTableProps) {
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/25 bg-muted/10 py-16 text-center">
@@ -196,7 +212,7 @@ export function ItemsTable({ items, catalogId, catalogPlan, categories, countryC
         </TableHeader>
         <TableBody>
           {items.map((item) => (
-            <ItemRow key={item.id} item={item} catalogId={catalogId} catalogPlan={catalogPlan} categories={categories} countryCode={countryCode} />
+            <ItemRow key={item.id} item={item} catalogId={catalogId} catalogName={catalogName} catalogPlan={catalogPlan} categories={categories} countryCode={countryCode} />
           ))}
         </TableBody>
       </Table>

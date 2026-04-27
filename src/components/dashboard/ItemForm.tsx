@@ -495,9 +495,14 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                                 onSuccess?.();
                                 router.push('/dashboard/categories');
                               }}
-                              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-black text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 border-2 border-emerald-300 dark:border-emerald-500/40 rounded-xl transition-all hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:border-emerald-400 dark:hover:bg-emerald-500/60 group"
+                              className={cn(
+                                "w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-black transition-all rounded-xl group",
+                                categories.length === 0 
+                                  ? "bg-yellow-400/20 text-yellow-400 animate-pulse shadow-[0_0_12px_rgba(250,204,21,0.3)] border-2 border-yellow-400/40" 
+                                  : "text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 border-2 border-emerald-300 dark:border-emerald-500/40 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:border-emerald-400 dark:hover:bg-emerald-500/60"
+                              )}
                             >
-                              <PlusCircle className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
+                              <PlusCircle className={cn("h-5 w-5 transition-transform duration-300", categories.length > 0 && "group-hover:rotate-90")} />
                               <span>إضافة تصنيف جديد</span>
                             </button>
                           </div>

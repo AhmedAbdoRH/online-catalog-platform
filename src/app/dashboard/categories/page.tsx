@@ -11,6 +11,7 @@ import { CategoriesTable } from '@/components/dashboard/CategoriesTable';
 import { useState } from 'react';
 import React from 'react';
 import type { CategoryWithSubcategories } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 async function getCatalogAndCategories() {
     const result = await getCategories();
@@ -67,7 +68,12 @@ export default function CategoriesPage() {
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="gap-2 shadow-lg bg-amber-500 hover:bg-amber-600 dark:bg-amber-500/20 dark:hover:bg-amber-500/30 text-white dark:text-amber-300 border-none font-black text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 rounded-xl transition-all hover:scale-105 active:scale-95 w-full sm:w-auto">
+                        <Button className={cn(
+                            "gap-2 shadow-lg font-black text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 rounded-xl transition-all hover:scale-105 active:scale-95 w-full sm:w-auto",
+                            totalCategories === 0 
+                              ? "bg-yellow-400/20 text-yellow-400 animate-pulse border-2 border-yellow-400/40 shadow-[0_0_15px_rgba(250,204,21,0.3)]" 
+                              : "bg-amber-500 hover:bg-amber-600 dark:bg-amber-500/20 dark:hover:bg-amber-500/30 text-white dark:text-amber-300 border-none"
+                        )}>
                             <PlusCircle className="h-5 w-5 sm:h-6 sm:w-6 stroke-[3px]" />
                             <span>إضافة تصنيف جديد</span>
                         </Button>

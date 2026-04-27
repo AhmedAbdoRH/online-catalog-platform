@@ -48,7 +48,7 @@ export default async function ItemsPage() {
                     </div>
                 </CardHeader>
                 <CardContent className="px-2 sm:px-6 w-full max-w-full overflow-hidden">
-                    <ItemsTable items={items as any} catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} countryCode={catalog.country_code} />
+                    <ItemsTable items={items as any} catalogId={catalog.id} catalogName={catalog.name} catalogPlan={catalog.plan} categories={categories} countryCode={catalog.country_code} />
                 </CardContent>
                 <div className="h-24" /> {/* مسافة إضافية في نهاية الصفحة لتجنب التداخل مع شريط التنقل السفلي */}
             </Card>
