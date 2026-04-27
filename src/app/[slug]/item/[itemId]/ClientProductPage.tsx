@@ -12,6 +12,9 @@ import { useEffect, useState } from "react";
 import { Catalog, MenuItem, ItemVariant } from "@/lib/types";
 import { PageLoader } from "@/components/common/PageLoader";
 import { Head } from "@/components/common/Head";
+import { CartProvider } from "@/components/cart/CartContext";
+import { CartDrawer } from "@/components/cart/CartDrawer";
+import { CartButton } from "@/components/cart/CartButton";
 
 // Helper Functions
 const getThemeClass = (theme: string) => {
@@ -173,125 +176,128 @@ export default function ClientProductPage() {
     const cardColors = getCardColors(theme);
 
     return (
-        <div className={cn("relative min-h-screen pb-24", themeClass)}>
-            <Head
-                faviconUrl={catalog.logo_url || undefined}
-                storeName={`${product.name} | ${catalog.display_name || catalog.name}`}
-            />
-            <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 pt-10 md:px-6">
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <Link
-                        href={`/${catalog.name}`}
-                        className="inline-flex items-center gap-2 text-brand-primary hover:text-brand-primary/80"
-                    >
-                        <ArrowRight className="h-4 w-4" />
-                        العودة للمتجر
-                    </Link>
-                </div>
-
-                <section className="glass-surface grid gap-6 rounded-3xl bg-white/10 p-4 shadow-2xl backdrop-blur-2xl md:grid-cols-[1.15fr_0.85fr] md:p-6">
-                    <div className={cn("relative aspect-square overflow-hidden rounded-[1.5rem] border border-white/30 bg-white/10 text-white shadow-[0_20px_55px_rgba(15,23,42,0.4)] md:aspect-auto md:h-[400px]", cardColors)}>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent pointer-events-none z-10" />
-
-                        <ProductGallery
-                            images={images}
-                            productName={product.name}
-                            placeholder={
-                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center z-0">
-                                    <Sparkles className="h-10 w-10 text-brand-primary" />
-                                    <p className="text-sm">صورة المنتج ستظهر هنا بعد رفعها من لوحة التحكم</p>
-                                    <p className="text-xs text-muted-foreground">رابط الصورة: {product.image_url || 'غير متوفر'}</p>
-                                </div>
-                            }
-                        />
+        <CartProvider storageKey={`oc_cart_${catalog.name}`}>
+            <div className={cn("relative min-h-screen pb-24", themeClass)}>
+                <Head
+                    faviconUrl={catalog.logo_url || undefined}
+                    storeName={`${product.name} | ${catalog.display_name || catalog.name}`}
+                />
+                <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 pt-10 md:px-6">
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <Link
+                            href={`/${catalog.name}`}
+                            className="inline-flex items-center gap-2 text-brand-primary hover:text-brand-primary/80"
+                        >
+                            <ArrowRight className="h-4 w-4" />
+                            العودة للمتجر
+                        </Link>
                     </div>
 
-                    <div className="flex flex-col gap-4">
+                    <section className="glass-surface grid gap-6 rounded-3xl bg-white/10 p-4 shadow-2xl backdrop-blur-2xl md:grid-cols-[1.15fr_0.85fr] md:p-6">
+                        <div className={cn("relative aspect-square overflow-hidden rounded-[1.5rem] border border-white/30 bg-white/10 text-white shadow-[0_20px_55px_rgba(15,23,42,0.4)] md:aspect-auto md:h-[400px]", cardColors)}>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent pointer-events-none z-10" />
 
-                        <div className="space-y-2">
-                            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                                {catalog.display_name}
-                            </p>
-                            <h1 className="font-headline text-3xl font-extrabold text-foreground md:text-4xl">
-                                {product.name}
-                            </h1>
-                            {categoryName && (
-                                <p className="text-sm text-foreground/70">
-                                    ضمن قسم <span className="text-brand-primary font-semibold">{categoryName}</span>
+                            <ProductGallery
+                                images={images}
+                                productName={product.name}
+                                placeholder={
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center z-0">
+                                        <Sparkles className="h-10 w-10 text-brand-primary" />
+                                        <p className="text-sm">صورة المنتج ستظهر هنا بعد رفعها من لوحة التحكم</p>
+                                        <p className="text-xs text-muted-foreground">رابط الصورة: {product.image_url || 'غير متوفر'}</p>
+                                    </div>
+                                }
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-4">
+                            <div className="space-y-2">
+                                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                                    {catalog.display_name}
                                 </p>
-                            )}
-                        </div>
-                        <p className="text-base leading-relaxed text-foreground/80">
-                            {product.description ?? "وصف المنتج سيتم إضافته قريبًا لإبراز القصة والنكهة الفريدة."}
-                        </p>
-
-                        <ProductActions
-                            basePrice={product.price}
-                            variants={product.item_variants || []}
-                            productName={product.name}
-                            catalogName={catalog.display_name || catalog.name}
-                            catalogPhone={catalog.whatsapp_number}
-                            productUrl={productUrl}
-                            countryCode={catalog.country_code}
-                            directOrderEnabled={catalog.direct_order_enabled ?? true}
-                            catalogId={catalog.id}
-                        />
-
-                    </div>
-                </section>
-
-                {related.length > 0 && (
-                    <section className="space-y-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h2 className="font-headline text-xl font-bold text-foreground">منتجات مقترحة</h2>
-                                <p className="text-sm text-muted-foreground">جرّب منتجات أخرى من نفس التصنيف</p>
+                                <h1 className="font-headline text-3xl font-extrabold text-foreground md:text-4xl">
+                                    {product.name}
+                                </h1>
+                                {categoryName && (
+                                    <p className="text-sm text-foreground/70">
+                                        ضمن قسم <span className="text-brand-primary font-semibold">{categoryName}</span>
+                                    </p>
+                                )}
                             </div>
-                            <Link
-                                href={`/${catalog.name}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm text-brand-primary hover:text-brand-primary/80"
-                            >
-                                استعرض المتجر كامل
-                            </Link>
-                        </div>
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                            {related.map((item) => (
-                                <Link
-                                    key={item.id}
-                                    href={`/${catalog.name}/item/${item.id}`}
-                                    className={cn(
-                                        "group flex flex-col rounded-2xl p-3 text-right border border-white/15 bg-white/10 backdrop-blur-md",
-                                        "transition-all duration-200 hover:bg-white/15 hover:border-white/25"
-                                    )}
-                                >
-                                    <div className={cn("relative h-36 overflow-hidden rounded-xl bg-gradient-to-br", cardColors)}>
-                                        {item.image_url && item.image_url.trim() !== '' ? (
-                                            <RelatedProductImage
-                                                src={item.image_url}
-                                                alt={item.name}
-                                            />
-                                        ) : (
-                                            <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
-                                                صورة المنتج
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="mt-3 space-y-1">
-                                        <p className="text-sm font-semibold text-foreground">{item.name}</p>
-                                        <p className="text-xs text-muted-foreground line-clamp-2">
-                                            {item.description ?? "تفاصيل المنتج ستظهر هنا."}
-                                        </p>
-                                        <p className="text-base font-black text-brand-accent drop-shadow-sm">{formatPrice(item.price, catalog.country_code)}</p>
+                            <p className="text-base leading-relaxed text-foreground/80">
+                                {product.description ?? "وصف المنتج سيتم إضافته قريبًا لإبراز القصة والنكهة الفريدة."}
+                            </p>
 
-                                    </div>
-                                </Link>
-                            ))}
+                            <ProductActions
+                                basePrice={product.price}
+                                variants={product.item_variants || []}
+                                productName={product.name}
+                                catalogName={catalog.display_name || catalog.name}
+                                catalogPhone={catalog.whatsapp_number}
+                                productUrl={productUrl}
+                                countryCode={catalog.country_code}
+                                directOrderEnabled={catalog.direct_order_enabled ?? true}
+                                catalogId={catalog.id}
+                                productId={product.id}
+                                productImage={product.image_url}
+                            />
                         </div>
                     </section>
-                )}
+
+                    {related.length > 0 && (
+                        <section className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h2 className="font-headline text-xl font-bold text-foreground">منتجات مقترحة</h2>
+                                    <p className="text-sm text-muted-foreground">جرّب منتجات أخرى من نفس التصنيف</p>
+                                </div>
+                                <Link
+                                    href={`/${catalog.name}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm text-brand-primary hover:text-brand-primary/80"
+                                >
+                                    استعرض المتجر كامل
+                                </Link>
+                            </div>
+                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                                {related.map((item) => (
+                                    <Link
+                                        key={item.id}
+                                        href={`/${catalog.name}/item/${item.id}`}
+                                        className={cn(
+                                            "group flex flex-col rounded-2xl p-3 text-right border border-white/15 bg-white/10 backdrop-blur-md",
+                                            "transition-all duration-200 hover:bg-white/15 hover:border-white/25"
+                                        )}
+                                    >
+                                        <div className={cn("relative h-36 overflow-hidden rounded-xl bg-gradient-to-br", cardColors)}>
+                                            {item.image_url && item.image_url.trim() !== '' ? (
+                                                <RelatedProductImage
+                                                    src={item.image_url}
+                                                    alt={item.name}
+                                                />
+                                            ) : (
+                                                <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+                                                    صورة المنتج
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="mt-3 space-y-1">
+                                            <p className="text-sm font-semibold text-foreground">{item.name}</p>
+                                            <p className="text-xs text-muted-foreground line-clamp-2">
+                                                {item.description ?? "تفاصيل المنتج ستظهر هنا."}
+                                            </p>
+                                            <p className="text-base font-black text-brand-accent drop-shadow-sm">{formatPrice(item.price, catalog.country_code)}</p>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+                </div>
+                <CartDrawer catalog={catalog} />
+                <CartButton />
             </div>
-        </div>
+        </CartProvider>
     );
 }

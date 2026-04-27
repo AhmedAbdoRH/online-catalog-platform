@@ -99,22 +99,52 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
             <ScrollArea className="h-[50vh] pr-2">
               <div className="space-y-3">
                 {items.map((i) => (
-                  <div key={i.id} className="flex items-center justify-between rounded-lg border bg-background p-3">
-                    <div className="flex min-w-0 flex-1 flex-col">
-                      <span className="font-medium truncate">{i.name}</span>
-                      <span className="text-sm font-bold text-brand-accent">{formatPrice(i.price, catalog.country_code)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="icon" onClick={() => updateQuantity(i.id, i.quantity - 1)} aria-label="تقليل الكمية">
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      <span className="w-7 text-center font-semibold">{i.quantity}</span>
-                      <Button variant="outline" size="icon" onClick={() => updateQuantity(i.id, i.quantity + 1)} aria-label="زيادة الكمية">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="text-destructive" onClick={() => removeItem(i.id)} aria-label="إزالة المنتج">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                  <div key={i.id} className="relative flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2 backdrop-blur-sm pr-1">
+                    {i.image_url && (
+                      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-white/5 shadow-sm">
+                        <img src={i.image_url} alt={i.name} className="h-full w-full object-cover" />
+                      </div>
+                    )}
+                    
+                    <div className="flex min-w-0 flex-1 flex-col gap-1 py-1">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-foreground text-xs sm:text-sm leading-tight line-clamp-2">{i.name}</span>
+                        <span className="text-xs font-black text-brand-accent mt-0.5">{formatPrice(i.price, catalog.country_code)}</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between mt-1">
+                        <div className="flex items-center bg-white/10 rounded-full p-0.5 border border-white/5 shadow-inner">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-white/20 text-white transition-all active:scale-90" 
+                            onClick={() => updateQuantity(i.id, i.quantity - 1)} 
+                            aria-label="تقليل الكمية"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <span className="w-5 text-center font-black text-[10px] text-white">{i.quantity}</span>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-white/20 text-white transition-all active:scale-90" 
+                            onClick={() => updateQuantity(i.id, i.quantity + 1)} 
+                            aria-label="زيادة الكمية"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-7 w-7 text-destructive/60 hover:text-destructive hover:bg-destructive/10 rounded-full transition-colors ml-auto" 
+                          onClick={() => removeItem(i.id)} 
+                          aria-label="إزالة المنتج"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}

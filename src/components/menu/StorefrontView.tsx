@@ -275,7 +275,12 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
             e.preventDefault();
             e.stopPropagation();
             const price = typeof item.price === 'number' ? item.price : Number(item.price || 0)
-            addItem({ id: item.id, name: item.name, price: Number.isNaN(price) ? 0 : price }, 1)
+            addItem({ 
+              id: item.id, 
+              name: item.name, 
+              price: Number.isNaN(price) ? 0 : price,
+              image_url: item.image_url 
+            }, 1)
           }}
           aria-label="أضف إلى العربة"
         >

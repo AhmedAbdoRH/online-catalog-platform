@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { cn, formatPrice } from "@/lib/utils";
-import { MessageCircle, Package } from "lucide-react";
+import { MessageCircle, Package, ShoppingCart, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { ItemVariant } from "@/lib/types";
 import { ShareButtons } from './ShareButtons';
 import { DirectOrderForm } from './DirectOrderForm';
 import { saveCustomerData } from '@/app/actions/customer';
+import { useCart } from '@/components/cart/CartContext';
 
 interface ProductActionsProps {
     basePrice: number;
@@ -21,6 +22,8 @@ interface ProductActionsProps {
     countryCode?: string | null;
     directOrderEnabled?: boolean;
     catalogId?: number;
+    productId: number;
+    productImage?: string | null;
 }
 
 interface DirectOrderFormData {
@@ -39,8 +42,11 @@ export function ProductActions({
     themeClass,
     countryCode,
     directOrderEnabled = true,
-    catalogId
+    catalogId,
+    productId,
+    productImage
 }: ProductActionsProps) {
+    const { addItem, openCart } = useCart();
     // Sort variants by price just in case
     const sortedVariants = [...variants].sort((a, b) => a.price - b.price);
 
@@ -188,6 +194,28 @@ export function ProductActions({
                         رقم الواتساب غير متوفر
                     </div>
                 )}
+
+                {/* Add to Cart Icon Button */}
+                <Button
+                    onClick={() => {
+                        const itemName = selectedVariant 
+                            ? `${productName} (${selectedVariant.name})` 
+                            : productName;
+                        addItem({
+                            id: selectedVariant ? Number(`${productId}${selectedVariant.id}`) : productId,
+                            name: itemName,
+                            price: currentPrice,
+                            image_url: productImage || undefined
+                        }, 1);
+                        openCart();
+                    }}
+                    className="h-12 w-12 rounded-full bg-gradient-to-br from-teal-500 to-blue-600 text-white shadow-[0_15px_35px_rgba(20,184,166,0.3)] border border-white/20 hover:scale-110 hover:shadow-[0_20px_45px_rgba(20,184,166,0.45)] transition-all duration-500 flex items-center justify-center gap-0.5 group overflow-hidden relative"
+                    title="إضافة للسلة"
+                >
+                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <Plus className="h-2.5 w-2.5 transition-transform duration-500 group-hover:rotate-90" />
+                    <ShoppingCart className="h-5.5 w-5.5" />
+                </Button>
             </div>
 
             <ShareButtons catalogName={catalogName} />
