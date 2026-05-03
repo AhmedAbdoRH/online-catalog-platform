@@ -25,6 +25,7 @@ interface Database {
           tiktok_url: string | null;
           snapchat_url: string | null;
           twitter_url: string | null;
+          plan_expires_at: string | null;
         };
         Insert: {
           id?: number;
@@ -47,6 +48,7 @@ interface Database {
           tiktok_url?: string | null;
           snapchat_url?: string | null;
           twitter_url?: string | null;
+          plan_expires_at?: string | null;
         };
         Update: {
           id?: number;
@@ -70,6 +72,7 @@ interface Database {
           tiktok_url?: string | null;
           snapchat_url?: string | null;
           twitter_url?: string | null;
+          plan_expires_at?: string | null;
         };
       };
       categories: {

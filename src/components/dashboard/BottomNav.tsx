@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { ItemForm } from "./ItemForm";
 import { createClient } from "@/lib/supabase/client";
 import type { Category, Catalog } from "@/lib/types";
+import { isProPlan } from "@/lib/plans";
 
 const leftNavItems = [
   {
@@ -283,7 +284,7 @@ export function BottomNav() {
             {catalog && (
               <ItemForm
                 catalogId={catalog.id}
-                isPro={catalog.plan === "pro" || catalog.plan === "business"}
+                isPro={isProPlan(catalog)}
                 categories={categories}
                 onSuccess={() => setIsAddItemOpen(false)}
                 onCancel={() => setIsAddItemOpen(false)}

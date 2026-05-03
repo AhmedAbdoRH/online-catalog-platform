@@ -25,7 +25,7 @@ export default function LandingFooter() {
                                     className="object-contain p-1"
                                 />
                             </div>
-                            <span className="text-xl font-black text-white tracking-tighter">اونلاين كاتلوج</span>
+                            <span className="text-xl font-black text-white tracking-tighter">تاجر أونلاين</span>
                         </Link>
                         <p className="text-sm leading-relaxed max-w-xs">
                             المنصة الأسرع والأسهل لإنشاء متجرك الرقمي وعرض منتجاتك باحترافية تامة في دقائق معدودة.
@@ -56,7 +56,7 @@ export default function LandingFooter() {
                         <ul className="space-y-4 text-sm">
                             <li><Link href="/login" className="hover:text-brand-accent transition-colors">تسجيل الدخول</Link></li>
                             <li><Link href="/" className="hover:text-brand-accent transition-colors">إنشاء حساب</Link></li>
-                            <li><a href="mailto:support@online-catalog.net" className="hover:text-brand-accent transition-colors">تواصل معنا</a></li>
+                            <li><a href="mailto:support@tagr-online.com" className="hover:text-brand-accent transition-colors">تواصل معنا</a></li>
                         </ul>
                     </div>
 
@@ -77,7 +77,7 @@ export default function LandingFooter() {
                 </div>
 
                 <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium">
-                    <p>© {currentYear} منصة اونلاين كاتلوج. جميع الحقوق محفوظة.</p>
+                    <p>© {currentYear} منصة تاجر أونلاين. جميع الحقوق محفوظة.</p>
                     <div className="flex items-center gap-6">
                         <Link href="/privacy" className="hover:text-white transition-colors">سياسة الخصوصية</Link>
                         <Link href="/terms" className="hover:text-white transition-colors">شروط الاستخدام</Link>

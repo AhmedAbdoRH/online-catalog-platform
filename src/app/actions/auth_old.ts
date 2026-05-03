@@ -57,7 +57,7 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
     const originHeader = (await headers()).get("origin");
     const fallbackOrigin = process.env.NODE_ENV === 'production'
-        ? "https://online-catalog.net"
+        ? "https://tagr-online.com"
         : "http://localhost:9003";
     const redirectTo = `${originHeader || fallbackOrigin}/auth/callback`;
     

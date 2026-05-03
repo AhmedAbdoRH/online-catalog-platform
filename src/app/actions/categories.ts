@@ -4,7 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { Category, CategoryWithSubcategories } from "@/lib/types";
-import { FREE_PLAN_MAX_CATEGORIES } from "@/lib/plans";
+import { FREE_PLAN_MAX_CATEGORIES, isProPlan } from "@/lib/plans";
+import { Catalog } from "@/lib/types";
 
 const categorySchema = z.object({
   catalog_id: z.coerce.number(),
@@ -71,7 +72,7 @@ export async function createCategory(prevState: any, formData: FormData) {
   // Check for plan limits
   const { data: catalog } = await supabase
     .from('catalogs')
-    .select('id, plan')
+    .select('id, plan, plan_expires_at')
     .eq('user_id', user.id)
     .single();
 
@@ -79,8 +80,8 @@ export async function createCategory(prevState: any, formData: FormData) {
     return { message: 'الكتالوج غير موجود.' };
   }
 
-  // Check if plan is basic (or null which defaults to basic logic) and enforce limit
-  if (!catalog.plan || catalog.plan === 'basic') {
+  // Check if plan is basic (or expired) and enforce limit
+  if (!isProPlan(catalog as Catalog)) {
     const { count } = await supabase
       .from('categories')
       .select('*', { count: 'exact', head: true })

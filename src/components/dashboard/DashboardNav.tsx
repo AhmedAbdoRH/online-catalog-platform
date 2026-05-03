@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Catalog } from '@/lib/types';
+import { isProPlan } from '@/lib/plans';
 import {
   Tooltip,
   TooltipContent,
@@ -50,27 +51,35 @@ const navItems = [
   { href: '/dashboard/items', icon: PackageIcon, label: 'المنتجات' },
 ];
 
-const getPlanDetails = (plan: string) => {
-  switch (plan?.toLowerCase()) {
-    case 'pro':
-      return {
-        label: 'الباقة الاحترافية',
-        className: 'relative overflow-hidden bg-amber-500 text-white shadow-lg border-0',
-        icon: Zap,
-      };
-    case 'business':
-      return {
-        label: 'باقة الأعمال',
-        className: 'relative overflow-hidden bg-purple-600 text-white shadow-lg border-0',
-        icon: Building,
-      };
-    default:
-      return {
-        label: 'الباقة الأساسية',
-        className: 'relative overflow-hidden bg-cyan-500 text-white shadow-lg border-0',
-        icon: PackageIcon,
-      };
+const getPlanDetails = (catalog: Catalog | null) => {
+  const plan = catalog?.plan?.toLowerCase() || 'basic';
+  const isActive = isProPlan(catalog);
+
+  if (plan === 'pro' || plan === 'pro-trial') {
+    return {
+      label: plan === 'pro-trial' ? (isActive ? 'برو تجريبي' : 'انتهى التجريبي') : (isActive ? 'الباقة الاحترافية' : 'انتهت الباقة'),
+      className: isActive 
+        ? 'relative overflow-hidden bg-amber-500 text-white shadow-lg border-0' 
+        : 'relative overflow-hidden bg-slate-500 text-white shadow-lg border-0',
+      icon: Zap,
+    };
   }
+
+  if (plan === 'business') {
+    return {
+      label: isActive ? 'باقة الأعمال' : 'انتهت الباقة',
+      className: isActive 
+        ? 'relative overflow-hidden bg-purple-600 text-white shadow-lg border-0' 
+        : 'relative overflow-hidden bg-slate-500 text-white shadow-lg border-0',
+      icon: Building,
+    };
+  }
+
+  return {
+    label: 'الباقة الأساسية',
+    className: 'relative overflow-hidden bg-cyan-500 text-white shadow-lg border-0',
+    icon: PackageIcon,
+  };
 };
 
 export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog | null }) {
@@ -121,7 +130,7 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
       <aside className="fixed inset-y-0 right-0 z-10 hidden w-14 flex-col border-l bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
-            href="https://online-catalog.net"
+            href="https://tagr-online.com"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex h-9 w-9 shrink-0 items-center justify-center"
@@ -239,7 +248,7 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
           <SheetContent side="right" className="sm:max-w-xs pt-10">
             <div className="flex items-center justify-between mb-6">
               <Link
-                href="https://online-catalog.net"
+                href="https://tagr-online.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={closeSheet}
@@ -341,9 +350,9 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
                     pathname === '/dashboard/items' ? 'المنتجات' :
                       pathname === '/dashboard/settings' ? 'إعدادات المتجر' : 'لوحة التحكم'}
               </h1>
-              <Badge className={cn(getPlanDetails(catalog.plan || 'basic').className, "text-[9px] sm:text-xs px-1.5 sm:px-3 py-0 sm:py-0.5 items-center gap-1 font-bold rounded-full shrink-0 w-fit")}>
+              <Badge className={cn(getPlanDetails(catalog).className, "text-[9px] sm:text-xs px-1.5 sm:px-3 py-0 sm:py-0.5 items-center gap-1 font-bold rounded-full shrink-0 w-fit")}>
                 {(() => {
-                  const Details = getPlanDetails(catalog.plan || 'basic');
+                  const Details = getPlanDetails(catalog);
                   return (
                     <>
                       <Details.icon className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
@@ -358,7 +367,7 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
         )}
 
         <div className="mr-auto flex items-center gap-3 sm:gap-4 sm:pl-0 shrink-0">
-          {catalog && catalog.plan !== 'pro' && catalog.plan !== 'business' && (
+          {catalog && !isProPlan(catalog) && (
             <>
               <Button 
                 onClick={() => setIsUpgradeOpen(true)}

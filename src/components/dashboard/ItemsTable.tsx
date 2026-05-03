@@ -36,12 +36,12 @@ interface ItemsTableProps {
   items: ItemWithCategory[];
   catalogId: number;
   catalogName: string;
-  catalogPlan: string;
+  isPro: boolean;
   categories: Category[];
   countryCode?: string | null;
 }
 
-function ItemRow({ item, catalogId, catalogName, catalogPlan, categories, countryCode }: { item: ItemWithCategory, catalogId: number, catalogName: string, catalogPlan: string, categories: Category[], countryCode?: string | null }) {
+function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode }: { item: ItemWithCategory, catalogId: number, catalogName: string, isPro: boolean, categories: Category[], countryCode?: string | null }) {
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -143,7 +143,7 @@ function ItemRow({ item, catalogId, catalogName, catalogPlan, categories, countr
                 </DialogHeader>
                 <ItemForm
                   catalogId={catalogId}
-                  isPro={catalogPlan === 'pro' || catalogPlan === 'business'}
+                  isPro={isPro}
                   categories={categories}
                   item={item}
                   countryCode={countryCode}
@@ -179,7 +179,7 @@ function ItemRow({ item, catalogId, catalogName, catalogPlan, categories, countr
   )
 }
 
-export function ItemsTable({ items, catalogId, catalogName, catalogPlan, categories, countryCode }: ItemsTableProps) {
+export function ItemsTable({ items, catalogId, catalogName, isPro, categories, countryCode }: ItemsTableProps) {
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/25 bg-muted/10 py-16 text-center">
@@ -212,7 +212,7 @@ export function ItemsTable({ items, catalogId, catalogName, catalogPlan, categor
         </TableHeader>
         <TableBody>
           {items.map((item) => (
-            <ItemRow key={item.id} item={item} catalogId={catalogId} catalogName={catalogName} catalogPlan={catalogPlan} categories={categories} countryCode={countryCode} />
+            <ItemRow key={item.id} item={item} catalogId={catalogId} catalogName={catalogName} isPro={isPro} categories={categories} countryCode={countryCode} />
           ))}
         </TableBody>
       </Table>

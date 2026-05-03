@@ -14,32 +14,6 @@ import * as motion from "framer-motion/client";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-const getPlanDetails = (plan: string) => {
-  switch (plan?.toLowerCase()) {
-    case 'pro':
-      return {
-        label: 'الباقة الاحترافية',
-        className: 'relative overflow-hidden bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 text-white shadow-lg shadow-orange-500/30 border-0',
-        icon: Zap,
-        glowColor: 'shadow-orange-400/50'
-      };
-    case 'business':
-      return {
-        label: 'باقة الأعمال',
-        className: 'relative overflow-hidden bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 text-white shadow-lg shadow-purple-500/30 border-0',
-        icon: Building,
-        glowColor: 'shadow-purple-400/50'
-      };
-    case 'basic':
-    default:
-      return {
-        label: 'الباقة الأساسية',
-        className: 'relative overflow-hidden bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30 border-0',
-        icon: Package,
-        glowColor: 'shadow-teal-400/50'
-      };
-  }
-};
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -102,11 +76,11 @@ export default async function DashboardPage() {
     .eq("catalog_id", catalog.id);
 
   const catalogUrl = process.env.NODE_ENV === 'production'
-    ? `https://online-catalog.net/${catalog.name}`
+    ? `https://tagr-online.com/${catalog.name}`
     : `${APP_URL}/${catalog.name}`;
 
   // Always use production URL for QR code
-  const qrCodeUrl = `https://online-catalog.net/${catalog.name}`;
+  const qrCodeUrl = `https://tagr-online.com/${catalog.name}`;
 
   return (
     <div className="space-y-8">

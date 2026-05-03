@@ -4,7 +4,8 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import type { NewMenuItem, UpdateMenuItem, NewProductImage } from '@/lib/types';
-import { FREE_PLAN_MAX_PRODUCTS } from '@/lib/plans';
+import { FREE_PLAN_MAX_PRODUCTS, isProPlan } from '@/lib/plans';
+import { Catalog } from '@/lib/types';
 
 const MAX_FILE_SIZE = 300 * 1024; // 300KB target for compressed SaaS images
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -176,7 +177,7 @@ export async function createItem(formData: FormData) {
     // Check for plan limits
     const { data: catalog } = await supabase
       .from('catalogs')
-      .select('id, plan')
+      .select('id, plan, plan_expires_at')
       .eq('id', catalogId)
       .single();
 
@@ -184,7 +185,7 @@ export async function createItem(formData: FormData) {
       return { error: 'الكتالوج غير موجود.' };
     }
 
-    const isPro = catalog.plan === 'pro' || catalog.plan === 'business';
+    const isPro = isProPlan(catalog as Catalog);
 
     // Limit check for basic plan
     if (!isPro) {
@@ -293,11 +294,11 @@ export async function updateItem(itemId: number, formData: FormData) {
 
     const { data: catalog } = await supabase
       .from('catalogs')
-      .select('plan')
+      .select('plan, plan_expires_at')
       .eq('id', existingItem.catalog_id)
       .single();
 
-    const isPro = catalog?.plan === 'pro' || catalog?.plan === 'business';
+    const isPro = isProPlan(catalog as Catalog);
 
     const rawImages = formData.getAll('images');
     const images = rawImages.filter((f): f is File => f instanceof File && f.size > 0);

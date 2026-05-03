@@ -168,7 +168,7 @@ export default function ClientProductPage() {
     if (!data) return <div className="min-h-screen flex items-center justify-center">المنتج غير موجود</div>;
 
     const { catalog, product, categoryName, related, images } = data;
-    const productUrl = `https://online-catalog.net/${catalog.name}/item/${product.id}`;
+    const productUrl = `https://tagr-online.com/${catalog.name}/item/${product.id}`;
 
     // Theme helpers usage
     const theme = (catalog as any).theme;

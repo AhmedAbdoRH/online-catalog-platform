@@ -9,12 +9,12 @@ import type { Category } from '@/lib/types';
 
 interface AddItemButtonProps {
     catalogId: number;
-    catalogPlan: string;
+    isPro: boolean;
     categories: Category[];
     countryCode?: string | null;
 }
 
-export function AddItemButton({ catalogId, catalogPlan, categories, countryCode }: AddItemButtonProps) {
+export function AddItemButton({ catalogId, isPro, categories, countryCode }: AddItemButtonProps) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -39,7 +39,7 @@ export function AddItemButton({ catalogId, catalogPlan, categories, countryCode 
                 </DialogHeader>
                 <ItemForm
                     catalogId={catalogId}
-                    isPro={catalogPlan === 'pro' || catalogPlan === 'business'}
+                    isPro={isPro}
                     categories={categories}
                     countryCode={countryCode}
                     onSuccess={() => setOpen(false)}

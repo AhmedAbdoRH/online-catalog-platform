@@ -28,6 +28,7 @@ import { exportCustomersToCSV } from '@/app/actions/customer';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import type { Catalog } from '@/lib/types';
+import { isProPlan } from '@/lib/plans';
 import NextImage from 'next/image';
 import { Capacitor } from '@capacitor/core';
 import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp, Download, Facebook, Instagram, Twitter, Music2, Share2 } from 'lucide-react';
@@ -216,7 +217,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
     setShowTooltips(false);
   };
 
-  const isPro = catalog.plan === 'pro' || catalog.plan === 'business';
+  const isPro = isProPlan(catalog);
 
   const handleLockedSectionKeyDown = (
     event: React.KeyboardEvent<HTMLElement>,
@@ -649,7 +650,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 <FormDescription>
                   {isPro
                     ? 'يمكنك تغيير رابط المتجر الخاص بك.'
-                    : 'احصل على رابط احترافي مخصص (مثل: online-catalog.com/brand) بدلاً من رقم الهاتف.'
+                    : 'احصل على رابط احترافي مخصص (مثل: tagr-online.com/brand) بدلاً من رقم الهاتف.'
                   }
                 </FormDescription>
                 <FormMessage />

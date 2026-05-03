@@ -2,12 +2,12 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.nextcatalog.app',
-  appName: 'اونلاين كاتلوج',
+  appName: 'تاجر أونلاين',
   webDir: 'out',
   server: {
-    url: 'https://online-catalog.net/home?native_android=1',
+    url: 'https://tagr-online.com/home?native_android=1',
     cleartext: true,
-    allowNavigation: ['https://online-catalog.net/*', 'https://*.online-catalog.net/*']
+    allowNavigation: ['https://tagr-online.com/*', 'https://*.tagr-online.com/*']
   },
   android: {
     allowMixedContent: true

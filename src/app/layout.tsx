@@ -16,30 +16,30 @@ const tajawal = Tajawal({
 
 export const metadata: Metadata = {
   title: {
-    default: 'أونلاين كاتلوج | Online Catalog',
-    template: '%s | أونلاين كاتلوج'
+    default: 'تاجر أونلاين | Tajer Online',
+    template: '%s | تاجر أونلاين'
   },
-    description: 'منصة اونلاين كاتلوج: منصة إنشاء المتجر الرقمي للمحال والمتاجر. سجل مجاناً وأنشئ متجرك خلال دقائق.',
+    description: 'منصة تاجر أونلاين: منصة إنشاء المتجر الرقمي للمحال والمتاجر. سجل مجاناً وأنشئ متجرك خلال دقائق.',
   icons: {},
   openGraph: {
     type: 'website',
     locale: 'ar_SA',
-    url: 'https://online-catalog.net',
-    title: 'أونلاين كاتلوج | Online Catalog',
+    url: 'https://tagr-online.com',
+    title: 'تاجر أونلاين | Tajer Online',
     description: 'أنشئ متجرك الرقمي والكاتلوج الخاص بك في دقائق. منصة متكاملة تدعم واتساب، بدون الحاجة لمبرمج.',
-    siteName: 'اونلاين كاتلوج',
+    siteName: 'تاجر أونلاين',
     images: [
       {
         url: '/logo.png',
         width: 512,
         height: 512,
-        alt: 'اونلاين كاتلوج - واجهة المعاينة',
+        alt: 'تاجر أونلاين - واجهة المعاينة',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'أونلاين كاتلوج | Online Catalog',
+    title: 'تاجر أونلاين | Tajer Online',
     description: 'أنشئ متجرك الرقمي والكاتلوج الخاص بك في دقائق.',
     images: ['/logo.png'],
   },

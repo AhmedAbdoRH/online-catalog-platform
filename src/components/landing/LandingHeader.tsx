@@ -53,15 +53,15 @@ export default function LandingHeader() {
                     <div className="relative h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-brand-primary/30 to-brand-accent/30 rounded-xl p-2 group-hover:rotate-3 transition-transform duration-300 shadow-[0_0_18px_rgba(85,249,230,0.18)]">
                             <Image
                                 src="/logo.png"
-                                alt="منصة اونلاين كاتلوج"
+                                alt="منصة تاجر أونلاين"
                                 fill
                                 className="object-contain p-1.5"
                                 priority
                             />
                         </div>
                     <div className="flex flex-col">
-                        <span className="text-lg sm:text-xl font-black text-foreground tracking-tighter leading-none">اونلاين كاتلوج</span>
-                        <span className="text-[10px] sm:text-xs text-brand-accent font-bold tracking-widest uppercase opacity-80">Online Catalog</span>
+                        <span className="text-lg sm:text-xl font-black text-foreground tracking-tighter leading-none">تاجر أونلاين</span>
+                        <span className="text-[10px] sm:text-xs text-brand-accent font-bold tracking-widest uppercase opacity-80">Tajer Online</span>
                     </div>
                 </Link>
 
@@ -105,12 +105,12 @@ export default function LandingHeader() {
                                 <div className="relative h-12 w-12">
                                         <Image
                                             src="/logo.png"
-                                            alt="منصة اونلاين كاتلوج"
+                                            alt="منصة تاجر أونلاين"
                                             fill
                                             className="object-contain"
                                         />
                                     </div>
-                                <span className="text-xl font-bold text-foreground">منصة اونلاين كاتلوج</span>
+                                <span className="text-xl font-bold text-foreground">منصة تاجر أونلاين</span>
                             </Link>
                             {navLinks.map((link) => (
                                 <Link

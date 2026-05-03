@@ -117,7 +117,7 @@ export async function resetPassword(formData: FormData) {
         // Get the origin for the redirect URL
         const originHeader = (await headers()).get("origin");
         const fallbackOrigin = process.env.NODE_ENV === 'production'
-            ? "https://online-catalog.net"
+            ? "https://tagr-online.com"
             : "http://localhost:9003";
         const redirectTo = `${originHeader || fallbackOrigin}/reset-password`;
 

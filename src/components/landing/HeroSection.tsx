@@ -511,7 +511,7 @@ export default function HeroSection() {
                   <div className="relative aspect-[4/3] w-full rounded-2xl bg-black/20 flex items-center justify-center overflow-visible p-2">
                     <Image
                       src="/caracter.png"
-                      alt="Online Catalog Character"
+                      alt="Tajer Online Character"
                       width={500}
                       height={500}
                       className="relative z-20 object-contain scale-[1.05] -translate-y-4 drop-shadow-[0_25px_25px_rgba(0,0,0,0.15)] animate-float"
@@ -566,7 +566,7 @@ export default function HeroSection() {
               <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
                 سجّل، أضف منتجاتك، وابدأ البيع فوراً برابط مخصص لمتجرك.
                 <span className="block mt-4 text-brand-accent/90 text-base md:text-lg font-mono" dir="ltr">
-                  Online-Catalog.net/store-name
+                  tagr-online.com/store-name
                 </span>
               </p>
             </ScrollAnimation>

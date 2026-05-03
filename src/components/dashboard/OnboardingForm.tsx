@@ -439,7 +439,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                             {isNameAvailable === true && (
                               <div className="text-sm font-mono text-muted-foreground flex items-center justify-center gap-2 pt-1 border-t border-brand-success/10" dir="ltr">
                                 <Link2 className="h-4 w-4" />
-                                online-catalog.net/{formData.name}
+                                tagr-online.com/{formData.name}
                               </div>
                             )}
                           </motion.div>

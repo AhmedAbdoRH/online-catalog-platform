@@ -9,10 +9,10 @@ type Props = {
 // Simplified and robust metadata generation
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const baseUrl = 'https://online-catalog.net';
+  const baseUrl = 'https://tagr-online.com';
   
   if (!slug || slug === '_') {
-    return { title: 'أونلاين كاتلوج' };
+    return { title: 'تاجر أونلاين' };
   }
 
   try {
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const absoluteLogoUrl = logoUrl.startsWith('http') ? logoUrl : `${baseUrl}${logoUrl.startsWith('/') ? '' : '/'}${logoUrl}`;
 
     return {
-      title: catalog.slogan ? `${storeName} | ${catalog.slogan}` : `${storeName} | أونلاين كاتلوج`,
+      title: catalog.slogan ? `${storeName} | ${catalog.slogan}` : `${storeName} | تاجر أونلاين`,
       description,
       openGraph: {
         title: storeName,
@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   } catch (error) {
     console.error("Metadata error:", error);
-    return { title: 'أونلاين كاتلوج' };
+    return { title: 'تاجر أونلاين' };
   }
 }
 

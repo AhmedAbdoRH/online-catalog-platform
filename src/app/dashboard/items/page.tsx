@@ -3,13 +3,15 @@ import { notFound, redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ItemsTable } from '@/components/dashboard/ItemsTable';
 import { AddItemButton } from '@/components/dashboard/AddItemButton';
+import { isProPlan } from '@/lib/plans';
+import { Catalog } from '@/lib/types';
 
 async function getData() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect('/login');
 
-    const { data: catalog } = await supabase.from('catalogs').select('id, name, plan, country_code').eq('user_id', user.id).single();
+    const { data: catalog } = await supabase.from('catalogs').select('id, name, plan, plan_expires_at, country_code').eq('user_id', user.id).single();
     if (!catalog) notFound();
 
     const { data: categories } = await supabase.from('categories').select('*').eq('catalog_id', catalog.id);
@@ -29,7 +31,7 @@ async function getData() {
             : item.categories,
     }));
 
-    return { catalog, categories: categories || [], items: normalizedItems };
+    return { catalog: catalog as Catalog, categories: categories || [], items: normalizedItems };
 }
 
 export default async function ItemsPage() {
@@ -44,11 +46,11 @@ export default async function ItemsPage() {
                         <CardDescription className="text-xs sm:text-sm">إدارة المنتجات في المتجر الخاص بك.</CardDescription>
                     </div>
                     <div className="w-full sm:w-auto">
-                        <AddItemButton catalogId={catalog.id} catalogPlan={catalog.plan} categories={categories} countryCode={catalog.country_code} />
+                        <AddItemButton catalogId={catalog.id} isPro={isProPlan(catalog)} categories={categories} countryCode={catalog.country_code} />
                     </div>
                 </CardHeader>
                 <CardContent className="px-2 sm:px-6 w-full max-w-full overflow-hidden">
-                    <ItemsTable items={items as any} catalogId={catalog.id} catalogName={catalog.name} catalogPlan={catalog.plan} categories={categories} countryCode={catalog.country_code} />
+                    <ItemsTable items={items as any} catalogId={catalog.id} catalogName={catalog.name} isPro={isProPlan(catalog)} categories={categories} countryCode={catalog.country_code} />
                 </CardContent>
                 <div className="h-24" /> {/* مسافة إضافية في نهاية الصفحة لتجنب التداخل مع شريط التنقل السفلي */}
             </Card>
