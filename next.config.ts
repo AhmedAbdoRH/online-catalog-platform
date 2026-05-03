@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import type { RemotePattern } from 'next/dist/shared/lib/image-config';
+import { PHASE_DEVELOPMENT_SERVER } from 'next/constants';
 
 const nextConfig: NextConfig = {
   experimental: {
@@ -56,6 +57,10 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default (phase: string) => {
+  if (phase === PHASE_DEVELOPMENT_SERVER) {
+    import('@opennextjs/cloudflare').then((m) => m.initOpenNextCloudflareForDev());
+  }
 
-import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());
+  return nextConfig;
+};
