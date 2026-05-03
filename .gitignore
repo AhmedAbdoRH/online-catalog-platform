@@ -46,3 +46,10 @@ firestore-debug.log
 
 # Google service account keys (sensitive)
 online-catalog-*.json
+# OpenNext
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
