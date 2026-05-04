@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-const MAX_FILE_SIZE = 300 * 1024; // 300KB target for compressed SaaS images
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 /**
@@ -270,10 +269,6 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   // Upload logo if provided
   if (logo && logo.size > 0) {
     console.log('Uploading logo:', logo.name, 'Size:', logo.size);
-
-    if (logo.size > MAX_FILE_SIZE) {
-      return { message: `حجم الشعار كبير جداً. يتم الضغط تلقائياً قبل الرفع.` };
-    }
     if (!ACCEPTED_IMAGE_TYPES.includes(logo.type)) {
       return { message: `.jpg, .jpeg, .png و .webp هي الملفات المقبولة للشعار.` };
     }
@@ -301,10 +296,6 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   // Upload cover if provided
   if (cover && cover.size > 0) {
     console.log('Uploading cover:', cover.name, 'Size:', cover.size);
-
-    if (cover.size > MAX_FILE_SIZE) {
-      return { message: `حجم صورة الغلاف كبير جداً. يتم الضغط تلقائياً قبل الرفع.` };
-    }
     if (!ACCEPTED_IMAGE_TYPES.includes(cover.type)) {
       return { message: `.jpg, .jpeg, .png و .webp هي الملفات المقبولة لصورة الغلاف.` };
     }

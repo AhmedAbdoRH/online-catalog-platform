@@ -7,7 +7,6 @@ import type { NewMenuItem, UpdateMenuItem, NewProductImage } from '@/lib/types';
 import { FREE_PLAN_MAX_PRODUCTS, isProPlan } from '@/lib/plans';
 import { Catalog } from '@/lib/types';
 
-const MAX_FILE_SIZE = 300 * 1024; // 300KB target for compressed SaaS images
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 /**
@@ -43,7 +42,6 @@ const itemSchema = z.object({
   price: z.coerce.number().min(0).optional().or(z.literal(null)),
   category_id: z.coerce.number(),
   images: z.array(z.instanceof(File))
-    .refine((files) => files.every(f => f.size <= MAX_FILE_SIZE), 'Max file size is 5MB.')
     .refine(
       (files) => files.every(f => ACCEPTED_IMAGE_TYPES.includes(f.type)),
       '.jpg, .jpeg, .png and .webp files are accepted.'

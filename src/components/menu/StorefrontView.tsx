@@ -185,10 +185,10 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
     "relative overflow-hidden rounded-[1.5rem]",
     hasGradient ? `bg-gradient-to-br ${cardColors}` : cardColors,
     isList
-      ? "w-36 shrink-0 aspect-[4/5]"
+      ? "w-36 shrink-0 aspect-square"
       : isCompact
-        ? "w-24 shrink-0 aspect-[3/4]"
-        : "w-full aspect-[4/5]"
+        ? "w-24 shrink-0 aspect-square"
+        : "w-full aspect-square"
   );
 
   const contentPadding = isList || isCompact ? "py-4 pr-3" : "pt-5 px-5 pb-6";
