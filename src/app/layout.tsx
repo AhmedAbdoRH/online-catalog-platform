@@ -8,6 +8,8 @@ import ClientProviders from '@/components/common/ClientProviders';
 import { ThemeProvider } from "@/components/theme-provider";
 import NextTopLoader from 'nextjs-toploader';
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tagr-online.com';
+
 const tajawal = Tajawal({
   subsets: ['arabic'],
   weight: ['400', '500', '700', '800'],
@@ -15,6 +17,7 @@ const tajawal = Tajawal({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'تاجر أونلاين | Tajer Online',
     template: '%s | تاجر أونلاين'
