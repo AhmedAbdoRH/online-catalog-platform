@@ -5,6 +5,8 @@ import ClientProductPage from "./ClientProductPage";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://tagr-online.com";
 const DEFAULT_OG_IMAGE = "/logo.png";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ slug: string; itemId: string }>;
 };
@@ -17,10 +19,6 @@ function absoluteUrl(value: string | null | undefined, baseUrl = SITE_URL) {
   } catch {
     return undefined;
   }
-}
-
-export async function generateStaticParams() {
-  return [{ slug: "_", itemId: "_" }];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
