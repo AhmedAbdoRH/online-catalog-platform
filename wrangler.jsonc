@@ -1,26 +1,12 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"main": ".open-next/worker.js",
 	"name": "tagr-online-platform",
+	"pages_build_output_dir": ".vercel/output",
 	"compatibility_date": "2026-05-03",
-	"workers_dev": false,
-	"preview_urls": false,
-	"routes": [
-		{
-			"pattern": "tagr-online.com",
-			"custom_domain": true,
-			"enabled": true,
-			"previews_enabled": false
-		}
-	],
 	"compatibility_flags": [
 		"nodejs_compat",
 		"global_fetch_strictly_public"
 	],
-	"assets": {
-		"directory": ".open-next/assets",
-		"binding": "ASSETS"
-	},
 	"services": [
 		{
 			// Self-reference service binding, the service name must match the worker name
@@ -28,10 +14,5 @@
 			"binding": "WORKER_SELF_REFERENCE",
 			"service": "tagr-online-platform"
 		}
-	],
-	"images": {
-		// Enable image optimization
-		// see https://opennext.js.org/cloudflare/howtos/image
-		"binding": "IMAGES"
-	}
+	]
 }
