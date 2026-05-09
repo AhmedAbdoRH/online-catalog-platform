@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Users, BookOpen, Rocket } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import ScrollAnimation from './ScrollAnimation';
 
@@ -175,7 +175,6 @@ const products = [
 ];
 
 // ─── Order animation stages ────────────────────────────────────────────────────
-// idle → adding (1.2s) → loading (1.5s) → success (2s) → reset
 const ORDER_CYCLE = ['idle', 'adding', 'loading', 'success', 'idle'];
 const ORDER_DURATIONS = { idle: 2800, adding: 1100, loading: 1400, success: 2000 };
 
@@ -201,7 +200,6 @@ function useOrderCycle() {
         setStage(nextStage);
         if (nextStage !== 'idle') next(nextStage);
         else {
-          // pause at idle then restart
           timeout = setTimeout(() => {
             setStage('adding');
             next('adding');
@@ -218,11 +216,9 @@ function useOrderCycle() {
   return stage;
 }
 
-// ─── Single product card matching screenshot layout ────────────────────────────
 function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }: { p: Product, size?: number, scanDelay?: string, showOrder?: boolean }) {
   const stage = useOrderCycle();
   const activeStage = showOrder ? stage : 'idle';
-
   const cardW = Math.round(148 * size);
 
   return (
@@ -236,16 +232,12 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }: {
         overflow: 'hidden',
         boxShadow: `0 ${16 * size}px ${40 * size}px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)`,
       }}>
-
-        {/* Scan line */}
         <div style={{
           position: 'absolute', top: 0, bottom: 0, width: 36 * size,
           background: 'linear-gradient(90deg,transparent,rgba(255,255,255,0.055),transparent)',
           animation: `scanLineCard 4.2s ease-in-out infinite ${scanDelay}`,
           pointerEvents: 'none', zIndex: 10,
         }} />
-
-        {/* ── Image area ── */}
         <div style={{
           background: p.bgTop,
           height: 82 * size,
@@ -255,142 +247,28 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }: {
           borderBottom: '1px solid rgba(255,255,255,0.07)',
           overflow: 'hidden',
         }}>
-          {/* subtle radial shine */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: `radial-gradient(ellipse at 60% 30%, ${p.color}30 0%, transparent 65%)`,
-          }} />
-          <span style={{ position: 'relative', zIndex: 1 }}>{p.emoji}</span>
-
-          {/* Flying item animation when adding */}
-          {activeStage === 'adding' && (
-            <span style={{
-              position: 'absolute', fontSize: 18 * size, zIndex: 20,
-              animation: 'itemFlyUp 0.9s ease forwards',
-            }}>{p.emoji}</span>
-          )}
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), transparent 70%)' }} />
+          <span style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))' }}>{p.emoji}</span>
         </div>
-
-        {/* ── Content ── */}
-        <div style={{ padding: `${8 * size}px ${9 * size}px ${9 * size}px` }}>
-
-          {/* Category label */}
+        <div style={{ padding: 10 * size }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 * size }}>
+            <div style={{ fontSize: 11 * size, fontWeight: 800, color: '#fff', lineHeight: 1.2, maxWidth: '70%' }}>{p.name}</div>
+            <div style={{ fontSize: 12 * size, fontWeight: 900, color: NEON, textShadow: `0 0 8px ${NEON}44` }}>{p.price}ج</div>
+          </div>
+          <div style={{ fontSize: 8 * size, color: 'rgba(255,255,255,0.45)', marginBottom: 8 * size, fontWeight: 500 }}>{p.sub}</div>
           <div style={{
-            fontSize: 7 * size, color: 'rgba(255,255,255,0.35)',
-            marginBottom: 3 * size, fontWeight: 600, letterSpacing: '0.3px',
+            height: 26 * size,
+            borderRadius: 6 * size,
+            background: activeStage === 'success' ? '#10B981' : (activeStage === 'adding' || activeStage === 'loading' ? NEON : 'rgba(255,255,255,0.06)'),
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            position: 'relative', overflow: 'hidden',
+            border: activeStage === 'idle' ? '1px solid rgba(255,255,255,0.1)' : 'none',
           }}>
-            {p.category}
-          </div>
-
-          {/* Product name */}
-          <div style={{ fontSize: 11 * size, color: 'rgba(255,255,255,0.92)', fontWeight: 700, lineHeight: 1.3, marginBottom: 3 * size }}>
-            {p.name}
-          </div>
-
-          {/* Description */}
-          <div style={{
-            fontSize: 8 * size, color: 'rgba(255,255,255,0.35)',
-            lineHeight: 1.4, marginBottom: 7 * size,
-            overflow: 'hidden', display: '-webkit-box',
-            WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-          }}>
-            {p.desc}
-          </div>
-
-          {/* Price */}
-          <div style={{
-            fontSize: 14 * size, fontWeight: 900,
-            background: `linear-gradient(90deg, ${NEON}, #CFFFF8, ${NEON})`,
-            backgroundSize: '200% auto',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            animation: 'shimmerPrice 2.5s linear infinite',
-            marginBottom: 7 * size,
-          }}>
-            {p.price} ج.م
-          </div>
-
-          {/* ── Order button with animation ── */}
-          <div style={{ position: 'relative' }}>
-
-            {/* Progress bar under button during loading */}
-            {activeStage === 'loading' && (
-              <div style={{
-                position: 'absolute', top: -4, left: 0, right: 0,
-                height: 2, borderRadius: 99, background: 'rgba(255,255,255,0.1)',
-                overflow: 'hidden',
-              }}>
-                <div style={{
-                  height: '100%', borderRadius: 99,
-                  background: `linear-gradient(90deg, #86EFAC, #22C55E)`,
-                  animation: 'progressFill 1.3s ease forwards',
-                }} />
-              </div>
-            )}
-
-            <div style={{
-              height: 26 * size,
-              borderRadius: 8 * size,
-              background: activeStage === 'success'
-                ? `linear-gradient(135deg, #86EFAC, #4ADE80)`
-                : `linear-gradient(135deg, #86EFAC, #22C55E)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              gap: 5 * size,
-              cursor: 'pointer',
-              position: 'relative', overflow: 'hidden',
-              transition: 'background 0.4s ease',
-              animation: activeStage === 'idle' ? 'btnPulse 3s ease-in-out infinite' : 'none',
-              boxShadow: activeStage === 'success'
-                ? '0 4px 16px rgba(74,222,128,0.55)'
-                : '0 4px 14px rgba(134,239,172,0.4)',
-            }}>
-
-              {/* Ripple on adding */}
-              {activeStage === 'adding' && (
-                <div style={{
-                  position: 'absolute', inset: 0, borderRadius: 8 * size,
-                  background: 'rgba(255,255,255,0.25)',
-                  animation: 'ripple 0.9s ease forwards',
-                }} />
-              )}
-
-              {/* Button content */}
-              {activeStage === 'loading' ? (
-                <div style={{
-                  width: 12 * size, height: 12 * size,
-                  border: `2px solid rgba(255,255,255,0.3)`,
-                  borderTopColor: '#fff',
-                  borderRadius: '50%',
-                  animation: 'spin 0.7s linear infinite',
-                }} />
-              ) : activeStage === 'success' ? (
-                <span style={{
-                  fontSize: 12 * size, color: '#fff',
-                  animation: 'checkPop 0.45s cubic-bezier(.36,.07,.19,.97) both',
-                  display: 'inline-block',
-                }}>✓ تم الطلب</span>
-              ) : (
-                <>
-                  <span style={{ fontSize: 11 * size, color: '#fff' }}>🛒</span>
-                  <span style={{ fontSize: 9 * size, color: '#fff', fontWeight: 700 }}>أضف للسلة</span>
-                </>
-              )}
-            </div>
-
-            {/* Success badge */}
-            {activeStage === 'success' && (
-              <div style={{
-                position: 'absolute', top: -22 * size, left: '50%',
-                transform: 'translateX(-50%)',
-                background: 'rgba(17,167,152,0.95)',
-                color: '#fff', fontSize: 7 * size, fontWeight: 700,
-                padding: `${2 * size}px ${6 * size}px`,
-                borderRadius: 99, whiteSpace: 'nowrap',
-                animation: 'badgeSlideIn 0.35s ease both',
-                boxShadow: '0 2px 8px rgba(42,181,109,0.5)',
-              }}>
-                ✓ أضيف للسلة!
-              </div>
-            )}
+            {activeStage === 'idle' && <span style={{ fontSize: 9 * size, fontWeight: 800, color: 'rgba(255,255,255,0.8)' }}>إضافة للسلة</span>}
+            {activeStage === 'adding' && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{ width: 10 * size, height: 10 * size, borderRadius: '50%', background: '#043832', animation: 'itemFlyUp 0.6s ease-out forwards' }} /></div>}
+            {activeStage === 'loading' && <div style={{ width: 12 * size, height: 12 * size, border: `2px solid #043832`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />}
+            {activeStage === 'success' && <div style={{ animation: 'checkPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards', color: '#fff' }}><svg width={14 * size} height={14 * size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>}
           </div>
         </div>
       </div>
@@ -398,205 +276,180 @@ function MiniProductCard({ p, size = 1, scanDelay = '1s', showOrder = false }: {
   );
 }
 
-// ─── Animated stacked cards widget ────────────────────────────────────────────
-function AnimatedProductCards() {
-  const [cardIndices, setCardIndices] = useState([0, 1, 2]);
+export default function HeroSection() {
+  const [deckIndex, setDeckIndex] = useState(0);
   const [isSwapping, setIsSwapping] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setIsSwapping(true);
       setTimeout(() => {
-        setCardIndices(prev => [
-          (prev[0] + 1) % products.length,
-          (prev[1] + 1) % products.length,
-          (prev[2] + 1) % products.length,
-        ]);
+        setDeckIndex((prev) => (prev + 1) % products.length);
         setIsSwapping(false);
       }, 700);
-    }, 6200); // تبديل كل ~6.2 ثواني مع مدة الأنيميشن
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
+  const p1 = products[deckIndex];
+  const p2 = products[(deckIndex + 1) % products.length];
+  const p3 = products[(deckIndex + 2) % products.length];
+
   return (
-    <>
-      <style>{productCardStyles}</style>
-
-      <div
-        className={`hero-cards-wrapper absolute -top-12 -right-12 sm:-top-16 sm:-right-16 md:-top-20 md:-right-20 z-[999] scale-[0.5] sm:scale-[0.6] md:scale-[0.7] origin-top-right ${isSwapping ? 'deck-swapping' : ''}`}
-        style={{ width: 190, height: 260, perspective: '1200px' }}
-      >
-        {/* Ambient glow - محسّنة */}
-        <div style={{
-          position: 'absolute', inset: '-30px', borderRadius: '50%',
-          background: `radial-gradient(ellipse 140% 120% at 50% 40%, ${TEAL_LIGHT}60 0%, rgba(21,94,88,0.2) 50%, transparent 85%)`,
-          animation: 'glowPulseCard 5.5s ease-in-out infinite',
-          filter: 'blur(30px)', pointerEvents: 'none',
-          boxShadow: `0 0 80px ${TEAL_LIGHT}40`,
-        }} />
-
-        {/* Grid texture محسّنة */}
-        <div style={{
-          position: 'absolute', inset: '-35px', opacity: 0.08,
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px),
-                             linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)`,
-          backgroundSize: '28px 28px',
-          animation: 'gridMove 8s linear infinite',
-          borderRadius: 18, pointerEvents: 'none',
-        }} />
-
-        {/* Orbiting dot محسّن */}
-        <div style={{ position: 'absolute', top: '48%', left: '42%', width: 0, height: 0 }}>
-          <div style={{
-            width: 8, height: 8, borderRadius: '50%',
-            background: NEON, 
-            boxShadow: `0 0 20px ${NEON}, 0 0 40px ${NEON}80`,
-            animation: 'orbitDot 10s linear infinite',
-            marginTop: -4, marginLeft: -4,
-            filter: 'drop-shadow(0 0 6px rgba(85,249,230,0.8))',
-          }} />
-        </div>
-
-        {/* Card 3 — back */}
-        <div key={`card-3-${cardIndices[2]}`} className={`pc-third ${isSwapping ? 'deck-back-to-mid' : ''}`} style={{
-          position: 'absolute', top: 24, left: -44, zIndex: 1,
-          filter: 'brightness(0.6) blur(0.5px)',
-          transformStyle: 'preserve-3d',
-        }}>
-          <MiniProductCard p={products[cardIndices[2]]} size={0.76} scanDelay="2.8s" showOrder={false} />
-        </div>
-
-        {/* Card 2 — middle */}
-        <div key={`card-2-${cardIndices[1]}`} className={`pc-sec ${isSwapping ? 'deck-mid-to-front' : ''}`} style={{
-          position: 'absolute', top: 12, left: -22, zIndex: 2,
-          filter: 'brightness(0.75)',
-          transformStyle: 'preserve-3d',
-        }}>
-          <MiniProductCard p={products[cardIndices[1]]} size={0.87} scanDelay="2s" showOrder={false} />
-        </div>
-
-        {/* Card 1 — front (مع أنيميشن الطلب) */}
-        <div key={`card-1-${cardIndices[0]}`} className={`pc-main ${isSwapping ? 'deck-front-to-back' : ''}`} style={{ 
-          position: 'relative', 
-          zIndex: 3,
-          transformStyle: 'preserve-3d',
-        }}>
-          <MiniProductCard p={products[cardIndices[0]]} size={1} scanDelay="1.1s" showOrder={true} />
-        </div>
+    <section className="relative min-h-[90vh] flex items-center pt-20 pb-16 overflow-hidden bg-[#041412]">
+      <style dangerouslySetInnerHTML={{ __html: productCardStyles }} />
+      
+      {/* Background Elements */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_-20%,rgba(85,249,230,0.12)_0%,transparent_70%)]" />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `radial-gradient(${NEON} 1px, transparent 1px)`, backgroundSize: '32px 32px', animation: 'gridMove 20s linear infinite' }} />
       </div>
-    </>
-  );
-}
 
-// ─── HeroSection ──────────────────────────────────────────────────────────────
-export default function HeroSection() {
-  return (
-    <section className="relative pt-14 sm:pt-16 md:pt-20 pb-16 sm:pb-24 md:pb-32 lg:pt-24 lg:pb-36 overflow-hidden bg-aurora">
-
-      {/* Background Decor */}
-      <div className="absolute -top-24 right-[-120px] w-[360px] h-[360px] sm:w-[520px] sm:h-[520px] landing-glow opacity-70" />
-      <div className="absolute bottom-0 left-[-160px] w-[420px] h-[420px] sm:w-[560px] sm:h-[560px] landing-glow opacity-50" />
-      <div className="absolute inset-0 landing-grid opacity-30 pointer-events-none" />
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-12 lg:gap-24">
-
-          {/* ── Visuals — Right Side ── */}
-          <div className="flex-1 w-full max-w-[320px] sm:max-w-[480px] md:max-w-[580px] lg:max-w-none order-1 lg:order-2">
-            <div className="relative">
-
-              {/* Main Hero Card */}
-              <ScrollAnimation animation="reveal-3d-up" duration={1} delay={0.2}>
-                <div className="relative z-20 rounded-3xl p-6 sm:p-8 landing-card landing-sheen">
-                  <div className="relative aspect-[4/3] w-full rounded-2xl bg-black/20 flex items-center justify-center overflow-visible p-2">
-                    <Image
-                      src="/caracter.png"
-                      alt="Tajer Online Character"
-                      width={500}
-                      height={500}
-                      className="relative z-20 object-contain scale-[1.05] -translate-y-4 drop-shadow-[0_25px_25px_rgba(0,0,0,0.15)] animate-float"
-                      priority
-                    />
-                  </div>
-                </div>
-              </ScrollAnimation>
-
-              {/* ✅ Animated Product Cards — Top Right */}
-              <AnimatedProductCards />
-
-              {/* Bottom Left — Success Card */}
-              <div className="absolute -bottom-6 -left-6 z-30 bg-black/40 backdrop-blur-md p-4 rounded-2xl shadow-[0_30px_80px_rgba(4,20,18,0.45)] border border-white/10 w-40 md:w-60 animate-float-slow">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-brand-accent/15 flex items-center justify-center text-brand-accent shadow-inner">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="h-2 w-20 bg-brand-accent/20 rounded-full mb-2" />
-                    <div className="text-[10px] md:text-xs font-bold text-foreground">تم إطلاق المتجر بنجاح!</div>
-                  </div>
-                </div>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+          
+          {/* Text Content */}
+          <div className="flex-1 text-center lg:text-right space-y-8 max-w-2xl">
+            <ScrollAnimation animation="reveal-3d-right" duration={1}>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-primary/10 border border-brand-primary/20 mb-4">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-accent"></span>
+                </span>
+                <span className="text-xs font-bold text-brand-accent uppercase tracking-widest">منظومة تمكين التاجر المحلي</span>
               </div>
-
-            </div>
-          </div>
-
-          {/* ── Content — Left Side ── */}
-          <div className="flex-1 text-center lg:text-right space-y-8 md:space-y-10 order-2 lg:order-1">
-
-            <div className="space-y-4">
-              <ScrollAnimation animation="blur-in" delay={0.1}>
-                <span className="inline-block px-4 py-1.5 rounded-full bg-brand-accent/15 text-brand-accent text-sm font-bold tracking-wide animate-fade-in ring-1 ring-brand-accent/30 shadow-[0_0_18px_rgba(85,249,230,0.35)]">
-                  🚀 أطلق متجرك في 3 خطوات بسيطة
-                </span>
-              </ScrollAnimation>
               
-              <ScrollAnimation animation="reveal-3d-up" delay={0.2}>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-headline tracking-tight text-foreground leading-[1.2]">
-                  <span className="block mb-2 text-foreground/90">متجرك الرقمي...</span>
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF9F1C] via-[#FFC800] to-[#34D399] block py-2 text-gradient-anim">
-                    جاهز في دقائق.
-                  </span>
-                </h1>
-              </ScrollAnimation>
-            </div>
-
-            <ScrollAnimation animation="fade-up" delay={0.4}>
-              <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
-                سجّل، أضف منتجاتك، وابدأ البيع فوراً برابط مخصص لمتجرك.
-                <span className="block mt-4 text-brand-accent/90 text-base md:text-lg font-mono" dir="ltr">
-                  tagr-online.com/store-name
+              <h1 className="text-5xl md:text-7xl font-black text-white leading-[1.1] tracking-tight">
+                جاهز تبيع <span className="text-brand-accent relative">أونلاين !
+                  <svg className="absolute -bottom-2 left-0 w-full h-3 text-brand-accent/30" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 25 0 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="4" /></svg>
                 </span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-white/80 font-medium leading-relaxed max-w-xl lg:ml-0 lg:mr-auto">
+                حمّل تطبيق <span className="text-brand-accent font-bold">"تاجر أونلاين"</span> وانضم لأول مجتمع لتمكين التاجر المحلي من البيع أونلاين
+              </p>
+
+              <p className="text-lg text-white/60 font-medium">
+                ابدأ متجرك .. اتعلم .. سوق وبيع مجاناً مع "تاجر أونلاين"
               </p>
             </ScrollAnimation>
 
-            <div className="flex flex-col items-center gap-4 md:gap-5 justify-center lg:justify-start">
+            <ScrollAnimation animation="reveal-3d-right" delay={0.2} duration={1}>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
+                <Button asChild size="lg" className="h-14 px-8 bg-brand-accent text-[#043832] hover:bg-brand-accent/90 font-black text-lg rounded-2xl shadow-[0_20px_40px_rgba(255,215,0,0.2)] transition-all hover:-translate-y-1 active:scale-95">
+                  <Link href="/home" className="flex items-center gap-2">
+                    ابدأ مجاناً
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </Button>
+                
+                <Button variant="outline" size="lg" className="h-14 px-8 border-white/10 bg-white/5 text-white hover:bg-white/10 font-bold text-lg rounded-2xl backdrop-blur-md transition-all hover:-translate-y-1 active:scale-95">
+                  <Link href="#community" className="flex items-center gap-2">
+                    <Users className="w-5 h-5 text-brand-accent" />
+                    انضم للمجتمع
+                  </Link>
+                </Button>
 
-              {/* Google Play Button */}
-              <ScrollAnimation animation="scale-up" delay={0.6}>
-                <div className="relative inline-flex w-full sm:w-auto">
-                  {/* Pulsing ring layers - Custom Subtle Pulse */}
-                  <span className="absolute inset-0 rounded-2xl bg-white/20" style={{ animation: 'playBtnSubtlePulse 2s cubic-bezier(0, 0, 0.2, 1) infinite' }} />
-                  <span className="absolute inset-0 rounded-2xl bg-white/10" style={{ animation: 'playBtnSubtlePulse 2s cubic-bezier(0, 0, 0.2, 1) infinite 0.5s' }} />
-                  <Button
-                    size="lg"
-                    className="relative h-14 md:h-16 px-8 md:px-12 text-lg md:text-xl rounded-2xl bg-white text-[#0b3c35] font-bold w-full sm:w-auto transition-all duration-300 shadow-[0_18px_45px_rgba(4,20,18,0.25)] hover:shadow-[0_20px_60px_rgba(85,249,230,0.4)] hover:scale-[1.02] active:scale-95 border border-white/60 group"
-                    style={{ animation: 'playBtnGlow 2s ease-in-out infinite' }}
-                    asChild
-                  >
-                    <Link href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3">
-                      <Image src={GOOGLE_PLAY_ICON} alt="Google Play" width={36} height={36} className="rounded-lg shadow-sm w-9 h-9 object-contain" />
-                      حمل التطبيق الآن
-                    </Link>
-                  </Button>
+                <Button variant="ghost" size="lg" className="h-14 px-8 text-white/70 hover:text-white hover:bg-white/5 font-bold text-lg rounded-2xl transition-all">
+                  <Link href="#ecosystem" className="flex items-center gap-2">
+                    استكشف المنصة
+                  </Link>
+                </Button>
+              </div>
+            </ScrollAnimation>
+
+            {/* Trust Badges */}
+            <ScrollAnimation animation="fade-in" delay={0.4} duration={1}>
+              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-8 pt-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                <div className="flex flex-col items-center lg:items-start">
+                  <span className="text-2xl font-black text-white">+50K</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">تاجر نشط</span>
                 </div>
-              </ScrollAnimation>
-
-
-            </div>
-
+                <div className="w-px h-8 bg-white/10 hidden sm:block" />
+                <div className="flex flex-col items-center lg:items-start">
+                  <span className="text-2xl font-black text-white">+1M</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">طلب تم معالجته</span>
+                </div>
+                <div className="w-px h-8 bg-white/10 hidden sm:block" />
+                <div className="flex flex-col items-center lg:items-start">
+                  <span className="text-2xl font-black text-white">98%</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">رضا التجار</span>
+                </div>
+              </div>
+            </ScrollAnimation>
           </div>
+
+          {/* Visual Side - The Ecosystem Mockup */}
+          <div className="flex-1 relative w-full max-w-[500px] lg:max-w-none aspect-square lg:aspect-auto lg:h-[600px]">
+            <ScrollAnimation animation="reveal-3d-left" duration={1.2}>
+              <div className={`relative w-full h-full flex items-center justify-center ${isSwapping ? 'deck-swapping' : ''}`}>
+                
+                {/* Main Ecosystem Visualization */}
+                <div className="relative w-[280px] h-[500px] sm:w-[320px] sm:h-[580px]">
+                  
+                  {/* Background Glows */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-brand-primary/20 blur-[120px] rounded-full -z-10" />
+                  
+                  {/* Floating Cards representing the Ecosystem */}
+                  <div className={`absolute top-0 left-0 w-full h-full transition-all duration-700 ${isSwapping ? 'deck-front-to-back' : 'pc-main'}`}>
+                    <MiniProductCard p={p1} size={1.8} showOrder={true} />
+                  </div>
+                  
+                  <div className={`absolute top-12 -left-12 w-full h-full transition-all duration-700 ${isSwapping ? 'deck-mid-to-front' : 'pc-sec'}`}>
+                    <div className="bg-card/90 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl w-[240px]">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-brand-accent/20 flex items-center justify-center">
+                          <Users className="w-6 h-6 text-brand-accent" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-white">مجتمع التجار</div>
+                          <div className="text-[10px] text-white/50">انضم لـ 50,000+ تاجر</div>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                          <div className="h-full bg-brand-accent w-3/4 animate-pulse" />
+                        </div>
+                        <div className="h-2 w-2/3 bg-white/5 rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={`absolute -top-8 -right-8 w-full h-full transition-all duration-700 ${isSwapping ? 'deck-back-to-mid' : 'pc-third'}`}>
+                    <div className="bg-card/90 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl w-[220px]">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-brand-primary/20 flex items-center justify-center">
+                          <BookOpen className="w-6 h-6 text-brand-primary" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-white">تعلم وتطوير</div>
+                          <div className="text-[10px] text-white/50">دروس عملية للنمو</div>
+                        </div>
+                      </div>
+                      <div className="flex -space-x-2 rtl:space-x-reverse">
+                        {[1,2,3,4].map(i => (
+                          <div key={i} className="w-8 h-8 rounded-full border-2 border-card bg-brand-primary/30 flex items-center justify-center text-[10px] font-bold text-white">
+                            {i}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Growth Indicator */}
+                  <div className="absolute -bottom-4 -right-4 bg-brand-accent text-[#043832] px-6 py-4 rounded-2xl shadow-2xl font-black flex items-center gap-3 animate-bounce">
+                    <Rocket className="w-6 h-6" />
+                    <div className="flex flex-col">
+                      <span className="text-xs uppercase tracking-tighter">معدل النمو</span>
+                      <span className="text-xl">+240%</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </ScrollAnimation>
+          </div>
+
         </div>
       </div>
     </section>

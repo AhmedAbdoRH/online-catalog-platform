@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -31,13 +30,15 @@ export default function LandingHeader() {
     };
 
     const navLinks = [
-        { name: "المميزات", href: "/#benefits" },
-        { name: "الخصائص", href: "/#features" },
-        { name: "باقات الأسعار", href: "/#pricing" },
+        { name: "المنظومة", href: "/#ecosystem" },
+        { name: "المجتمع", href: "/#community" },
+        { name: "الباقات", href: "/#pricing" },
+        { name: "قصص النجاح", href: "/#success-stories" },
+        { name: "الأسئلة الشائعة", href: "/#faq" },
     ];
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50">
+        <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#041412]/70 backdrop-blur-xl supports-[backdrop-filter]:bg-[#041412]/50">
             <motion.div 
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -60,18 +61,18 @@ export default function LandingHeader() {
                             />
                         </div>
                     <div className="flex flex-col">
-                        <span className="text-lg sm:text-xl font-black text-foreground tracking-tighter leading-none">تاجر أونلاين</span>
+                        <span className="text-lg sm:text-xl font-black text-white tracking-tighter leading-none">تاجر أونلاين</span>
                         <span className="text-[10px] sm:text-xs text-brand-accent font-bold tracking-widest uppercase opacity-80">Tajer Online</span>
                     </div>
                 </Link>
 
                 {/* Desktop Navigation */}
-                <nav className="hidden lg:flex items-center gap-8">
+                <nav className="hidden lg:flex items-center gap-6">
                     {navLinks.map((link) => (
                         <Link
                             key={link.name}
                             href={link.href}
-                            className="text-sm font-bold text-muted-foreground hover:text-brand-accent transition-all relative group py-2"
+                            className="text-sm font-bold text-white/70 hover:text-brand-accent transition-all relative group py-2"
                         >
                             {link.name}
                             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-accent transition-all group-hover:w-full shadow-[0_0_14px_rgba(85,249,230,0.6)]" />
@@ -80,7 +81,7 @@ export default function LandingHeader() {
                 </nav>
 
                 <div className="hidden lg:flex items-center gap-4">
-                    <Button variant="ghost" asChild className="font-bold text-sm hover:bg-brand-accent/10 hover:text-brand-accent rounded-xl">
+                    <Button variant="ghost" asChild className="font-bold text-sm text-white/70 hover:bg-white/5 hover:text-white rounded-xl">
                         <Link href="/login">تسجيل دخول</Link>
                     </Button>
                     <Button asChild className="font-bold text-sm bg-brand-accent text-[#043832] hover:bg-brand-accent/90 shadow-lg shadow-brand-accent/30 rounded-xl px-6">
@@ -90,42 +91,44 @@ export default function LandingHeader() {
 
                 {/* Mobile Menu & Login */}
                 <div className="flex lg:hidden items-center gap-2">
-                    <Button variant="outline" asChild className="font-bold text-sm h-9 px-4 border-white/20 bg-white/5 hover:bg-white/10 hover:text-white rounded-md">
-                        <Link href="/login">تسجيل دخول</Link>
+                    <Button variant="outline" asChild className="font-bold text-sm h-9 px-4 border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-md">
+                        <Link href="/login">دخول</Link>
                     </Button>
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-9 w-9">
+                            <Button variant="ghost" size="icon" className="h-9 w-9 text-white">
                                 <Menu className="h-5 w-5" />
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="right" className="w-80 sm:w-96">
+                        <SheetContent side="right" className="w-80 sm:w-96 bg-[#041412] border-white/10">
                             <div className="flex flex-col gap-6 mt-8">
                             <Link href="/" className="flex items-center gap-3 mx-auto hover:opacity-80 transition-opacity">
-                                <div className="relative h-12 w-12">
+                                <div className="relative h-12 w-12 bg-brand-primary/20 rounded-xl p-2">
                                         <Image
                                             src="/logo.png"
                                             alt="منصة تاجر أونلاين"
                                             fill
-                                            className="object-contain"
+                                            className="object-contain p-1"
                                         />
                                     </div>
-                                <span className="text-xl font-bold text-foreground">منصة تاجر أونلاين</span>
+                                <span className="text-xl font-black text-white">تاجر أونلاين</span>
                             </Link>
-                            {navLinks.map((link) => (
-                                <Link
-                                    key={link.name}
-                                    href={link.href}
-                                    className="text-lg font-medium hover:text-brand-accent transition-colors py-2 px-4 rounded-lg hover:bg-white/5"
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
+                            <div className="flex flex-col gap-2 mt-4">
+                                {navLinks.map((link) => (
+                                    <Link
+                                        key={link.name}
+                                        href={link.href}
+                                        className="text-lg font-bold text-white/70 hover:text-brand-accent transition-colors py-3 px-4 rounded-xl hover:bg-white/5"
+                                    >
+                                        {link.name}
+                                    </Link>
+                                ))}
+                            </div>
                             <div className="flex flex-col gap-3 mt-6 px-4">
-                                <Button variant="outline" asChild className="w-full h-12 border-white/20 bg-white/5">
+                                <Button variant="outline" asChild className="w-full h-12 border-white/10 bg-white/5 text-white">
                                     <Link href="/login">تسجيل دخول</Link>
                                 </Button>
-                                <Button asChild className="w-full h-12 bg-brand-accent text-[#043832]">
+                                <Button asChild className="w-full h-12 bg-brand-accent text-[#043832] font-black">
                                     <Link href="/home">ابدأ مجاناً</Link>
                                 </Button>
                             </div>

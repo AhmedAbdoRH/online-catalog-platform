@@ -13,22 +13,22 @@ import StickyCTA from '@/components/landing/StickyCTA';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden landing-shell">
+    <div className="min-h-screen bg-[#041412] text-foreground overflow-x-hidden landing-shell">
       <LandingHeader />
       <main>
-        {/* 1. الهيرو — الوعد الأساسي وجذب الانتباه */}
+        {/* 1. الهيرو — الوعد الأساسي وجذب الانتباه (تم تحديثه بالشعارات الجديدة) */}
         <HeroSection />
 
-        {/* 2. القيمة المضافة — "ليه تختارنا؟" الفوائد قبل المميزات */}
+        {/* 2. ركائز المنظومة — "ليه تختارنا؟" (تم تحديثه ليعكس الـ 4 ركائز) */}
         <ValueProps />
 
-        {/* 3. معرض العملاء — الإثبات الاجتماعي القوي يبني الثقة فوراً */}
-        <ClientShowcase />
-
-        {/* 4. طريقة العمل — "الموضوع بسيط" تقليل الاحتكاك النفسي */}
+        {/* 3. رحلة المستخدم — (تم تحديثه ليعكس الـ 6 مراحل من الاكتشاف للنمو) */}
         <HowItWorks />
 
-        {/* 5. المميزات المتكاملة — التفاصيل التقنية اللي بتطمن المحترفين */}
+        {/* 4. معرض العملاء — الإثبات الاجتماعي القوي */}
+        <ClientShowcase />
+
+        {/* 5. المميزات المتكاملة — التفاصيل التقنية */}
         <Features />
 
         {/* 6. مميزات الباقة Pro — استعراض العضلات للمشاريع الكبيرة */}

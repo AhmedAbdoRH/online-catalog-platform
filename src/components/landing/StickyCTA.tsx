@@ -1,4 +1,3 @@
-
 "use client";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -32,12 +31,12 @@ export default function StickyCTA() {
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: 100, opacity: 0 }}
                             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                            className="absolute bottom-3 left-3 right-3 md:left-8 md:right-auto md:w-auto bg-gradient-to-r from-brand-accent/90 to-brand-accent/80 text-[#043832] backdrop-blur-lg p-3 sm:p-4 rounded-lg sm:rounded-xl shadow-lg sm:shadow-xl flex items-center gap-3 sm:gap-4 justify-between pointer-events-auto ring-2 ring-brand-accent/25 border border-brand-accent/30 shadow-[0_18px_45px_rgba(85,249,230,0.25)]"
+                            className="absolute bottom-3 left-3 right-3 md:left-8 md:right-auto md:w-auto bg-brand-accent text-[#043832] backdrop-blur-lg p-3 sm:p-4 rounded-2xl shadow-2xl flex items-center gap-3 sm:gap-4 justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(255,215,0,0.3)]"
                         >
-                            <div className="font-bold text-base sm:text-lg sm:hidden md:block px-4">
-                                جاهز تبيع اونلاين؟
+                            <div className="font-black text-base sm:text-lg px-4">
+                                جاهز تبيع أونلاين؟
                             </div>
-                            <Button size="sm" className="rounded-md sm:rounded-lg font-bold bg-[#043832] text-brand-accent hover:bg-[#032f29] shadow-md sm:shadow-lg shadow-white/20 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base transition-all hover:scale-105 border-2 border-brand-accent/30 mr-4" asChild>
+                            <Button size="lg" className="rounded-xl font-black bg-[#043832] text-brand-accent hover:bg-[#032f29] shadow-lg px-6 py-3 text-sm sm:text-base transition-all hover:scale-105" asChild>
                                 <Link href="/home">
                                     ابدأ مجاناً
                                 </Link>

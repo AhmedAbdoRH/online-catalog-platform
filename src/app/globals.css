@@ -4,92 +4,55 @@
 
 @layer base {
   :root {
-    /* Brand palette */
-    --brand-primary: 165 60% 30%;
-    /* Crimson Green / Deep Emerald #1e7a6b approx */
-    --brand-accent: 47 100% 50%;
-    /* Yellow-orange, slightly leaning to orange */
+    /* Brand palette - Updated for "Tajer Online" Identity */
+    --brand-primary: 170 70% 15%; /* Deep Petrol/Teal #041412 approx */
+    --brand-accent: 47 100% 50%;   /* Vibrant Yellow/Gold #FFD700 */
     --brand-luxury: 268 92% 65%;
-    /* #A855F7 */
     --brand-success: 160 84% 39%;
-    /* #10B981 */
     --brand-error: 0 84% 63%;
-    /* #EF4444 */
 
-    /* Light theme - Adjusted to be Dark as requested */
-    --background: 165 25% 12%;
-    /* Lighter, more professional dark petrol */
-    --foreground: 165 20% 98%;
-    /* Light text for readability */
-    --card: 165 20% 16%;
-    --card-foreground: 165 20% 98%;
-    --popover: 165 20% 16%;
-    --popover-foreground: 165 20% 98%;
-    --primary: var(--brand-primary);
-    --primary-foreground: 0 0% 100%;
-    --secondary: 165 30% 20%;
+    /* Dark theme as default for the new landing page */
+    --background: 170 70% 4%;    /* Very dark petrol */
+    --foreground: 170 20% 98%;
+    --card: 170 50% 8%;
+    --card-foreground: 170 20% 98%;
+    --popover: 170 50% 8%;
+    --popover-foreground: 170 20% 98%;
+    --primary: var(--brand-accent); /* Accent is now primary for buttons/actions */
+    --primary-foreground: 170 70% 5%;
+    --secondary: 170 40% 12%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 165 30% 15%;
-    --muted-foreground: 165 20% 70%;
+    --muted: 170 40% 10%;
+    --muted-foreground: 170 20% 60%;
     --accent: var(--brand-accent);
-    --accent-foreground: 165 60% 10%;
+    --accent-foreground: 170 70% 5%;
     --destructive: var(--brand-error);
     --destructive-foreground: 0 0% 100%;
-    --border: 165 30% 18%;
-    --input: 165 30% 18%;
-    --ring: var(--brand-primary);
-    --chart-1: 165 60% 30%;
-    --chart-2: 47 100% 50%;
-    --chart-3: 268 92% 65%;
-    --chart-4: 160 84% 39%;
-    --chart-5: 0 84% 63%;
-    --radius: 0.9rem;
+    --border: 170 40% 12%;
+    --input: 170 40% 12%;
+    --ring: var(--brand-accent);
+    --radius: 1rem;
 
     /* Sidebar */
-    --sidebar-background: 165 30% 97%;
-    --sidebar-foreground: 165 60% 10%;
-    --sidebar-primary: var(--brand-primary);
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 165 30% 94%;
-    --sidebar-accent-foreground: 165 60% 10%;
-    --sidebar-border: 165 30% 88%;
-    --sidebar-ring: var(--brand-primary);
+    --sidebar-background: 170 70% 4%;
+    --sidebar-foreground: 170 20% 95%;
+    --sidebar-primary: var(--brand-accent);
+    --sidebar-primary-foreground: 170 70% 5%;
+    --sidebar-accent: 170 40% 10%;
+    --sidebar-accent-foreground: 170 20% 98%;
+    --sidebar-border: 170 40% 12%;
+    --sidebar-ring: var(--brand-accent);
   }
 
   .dark {
-    --background: 165 25% 12%;
-    --foreground: 165 20% 98%;
-    --card: 165 20% 16%;
-    --card-foreground: 165 20% 98%;
-    --popover: 165 20% 16%;
-    --popover-foreground: 165 20% 98%;
-    --primary: var(--brand-primary);
-    --primary-foreground: 165 60% 100%;
-    --secondary: 165 30% 15%;
-    --secondary-foreground: 165 20% 98%;
-    --muted: 165 60% 8%;
-    --muted-foreground: 165 20% 70%;
-    --accent: var(--brand-accent);
-    --accent-foreground: 165 60% 5%;
-    --destructive: var(--brand-error);
-    --destructive-foreground: 165 20% 98%;
-    --border: 165 60% 12%;
-    --input: 165 60% 12%;
-    --ring: var(--brand-primary);
-    --chart-1: 165 60% 30%;
-    --chart-2: 47 100% 50%;
-    --chart-3: 268 92% 65%;
-    --chart-4: 160 84% 39%;
-    --chart-5: 0 84% 63%;
-
-    --sidebar-background: 165 60% 4%;
-    --sidebar-foreground: 165 20% 95%;
-    --sidebar-primary: var(--brand-primary);
-    --sidebar-primary-foreground: 165 60% 100%;
-    --sidebar-accent: 165 60% 10%;
-    --sidebar-accent-foreground: 165 20% 98%;
-    --sidebar-border: 165 60% 12%;
-    --sidebar-ring: var(--brand-primary);
+    /* Keep dark theme consistent */
+    --background: 170 70% 4%;
+    --foreground: 170 20% 98%;
+    --card: 170 50% 8%;
+    --card-foreground: 170 20% 98%;
+    --primary: var(--brand-accent);
+    --primary-foreground: 170 70% 5%;
+    --ring: var(--brand-accent);
   }
 }
 
@@ -98,20 +61,14 @@
     @apply border-border;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  .headline-text {
-    @apply text-brand-accent;
+  h1, h2, h3, h4, h5, h6, .headline-text {
+    @apply text-white;
   }
 
   body {
     @apply bg-background text-foreground;
     font-size: 17px;
-    font-family: 'Tajawal', 'system-ui', 'sans-serif';
+    font-family: 'Tajawal', 'Cairo', 'system-ui', 'sans-serif';
     font-display: swap;
     unicode-bidi: plaintext;
     direction: rtl;
@@ -125,166 +82,17 @@
 }
 
 @layer components {
-
-  /* Soft glass / neumorphic surface */
   .glass-surface {
-    @apply bg-card/70 border border-white/20 rounded-2xl;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow:
-      0 18px 45px rgba(15, 23, 42, 0.16),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    @apply bg-white/[0.03] border border-white/10 rounded-2xl backdrop-blur-xl;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.4);
   }
 
   .glass-surface-hover {
-    transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease,
-      border-color 200ms ease;
+    transition: all 300ms ease;
   }
 
   .glass-surface-hover:hover {
-    transform: translateY(-8px);
-    box-shadow:
-      0 24px 60px rgba(15, 23, 42, 0.32),
-      0 0 0 1px rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.32);
-  }
-
-  .masonry-columns {
-    column-count: 2;
-    column-gap: 1.2rem;
-  }
-
-  @media (min-width: 768px) {
-    .masonry-columns {
-      column-count: 3;
-      column-gap: 1.5rem;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .masonry-columns {
-      column-count: 4;
-      column-gap: 1.5rem;
-    }
-  }
-
-  @media (min-width: 1536px) {
-    .masonry-columns {
-      column-count: 5;
-      column-gap: 1.75rem;
-    }
-  }
-
-  .masonry-item {
-    break-inside: avoid;
-    margin-bottom: 1.5rem;
-  }
-
-  /* Plan Badge Animations */
-  @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-
-    100% {
-      background-position: 200% 0;
-    }
-  }
-
-  @keyframes pulse-slow {
-
-    0%,
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    50% {
-      opacity: 0.95;
-      transform: scale(1.02);
-    }
-  }
-
-  .animate-shimmer {
-    animation: shimmer 3s ease-in-out infinite;
-  }
-
-  .animate-pulse-slow {
-    animation: pulse-slow 3s ease-in-out infinite;
-  }
-
-  /* Loading Bar Animation */
-  @keyframes loading-bar {
-    0% {
-      width: 0%;
-      margin-left: 0;
-    }
-
-    50% {
-      width: 70%;
-      margin-left: 0;
-    }
-
-    100% {
-      width: 100%;
-      margin-left: 0;
-    }
-  }
-
-  .animate-loading-bar {
-    animation: loading-bar 1.5s ease-in-out infinite;
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  .animate-spin {
-    animation: spin 1s linear infinite;
-  }
-
-  /* Store Theme Gradients */
-  .bg-gradient-default {
-    background:
-      radial-gradient(circle at top, rgba(0, 209, 201, 0.25), transparent 60%),
-      radial-gradient(circle at bottom, rgba(168, 85, 247, 0.18), transparent 62%),
-      hsl(var(--background));
-  }
-
-  .bg-gradient-1 {
-    background-image: linear-gradient(to bottom right, #2D1F3D, #1A1F2C, #3D1F2C);
-  }
-
-  .bg-gradient-2 {
-    background-image: linear-gradient(to bottom right, #3B0A0A, #5C1A1A, #3D1F2C);
-  }
-
-  .bg-gradient-3 {
-    background-image: linear-gradient(to bottom right, #14090e, #4a1e34, #9c3d1a);
-  }
-
-  .bg-gradient-4 {
-    background-image: linear-gradient(to bottom right, #0A0E0A, #1F2D24, #3B4A36);
-  }
-
-  .bg-gradient-5 {
-    background-image: linear-gradient(to bottom right, #0A1628, #1A2D4A, #0D2035);
-  }
-
-  .bg-gradient-6 {
-    background-image: linear-gradient(to bottom right, #2D1A2D, #4A1A3D, #3D1A35);
-  }
-
-  .bg-gradient-7 {
-    background-image: linear-gradient(to bottom right, #2D2A1A, #4A3D1A, #3D351A);
-  }
-
-  .bg-gradient-8 {
-    background-image: linear-gradient(to bottom right, #0A2828, #1A3D3D, #0D3535);
-  }
-
-  .bg-gradient-9 {
-    background-image: linear-gradient(to bottom right, #1A1A1A, #2D2D2D, #252525);
+    @apply bg-white/[0.06] border-brand-accent/30 -translate-y-2;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
   }
 }

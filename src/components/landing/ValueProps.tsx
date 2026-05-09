@@ -1,52 +1,61 @@
-import { Zap, Layout, Share2 } from 'lucide-react';
+import { Users, BookOpen, Briefcase, TrendingUp } from 'lucide-react';
 import ScrollAnimation from './ScrollAnimation';
 
 const values = [
     {
-        icon: Zap,
-        title: "سهل وسريع",
-        description: "سجّل وأطلق متجرك خلال دقائق."
+        icon: Users,
+        title: "مجتمع ودعم",
+        description: "انضم لمجتمع نشط من التجار والخبراء للحصول على الدعم والإرشاد المستمر."
     },
     {
-        icon: Layout,
-        title: "مظهر احترافي",
-        description: "واجهات جاهزة تعرض منتجاتك بأفضل شكل."
+        icon: BookOpen,
+        title: "تعلم وتطوير",
+        description: "أكاديمية ومحتوى تدريبي يرفع من مهاراتك في التجارة الإلكترونية والبيع."
     },
     {
-        icon: Share2,
-        title: "قابل للمشاركة",
-        description: "رابط واحد، مشاركة على أي منصة أو QR."
+        icon: Briefcase,
+        title: "أدوات وحلول",
+        description: "أدوات ذكية وحلول متكاملة لإدارة متجرك، منتجاتك، وطلباتك بكل سهولة."
+    },
+    {
+        icon: TrendingUp,
+        title: "نمو وتوسع",
+        description: "استراتيجيات وشركاء يساعدونك على النمو والتوسع في سوقك المحلي."
     }
 ];
 
 export default function ValueProps() {
     return (
-        <section id="benefits" className="py-20 sm:py-24 bg-aurora relative overflow-hidden">
+        <section id="ecosystem" className="py-20 sm:py-24 bg-[#041412] relative overflow-hidden">
             {/* Background Decoration */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(var(--brand-primary),0.03)_0%,transparent_70%)] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(85,249,230,0.05)_0%,transparent_70%)] pointer-events-none" />
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+                <div className="text-center mb-16 space-y-4">
+                    <ScrollAnimation animation="reveal-3d-up">
+                        <h2 className="text-3xl md:text-5xl font-black text-white">نظام تاجر أون لاين - 4 ركائز لنجاحك</h2>
+                        <p className="text-xl text-white/60 max-w-2xl mx-auto">أدوات، دعم، مجتمع وخبرات تدفع تجارتك للنمو</p>
+                    </ScrollAnimation>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                     {values.map((item, index) => (
                         <ScrollAnimation 
                             key={index} 
                             animation="reveal-3d-up" 
-                            delay={index * 0.15}
-                            duration={1}
+                            delay={index * 0.1}
+                            duration={0.8}
                         >
                             <div className="relative group h-full">
-                                {/* Card Glow Effect - Softer */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/15 to-brand-accent/10 rounded-[2.5rem] blur-3xl opacity-60 transition-opacity duration-500 -z-10 group-hover:opacity-100" />
+                                {/* Card Glow Effect */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/10 to-brand-accent/5 rounded-[2rem] blur-2xl opacity-0 transition-opacity duration-500 -z-10 group-hover:opacity-100" />
 
-                                <div className="h-full flex flex-col items-center text-center p-10 rounded-[2.5rem] bg-white/[0.15] dark:bg-white/[0.1] backdrop-blur-2xl border border-white/20 group-hover:border-brand-primary/40 transition-all duration-500 shadow-xl shadow-black/5 ring-1 ring-white/10">
-                                    <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-brand-primary/25 to-brand-accent/20 flex items-center justify-center text-white mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-md border border-white/10">
-                                        <item.icon className="w-10 h-10 opacity-90" />
+                                <div className="h-full flex flex-col items-center text-center p-8 rounded-[2rem] bg-white/[0.03] border border-white/10 group-hover:border-brand-accent/30 transition-all duration-500 shadow-xl">
+                                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-accent/10 flex items-center justify-center text-brand-accent mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 border border-white/5">
+                                        <item.icon className="w-8 h-8" />
                                     </div>
-                                    <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-brand-accent transition-colors tracking-tight">{item.title}</h3>
-                                    <p className="text-white/70 text-lg leading-relaxed group-hover:text-white transition-colors">{item.description}</p>
-
-                                    {/* Bottom Decoration Line */}
-                                    <div className="mt-8 w-12 h-1 bg-gradient-to-r from-brand-primary to-brand-accent rounded-full opacity-40 group-hover:opacity-100 transition-all duration-500" />
+                                    <h3 className="text-xl font-bold mb-3 text-white group-hover:text-brand-accent transition-colors">{item.title}</h3>
+                                    <p className="text-white/50 text-base leading-relaxed group-hover:text-white/80 transition-colors">{item.description}</p>
                                 </div>
                             </div>
                         </ScrollAnimation>
