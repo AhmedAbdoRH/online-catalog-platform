@@ -25,20 +25,39 @@ if (!fs.existsSync(openNextDir)) {
   process.exit(1);
 }
 
+console.log('Preparing deployment directory...');
+
 // Clean output dir
 if (fs.existsSync(outputDir)) {
   fs.rmSync(outputDir, { recursive: true, force: true });
 }
 fs.mkdirSync(outputDir, { recursive: true });
 
-// Copy everything from .open-next into .vercel/output
-copyRecursiveSync(openNextDir, outputDir);
+// 1. Copy all contents from .open-next (except assets) to outputDir
+fs.readdirSync(openNextDir).forEach(file => {
+  if (file === 'assets') return;
+  const srcPath = path.join(openNextDir, file);
+  const destPath = path.join(outputDir, file);
+  copyRecursiveSync(srcPath, destPath);
+});
 
-// The main worker entry must be named _worker.js at the root
+// 2. Flatten assets: Copy contents of .open-next/assets to outputDir root
+const assetsDir = path.join(openNextDir, 'assets');
+if (fs.existsSync(assetsDir)) {
+  console.log('Flattening assets directory...');
+  fs.readdirSync(assetsDir).forEach(file => {
+    const srcPath = path.join(assetsDir, file);
+    const destPath = path.join(outputDir, file);
+    copyRecursiveSync(srcPath, destPath);
+  });
+}
+
+// 3. The main worker entry must be named _worker.js at the root
 const workerSrc = path.join(outputDir, 'worker.js');
 const workerDest = path.join(outputDir, '_worker.js');
-if (fs.existsSync(workerSrc) && !fs.existsSync(workerDest)) {
+if (fs.existsSync(workerSrc)) {
   fs.copyFileSync(workerSrc, workerDest);
 }
 
 console.log('✅ Successfully prepared .vercel/output for Cloudflare Pages');
+
