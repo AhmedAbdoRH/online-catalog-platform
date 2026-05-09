@@ -3,14 +3,14 @@ const path = require('path');
 
 function copyRecursiveSync(src, dest) {
   const exists = fs.existsSync(src);
-  const stats = exists && fs.statSync(src);
-  const isDirectory = exists && stats.isDirectory();
-  if (isDirectory) {
+  if (!exists) return;
+  const stats = fs.statSync(src);
+  if (stats.isDirectory()) {
     if (!fs.existsSync(dest)) {
       fs.mkdirSync(dest, { recursive: true });
     }
-    fs.readdirSync(src).forEach((childItemName) => {
-      copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
+    fs.readdirSync(src).forEach((child) => {
+      copyRecursiveSync(path.join(src, child), path.join(dest, child));
     });
   } else {
     fs.copyFileSync(src, dest);
@@ -31,16 +31,14 @@ if (fs.existsSync(outputDir)) {
 }
 fs.mkdirSync(outputDir, { recursive: true });
 
-// Copy assets
-const assetsDir = path.join(openNextDir, 'assets');
-if (fs.existsSync(assetsDir)) {
-  copyRecursiveSync(assetsDir, outputDir);
+// Copy everything from .open-next into .vercel/output
+copyRecursiveSync(openNextDir, outputDir);
+
+// The main worker entry must be named _worker.js at the root
+const workerSrc = path.join(outputDir, 'worker.js');
+const workerDest = path.join(outputDir, '_worker.js');
+if (fs.existsSync(workerSrc) && !fs.existsSync(workerDest)) {
+  fs.copyFileSync(workerSrc, workerDest);
 }
 
-// Copy worker
-const workerFile = path.join(openNextDir, 'worker.js');
-if (fs.existsSync(workerFile)) {
-  fs.copyFileSync(workerFile, path.join(outputDir, '_worker.js'));
-}
-
-console.log('Successfully prepared .vercel/output for Cloudflare Pages');
+console.log('✅ Successfully prepared .vercel/output for Cloudflare Pages');
