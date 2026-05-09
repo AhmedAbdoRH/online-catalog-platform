@@ -71,19 +71,20 @@ export default function HeroSection() {
                 </Link>
               </Button>
               
-              <Link 
-                href={PLAY_STORE_URL} 
-                target="_blank" 
-                className="transition-all hover:scale-105 active:scale-95"
-              >
-                <Image 
-                  src={GOOGLE_PLAY_ICON} 
-                  alt="Download from Google Play" 
-                  width={180} 
-                  height={54} 
-                  className="h-16 w-auto"
-                />
-              </Link>
+              <Button asChild size="lg" className="h-16 px-8 bg-white text-[#020D0A] hover:bg-white/90 font-black text-xl rounded-2xl shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all hover:scale-105 active:scale-95 group">
+                <Link href={PLAY_STORE_URL} target="_blank" className="flex items-center gap-3">
+                  <div className="w-8 h-8 flex items-center justify-center">
+                    <Image 
+                      src="https://res.cloudinary.com/dvikey3wc/image/upload/v1773216706/Online_Catalog_pmlblb.png" 
+                      alt="Google Play" 
+                      width={32} 
+                      height={32} 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  حمل التطبيق
+                </Link>
+              </Button>
             </motion.div>
 
             {/* Trust Badges */}
