@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Play, ShoppingBag, Store, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.nextcatalog.app';
+const GOOGLE_PLAY_ICON = 'https://res.cloudinary.com/dvikey3wc/image/upload/v1773216706/Online_Catalog_pmlblb.png';
+
 export default function HeroSection() {
   return (
     <section className="relative min-h-[95vh] flex items-center pt-24 pb-16 overflow-hidden bg-[#020D0A]">
@@ -68,14 +71,19 @@ export default function HeroSection() {
                 </Link>
               </Button>
               
-              <Button variant="outline" size="lg" className="h-16 px-8 border-white/10 bg-white/5 text-white hover:bg-white/10 font-bold text-lg rounded-2xl backdrop-blur-md transition-all hover:scale-105 active:scale-95 group">
-                <Link href="#how-it-works" className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-brand-accent group-hover:text-[#020D0A] transition-colors">
-                    <Play className="w-4 h-4 ml-1" />
-                  </div>
-                  شاهد كيف يعمل
-                </Link>
-              </Button>
+              <Link 
+                href={PLAY_STORE_URL} 
+                target="_blank" 
+                className="transition-all hover:scale-105 active:scale-95"
+              >
+                <Image 
+                  src={GOOGLE_PLAY_ICON} 
+                  alt="Download from Google Play" 
+                  width={180} 
+                  height={54} 
+                  className="h-16 w-auto"
+                />
+              </Link>
             </motion.div>
 
             {/* Trust Badges */}
