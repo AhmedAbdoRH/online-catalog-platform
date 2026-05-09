@@ -164,7 +164,7 @@ export default function HeroSection() {
             >
               <div className="bg-[#0A1A17]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl w-44 md:w-52 transform rotate-3 hover:rotate-0 transition-transform cursor-pointer">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-white/60 text-xs font-bold">أداء ذكي</div>
+                  <div className="text-white/60 text-xs font-bold">أوصل لناس أكتر</div>
                   <TrendingUp className="w-4 h-4 text-brand-accent" />
                 </div>
                 <div className="text-2xl font-black text-white mb-1">زود مبيعاتك</div>
