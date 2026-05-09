@@ -1,0 +1,6 @@
+name = "tagr-online-platform"
+compatibility_date = "2026-05-03"
+compatibility_flags = ["nodejs_compat"]
+
+[pages]
+build_output_dir = ".vercel/output"
