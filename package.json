@@ -8,7 +8,7 @@
     "build": "opennextjs-cloudflare build && node scripts/prepare-deploy.js",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "wrangler pages deploy .vercel/output --project-name tagr-online-platform --commit-dirty=true",
+    "deploy": "echo 'Skipping manual deploy, Cloudflare Pages will deploy automatically from .vercel/output'",
     "preview": "opennextjs-cloudflare preview"
   },
   "dependencies": {
