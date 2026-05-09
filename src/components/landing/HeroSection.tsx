@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Play, ShoppingBag, Store, TrendingUp } from 'lucide-react';
+import { ArrowRight, Play, ShoppingBag, Store, TrendingUp, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.nextcatalog.app';
@@ -156,7 +156,7 @@ export default function HeroSection() {
               </div>
             </motion.div>
 
-            {/* Floating Card 2: Sales */}
+            {/* Floating Card 2: Visits */}
             <motion.div 
               className="absolute -left-4 md:-left-8 top-1/2 z-20"
               animate={{ y: [10, -10, 10] }}
@@ -164,15 +164,15 @@ export default function HeroSection() {
             >
               <div className="bg-[#0A1A17]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl w-44 md:w-52 transform rotate-3 hover:rotate-0 transition-transform cursor-pointer">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-white/60 text-xs font-bold">مبيعات اليوم</div>
-                  <TrendingUp className="w-4 h-4 text-brand-accent" />
+                  <div className="text-white/60 text-xs font-bold">زيارات المتجر اليوم</div>
+                  <Users className="w-4 h-4 text-brand-accent" />
                 </div>
-                <div className="text-2xl font-black text-white mb-1">EGP 4,250</div>
+                <div className="text-2xl font-black text-white mb-1">1,240 زيارة</div>
                 <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
                   <motion.div 
                     className="h-full bg-brand-accent"
                     initial={{ width: 0 }}
-                    animate={{ width: '75%' }}
+                    animate={{ width: '85%' }}
                     transition={{ duration: 1.5, delay: 0.5 }}
                   />
                 </div>
