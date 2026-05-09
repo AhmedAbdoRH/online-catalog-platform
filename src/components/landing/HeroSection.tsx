@@ -167,7 +167,7 @@ export default function HeroSection() {
                   <div className="text-white/60 text-xs font-bold">زود مبيعاتك</div>
                   <TrendingUp className="w-4 h-4 text-brand-accent" />
                 </div>
-                <div className="text-2xl font-black text-white mb-1">+240% نمو</div>
+                <div className="text-2xl font-black text-white mb-1">أداء استثنائي</div>
                 <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
                   <motion.div 
                     className="h-full bg-brand-accent"
