@@ -82,7 +82,7 @@ export default function HeroSection() {
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  حمل التطبيق
+                  حمل التطبيق من المتجر
                 </Link>
               </Button>
             </motion.div>
