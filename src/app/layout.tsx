@@ -64,6 +64,11 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning className={tajawal.variable}>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: 'window.__name = window.__name || function(fn) { return fn; };',
+          }}
+        />
         <link
           href="https://fonts.cdnfonts.com/css/satoshi"
           rel="stylesheet"

@@ -16,25 +16,23 @@ export default function CTASection() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <ScrollAnimation animation="reveal-3d-up" duration={1} viewport={{ once: true, amount: 0.3 }}>
           <div
-            className="relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] mx-auto max-w-4xl"
+            className="relative overflow-hidden rounded-[2.5rem] sm:rounded-[3rem] mx-auto max-w-4xl p-8 sm:p-16 md:p-20 text-center"
             style={{
-              background: 'linear-gradient(145deg, #041412 0%, #06201d 50%, #041412 100%)',
-              border: '1px solid rgba(85,249,230,0.12)',
-              boxShadow: '0 40px 80px -20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06)',
+              background: 'rgba(6, 32, 29, 0.4)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(85, 249, 230, 0.15)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
             }}
           >
-            {/* Inner shine sweep */}
-            <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/5 via-transparent to-brand-accent/5 pointer-events-none" />
-
             {/* Corner glows */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-[radial-gradient(circle,rgba(85,249,230,0.12),transparent_70%)] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-[radial-gradient(circle,rgba(245,158,11,0.1),transparent_70%)] pointer-events-none" />
+            <div className="absolute top-0 right-0 w-48 h-48 bg-[radial-gradient(circle,rgba(85,249,230,0.1),transparent_70%)] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-[radial-gradient(circle,rgba(245,158,11,0.08),transparent_70%)] pointer-events-none" />
 
-            <div className="relative z-10 py-16 px-6 sm:py-20 sm:px-16 text-center">
+            <div className="relative z-10">
 
               {/* Icon */}
-              <div className="inline-flex items-center justify-center w-14 h-14 mb-8 rounded-2xl bg-brand-accent/15 border border-brand-accent/25 shadow-lg shadow-brand-accent/10">
-                <Rocket className="w-6 h-6 text-brand-accent" />
+              <div className="inline-flex items-center justify-center w-16 h-16 mb-8 rounded-2xl bg-brand-accent/20 border border-brand-accent/40 shadow-lg shadow-brand-accent/20">
+                <Rocket className="w-8 h-8 text-brand-accent" />
               </div>
 
               {/* Heading */}
@@ -43,7 +41,7 @@ export default function CTASection() {
               </h2>
 
               {/* Sub-text */}
-              <p className="text-base sm:text-lg text-white/60 max-w-xl mx-auto mb-10 leading-relaxed">
+              <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed">
                 انضم لآلاف التجار وابدأ رحلتك نحو النجاح الآن مع منظومة تاجر أونلاين المتكاملة.
               </p>
 
@@ -54,9 +52,9 @@ export default function CTASection() {
                 <Button
                   asChild
                   size="lg"
-                  className="h-14 px-10 text-lg font-black rounded-xl bg-brand-accent text-[#043832] shadow-[0_10px_30px_-8px_rgba(255,215,0,0.4)] hover:shadow-[0_16px_40px_-8px_rgba(255,215,0,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 w-full sm:w-auto gap-2.5"
+                  className="h-14 px-8 sm:px-10 text-base sm:text-lg font-black rounded-2xl bg-brand-accent text-[#043832] shadow-[0_10px_30px_-8px_rgba(255,215,0,0.4)] hover:shadow-[0_16px_40px_-8px_rgba(255,215,0,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 w-full sm:w-auto gap-2.5"
                 >
-                  <Link href="/home" className="flex items-center justify-center gap-2.5">
+                  <Link href="https://play.google.com/store/apps/details?id=com.nextcatalog.app" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2.5">
                     <ShoppingBag className="w-5 h-5" />
                     ابدأ مجاناً الآن
                   </Link>
@@ -65,9 +63,8 @@ export default function CTASection() {
                 {/* Secondary CTA */}
                 <Button
                   asChild
-                  variant="outline"
                   size="lg"
-                  className="h-14 px-10 text-lg font-bold rounded-xl border border-white/10 bg-white/[0.05] backdrop-blur-sm hover:bg-white/[0.1] text-white w-full sm:w-auto transition-all duration-300 gap-2.5"
+                  className="h-14 px-8 sm:px-10 text-base sm:text-lg font-black rounded-2xl border border-white/20 bg-white/[0.08] backdrop-blur-md hover:bg-white/[0.12] text-white w-full sm:w-auto transition-all duration-300 gap-2.5 hover:border-white/30"
                 >
                   <Link
                     href="https://wa.me/201008116452"

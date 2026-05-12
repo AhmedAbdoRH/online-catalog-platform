@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Facebook, Instagram, Twitter, Youtube, MessageCircle } from 'lucide-react';
+import { versionedAsset } from '@/lib/static-assets';
 
 export default function LandingFooter() {
     const currentYear = new Date().getFullYear();
@@ -52,7 +53,7 @@ export default function LandingFooter() {
                         <Link href="/" className="flex items-center gap-3 group">
                             <div className="relative h-12 w-12 bg-brand-primary/20 rounded-xl p-2 group-hover:rotate-3 transition-transform">
                                 <Image
-                                    src="/logo.png"
+                                    src={versionedAsset('/logo.png')}
                                     alt="تاجر أونلاين"
                                     fill
                                     className="object-contain p-1"

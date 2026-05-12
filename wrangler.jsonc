@@ -1,6 +1,6 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "tagr-online-platform",
+	"name": "online-catalog-platform",
 	"pages_build_output_dir": ".vercel/output",
 	"compatibility_date": "2026-05-03",
 	"compatibility_flags": [

@@ -13,6 +13,7 @@ import {
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { versionedAsset } from '@/lib/static-assets';
 
 export default function LandingHeader() {
     const router = useRouter();
@@ -53,7 +54,7 @@ export default function LandingHeader() {
                 >
                     <div className="relative h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-brand-primary/30 to-brand-accent/30 rounded-xl p-2 group-hover:rotate-3 transition-transform duration-300 shadow-[0_0_18px_rgba(85,249,230,0.18)]">
                             <Image
-                                src="/logo.png"
+                                src={versionedAsset('/logo.png')}
                                 alt="منصة تاجر أونلاين"
                                 fill
                                 className="object-contain p-1.5"
@@ -105,7 +106,7 @@ export default function LandingHeader() {
                             <Link href="/" className="flex items-center gap-3 mx-auto hover:opacity-80 transition-opacity">
                                 <div className="relative h-12 w-12 bg-brand-primary/20 rounded-xl p-2">
                                         <Image
-                                            src="/logo.png"
+                                            src={versionedAsset('/logo.png')}
                                             alt="منصة تاجر أونلاين"
                                             fill
                                             className="object-contain p-1"

@@ -37,8 +37,8 @@ export default function StickyCTA() {
                                 جاهز تبيع أونلاين؟
                             </div>
                             <Button size="lg" className="rounded-xl font-black bg-[#043832] text-brand-accent hover:bg-[#032f29] shadow-lg px-6 py-3 text-sm sm:text-base transition-all hover:scale-105" asChild>
-                                <Link href="/home">
-                                    ابدأ مجاناً
+                                <Link href="https://play.google.com/store/apps/details?id=com.nextcatalog.app" target="_blank" rel="noopener noreferrer">
+                                    ابدأ معنا
                                 </Link>
                             </Button>
                         </motion.div>

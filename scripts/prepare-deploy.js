@@ -34,7 +34,7 @@ if (fs.existsSync(outputDir)) {
 fs.mkdirSync(outputDir, { recursive: true });
 
 // 1. Copy all contents from .open-next (except assets) to outputDir
-fs.readdirSync(openNextDir).forEach(file => {
+fs.readdirSync(openNextDir).forEach((file) => {
   if (file === 'assets') return;
   const srcPath = path.join(openNextDir, file);
   const destPath = path.join(outputDir, file);
@@ -45,7 +45,7 @@ fs.readdirSync(openNextDir).forEach(file => {
 const assetsDir = path.join(openNextDir, 'assets');
 if (fs.existsSync(assetsDir)) {
   console.log('Flattening assets directory...');
-  fs.readdirSync(assetsDir).forEach(file => {
+  fs.readdirSync(assetsDir).forEach((file) => {
     const srcPath = path.join(assetsDir, file);
     const destPath = path.join(outputDir, file);
     copyRecursiveSync(srcPath, destPath);
@@ -59,5 +59,29 @@ if (fs.existsSync(workerSrc)) {
   fs.copyFileSync(workerSrc, workerDest);
 }
 
-console.log('✅ Successfully prepared .vercel/output for Cloudflare Pages');
+// 4. Keep static assets out of the Pages Function/Worker route.
+// Without this, paths like /logo.png and /_next/static/* are handled by
+// the Next server and can return HTML/404 instead of the real asset.
+const routes = {
+  version: 1,
+  include: ['/*'],
+  exclude: [
+    '/_next/static/*',
+    '/BUILD_ID',
+    '/favicon.ico',
+    '/manifest.json',
+    '/sw.js',
+    '/*.png',
+    '/*.jpg',
+    '/*.jpeg',
+    '/*.gif',
+    '/*.svg',
+    '/*.webp',
+    '/*.ico',
+    '/*.txt',
+    '/*.xml',
+  ],
+};
+fs.writeFileSync(path.join(outputDir, '_routes.json'), JSON.stringify(routes, null, 2));
 
+console.log('Successfully prepared .vercel/output for Cloudflare Pages');

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Play, ShoppingBag, Store, TrendingUp, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { versionedAsset } from '@/lib/static-assets';
 
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.nextcatalog.app';
 const GOOGLE_PLAY_ICON = 'https://res.cloudinary.com/dvikey3wc/image/upload/v1773216706/Online_Catalog_pmlblb.png';
@@ -130,7 +131,7 @@ export default function HeroSection() {
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <Image 
-                src="/caracter.png" 
+                src={versionedAsset('/caracter.png')} 
                 alt="تاجر أونلاين" 
                 width={600} 
                 height={800} 

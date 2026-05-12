@@ -24,24 +24,16 @@ const plans = [
       { text: 'دخول للمجتمع الأساسي', included: true },
       { text: 'متابعة مبدئية للتفعيل', included: true },
     ],
-    cta: 'ابدأ مجاناً الآن',
-    ctaLink: '/signup',
+    cta: 'ابدأ معنا الآن',
+    ctaLink: 'https://play.google.com/store/apps/details?id=com.nextcatalog.app',
     popular: false,
   },
   {
     name: 'المتقدمة (Pro)',
-    price: formatPlanPrice(PRO_YEARLY_PRICE_EGP),
-    period: '/ سنوياً',
+    price: formatPlanPrice(PRO_MONTHLY_PRICE_EGP),
+    period: '/ شهرياً',
     secondaryPrice: (
-      <div className="flex flex-col items-center gap-1">
-        <div className="flex items-center gap-2">
-          <span className="text-white/40 line-through text-xs italic">{formatPlanPrice(PRO_MONTHLY_ORIGINAL_PRICE_EGP)}</span>
-          <span className="text-brand-accent flex items-center gap-1 font-bold">
-            {formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} / شهرياً
-          </span>
-        </div>
-        <div className="text-[10px] text-brand-accent font-black animate-pulse">عرض النمو لفترة محدودة ⏳</div>
-      </div>
+      <div className="text-[10px] text-brand-accent font-black animate-pulse">عرض النمو لفترة محدودة ⏳</div>
     ),
     description: 'لما تبدأ تكبر وتحتاج أدوات احترافية للنمو',
     icon: Zap,
@@ -60,19 +52,20 @@ const plans = [
   },
   {
     name: 'الأعمال (Business)',
-    prefix: 'حلول مخصصة',
+    prefix: 'حلول مخصصة - تبدأ من',
     price: '5000 ج.م',
-    period: '/ سنوياً',
+    period: '',
     description: 'لو عندك احتياج أكبر أو براند خاص وتنفيذ مخصص',
     icon: Building,
     features: [
-      { text: 'نطاق خاص (Domain) باسمك', included: true },
-      { text: 'تصميم مخصص لهوية براندك', included: true },
-      { text: 'ربط مع أنظمة الشحن والدفع', included: true },
-      { text: 'مدير حساب مخصص للمتابعة', included: true },
+      { text: 'موقع إحترافي ومتجر إلكتروني متكامل', included: true },
+      { text: 'دومين خاص وايميل بيزنيس رسمي', included: true },
+      { text: 'لوحة تحكم كاملة', included: true },
+      { text: '300 كارت بيزنس مجاناً مع QR Code', included: true },
+      { text: 'AI خدمة عملاء للموقع والسوشيال ميديا', included: true },
     ],
-    cta: 'تواصل معنا للحلول',
-    ctaLink: 'https://wa.me/201008116452',
+    cta: 'اعرف المزيد',
+    ctaLink: 'https://onlinecatalog.netlify.app/',
     popular: false,
   },
 ];
@@ -121,7 +114,7 @@ export default function Pricing() {
                     <div className="flex items-baseline gap-1">
                       {plan.name.includes('Pro') ? (
                         <div className="flex flex-col items-center">
-                           <span className="text-xs text-white/30 line-through italic mb-1">{formatPlanPrice(PRO_YEARLY_ORIGINAL_PRICE_EGP)}</span>
+                           <span className="text-xs text-white/30 line-through italic mb-1">{formatPlanPrice(PRO_MONTHLY_ORIGINAL_PRICE_EGP)}</span>
                            <span className="text-4xl font-black text-white">{plan.price}</span>
                         </div>
                       ) : (

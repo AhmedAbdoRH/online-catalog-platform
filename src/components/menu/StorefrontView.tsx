@@ -232,11 +232,6 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
               {categoryName ?? "منتج"}
             </p>
             <div className="flex items-center gap-2 text-[11px] font-semibold">
-              {newItem && (
-                <span className="inline-flex -rotate-2 items-center rounded-full bg-gradient-to-r from-[#FFC800] to-[#61ffd0] px-3 py-0.5 text-[10px] text-white shadow-lg">
-                  جديد
-                </span>
-              )}
               {(item as any).is_featured && (
                 <span className="inline-flex items-center gap-1 rounded-full border border-brand-luxury/50 bg-brand-luxury/10 px-3 py-0.5 text-[10px] text-brand-luxury">
                   مميز
@@ -296,7 +291,7 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
 
 
 export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("masonry");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [mounted, setMounted] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<number | null>(null);
@@ -694,8 +689,8 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
               {searchTerm ? (
                 // Show search results when there's a search term
                 <div className={cn(
-                  viewMode === "masonry" && "masonry-columns space-y-4",
-                  viewMode === "grid" && "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+                  viewMode === "masonry" && "masonry-columns space-y-3",
+                  viewMode === "grid" && "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5",
                   (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-4"
                 )}>
                   {flattenMenuItems(searchFilteredCategories).length > 0 ? (
@@ -719,8 +714,8 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
               ) : !selectedCategoryId ? (
                 // Show all products in a single grid when no category is selected and no search
                 <div className={cn(
-                  viewMode === "masonry" && "masonry-columns space-y-4",
-                  viewMode === "grid" && "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+                  viewMode === "masonry" && "masonry-columns space-y-3",
+                  viewMode === "grid" && "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5",
                   (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-4"
                 )}>
                   {flattenMenuItems(categories).map((item, index) => (
@@ -768,9 +763,9 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                         {/* Main Category Items */}
                         <div
                           className={cn(
-                            viewMode === "masonry" && "masonry-columns space-y-4",
+                            viewMode === "masonry" && "masonry-columns space-y-3",
                             viewMode === "grid" &&
-                            "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+                            "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5",
                             (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-4"
                           )}
                         >
@@ -825,9 +820,9 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
                                   </div>
                                   <div
                                     className={cn(
-                                      viewMode === "masonry" && "masonry-columns",
+                                      viewMode === "masonry" && "masonry-columns space-y-3",
                                       viewMode === "grid" &&
-                                      "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+                                      "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5",
                                       (viewMode === "list" || viewMode === "compact") && "flex flex-col gap-3"
                                     )}
                                   >

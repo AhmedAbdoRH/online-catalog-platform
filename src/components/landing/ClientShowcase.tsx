@@ -6,6 +6,7 @@ import { ExternalLink, Sparkles, ArrowUpRight, ShieldCheck, Users, TrendingUp } 
 import Image from 'next/image';
 import ScrollAnimation from './ScrollAnimation';
 import { getStoreCount } from '@/app/actions/stats';
+import { versionedAsset } from '@/lib/static-assets';
 
 function Counter({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -53,7 +54,7 @@ const clients: ClientStore[] = [
     url: 'https://tagr-online.com/01155881165',
     category: 'أثاث وأدوات منزلية',
     categoryIcon: '🏠',
-    image: '/showcase-dream-store.png',
+    image: versionedAsset('/showcase-dream-store.png'),
     accentFrom: 'from-emerald-500',
     accentTo: 'to-teal-400',
     glowColor: 'rgba(16,185,129,0.4)',
@@ -68,7 +69,7 @@ const clients: ClientStore[] = [
     url: 'https://tagr-online.com/01027381559',
     category: 'عطور فاخرة',
     categoryIcon: '✨',
-    image: '/showcase-saffir-alotoor.png',
+    image: versionedAsset('/showcase-saffir-alotoor.png'),
     accentFrom: 'from-amber-400',
     accentTo: 'to-yellow-300',
     glowColor: 'rgba(245,158,11,0.4)',
@@ -83,13 +84,28 @@ const clients: ClientStore[] = [
     url: 'https://tagr-online.com/01114228095',
     category: 'بهارات وتوابل',
     categoryIcon: '🌿',
-    image: '/showcase-sultan-spices.png',
+    image: versionedAsset('/showcase-sultan-spices.png'),
     accentFrom: 'from-orange-500',
     accentTo: 'to-red-400',
     glowColor: 'rgba(249,115,22,0.4)',
     badge: 'مستخدم برو',
     statsLabel: 'منتج مفعل',
     statsValue: '+120',
+  },
+  {
+    id: 'tagr-online-store',
+    name: 'متجر تاجر أونلاين',
+    tagline: 'استخدم منصتنا لتحويل عملك إلى متجر إلكتروني احترافي',
+    url: 'https://tagr-online.net/01014498064',
+    category: 'متعدد المنتجات',
+    categoryIcon: '🛍️',
+    image: versionedAsset('/showcase-dream-store.png'),
+    accentFrom: 'from-blue-500',
+    accentTo: 'to-cyan-400',
+    glowColor: 'rgba(59,130,246,0.4)',
+    badge: 'نمو سريع',
+    statsLabel: 'عملاء نشطين',
+    statsValue: '+250',
   },
 ];
 
@@ -296,7 +312,7 @@ export default function ClientShowcase() {
           </ScrollAnimation>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           {clients.map((store, idx) => (
             <StoreCard key={store.id} store={store} index={idx} />
           ))}
