@@ -8,7 +8,8 @@
     "build": "opennextjs-cloudflare build && node scripts/prepare-deploy.js",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "npm run build && wrangler pages deploy .vercel/output --project-name online-catalog-platform --branch main",
+    "deploy": "npm run build",
+    "deploy:manual": "npm run build && wrangler pages deploy .vercel/output --project-name online-catalog-platform --branch main",
     "preview": "opennextjs-cloudflare preview"
   },
   "dependencies": {
