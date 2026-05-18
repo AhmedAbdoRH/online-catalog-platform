@@ -123,6 +123,21 @@ function isPopularItem(item: MenuItem) {
   return inferredPopular;
 }
 
+function getEffectivePrice(item: MenuItem) {
+  const price = Number(item.price ?? 0);
+  const discountPrice = Number((item as any).discount_price ?? NaN);
+
+  if (Number.isFinite(discountPrice) && discountPrice >= 0 && discountPrice < price) {
+    return discountPrice;
+  }
+
+  return price;
+}
+
+function hasDiscountPrice(item: MenuItem) {
+  return getEffectivePrice(item) !== Number(item.price ?? 0);
+}
+
 type MenuItemCardProps = {
   item: MenuItem;
   catalogName: string;
@@ -157,6 +172,8 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
   const newItem = isNewItem(item);
   const popular = isPopularItem(item);
   const { addItem, openCart } = useCart();
+  const effectivePrice = getEffectivePrice(item);
+  const hasDiscount = hasDiscountPrice(item);
 
   const cardColors = getCardColors(theme);
   const hasGradient = theme && theme !== 'default';
@@ -250,7 +267,14 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
           </div>
 
           <div className="mt-auto pt-2 flex items-center justify-between border-t border-white/5">
-            <p className="text-[16px] md:text-[18px] font-black text-brand-accent drop-shadow-sm">{formatPrice(item.price, countryCode)}</p>
+            <div className="flex flex-col items-start gap-0.5">
+              {hasDiscount && (
+                <span className="text-[11px] font-bold text-foreground/45 line-through">
+                  {formatPrice(item.price, countryCode)}
+                </span>
+              )}
+              <p className="text-[16px] md:text-[18px] font-black text-brand-accent drop-shadow-sm">{formatPrice(effectivePrice, countryCode)}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -269,12 +293,11 @@ function MenuItemCard({ item, catalogName, categoryName, viewMode, index, theme,
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            const price = typeof item.price === 'number' ? item.price : Number(item.price || 0)
             addItem({ 
               id: item.id, 
               name: item.name, 
-              price: Number.isNaN(price) ? 0 : price,
-              image_url: item.image_url 
+              price: Number.isNaN(effectivePrice) ? 0 : effectivePrice,
+              image_url: item.image_url || undefined
             }, 1)
           }}
           aria-label="أضف إلى العربة"

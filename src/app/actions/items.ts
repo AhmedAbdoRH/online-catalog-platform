@@ -40,6 +40,10 @@ const itemSchema = z.object({
   name: z.string().min(2).max(100),
   description: z.string().max(255).optional(),
   price: z.coerce.number().min(0).optional().or(z.literal(null)),
+  discount_price: z.preprocess(
+    (val) => val === '' || val === null ? null : val,
+    z.coerce.number().min(0).nullable().optional()
+  ),
   category_id: z.coerce.number(),
   images: z.array(z.instanceof(File))
     .refine(
@@ -150,6 +154,7 @@ export async function createItem(formData: FormData) {
       name: formData.get('name'),
       description: formData.get('description'),
       price: formData.get('price'),
+      discount_price: formData.get('discount_price'),
       category_id: formData.get('category_id'),
       images: images,
       variants: formData.get('variants'),
@@ -162,6 +167,7 @@ export async function createItem(formData: FormData) {
 
     const { catalogId, name, description, category_id, variants } = validatedFields.data;
     let price = validatedFields.data.price || 0;
+    let discountPrice = validatedFields.data.discount_price ?? null;
 
     // Determine price from variants if valid
     if (variants && variants.length > 0) {
@@ -170,6 +176,10 @@ export async function createItem(formData: FormData) {
       if (!isNaN(minPrice)) {
         price = minPrice;
       }
+      discountPrice = null;
+    }
+    if (discountPrice !== null && discountPrice >= price) {
+      return { error: 'السعر المخفض يجب أن يكون أقل من السعر الأساسي.' };
     }
 
     // Check for plan limits
@@ -217,6 +227,7 @@ export async function createItem(formData: FormData) {
       name,
       description,
       price, // Uses min price if variants exist
+      discount_price: discountPrice,
       category_id,
       image_url: mainImageUrl, // Backward compatibility
     };
@@ -317,6 +328,11 @@ export async function updateItem(itemId: number, formData: FormData) {
     }
 
     let price = parseFloat(formData.get('price') as string);
+    const rawDiscountPrice = formData.get('discount_price');
+    let discountPrice =
+      typeof rawDiscountPrice === 'string' && rawDiscountPrice.trim() !== ''
+        ? parseFloat(rawDiscountPrice)
+        : null;
     // Determine price from variants if valid
     if (variants && variants.length > 0) {
       // Find min price
@@ -324,12 +340,17 @@ export async function updateItem(itemId: number, formData: FormData) {
       if (!isNaN(minPrice)) {
         price = minPrice;
       }
+      discountPrice = null;
+    }
+    if (discountPrice !== null && discountPrice >= price) {
+      return { error: 'السعر المخفض يجب أن يكون أقل من السعر الأساسي.' };
     }
 
     const updatePayload: UpdateMenuItem = {
       name: formData.get('name') as string,
       description: formData.get('description') as string,
       price: price, // Uses min price if variants exist
+      discount_price: Number.isFinite(discountPrice as number) ? discountPrice : null,
       category_id: parseInt(formData.get('category_id') as string),
     };
 

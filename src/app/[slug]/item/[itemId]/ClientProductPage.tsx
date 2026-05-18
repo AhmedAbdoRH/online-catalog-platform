@@ -230,6 +230,7 @@ export default function ClientProductPage() {
 
                             <ProductActions
                                 basePrice={product.price}
+                                baseDiscountPrice={product.discount_price}
                                 variants={product.item_variants || []}
                                 productName={product.name}
                                 catalogName={catalog.display_name || catalog.name}
@@ -287,7 +288,14 @@ export default function ClientProductPage() {
                                             <p className="text-xs text-muted-foreground line-clamp-2">
                                                 {item.description ?? "تفاصيل المنتج ستظهر هنا."}
                                             </p>
-                                            <p className="text-base font-black text-brand-accent drop-shadow-sm">{formatPrice(item.price, catalog.country_code)}</p>
+                                            {item.discount_price !== null && item.discount_price !== undefined && Number(item.discount_price) < Number(item.price) ? (
+                                                <div className="flex flex-col items-start gap-0.5">
+                                                    <span className="text-[11px] font-bold text-muted-foreground line-through">{formatPrice(item.price, catalog.country_code)}</span>
+                                                    <p className="text-base font-black text-brand-accent drop-shadow-sm">{formatPrice(item.discount_price, catalog.country_code)}</p>
+                                                </div>
+                                            ) : (
+                                                <p className="text-base font-black text-brand-accent drop-shadow-sm">{formatPrice(item.price, catalog.country_code)}</p>
+                                            )}
                                         </div>
                                     </Link>
                                 ))}

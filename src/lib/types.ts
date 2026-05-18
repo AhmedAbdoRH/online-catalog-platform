@@ -105,6 +105,7 @@ interface Database {
           name: string;
           description: string | null;
           price: number;
+          discount_price: number | null;
           image_url: string | null;
           category_id: number;
           catalog_id: number;
@@ -115,6 +116,7 @@ interface Database {
           name: string;
           description?: string | null;
           price: number;
+          discount_price?: number | null;
           image_url?: string | null;
           category_id: number;
           catalog_id: number;
@@ -125,6 +127,7 @@ interface Database {
           name?: string;
           description?: string | null;
           price?: number;
+          discount_price?: number | null;
           image_url?: string | null;
           category_id?: number;
           catalog_id?: number;

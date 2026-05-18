@@ -18,12 +18,12 @@ export const PageLoader = ({ logoUrl, fullScreen = true }: { logoUrl?: string | 
                             repeat: Infinity,
                             ease: "easeInOut",
                         }}
-                        className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border border-brand-primary/20 shadow-[0_0_40px_rgba(var(--brand-primary),0.15)] bg-white/5 backdrop-blur-md p-3 flex items-center justify-center z-10"
+                        className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border border-brand-primary/20 shadow-[0_0_40px_rgba(var(--brand-primary),0.15)] bg-white/5 backdrop-blur-md flex items-center justify-center z-10"
                     >
                         <img
                             src={logoUrl}
                             alt="Store Loading"
-                            className="w-full h-full object-contain filter drop-shadow-md"
+                            className="h-full w-full rounded-full object-cover filter drop-shadow-md"
                         />
                         <div className="absolute inset-0 rounded-full border-t-[3px] border-brand-primary animate-spin" style={{ animationDuration: '2.5s' }} />
                         <div className="absolute inset-0 rounded-full border-2 border-transparent border-b-brand-accent/50 animate-spin" style={{ animationDuration: '1.5s', animationDirection: 'reverse' }} />

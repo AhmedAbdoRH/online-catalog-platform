@@ -49,6 +49,10 @@ const formSchema = z.object({
   name: z.string().min(2, 'الاسم مطلوب').max(100),
   description: z.string().max(255).optional().or(z.literal('')),
   price: z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً').optional().or(z.literal(undefined)),
+  discount_price: z.preprocess(
+    (val) => val === '' || val === null ? undefined : val,
+    z.coerce.number().min(0, 'يجب أن يكون السعر المخفض إيجابياً').optional()
+  ),
   category_id: z.string().min(1, 'التصنيف مطلوب'),
   main_image: fileSchema.optional(),
   additional_images: z.array(fileSchema)
@@ -67,6 +71,14 @@ const formSchema = z.object({
 }, {
   message: "السعر مطلوب في حال السعر الموحد",
   path: ["price"],
+}).refine((data) => {
+  if (data.pricing_type === 'unified' && data.discount_price !== undefined && data.price !== undefined) {
+    return data.discount_price < data.price;
+  }
+  return true;
+}, {
+  message: "السعر المخفض يجب أن يكون أقل من السعر الأساسي",
+  path: ["discount_price"],
 }).refine((data) => {
   if (data.pricing_type === 'multi') {
     return data.variants && data.variants.length > 0;
@@ -173,6 +185,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
       name: item?.name || '',
       description: item?.description || '',
       price: item?.price || undefined,
+      discount_price: item?.discount_price ?? undefined,
       category_id: item?.category_id?.toString() || '',
       pricing_type: item?.variants && item.variants.length > 0 ? 'multi' : 'unified',
       variants: item?.variants || [],
@@ -320,9 +333,11 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
         formData.append('variants', JSON.stringify(values.variants));
         const minPrice = Math.min(...values.variants.map(v => v.price));
         formData.append('price', minPrice.toString());
+        formData.append('discount_price', '');
       } else {
         console.log('Handling unified pricing:', values.price);
         formData.append('price', (values.price || 0).toString());
+        formData.append('discount_price', values.discount_price !== undefined ? values.discount_price.toString() : '');
         formData.append('variants', JSON.stringify([]));
       }
 
@@ -556,6 +571,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                 </div>
 
                 {pricingType === 'unified' ? (
+                  <>
                   <FormField
                     control={form.control}
                     name="price"
@@ -581,6 +597,32 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="discount_price"
+                    render={({ field }) => (
+                      <FormItem className="animate-in fade-in slide-in-from-top-2 duration-300">
+                        <FormLabel className="text-base font-bold text-slate-200 mb-2 block">السعر المخفض</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              type="number"
+                              step="0.01"
+                              placeholder="اختياري"
+                              {...field}
+                              value={field.value ?? ''}
+                              className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl pl-12 text-white"
+                            />
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-500">
+                              {countryCode === '+966' ? 'ر.س' : 'ج.م'}
+                            </div>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  </>
                 ) : (
                   <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 p-4 bg-slate-800/30 rounded-xl border border-slate-700">
                     <div className="flex items-center justify-between mb-2">

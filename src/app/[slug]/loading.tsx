@@ -38,9 +38,9 @@ export default function Loading() {
                     className="relative"
                 >
                     <div className="absolute inset-0 rounded-full bg-[#00D1C9]/20 blur-2xl animate-pulse" />
-                    <div className="relative h-28 w-28 overflow-hidden rounded-full border-2 border-white/20 bg-white/5 p-1.5 backdrop-blur-md shadow-2xl flex items-center justify-center">
+                    <div className="relative h-28 w-28 overflow-hidden rounded-full border-2 border-white/20 bg-white/5 backdrop-blur-md shadow-2xl flex items-center justify-center">
                         {logoUrl ? (
-                            <img src={logoUrl} alt="Store Loading" className="w-full h-full object-contain filter drop-shadow-md p-2" />
+                            <img src={logoUrl} alt="Store Loading" className="h-full w-full rounded-full object-cover filter drop-shadow-md" />
                         ) : (
                             <Sparkles className="h-10 w-10 text-[#00D1C9] animate-pulse" />
                         )}

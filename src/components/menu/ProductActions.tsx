@@ -13,6 +13,7 @@ import { useCart } from '@/components/cart/CartContext';
 
 interface ProductActionsProps {
     basePrice: number;
+    baseDiscountPrice?: number | null;
     variants: ItemVariant[];
     productName: string;
     catalogName: string;
@@ -34,6 +35,7 @@ interface DirectOrderFormData {
 
 export function ProductActions({
     basePrice,
+    baseDiscountPrice,
     variants = [],
     productName,
     catalogName,
@@ -58,7 +60,12 @@ export function ProductActions({
     const [showDirectOrderDialog, setShowDirectOrderDialog] = useState(false);
     const [customerData, setCustomerData] = useState<DirectOrderFormData | null>(null);
 
-    const currentPrice = selectedVariant ? selectedVariant.price : basePrice;
+    const hasBaseDiscount =
+        !selectedVariant &&
+        typeof baseDiscountPrice === 'number' &&
+        baseDiscountPrice >= 0 &&
+        baseDiscountPrice < basePrice;
+    const currentPrice = selectedVariant ? selectedVariant.price : hasBaseDiscount ? baseDiscountPrice : basePrice;
 
     // Formatting price
     // formatPrice moved to @/lib/utils.ts
@@ -128,8 +135,15 @@ export function ProductActions({
         return (
             <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground font-bold italic">السعر</span>
-                <span className="font-black text-brand-accent text-2xl drop-shadow-sm">
-                    {formatPrice(currentPrice, countryCode)}
+                <span className="flex flex-col items-end gap-0.5">
+                    {hasBaseDiscount && (
+                        <span className="text-xs font-bold text-muted-foreground line-through">
+                            {formatPrice(basePrice, countryCode)}
+                        </span>
+                    )}
+                    <span className="font-black text-brand-accent text-2xl drop-shadow-sm">
+                        {formatPrice(currentPrice, countryCode)}
+                    </span>
                 </span>
 
             </div>

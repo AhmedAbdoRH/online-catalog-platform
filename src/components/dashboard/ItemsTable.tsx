@@ -47,6 +47,10 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const parentCategoryName = item.categories?.parent_category_name || null;
+  const hasDiscount =
+    item.discount_price !== null &&
+    item.discount_price !== undefined &&
+    Number(item.discount_price) < Number(item.price);
 
   const handleDelete = async (itemId: number) => {
     startTransition(async () => {
@@ -99,7 +103,16 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
           )}
         </Badge>
       </TableCell>
-      <TableCell className="font-mono text-[15px] sm:text-xl font-black p-2 sm:p-5 whitespace-nowrap text-left sm:text-right text-brand-accent drop-shadow-sm">{formatPrice(item.price, countryCode)}</TableCell>
+      <TableCell className="font-mono text-[15px] sm:text-xl font-black p-2 sm:p-5 whitespace-nowrap text-left sm:text-right text-brand-accent drop-shadow-sm">
+        {hasDiscount ? (
+          <div className="flex flex-col items-end gap-0.5">
+            <span className="text-[11px] sm:text-xs font-bold text-muted-foreground line-through">{formatPrice(item.price, countryCode)}</span>
+            <span>{formatPrice(item.discount_price, countryCode)}</span>
+          </div>
+        ) : (
+          formatPrice(item.price, countryCode)
+        )}
+      </TableCell>
       <TableCell className="p-2 sm:p-5 text-left">
         <div className="flex flex-col items-center gap-1 justify-center">
           <Button

@@ -3,12 +3,20 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Play, ShoppingBag, Store, TrendingUp, Users } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ArrowRight, ChevronDown, Facebook, MessageCircle, ShoppingBag, Store, TrendingUp, UsersRound } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { versionedAsset } from '@/lib/static-assets';
 
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.nextcatalog.app';
 const GOOGLE_PLAY_ICON = 'https://res.cloudinary.com/dvikey3wc/image/upload/v1773216706/Online_Catalog_pmlblb.png';
+const MERCHANTS_WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb8HBRN6mYPSvZzfgo2Y';
+const MERCHANTS_FACEBOOK_GROUP_URL = 'https://www.facebook.com/share/g/1Dna48xdyp/';
 
 export default function HeroSection() {
   return (
@@ -76,7 +84,7 @@ export default function HeroSection() {
                 <Link href={PLAY_STORE_URL} target="_blank" className="flex items-center gap-3">
                   <div className="w-8 h-8 flex items-center justify-center">
                     <Image 
-                      src="https://res.cloudinary.com/dvikey3wc/image/upload/v1773216706/Online_Catalog_pmlblb.png" 
+                      src={GOOGLE_PLAY_ICON} 
                       alt="Google Play" 
                       width={32} 
                       height={32} 
@@ -86,6 +94,49 @@ export default function HeroSection() {
                   حمل التطبيق من المتجر
                 </Link>
               </Button>
+
+              <DropdownMenu dir="rtl">
+                <DropdownMenuTrigger asChild>
+                  <Button size="lg" className="group relative h-16 w-full overflow-hidden rounded-2xl border border-white/70 bg-white px-7 text-lg font-black text-[#04251F] shadow-[0_22px_55px_rgba(255,255,255,0.14),0_0_34px_rgba(85,249,230,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#F2FFFC] hover:shadow-[0_26px_70px_rgba(85,249,230,0.24)] active:scale-95 sm:w-auto sm:text-xl">
+                    <span className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(85,249,230,0.38),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.92),rgba(219,255,246,0.82))]" />
+                    <span className="relative flex items-center justify-center gap-3">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#04251F] text-brand-accent shadow-[0_10px_28px_rgba(4,37,31,0.24)] ring-4 ring-brand-accent/20">
+                        <UsersRound className="w-5 h-5" />
+                      </span>
+                      انضم لمجتمع التجار
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#04251F]/8 text-[#04251F]">
+                        <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]:rotate-180" />
+                      </span>
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" sideOffset={10} className="w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[1.25rem] border border-white/80 bg-[linear-gradient(135deg,#E8FFF7_0%,#F7FFF2_36%,#EAF3FF_100%)] p-2 text-right text-[#04251F] shadow-[0_24px_70px_rgba(0,0,0,0.28),0_0_40px_rgba(85,249,230,0.24)] backdrop-blur-2xl">
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-2xl p-0 focus:bg-transparent focus:text-white">
+                    <Link href={MERCHANTS_WHATSAPP_CHANNEL_URL} target="_blank" rel="noopener noreferrer" className="group/item mb-1.5 flex items-center gap-3 rounded-2xl bg-[#F0FFF7] px-3.5 py-3 transition-all hover:bg-[#E2FFF0]">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_22px_rgba(37,211,102,0.24)]">
+                        <MessageCircle className="h-4.5 w-4.5" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-black text-[#04251F]">قناة الواتساب</span>
+                        <span className="mt-0.5 block text-[11px] font-bold leading-tight text-[#5B7A72]">تنبيهات ونصائح سريعة</span>
+                      </span>
+                      <ArrowRight className="h-4 w-4 shrink-0 text-[#25D366] opacity-70 transition-transform group-hover/item:-translate-x-1" />
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-2xl p-0 focus:bg-transparent focus:text-white">
+                    <Link href={MERCHANTS_FACEBOOK_GROUP_URL} target="_blank" rel="noopener noreferrer" className="group/item flex items-center gap-3 rounded-2xl bg-[#F1F7FF] px-3.5 py-3 transition-all hover:bg-[#E5F0FF]">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1877F2] text-white shadow-[0_10px_22px_rgba(24,119,242,0.24)]">
+                        <Facebook className="h-4.5 w-4.5" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-black text-[#04251F]">مجتمع الفيسبوك</span>
+                        <span className="mt-0.5 block text-[11px] font-bold leading-tight text-[#5B7A72]">نقاشات وتجارب التجار</span>
+                      </span>
+                      <ArrowRight className="h-4 w-4 shrink-0 text-[#1877F2] opacity-70 transition-transform group-hover/item:-translate-x-1" />
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </motion.div>
 
             {/* Trust Badges */}
@@ -96,12 +147,12 @@ export default function HeroSection() {
               transition={{ duration: 1, delay: 0.4 }}
             >
               {[
-                { number: '+50K', label: 'تاجر نشط' },
-                { number: '+1M', label: 'طلب معالج' },
-                { number: '98%', label: 'رضا التجار' },
+                { title: 'متجر رقمي سريع', label: 'جاهز للمشاركة' },
+                { title: 'طلبات مباشرة', label: 'عبر واتساب' },
+                { title: 'إدارة بسيطة', label: 'من لوحة واحدة' },
               ].map((stat, i) => (
                 <div key={i} className="flex flex-col items-center lg:items-start group">
-                  <span className="text-3xl font-black text-white group-hover:text-brand-accent transition-colors">{stat.number}</span>
+                  <span className="text-lg sm:text-xl font-black text-white group-hover:text-brand-accent transition-colors">{stat.title}</span>
                   <span className="text-xs font-bold uppercase tracking-widest text-white/50 mt-1">{stat.label}</span>
                 </div>
               ))}
