@@ -1,34 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { motion, useInView, animate } from 'framer-motion';
-import { ExternalLink, Sparkles, ArrowUpRight, ShieldCheck, Users, TrendingUp } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { ArrowUpRight, ExternalLink, ShieldCheck, Sparkles, Store, Wrench } from 'lucide-react';
 import Image from 'next/image';
 import ScrollAnimation from './ScrollAnimation';
-import { getStoreCount } from '@/app/actions/stats';
 import { versionedAsset } from '@/lib/static-assets';
-
-function Counter({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView && ref.current) {
-      const controls = animate(0, value, {
-        duration: 2,
-        ease: 'easeOut',
-        onUpdate(latest) {
-          if (ref.current) {
-            ref.current.textContent = prefix + Math.floor(latest).toLocaleString() + suffix;
-          }
-        },
-      });
-      return () => controls.stop();
-    }
-  }, [value, isInView, prefix, suffix]);
-
-  return <span ref={ref}>0</span>;
-}
 
 interface ClientStore {
   id: string;
@@ -42,15 +19,13 @@ interface ClientStore {
   accentTo: string;
   glowColor: string;
   badge: string;
-  statsLabel: string;
-  statsValue: string;
 }
 
 const clients: ClientStore[] = [
   {
     id: 'dream-store',
-    name: 'دريم استور',
-    tagline: 'بدأ بـ 5 منتجات والآن يبيع لآلاف العملاء شهرياً',
+    name: 'دريم ستور',
+    tagline: 'نموذج لمتجر يعرض منتجاته بشكل منظم وسهل المشاركة مع العملاء.',
     url: 'https://tagr-online.com/01155881165',
     category: 'أثاث وأدوات منزلية',
     categoryIcon: '🏠',
@@ -58,14 +33,12 @@ const clients: ClientStore[] = [
     accentFrom: 'from-emerald-500',
     accentTo: 'to-teal-400',
     glowColor: 'rgba(16,185,129,0.4)',
-    badge: 'قصة نجاح',
-    statsLabel: 'نمو المبيعات',
-    statsValue: '+300%',
+    badge: 'نموذج متجر',
   },
   {
     id: 'saffir-alotoor',
     name: 'سفير العطور',
-    tagline: 'استخدم الرابط عبر واتساب لزيادة التفاعل بنسبة 200%',
+    tagline: 'واجهة بسيطة تساعد العميل على تصفح المنتجات وطلبها مباشرة عبر الرابط.',
     url: 'https://tagr-online.com/perfume-ambassador',
     category: 'عطور فاخرة',
     categoryIcon: '✨',
@@ -73,14 +46,12 @@ const clients: ClientStore[] = [
     accentFrom: 'from-amber-400',
     accentTo: 'to-yellow-300',
     glowColor: 'rgba(245,158,11,0.4)',
-    badge: 'تفاعل عالي',
-    statsLabel: 'طلبات يومية',
-    statsValue: '+45',
+    badge: 'تجربة عرض',
   },
   {
     id: 'sultan-spices',
-    name: 'عطاره السلطان',
-    tagline: 'ترقّى للبرو بعد ما بدأ يشوف نتائج حقيقية في أول شهر',
+    name: 'عطارة السلطان',
+    tagline: 'كتالوج واضح للمنتجات والأقسام، مناسب للمشاركة على واتساب والسوشيال ميديا.',
     url: 'https://tagr-online.com/01114228095',
     category: 'بهارات وتوابل',
     categoryIcon: '🌿',
@@ -89,8 +60,6 @@ const clients: ClientStore[] = [
     accentTo: 'to-red-400',
     glowColor: 'rgba(249,115,22,0.4)',
     badge: 'مستخدم برو',
-    statsLabel: 'منتج مفعل',
-    statsValue: '+120',
   },
 ];
 
@@ -158,7 +127,7 @@ function StoreCard({ store, index }: { store: ClientStore; index: number }) {
           </div>
 
           <div className="relative mx-auto rounded-2xl overflow-hidden border border-white/10 shadow-inner bg-[#041412] aspect-[3/4] sm:aspect-[4/5.5]">
-            <motion.div 
+            <motion.div
               className="absolute top-0 left-0 w-full"
               animate={{ y: hovered ? '-78%' : '0%' }}
               transition={{ duration: 7, ease: [0.45, 0, 0.55, 1] }}
@@ -196,11 +165,11 @@ function StoreCard({ store, index }: { store: ClientStore; index: number }) {
             </motion.div>
           </div>
 
-          <div className="mt-4 flex items-center justify-between">
-            <div>
-              <div className="text-[10px] text-white/40">{store.statsLabel}</div>
-              <div className={`text-sm font-black bg-gradient-to-r ${store.accentFrom} ${store.accentTo} bg-clip-text text-transparent mt-0.5`}>
-                {store.statsValue}
+          <div className="mt-4 flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <div className="text-[10px] text-white/40">نوع المتجر</div>
+              <div className={`text-sm font-black bg-gradient-to-r ${store.accentFrom} ${store.accentTo} bg-clip-text text-transparent mt-0.5 truncate`}>
+                {store.category}
               </div>
             </div>
 
@@ -232,16 +201,6 @@ function StoreCard({ store, index }: { store: ClientStore; index: number }) {
 }
 
 export default function ClientShowcase() {
-  const [storeCount, setStoreCount] = useState<number>(0);
-
-  useEffect(() => {
-    const fetchCount = async () => {
-      const count = await getStoreCount();
-      setStoreCount(count || 5240); // Fallback to a realistic number if 0
-    };
-    fetchCount();
-  }, []);
-
   return (
     <section
       id="success-stories"
@@ -257,41 +216,38 @@ export default function ClientShowcase() {
             <ScrollAnimation animation="reveal-3d-right">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/20 mb-4">
                 <Sparkles className="w-4 h-4 text-brand-accent" />
-                <span className="text-[10px] font-bold text-brand-accent uppercase tracking-widest">قصص نجاح حقيقية</span>
+                <span className="text-[10px] font-bold text-brand-accent uppercase tracking-widest">نماذج متاجر حقيقية</span>
               </div>
               <h2 className="text-4xl md:text-6xl font-black text-white leading-tight mb-6">
-                تجار حققوا <span className="text-brand-accent">نمواً ملموساً</span>
+                متاجر منظمة <span className="text-brand-accent">وجاهزة للمشاركة</span>
               </h2>
               <p className="text-lg md:text-xl text-white/50 leading-relaxed">
-                انضم لأكثر من <span className="text-white font-bold"><Counter value={storeCount} /></span> تاجر يستخدمون منظومة تاجر أونلاين يومياً لتطوير أعمالهم.
+                شاهد كيف يظهر كتالوج المنتجات للعميل، وكيف يمكن للتاجر مشاركة رابط متجره واستقبال الطلبات بطريقة مباشرة.
               </p>
             </ScrollAnimation>
           </div>
 
           <ScrollAnimation animation="fade-in" delay={0.3}>
             <div className="flex gap-4 sm:gap-8">
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center max-w-24">
                 <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3">
-                  <Users className="w-6 h-6 text-brand-accent" />
+                  <Store className="w-6 h-6 text-brand-accent" />
                 </div>
-                <div className="text-xl font-black text-white">+50K</div>
-                <div className="text-[10px] text-white/40 font-bold uppercase tracking-tighter">شريك موثوق</div>
+                <div className="text-xs text-white/70 font-bold text-center leading-relaxed">واجهة متجر واضحة</div>
               </div>
               <div className="w-px h-16 bg-white/10 self-center" />
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center max-w-24">
                 <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3">
-                  <TrendingUp className="w-6 h-6 text-brand-primary" />
+                  <Wrench className="w-6 h-6 text-brand-primary" />
                 </div>
-                <div className="text-xl font-black text-white">98%</div>
-                <div className="text-[10px] text-white/40 font-bold uppercase tracking-tighter">رضا التجار</div>
+                <div className="text-xs text-white/70 font-bold text-center leading-relaxed">إدارة سهلة</div>
               </div>
               <div className="w-px h-16 bg-white/10 self-center" />
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center max-w-24">
                 <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3">
                   <ShieldCheck className="w-6 h-6 text-emerald-500" />
                 </div>
-                <div className="text-xl font-black text-white">100%</div>
-                <div className="text-[10px] text-white/40 font-bold uppercase tracking-tighter">دعم فني</div>
+                <div className="text-xs text-white/70 font-bold text-center leading-relaxed">دعم ومتابعة</div>
               </div>
             </div>
           </ScrollAnimation>

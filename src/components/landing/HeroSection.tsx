@@ -16,7 +16,7 @@ import { versionedAsset } from '@/lib/static-assets';
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.nextcatalog.app';
 const GOOGLE_PLAY_ICON = 'https://res.cloudinary.com/dvikey3wc/image/upload/v1773216706/Online_Catalog_pmlblb.png';
 const MERCHANTS_WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb8HBRN6mYPSvZzfgo2Y';
-const MERCHANTS_FACEBOOK_GROUP_URL = 'https://www.facebook.com/share/g/1Dna48xdyp/';
+const MERCHANTS_FACEBOOK_GROUP_URL = 'https://www.facebook.com/groups/tagr.online/';
 
 export default function HeroSection() {
   return (
@@ -95,48 +95,40 @@ export default function HeroSection() {
                 </Link>
               </Button>
 
-              <DropdownMenu dir="rtl">
-                <DropdownMenuTrigger asChild>
-                  <Button size="lg" className="group relative h-16 w-full overflow-hidden rounded-2xl border border-white/70 bg-white px-7 text-lg font-black text-[#04251F] shadow-[0_22px_55px_rgba(255,255,255,0.14),0_0_34px_rgba(85,249,230,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#F2FFFC] hover:shadow-[0_26px_70px_rgba(85,249,230,0.24)] active:scale-95 sm:w-auto sm:text-xl">
-                    <span className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(85,249,230,0.38),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.92),rgba(219,255,246,0.82))]" />
-                    <span className="relative flex items-center justify-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#04251F] text-brand-accent shadow-[0_10px_28px_rgba(4,37,31,0.24)] ring-4 ring-brand-accent/20">
-                        <UsersRound className="w-5 h-5" />
+              <div className="relative overflow-hidden flex flex-col gap-4 p-4 rounded-[1.5rem] border border-white/10 bg-[#04251F] shadow-[0_22px_55px_rgba(0,0,0,0.4),0_0_34px_rgba(85,249,230,0.08)] w-full lg:w-auto">
+                <span className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(85,249,230,0.15),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.02),rgba(219,255,246,0.01))]" />
+                
+                <div className="relative z-10 flex flex-col sm:flex-row items-center gap-3 px-2 text-white font-black text-xl">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#020D0A] text-brand-accent shadow-[0_10px_28px_rgba(0,0,0,0.4)] ring-2 ring-brand-accent/30">
+                    <UsersRound className="w-5 h-5" />
+                  </span>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-center sm:text-right">
+                    <span>انضم لمجتمع التجار</span>
+                    <span className="hidden sm:inline text-brand-accent/60">-</span>
+                    <span className="text-sm sm:text-xl text-brand-accent/90">وتعلم البيع أونلاين</span>
+                  </div>
+                </div>
+                
+                <div className="relative z-10 flex flex-wrap sm:flex-nowrap gap-3 mt-1">
+                  <Button asChild size="lg" className="h-14 px-6 bg-[#1877F2] text-white hover:bg-[#166fe5] font-bold text-lg rounded-xl shadow-[0_0_20px_rgba(24,119,242,0.2)] hover:shadow-[0_0_30px_rgba(24,119,242,0.3)] transition-all hover:-translate-y-0.5 active:scale-95 group border border-[#1877F2]/50 w-full sm:w-auto flex-1">
+                    <Link href={MERCHANTS_FACEBOOK_GROUP_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#1877F2] shadow-sm">
+                        <Facebook className="w-4 h-4 fill-current" />
                       </span>
-                      انضم لمجتمع التجار
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#04251F]/8 text-[#04251F]">
-                        <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]:rotate-180" />
-                      </span>
-                    </span>
+                      على فيسبوك
+                    </Link>
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" sideOffset={10} className="w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[1.25rem] border border-white/80 bg-[linear-gradient(135deg,#E8FFF7_0%,#F7FFF2_36%,#EAF3FF_100%)] p-2 text-right text-[#04251F] shadow-[0_24px_70px_rgba(0,0,0,0.28),0_0_40px_rgba(85,249,230,0.24)] backdrop-blur-2xl">
-                  <DropdownMenuItem asChild className="cursor-pointer rounded-2xl p-0 focus:bg-transparent focus:text-white">
-                    <Link href={MERCHANTS_WHATSAPP_CHANNEL_URL} target="_blank" rel="noopener noreferrer" className="group/item mb-1.5 flex items-center gap-3 rounded-2xl bg-[#F0FFF7] px-3.5 py-3 transition-all hover:bg-[#E2FFF0]">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_22px_rgba(37,211,102,0.24)]">
-                        <MessageCircle className="h-4.5 w-4.5" />
+
+                  <Button asChild size="lg" className="h-14 px-6 bg-[#25D366] text-white hover:bg-[#20bd5a] font-bold text-lg rounded-xl shadow-[0_0_20px_rgba(37,211,102,0.2)] hover:shadow-[0_0_30px_rgba(37,211,102,0.3)] transition-all hover:-translate-y-0.5 active:scale-95 group border border-[#25D366]/50 w-full sm:w-auto flex-1">
+                    <Link href={MERCHANTS_WHATSAPP_CHANNEL_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#25D366] shadow-sm">
+                        <MessageCircle className="w-4 h-4 fill-current" />
                       </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-black text-[#04251F]">قناة الواتساب</span>
-                        <span className="mt-0.5 block text-[11px] font-bold leading-tight text-[#5B7A72]">تنبيهات ونصائح سريعة</span>
-                      </span>
-                      <ArrowRight className="h-4 w-4 shrink-0 text-[#25D366] opacity-70 transition-transform group-hover/item:-translate-x-1" />
+                      على واتساب
                     </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer rounded-2xl p-0 focus:bg-transparent focus:text-white">
-                    <Link href={MERCHANTS_FACEBOOK_GROUP_URL} target="_blank" rel="noopener noreferrer" className="group/item flex items-center gap-3 rounded-2xl bg-[#F1F7FF] px-3.5 py-3 transition-all hover:bg-[#E5F0FF]">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1877F2] text-white shadow-[0_10px_22px_rgba(24,119,242,0.24)]">
-                        <Facebook className="h-4.5 w-4.5" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-black text-[#04251F]">مجتمع الفيسبوك</span>
-                        <span className="mt-0.5 block text-[11px] font-bold leading-tight text-[#5B7A72]">نقاشات وتجارب التجار</span>
-                      </span>
-                      <ArrowRight className="h-4 w-4 shrink-0 text-[#1877F2] opacity-70 transition-transform group-hover/item:-translate-x-1" />
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </Button>
+                </div>
+              </div>
             </motion.div>
 
             {/* Trust Badges */}

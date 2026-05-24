@@ -103,15 +103,16 @@ export default function RootLayout({
         )}
       >
         <NextTopLoader
-          color="#55F9E6"
+          color="#FFD700"
           initialPosition={0.08}
-          crawlSpeed={200}
-          height={3}
+          crawlSpeed={120}
+          height={5}
           crawl={true}
           showSpinner={false}
-          easing="ease"
-          speed={200}
-          shadow="0 0 10px #55F9E6,0 0 5px #55F9E6"
+          easing="cubic-bezier(0.65, 0, 0.35, 1)"
+          speed={260}
+          shadow="0 0 18px rgba(255,215,0,0.85),0 0 28px rgba(85,249,230,0.55)"
+          template='<div class="bar top-loader-glow" role="bar"><div class="peg"></div></div>'
         />
         <ClientProviders>
           <ThemeProvider

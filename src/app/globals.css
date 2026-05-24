@@ -95,4 +95,37 @@
     @apply bg-white/[0.06] border-brand-accent/30 -translate-y-2;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
   }
+
+  .dashboard-action-bar {
+    background:
+      linear-gradient(90deg, transparent 0%, rgba(85, 249, 230, 0.92) 26%, rgba(255, 215, 0, 1) 52%, rgba(45, 212, 191, 0.95) 78%, transparent 100%);
+    filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.75));
+    animation: dashboard-action-bar 1.05s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  .top-loader-glow {
+    background:
+      linear-gradient(90deg, #55f9e6 0%, #ffd700 45%, #2dd4bf 100%) !important;
+    box-shadow:
+      0 0 18px rgba(255, 215, 0, 0.8),
+      0 0 28px rgba(85, 249, 230, 0.55) !important;
+  }
+}
+
+@keyframes dashboard-action-bar {
+  0% {
+    transform: translateX(110%) scaleX(0.45);
+    opacity: 0.25;
+  }
+  18% {
+    opacity: 1;
+  }
+  55% {
+    transform: translateX(0) scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-120%) scaleX(0.55);
+    opacity: 0.3;
+  }
 }

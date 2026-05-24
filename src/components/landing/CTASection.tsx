@@ -42,7 +42,7 @@ export default function CTASection() {
 
               {/* Sub-text */}
               <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed">
-                انضم لآلاف التجار وابدأ رحلتك نحو النجاح الآن مع منظومة تاجر أونلاين المتكاملة.
+                ابدأ متجرًا رقميًا منظمًا وشارك منتجاتك مع عملائك بسهولة من خلال منظومة تاجر أونلاين المتكاملة.
               </p>
 
               {/* Buttons */}

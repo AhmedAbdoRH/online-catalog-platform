@@ -4,6 +4,7 @@ import Header from "@/components/common/Header";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { Toaster } from "@/components/ui/toaster";
 import { BottomNav } from "@/components/dashboard/BottomNav";
+import { DashboardActionFeedback } from "@/components/dashboard/DashboardActionFeedback";
 import { cn } from "@/lib/utils";
 
 export default async function DashboardLayout({
@@ -28,6 +29,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-[100dvh] w-full flex-col bg-background relative overflow-x-clip">
+      {catalog && <DashboardActionFeedback />}
       {catalog && <DashboardNav user={user} catalog={catalog} />}
       <div className={cn(
         "flex flex-col flex-1 w-full max-w-full",

@@ -123,8 +123,9 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
     <TooltipProvider>
       {/* Loading Bar */}
       {isLoading && (
-        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-muted overflow-hidden">
-          <div className="h-full bg-brand-primary animate-loading-bar" />
+        <div className="fixed top-0 left-0 right-0 z-[70] h-2 overflow-hidden bg-[#03110f] shadow-[0_8px_28px_rgba(0,0,0,0.45)]">
+          <div className="dashboard-action-bar absolute inset-y-0 right-0 w-[70%]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.28),transparent)] opacity-70 animate-progress-indeterminate" />
         </div>
       )}
       <aside className="fixed inset-y-0 right-0 z-10 hidden w-14 flex-col border-l bg-background sm:flex">
