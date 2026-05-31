@@ -47,7 +47,13 @@ const fileSchema = z.custom<File>((val) => {
 
 const formSchema = z.object({
   name: z.string().min(2, 'الاسم مطلوب').max(100),
-  description: z.string().max(255).optional().or(z.literal('')),
+  description: z.string()
+    .refine(
+      (val) => !val || val.trim().split(/\s+/).filter(Boolean).length <= 1000,
+      'يجب ألا يتجاوز الوصف 1000 كلمة'
+    )
+    .optional()
+    .or(z.literal('')),
   price: z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً').optional().or(z.literal(undefined)),
   discount_price: z.preprocess(
     (val) => val === '' || val === null ? undefined : val,
@@ -191,6 +197,9 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
       variants: item?.variants || [],
     },
   } as any);
+
+  const descValue = form.watch('description') || '';
+  const descWordCount = descValue.trim().split(/\s+/).filter(Boolean).length;
 
   const handleRemoveMainBackground = async () => {
     if (!isPro) {
@@ -517,7 +526,15 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-bold text-slate-200 mb-2 block">وصف المنتج (اختياري)</FormLabel>
+                      <div className="flex justify-between items-center mb-2">
+                        <FormLabel className="text-base font-bold text-slate-200">وصف المنتج (اختياري)</FormLabel>
+                        <span className={cn(
+                          "text-xs font-bold transition-colors",
+                          descWordCount > 1000 ? "text-red-400 animate-pulse" : descWordCount > 800 ? "text-amber-400" : "text-slate-400"
+                        )}>
+                          {descWordCount} / 1000 كلمة
+                        </span>
+                      </div>
                       <FormControl>
                         <Textarea
                           placeholder="اكتب وصفاً جذاباً لمنتجك..."

@@ -38,7 +38,12 @@ async function deleteImageFromStorage(url: string) {
 const itemSchema = z.object({
   catalogId: z.coerce.number(),
   name: z.string().min(2).max(100),
-  description: z.string().max(255).optional(),
+  description: z.string()
+    .refine(
+      (val) => !val || val.trim().split(/\s+/).filter(Boolean).length <= 1000,
+      'يجب ألا يتجاوز الوصف 1000 كلمة'
+    )
+    .optional(),
   price: z.coerce.number().min(0).optional().or(z.literal(null)),
   discount_price: z.preprocess(
     (val) => val === '' || val === null ? null : val,
