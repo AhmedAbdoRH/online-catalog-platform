@@ -532,7 +532,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                           "text-xs font-bold transition-colors",
                           descWordCount > 1000 ? "text-red-400 animate-pulse" : descWordCount > 800 ? "text-amber-400" : "text-slate-400"
                         )}>
-                          {descWordCount} / 
+                        
                         </span>
                       </div>
                       <FormControl>
