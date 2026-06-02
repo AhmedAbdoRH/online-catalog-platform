@@ -12,9 +12,17 @@ import { useEffect, useState } from "react";
 import { Catalog, MenuItem, ItemVariant } from "@/lib/types";
 import { PageLoader } from "@/components/common/PageLoader";
 import { Head } from "@/components/common/Head";
+import { Button } from "@/components/ui/button";
 import { CartProvider } from "@/components/cart/CartContext";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CartButton } from "@/components/cart/CartButton";
+import {
+    FREE_PLAN_MAX_CATEGORIES,
+    FREE_PLAN_MAX_PRODUCTS,
+    getEffectiveCatalogSettings,
+    getPlanEntitlement,
+    isProPlan,
+} from "@/lib/plans";
 
 // Helper Functions
 const getThemeClass = (theme: string) => {
@@ -61,6 +69,7 @@ export default function ClientProductPage() {
     const itemId = params?.itemId as string;
     const [data, setData] = useState<ProductPageData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [unavailable, setUnavailable] = useState(false);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
     // Fast initial logo before fetching
@@ -77,6 +86,7 @@ export default function ClientProductPage() {
         async function fetchData() {
             if (!slug || !itemId) return;
 
+            setUnavailable(false);
             const supabase = createClient();
 
             // 1. Get Catalog
@@ -94,6 +104,37 @@ export default function ClientProductPage() {
             if (catalog.logo_url) {
                 sessionStorage.setItem(`store_logo_${slug}`, catalog.logo_url);
                 setLogoUrl(catalog.logo_url);
+            }
+
+            const isPro = isProPlan(catalog as Catalog);
+            let entitledProductIds: Set<number> | null = null;
+
+            if (!isPro) {
+                const [{ data: categories }, { data: products }] = await Promise.all([
+                    supabase
+                        .from("categories")
+                        .select("id, created_at")
+                        .eq("catalog_id", catalog.id),
+                    supabase
+                        .from("menu_items")
+                        .select("id, category_id, created_at")
+                        .eq("catalog_id", catalog.id),
+                ]);
+
+                const categoryEntitlement = getPlanEntitlement(categories || [], FREE_PLAN_MAX_CATEGORIES, false);
+                const productEntitlement = getPlanEntitlement(products || [], FREE_PLAN_MAX_PRODUCTS, false);
+                const productSummary = (products || []).find((item: any) => String(item.id) === String(itemId));
+                entitledProductIds = productEntitlement.entitledIds;
+
+                if (
+                    !productSummary ||
+                    !productEntitlement.isEntitled(productSummary.id) ||
+                    !categoryEntitlement.isEntitled(productSummary.category_id)
+                ) {
+                    setUnavailable(true);
+                    setLoading(false);
+                    return;
+                }
             }
 
             // 2. Get Product
@@ -142,22 +183,25 @@ export default function ClientProductPage() {
                 .eq("id", product.category_id)
                 .maybeSingle();
 
-            // 6. Get Related
+            // 6. Get Related (filtered by entitlement for non-pro)
             const { data: related } = await supabase
                 .from("menu_items")
                 .select("*")
                 .eq("catalog_id", catalog.id)
                 .eq("category_id", product.category_id)
                 .neq("id", product.id)
-                .order('created_at', { ascending: false })
-                .limit(4);
+                .order('created_at', { ascending: false });
+
+            const visibleRelated = entitledProductIds
+                ? (related || []).filter((item: any) => entitledProductIds?.has(item.id)).slice(0, 4)
+                : (related || []).slice(0, 4);
 
             setData({
-                catalog,
+                catalog: getEffectiveCatalogSettings(catalog as Catalog),
                 product: { ...product, item_variants: variants || [] },
                 categoryName: category?.name ?? undefined,
-                related: related ?? [],
-                images
+                related: visibleRelated,
+                images,
             });
             setLoading(false);
         }
@@ -165,12 +209,29 @@ export default function ClientProductPage() {
     }, [slug, itemId]);
 
     if (loading) return <PageLoader logoUrl={logoUrl} />;
+    if (unavailable) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-default px-4 text-center">
+                <div className="max-w-md rounded-2xl border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
+                    <h1 className="text-2xl font-black text-foreground">المنتج غير متاح حاليًا</h1>
+                    <p className="mt-3 text-sm text-foreground/70">
+                        هذا المنتج غير معروض في المتجر الآن. يمكنك الرجوع للمتجر لرؤية المنتجات المتاحة.
+                    </p>
+                    <Button asChild className="mt-6 rounded-full">
+                        <Link href={`/${slug}`}>
+                            <ArrowRight className="h-4 w-4" />
+                            العودة للمتجر
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+        );
+    }
     if (!data) return <div className="min-h-screen flex items-center justify-center">المنتج غير موجود</div>;
 
     const { catalog, product, categoryName, related, images } = data;
     const productUrl = `https://tagr-online.com/${catalog.name}/item/${product.id}`;
 
-    // Theme helpers usage
     const theme = (catalog as any).theme;
     const themeClass = getThemeClass(theme);
     const cardColors = getCardColors(theme);

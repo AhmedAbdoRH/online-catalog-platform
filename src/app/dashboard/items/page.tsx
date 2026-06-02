@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ItemsTable } from '@/components/dashboard/ItemsTable';
 import { AddItemButton } from '@/components/dashboard/AddItemButton';
-import { isProPlan } from '@/lib/plans';
+import { FREE_PLAN_MAX_CATEGORIES, FREE_PLAN_MAX_PRODUCTS, getPlanEntitlement, isProPlan } from '@/lib/plans';
 import { Catalog } from '@/lib/types';
 
 async function getData() {
@@ -21,15 +21,26 @@ async function getData() {
         .eq('catalog_id', catalog.id)
         .order('created_at', { ascending: false });
 
-    const normalizedItems = (items || []).map((item: any) => ({
-        ...item,
-        categories: item.categories
-            ? {
-                ...item.categories,
-                parent_category_name: item.categories.parent?.name || null,
-            }
-            : item.categories,
-    }));
+    const isPro = isProPlan(catalog as Catalog);
+    const itemEntitlement = getPlanEntitlement(items || [], FREE_PLAN_MAX_PRODUCTS, isPro);
+    const categoryEntitlement = getPlanEntitlement(categories || [], FREE_PLAN_MAX_CATEGORIES, isPro);
+
+    const normalizedItems = (items || []).map((item: any) => {
+        const isHiddenByPlan =
+            !isPro &&
+            (!itemEntitlement.isEntitled(item.id) || !categoryEntitlement.isEntitled(item.category_id));
+
+        return {
+            ...item,
+            hiddenReason: isHiddenByPlan ? 'plan_limit' : null,
+            categories: item.categories
+                ? {
+                    ...item.categories,
+                    parent_category_name: item.categories.parent?.name || null,
+                }
+                : item.categories,
+        };
+    });
 
     return { catalog: catalog as Catalog, categories: categories || [], items: normalizedItems };
 }

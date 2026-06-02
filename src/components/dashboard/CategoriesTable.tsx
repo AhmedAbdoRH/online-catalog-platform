@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import type { CategoryWithSubcategories } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, ChevronRight, ChevronDown, Folder, FolderOpen, Plus } from 'lucide-react';
+import { MoreHorizontal, ChevronRight, ChevronDown, Folder, FolderOpen, Plus, EyeOff } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,18 +29,22 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
+type CategoryWithHiddenReason = CategoryWithSubcategories & {
+  hiddenReason?: 'plan_limit' | null;
+};
+
 type CategoryActionsMenuProps = {
-  category: CategoryWithSubcategories;
+  category: CategoryWithHiddenReason;
   catalogId: number;
-  categories: CategoryWithSubcategories[];
+  categories: CategoryWithHiddenReason[];
   size?: 'icon' | 'default';
   onSuccess?: () => void;
 };
 
 type CategoryRowProps = {
-  category: CategoryWithSubcategories;
+  category: CategoryWithHiddenReason;
   catalogId: number;
-  categories: CategoryWithSubcategories[];
+  categories: CategoryWithHiddenReason[];
   level?: number;
   isLast?: boolean;
   onSuccess?: () => void;
@@ -51,6 +55,7 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
   const [isAddSubOpen, setIsAddSubOpen] = useState(false);
   const hasSubcategories = category.subcategories && category.subcategories.length > 0;
   const isSubcategory = category.parent_category_id !== null;
+  const isHiddenByPlan = category.hiddenReason === 'plan_limit';
 
   return (
     <div className="relative">
@@ -73,7 +78,8 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
           "group relative flex items-center justify-between rounded-xl border p-3 sm:p-5 transition-all duration-200",
           isSubcategory
             ? "border-border/40 bg-muted/20 hover:bg-muted/40 hover:border-border/60"
-            : "glass-surface border-border/50 hover:border-primary/20 mb-3"
+            : "glass-surface border-border/50 hover:border-primary/20 mb-3",
+          isHiddenByPlan && "bg-muted/20 opacity-65"
         )}
       >
         <div className="flex items-center gap-2 sm:gap-5 min-w-0">
@@ -110,6 +116,12 @@ function CategoryRow({ category, catalogId, categories, level = 0, isLast = fals
               )}>
                 {category.name}
               </span>
+              {isHiddenByPlan && (
+                <Badge variant="outline" className="w-fit gap-1 border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-600">
+                  <EyeOff className="h-3 w-3" />
+                  مخفي
+                </Badge>
+              )}
               {hasSubcategories && (
                 <Badge variant="secondary" className="h-5 sm:h-8 px-1.5 sm:px-3 text-[10px] sm:text-sm font-bold bg-muted/50 text-muted-foreground border-transparent whitespace-nowrap">
                   {category.subcategories.length} <span className="hidden xs:inline">فئات</span>
@@ -294,7 +306,7 @@ function CategoryActionsMenu({ category, catalogId, categories, size = 'default'
   );
 }
 
-export function CategoriesTable({ categories, catalogId, onSuccess }: { categories: CategoryWithSubcategories[]; catalogId: number; onSuccess?: () => void }) {
+export function CategoriesTable({ categories, catalogId, isPro, onSuccess }: { categories: CategoryWithHiddenReason[]; catalogId: number; isPro: boolean; onSuccess?: () => void }) {
   if (categories.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/25 bg-muted/10 py-16 text-center">

@@ -8,10 +8,33 @@ import { StorefrontView } from "@/components/menu/StorefrontView";
 import { Head } from "@/components/common/Head";
 import { InstallPrompt } from "@/components/common/InstallPrompt";
 import { PageLoader } from "@/components/common/PageLoader";
+import {
+    FREE_PLAN_MAX_CATEGORIES,
+    FREE_PLAN_MAX_PRODUCTS,
+    getEffectiveCatalogSettings,
+    getPlanEntitlement,
+    isProPlan,
+} from "@/lib/plans";
 
 type CatalogPageData = Catalog & {
     categories: CategoryWithSubcategories[];
 };
+
+function categoryHasVisibleItems(category: CategoryWithSubcategories): boolean {
+    return (
+        category.menu_items.length > 0 ||
+        category.subcategories.some((subcategory) => categoryHasVisibleItems(subcategory))
+    );
+}
+
+function pruneEmptyCategories(categories: CategoryWithSubcategories[]): CategoryWithSubcategories[] {
+    return categories
+        .map((category) => ({
+            ...category,
+            subcategories: pruneEmptyCategories(category.subcategories || []),
+        }))
+        .filter(categoryHasVisibleItems);
+}
 
 export default function ClientCatalogPage() {
     const params = useParams();
@@ -68,13 +91,21 @@ export default function ClientCatalogPage() {
                     return;
                 }
 
+                const isPro = isProPlan(catalog as Catalog);
+                const allCategories = categories || [];
+                const allItems = allCategories.flatMap((category: any) => category.menu_items || []);
+                const categoryEntitlement = getPlanEntitlement(allCategories, FREE_PLAN_MAX_CATEGORIES, isPro);
+                const itemEntitlement = getPlanEntitlement(allItems, FREE_PLAN_MAX_PRODUCTS, isPro);
+
                 const categoriesMap = new Map<number, CategoryWithSubcategories>();
                 const rootCategories: CategoryWithSubcategories[] = [];
 
-                categories?.forEach((category: any) => {
+                allCategories.forEach((category: any) => {
+                    if (!categoryEntitlement.isEntitled(category.id)) return;
+
                     const sortedItems = (category.menu_items || []).sort((a: any, b: any) => {
                         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                    });
+                    }).filter((item: any) => itemEntitlement.isEntitled(item.id));
 
                     categoriesMap.set(category.id, {
                         ...category,
@@ -83,8 +114,10 @@ export default function ClientCatalogPage() {
                     });
                 });
 
-                categories?.forEach((category: any) => {
-                    const categoryNode = categoriesMap.get(category.id)!;
+                allCategories.forEach((category: any) => {
+                    const categoryNode = categoriesMap.get(category.id);
+                    if (!categoryNode) return;
+
                     if (category.parent_category_id && categoriesMap.has(category.parent_category_id)) {
                         categoriesMap.get(category.parent_category_id)!.subcategories.push(categoryNode);
                     } else {
@@ -92,7 +125,7 @@ export default function ClientCatalogPage() {
                     }
                 });
 
-                setData({ ...catalog, categories: rootCategories });
+                setData({ ...getEffectiveCatalogSettings(catalog as Catalog), categories: pruneEmptyCategories(rootCategories) });
                 setLoading(false);
             } catch (err) {
                 console.error(err);

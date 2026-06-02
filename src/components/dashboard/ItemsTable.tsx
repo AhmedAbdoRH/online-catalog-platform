@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/table';
 import type { Category, MenuItemWithDetails } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Package, Share2 } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
+import { EyeOff, MoreHorizontal, Package, Share2 } from 'lucide-react';
+import { cn, formatPrice } from '@/lib/utils';
 
 import {
   DropdownMenu,
@@ -30,7 +30,9 @@ import { deleteItem } from '@/app/actions/items';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
-type ItemWithCategory = MenuItemWithDetails;
+type ItemWithCategory = MenuItemWithDetails & {
+  hiddenReason?: 'plan_limit' | null;
+};
 
 interface ItemsTableProps {
   items: ItemWithCategory[];
@@ -47,6 +49,7 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const parentCategoryName = item.categories?.parent_category_name || null;
+  const isHiddenByPlan = item.hiddenReason === 'plan_limit';
   const hasDiscount =
     item.discount_price !== null &&
     item.discount_price !== undefined &&
@@ -65,7 +68,7 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
   }
 
   return (
-    <TableRow className="hover:bg-muted/50 transition-colors">
+    <TableRow className={cn("hover:bg-muted/50 transition-colors", isHiddenByPlan && "bg-muted/20 opacity-65")}>
       <TableCell className="p-2 sm:p-5">
         <div className="relative h-14 w-14 sm:h-20 sm:w-20 shrink-0 overflow-hidden rounded-xl border border-border/50 shadow-sm">
           <Image
@@ -79,6 +82,12 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
       <TableCell className="font-medium text-[14px] sm:text-lg p-2 sm:p-5 overflow-hidden">
         <div className="flex flex-col gap-1 min-w-0">
           <span className="truncate block font-bold text-foreground" title={item.name}>{item.name}</span>
+          {isHiddenByPlan && (
+            <Badge variant="outline" className="w-fit gap-1 border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-600">
+              <EyeOff className="h-3 w-3" />
+              مخفي حتى تجديد الاشتراك
+            </Badge>
+          )}
           <div className="sm:hidden">
             <Badge variant="outline" className="text-[11px] px-2 py-0.5 bg-muted/50 whitespace-normal leading-tight">
               <span>{item.categories?.name || 'غير مصنف'}</span>
@@ -118,7 +127,8 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
           <Button
             size="icon"
             variant="ghost"
-            className="h-7 w-7 sm:h-8 sm:w-8 text-brand-primary"
+            disabled={isHiddenByPlan}
+            className="h-7 w-7 sm:h-8 sm:w-8 text-brand-primary disabled:cursor-not-allowed disabled:opacity-40"
             title="نسخ رابط المنتج"
             onClick={(e) => {
               e.stopPropagation();
