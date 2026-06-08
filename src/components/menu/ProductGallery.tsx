@@ -312,7 +312,7 @@ function ImageLightbox({
 
             {/* Image container */}
             <div
-                className="relative z-10 flex h-full w-full items-center justify-center select-none"
+                className="relative z-10 flex h-full w-full items-center justify-center select-none px-4 py-6"
                 style={{
                     transform: `translateX(${dragDeltaX}px)`,
                     transition: dragDeltaX === 0 ? 'transform 0.2s ease' : 'none',
@@ -328,7 +328,7 @@ function ImageLightbox({
                 <img
                     src={images[currentIndex]}
                     alt={`${productName} - ${currentIndex + 1}`}
-                    className="max-h-[90vh] max-w-[95vw] rounded-xl object-contain shadow-2xl"
+                    className="max-h-[78vh] max-w-[95vw] rounded-xl object-contain shadow-2xl"
                     draggable={false}
                 />
             </div>
