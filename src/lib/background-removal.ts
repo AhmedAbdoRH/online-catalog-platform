@@ -9,16 +9,46 @@ type RemoveBgConfig = {
   progress?: (key: string, current: number, total: number) => void;
   device?: 'cpu' | 'gpu';
   proxyToWorker?: boolean;
+  publicPath?: string;
 };
 
 function inferenceConfig(onProgress?: RemoveBgConfig['progress']): RemoveBgConfig & { device: 'gpu'; proxyToWorker: boolean } {
+  const publicPath = computeImglyPublicPath();
+  if (publicPath) {
+    try {
+      // Helpful debug info when diagnosing fetch/wasm loading issues on devices
+      // eslint-disable-next-line no-console
+      console.debug('[background-removal] using publicPath:', publicPath);
+    } catch {}
+  }
   return {
     model: 'isnet_quint8',
     output: { format: 'image/webp', quality: 0.9 },
     device: 'gpu',
     proxyToWorker: true,
     ...(onProgress ? { progress: onProgress } : {}),
+    ...(publicPath ? { publicPath } : {}),
   };
+}
+
+// Determine a sensible publicPath for the WASM/model assets at runtime.
+// - If `NEXT_PUBLIC_IMG_LY_BG_PUBLIC_PATH` is set at build time it will be used.
+// - Otherwise we try to resolve to the Next.js static path: `${location.origin}/_next/static/chunks/`.
+function computeImglyPublicPath(): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+  // Allow explicit override via env (inlined at build) or a global set by the host app.
+  const env = (process?.env as any)?.NEXT_PUBLIC_IMG_LY_BG_PUBLIC_PATH as string | undefined;
+  const globalOverride = (window as any).__IMG_LY_BG_REMOVAL_PUBLIC_PATH as string | undefined;
+  if (env) return env;
+  if (globalOverride) return globalOverride;
+
+  try {
+    const origin = window.location && window.location.origin ? window.location.origin : '';
+    // We point to the Next.js static chunks folder which contains the built runtime files.
+    return `${origin}/_next/static/chunks/`;
+  } catch {
+    return undefined;
+  }
 }
 
 async function loadImageBitmap(source: BackgroundRemovalSource): Promise<ImageBitmap> {
