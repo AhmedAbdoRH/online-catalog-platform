@@ -215,7 +215,11 @@ export function ProductGallery({ images, productName, className, placeholder }: 
                             <div
                                 className="relative flex-[0_0_100%] min-w-0 h-full cursor-zoom-in"
                                 key={index}
-                                onClick={() => openLightbox(index)}
+                                // Use pointer events (covers mouse & touch) and respect Embla's clickAllowed
+                                onPointerUp={(e) => {
+                                    if (emblaApi && typeof emblaApi.clickAllowed === 'function' && !emblaApi.clickAllowed()) return;
+                                    openLightbox(index);
+                                }}
                                 title="اضغط لعرض الصورة بحجم كامل"
                             >
                                 <SlideImage src={src} alt={`${productName} - ${index + 1}`} priority={index === 0} />
