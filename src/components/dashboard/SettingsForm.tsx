@@ -535,9 +535,14 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             render={({ field }) => (
               <FormItem>
                 <FormLabel>اسم المتجر المعروض</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled={isSubmitting} className="bg-white text-[#1e3a5f] text-lg" />
-                </FormControl>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <Input {...field} disabled={isSubmitting} className="bg-white text-[#1e3a5f] text-lg flex-1" />
+                  </FormControl>
+                  <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
+                    حفظ
+                  </Button>
+                </div>
                 <FormDescription>
                   سيظهر هذا الاسم في واجهة المتجر الخاصة بك.
                 </FormDescription>
@@ -580,6 +585,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                       className="bg-white text-[#1e3a5f] text-lg flex-1 h-12"
                     />
                   </FormControl>
+                  <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
+                    حفظ
+                  </Button>
                 </div>
                 <FormDescription>
                   سيتم توجيه طلبات العملاء إلى هذا الرقم. العملة ستتغير تلقائياً حسب كود الدولة المختار.
@@ -595,9 +603,14 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             render={({ field }) => (
               <FormItem>
                 <FormLabel>شعار نصي (سلوغان)</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled={isSubmitting} placeholder="شعار متجرك أو جملة ترويجية" className="bg-white text-[#1e3a5f] text-lg" />
-                </FormControl>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <Input {...field} disabled={isSubmitting} placeholder="شعار متجرك أو جملة ترويجية" className="bg-white text-[#1e3a5f] text-lg flex-1" />
+                  </FormControl>
+                  <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
+                    حفظ
+                  </Button>
+                </div>
                 <FormDescription>
                   سيظهر هذا النص بخط صغير تحت اسم المتجر.
                 </FormDescription>
@@ -627,26 +640,33 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                   </button>
                 )}
                 </div>
-                <FormControl>
-                  <div
-                    className={`relative ${!isPro ? 'cursor-pointer' : ''}`}
-                    role={!isPro ? 'button' : undefined}
-                    tabIndex={!isPro ? 0 : undefined}
-                    onClick={!isPro ? () => setIsUpgradeOpen(true) : undefined}
-                    onKeyDown={!isPro ? (event) => handleLockedSectionKeyDown(event, () => setIsUpgradeOpen(true)) : undefined}
-                  >
-                    <Input
-                      {...field}
-                      disabled={isSubmitting || !isPro}
-                      className={`bg-white text-[#1e3a5f] text-lg ${!isPro ? 'opacity-60 cursor-not-allowed pointer-events-none' : ''}`}
-                    />
-                    {!isPro && (
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                        <Lock className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                    )}
-                  </div>
-                </FormControl>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <div
+                      className={`relative flex-1 ${!isPro ? 'cursor-pointer' : ''}`}
+                      role={!isPro ? 'button' : undefined}
+                      tabIndex={!isPro ? 0 : undefined}
+                      onClick={!isPro ? () => setIsUpgradeOpen(true) : undefined}
+                      onKeyDown={!isPro ? (event) => handleLockedSectionKeyDown(event, () => setIsUpgradeOpen(true)) : undefined}
+                    >
+                      <Input
+                        {...field}
+                        disabled={isSubmitting || !isPro}
+                        className={`bg-white text-[#1e3a5f] text-lg ${!isPro ? 'opacity-60 cursor-not-allowed pointer-events-none' : ''}`}
+                      />
+                      {!isPro && (
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                          <Lock className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+                  </FormControl>
+                  {isPro && (
+                    <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
+                      حفظ
+                    </Button>
+                  )}
+                </div>
                 <FormDescription>
                   {isPro
                     ? 'يمكنك تغيير رابط المتجر الخاص بك.'
@@ -718,25 +738,32 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             })}
           </div>
 
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowAllThemes(!showAllThemes)}
-            className="w-full mt-2 text-xs text-brand-primary hover:bg-brand-primary/5 gap-1 h-8"
-          >
-            {showAllThemes ? (
-              <>
-                عرض أقل
-                <ChevronUp className="h-3 w-3" />
-              </>
-            ) : (
-              <>
-                عرض المزيد من الأنماط
-                <ChevronDown className="h-3 w-3" />
-              </>
+          <div className="flex gap-2 items-center">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAllThemes(!showAllThemes)}
+              className="flex-1 text-xs text-brand-primary hover:bg-brand-primary/5 gap-1 h-8"
+            >
+              {showAllThemes ? (
+                <>
+                  عرض أقل
+                  <ChevronUp className="h-3 w-3" />
+                </>
+              ) : (
+                <>
+                  عرض المزيد من الأنماط
+                  <ChevronDown className="h-3 w-3" />
+                </>
+              )}
+            </Button>
+            {isPro && (
+              <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-8 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
+                حفظ
+              </Button>
             )}
-          </Button>
+          </div>
         </div>
 
         {/* قسم الطلب المباشر */}
@@ -820,6 +847,11 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 onCheckedChange={setHideFooter}
                 disabled={!isPro || isSubmitting}
               />
+              {isPro && (
+                <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-8 px-3 bg-brand-primary hover:bg-brand-primary/90 text-white text-[10px] font-bold">
+                  حفظ
+                </Button>
+              )}
             </div>
           </div>
         </div>

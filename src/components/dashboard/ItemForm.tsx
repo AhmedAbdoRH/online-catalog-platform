@@ -761,7 +761,9 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                           <PlusCircle className="h-5 w-5 text-brand-primary" />
                           صور إضافية
                         </div>
-                        <span className="text-xs font-medium text-slate-400 dark:text-slate-500">اختياري</span>
+                        <span className="text-xs font-medium text-slate-400 dark:text-slate-500">
+                          {additionalPreviews.length}/7
+                        </span>
                       </FormLabel>
                       <FormControl>
                         <div className={cn("grid grid-cols-3 gap-4", !isPro && "opacity-60")}>
@@ -817,6 +819,18 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             multiple
                             onChange={async (e) => {
                               const files = Array.from(e.target.files || []);
+                              const currentCount = (value || []).length;
+                              const maxImages = 7;
+
+                              if (currentCount + files.length > maxImages) {
+                                toast({
+                                  title: 'تم الوصول للحد الأقصى',
+                                  description: `يمكنك رفع حتى ${maxImages} صور إضافية فقط.`,
+                                  variant: 'destructive'
+                                });
+                                return;
+                              }
+
                               if (files.length > 0) {
                                 onChange([...(value || []), ...files]);
                                 files.forEach(file => {
@@ -828,27 +842,29 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                             }}
                             {...rest}
                           />
-                          <div className="flex flex-col gap-2 min-w-0">
-                            <label
-                              htmlFor={isPro ? "additional-images-upload" : ""}
-                              onClick={() => !isPro && setShowUpgradeAlert(true)}
-                              className="flex flex-col items-center justify-center aspect-square rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-brand-primary/40 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all cursor-pointer group"
-                            >
-                              <Plus className="h-6 w-6 text-slate-300 dark:text-slate-600 group-hover:text-brand-primary transition-colors" />
-                            </label>
-                            {!isPro && (
-                              <button 
-                                type="button"
-                                onClick={() => setShowUpgradeAlert(true)}
-                                className="w-full flex justify-center hover:scale-105 transition-transform"
+                          {additionalPreviews.length < 7 && (
+                            <div className="flex flex-col gap-2 min-w-0">
+                              <label
+                                htmlFor={isPro ? "additional-images-upload" : ""}
+                                onClick={() => !isPro && setShowUpgradeAlert(true)}
+                                className="flex flex-col items-center justify-center aspect-square rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-brand-primary/40 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all cursor-pointer group"
                               >
-                                <span className="text-[10px] bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-2 py-1.5 rounded-lg font-black tracking-wide uppercase w-full text-center border border-amber-200 dark:border-amber-700/50 flex items-center justify-center gap-1">
-                                  <span>باقة PRO</span>
-                                  <span className="text-xs">👑</span>
-                                </span>
-                              </button>
-                            )}
-                          </div>
+                                <Plus className="h-6 w-6 text-slate-300 dark:text-slate-600 group-hover:text-brand-primary transition-colors" />
+                              </label>
+                              {!isPro && (
+                                <button
+                                  type="button"
+                                  onClick={() => setShowUpgradeAlert(true)}
+                                  className="w-full flex justify-center hover:scale-105 transition-transform"
+                                >
+                                  <span className="text-[10px] bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-2 py-1.5 rounded-lg font-black tracking-wide uppercase w-full text-center border border-amber-200 dark:border-amber-700/50 flex items-center justify-center gap-1">
+                                    <span>باقة PRO</span>
+                                    <span className="text-xs">👑</span>
+                                  </span>
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </FormControl>
                       <FormMessage />
