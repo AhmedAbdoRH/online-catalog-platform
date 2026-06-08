@@ -312,7 +312,7 @@ function ImageLightbox({
 
             {/* Image container */}
             <div
-                className="relative z-10 flex h-full w-full items-center justify-center select-none px-4 py-6"
+                className="relative z-10 flex h-screen w-full items-start justify-center select-none px-3 sm:px-4 pt-8 sm:pt-12 pb-4 sm:pb-6"
                 style={{
                     transform: `translateX(${dragDeltaX}px)`,
                     transition: dragDeltaX === 0 ? 'transform 0.2s ease' : 'none',
@@ -328,7 +328,7 @@ function ImageLightbox({
                 <img
                     src={images[currentIndex]}
                     alt={`${productName} - ${currentIndex + 1}`}
-                    className="max-h-[78vh] max-w-[95vw] rounded-xl object-contain shadow-2xl"
+                    className="max-h-[70vh] sm:max-h-[78vh] max-w-[95vw] rounded-xl object-contain shadow-2xl"
                     draggable={false}
                 />
             </div>
@@ -343,6 +343,30 @@ function ImageLightbox({
                     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
             </button>
+
+            {/* Navigation buttons */}
+            {images.length > 1 && (
+                <>
+                    <button
+                        onClick={() => onChangeIndex((currentIndex - 1 + images.length) % images.length)}
+                        className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 flex h-12 w-12 items-center justify-center rounded-lg bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                        aria-label="الصورة السابقة"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+                        </svg>
+                    </button>
+                    <button
+                        onClick={() => onChangeIndex((currentIndex + 1) % images.length)}
+                        className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 flex h-12 w-12 items-center justify-center rounded-lg bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                        aria-label="الصورة التالية"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </button>
+                </>
+            )}
 
             {/* Navigation dots */}
             {images.length > 1 && (
