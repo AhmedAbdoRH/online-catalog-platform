@@ -132,7 +132,7 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
             title="نسخ رابط المنتج"
             onClick={(e) => {
               e.stopPropagation();
-              const url = `${window.location.origin}/${catalogName}/item/${item.id}`;
+              const url = `https://tagr-online.com/${catalogName}/item/${item.id}`;
               navigator.clipboard.writeText(url);
               toast({ title: 'نجاح', description: 'تم نسخ رابط المنتج.' });
             }}
