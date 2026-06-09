@@ -47,7 +47,7 @@ const fileSchema = z.custom<File>((val) => {
 
 const formSchema = z.object({
   name: z.string().min(2, 'الاسم مطلوب').max(100),
-  description: z.string().max(255).optional().or(z.literal('')),
+  description: z.string().optional().or(z.literal('')),
   price: z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً').optional().or(z.literal(undefined)),
   discount_price: z.preprocess(
     (val) => val === '' || val === null ? undefined : val,
