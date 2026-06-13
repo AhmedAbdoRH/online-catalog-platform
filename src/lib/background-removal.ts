@@ -42,13 +42,8 @@ function computeImglyPublicPath(): string | undefined {
   if (env) return env;
   if (globalOverride) return globalOverride;
 
-  try {
-    const origin = window.location && window.location.origin ? window.location.origin : '';
-    // We point to the Next.js static chunks folder which contains the built runtime files.
-    return `${origin}/_next/static/chunks/`;
-  } catch {
-    return undefined;
-  }
+  // Returning undefined tells the library to fallback to its official CDN assets.
+  return undefined;
 }
 
 async function loadImageBitmap(source: BackgroundRemovalSource): Promise<ImageBitmap> {
