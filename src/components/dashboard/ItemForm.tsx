@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Plus, Trash2, Image as ImageIcon, PlusCircle, X, Eraser, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Image as ImageIcon, PlusCircle, X, Eraser, Loader2, Sparkles, RotateCcw, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
