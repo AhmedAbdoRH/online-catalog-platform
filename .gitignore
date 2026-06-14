@@ -55,6 +55,25 @@ serviceaccount*.json
 *-firebase-adminsdk-*.json
 # Any JSON file that looks like a GCP credential
 *private_key*.json
+
+# Android keystore reports & signing info — contain SHA fingerprints
+signing_report.txt
+keys_*.txt
+*.keystore
+*.jks
+
+# Build & runtime logs — may contain env details, paths, or PII
+*.log
+build_*.log
+build_*.txt
+dev-server.*.log
+run_android_log*.txt
+android/build_*.txt
+android/signing_report.txt
+
+# Throwaway test/debug SQL scripts — may contain real phone numbers or user IDs
+test_*.sql
+debug_*.sql
 # ───────────────────────────────────────────────────────────────────────────────
 
 # OpenNext
