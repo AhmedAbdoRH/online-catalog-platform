@@ -44,8 +44,19 @@ next-env.d.ts
 firebase-debug.log
 firestore-debug.log
 
-# Google service account keys (sensitive)
+# ─── Sensitive credentials & secrets ──────────────────────────────────────────
+# Google Cloud / Firebase service account keys — NEVER commit these
 online-catalog-*.json
+*-service-account.json
+*-serviceaccount.json
+service-account*.json
+serviceaccount*.json
+# Generic GCP key files
+*-firebase-adminsdk-*.json
+# Any JSON file that looks like a GCP credential
+*private_key*.json
+# ───────────────────────────────────────────────────────────────────────────────
+
 # OpenNext
 .open-next
 
