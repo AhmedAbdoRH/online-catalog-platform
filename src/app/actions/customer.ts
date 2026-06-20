@@ -43,6 +43,24 @@ export async function exportCustomersToCSV(catalogId: number) {
   const supabase = await createClient()
 
   try {
+    // 1. Get logged-in user
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    // 2. Check if catalog belongs to user
+    const { data: catalog, error: catalogError } = await supabase
+      .from('catalogs')
+      .select('id')
+      .eq('id', catalogId)
+      .eq('user_id', user.id)
+      .single()
+
+    if (catalogError || !catalog) {
+      return { success: false, error: 'Unauthorized or catalog not found' }
+    }
+
     const { data: customers, error } = await supabase
       .from('customers')
       .select('*')
@@ -58,19 +76,29 @@ export async function exportCustomersToCSV(catalogId: number) {
       return { success: false, error: 'No customers found' }
     }
 
-    // Create CSV content
+    // Function to prevent CSV Injection (escaping formula symbols = + - @ and tab/return)
+    const escapeCsv = (val: string) => {
+      const cleaned = String(val || '')
+      if (/^[=+\-@\t\r]/.test(cleaned)) {
+        return `"'${cleaned.replace(/"/g, '""')}"`
+      }
+      return `"${cleaned.replace(/"/g, '""')}"`
+    }
+
+    // Create CSV content with byte order mark (BOM) for Excel UTF-8 Arabic support
+    const BOM = '\uFEFF'
     const headers = ['الاسم', 'رقم الهاتف', 'العنوان', 'تاريخ أول طلب']
     const csvRows = [
       headers.join(','),
       ...customers.map(customer => [
-        `"${customer.name}"`,
-        `"${customer.phone}"`,
-        `"${customer.address || ''}"`,
-        `"${new Date(customer.first_order_date).toLocaleDateString('ar-EG')}"`
+        escapeCsv(customer.name),
+        escapeCsv(customer.phone),
+        escapeCsv(customer.address),
+        escapeCsv(customer.first_order_date ? new Date(customer.first_order_date).toLocaleDateString('ar-EG') : '')
       ].join(','))
     ]
 
-    const csvContent = csvRows.join('\n')
+    const csvContent = BOM + csvRows.join('\n')
 
     return { success: true, data: csvContent }
   } catch (error) {
