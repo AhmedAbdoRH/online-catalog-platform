@@ -112,10 +112,18 @@ export async function verifyAndActivatePro(
 
     console.log("🔄 جاري تحديث الخطة إلى Pro...");
 
+    // Calculate expiration date: monthly = 30 days + 3 days grace period, yearly = 365 days + 7 days grace period
+    const expiresAt = type === 'yearly'
+      ? new Date(Date.now() + (365 + 7) * 24 * 60 * 60 * 1000)
+      : new Date(Date.now() + (30 + 3) * 24 * 60 * 60 * 1000);
+
     // تحديث الخطة باستخدام authenticated user (يملك صلاحيات RLS)
     const { data: updateData, error } = await supabase
       .from("catalogs")
-      .update({ plan: "pro" })
+      .update({ 
+        plan: "pro",
+        plan_expires_at: expiresAt.toISOString()
+      })
       .eq("id", catalogId)
       .select();
 
