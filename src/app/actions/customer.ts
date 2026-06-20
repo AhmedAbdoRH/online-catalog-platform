@@ -1,9 +1,24 @@
 'use server'
 
+import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
+
+const customerSchema = z.object({
+  catalogId: z.number().int().positive(),
+  name: z.string().trim().min(2, 'الاسم يجب أن يكون حرفين على الأقل').max(100, 'الاسم طويل جداً'),
+  phone: z.string().trim().min(7, 'رقم الهاتف غير صالح').max(20, 'رقم الهاتف طويل جداً').regex(/^[0-9+\s-]+$/, 'رقم الهاتف يحتوي على رموز غير صالحة'),
+  address: z.string().trim().max(300, 'العنوان طويل جداً').optional().or(z.literal('')),
+})
 
 export async function saveCustomerData(catalogId: number, name: string, phone: string, address: string) {
+  // Validate inputs
+  const validation = customerSchema.safeParse({ catalogId, name, phone, address })
+  if (!validation.success) {
+    const errorMsg = validation.error.errors[0]?.message || 'بيانات العميل غير صالحة'
+    return { success: false, error: errorMsg }
+  }
+
+  const { name: cleanName, phone: cleanPhone, address: cleanAddress } = validation.data
   const supabase = await createClient()
 
   try {
@@ -12,7 +27,7 @@ export async function saveCustomerData(catalogId: number, name: string, phone: s
       .from('customers')
       .select('id')
       .eq('catalog_id', catalogId)
-      .eq('phone', phone)
+      .eq('phone', cleanPhone)
       .single()
 
     // If customer doesn't exist, add them
@@ -21,9 +36,9 @@ export async function saveCustomerData(catalogId: number, name: string, phone: s
         .from('customers')
         .insert({
           catalog_id: catalogId,
-          name,
-          phone,
-          address,
+          name: cleanName,
+          phone: cleanPhone,
+          address: cleanAddress || null,
         })
 
       if (error) {
