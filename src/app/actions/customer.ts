@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function saveCustomerData(catalogId: number, name: string, phone: string, address: string) {
