@@ -28,9 +28,13 @@ export async function middleware(request: NextRequest) {
 
     return response
   } catch (e) {
-    // If middleware fails, log it but don't break the app. 
-    // Just allow the request to proceed.
+    // If middleware fails, log it.
+    // If trying to access dashboard, redirect to login to avoid bypass on failure.
     console.error('Middleware Error:', e);
+    const url = new URL(request.url);
+    if (url.pathname.startsWith('/dashboard')) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
     return NextResponse.next({
       request: {
         headers: request.headers,
