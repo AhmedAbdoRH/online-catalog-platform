@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { normalizeShippingRatesInput } from "@/lib/shipping";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -16,6 +17,51 @@ function extractStoragePath(url: string, bucket: string): string | null {
   const parts = url.split(separator);
   if (parts.length < 2) return null;
   return parts[1];
+}
+
+export async function updateShippingRates(catalogId: number, rawRates: unknown) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, message: 'غير مصرح به' };
+  }
+
+  if (!Number.isInteger(catalogId) || catalogId <= 0) {
+    return { success: false, message: 'معرف الكتالوج غير صالح' };
+  }
+
+  const { rates, errors } = normalizeShippingRatesInput(rawRates);
+  if (errors.length > 0) {
+    return { success: false, message: errors[0] };
+  }
+
+  const { data: catalog, error: catalogError } = await supabase
+    .from('catalogs')
+    .select('id, name')
+    .eq('id', catalogId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (catalogError || !catalog) {
+    return { success: false, message: 'الكتالوج غير موجود أو لا تملك صلاحية تعديله' };
+  }
+
+  const { error: dbError } = await supabase
+    .from('catalogs')
+    .update({ shipping_rates: rates })
+    .match({ id: catalogId, user_id: user.id });
+
+  if (dbError) {
+    console.error('Shipping rates update error:', dbError);
+    return { success: false, message: `فشل حفظ أسعار الشحن: ${dbError.message}` };
+  }
+
+  revalidatePath('/dashboard', 'layout');
+  revalidatePath('/dashboard/settings', 'page');
+  revalidatePath(`/${catalog.name}`);
+
+  return { success: true, message: 'تم حفظ أسعار الشحن بنجاح' };
 }
 
 async function deleteImageFromStorage(url: string, bucket: string) {

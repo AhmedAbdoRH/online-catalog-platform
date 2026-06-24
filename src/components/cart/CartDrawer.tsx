@@ -10,14 +10,9 @@ import { Trash2, Minus, Plus, MessageCircle, Package } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
 import type { Catalog } from '@/lib/types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { DirectOrderForm } from '@/components/menu/DirectOrderForm'
+import { DirectOrderForm, type DirectOrderFormData } from '@/components/menu/DirectOrderForm'
 import { saveCustomerData } from '@/app/actions/customer'
-
-interface DirectOrderFormData {
-  name: string;
-  phone: string;
-  address: string;
-}
+import { hasConfiguredShippingRates } from '@/lib/shipping'
 
 export function CartDrawer({ catalog }: { catalog: Catalog }) {
   const { items, total, isOpen, closeCart, removeItem, updateQuantity, clear } = useCart()
@@ -25,48 +20,54 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
   const whatsappNumber = catalog.whatsapp_number || ''
   const canOrder = items.length > 0 && !!whatsappNumber
   const directOrderEnabled = catalog.direct_order_enabled ?? true
+  const shippingEnabled = hasConfiguredShippingRates(catalog.shipping_rates)
 
   const [showDirectOrderDialog, setShowDirectOrderDialog] = useState(false)
-  const [customerData, setCustomerData] = useState<DirectOrderFormData | null>(null)
 
-  const message = React.useMemo(() => {
+  const buildWhatsAppMessage = (orderData?: DirectOrderFormData | null) => {
     const lines = items.map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity, catalog.country_code)}`)
-    const totalLine = `\nالإجمالي: ${formatPrice(total, catalog.country_code)}`
     const header = `طلب جديد من كتالوج ${catalog.display_name || catalog.name}:\n\n`
-    let fullMessage = `${header}${lines.join('\n')}${totalLine}`
+    let fullMessage = `${header}${lines.join('\n')}`
 
-    // Add customer data if available and has content
-    if (customerData && (customerData.name || customerData.phone || customerData.address)) {
+    if (orderData?.governorateName && typeof orderData.shippingPrice === 'number') {
+      fullMessage += `\n\nقيمة المنتجات: ${formatPrice(total, catalog.country_code)}`
+      fullMessage += `\nالشحن (${orderData.governorateName}): ${formatPrice(orderData.shippingPrice, catalog.country_code)}`
+      fullMessage += `\nالإجمالي: ${formatPrice(orderData.orderTotal ?? total + orderData.shippingPrice, catalog.country_code)}`
+    } else {
+      fullMessage += `\nالإجمالي: ${formatPrice(total, catalog.country_code)}`
+    }
+
+    if (orderData && (orderData.name || orderData.phone || orderData.address)) {
       fullMessage += `\n\n━━━━━━━━━━━━━━━━━━`
       fullMessage += `\n📋 بيانات العميل:`
       fullMessage += `\n━━━━━━━━━━━━━━━━━━`
-      if (customerData.name) fullMessage += `\n👤 الاسم: ${customerData.name}`
-      if (customerData.phone) fullMessage += `\n📱 رقم الهاتف: ${customerData.phone}`
-      if (customerData.address) fullMessage += `\n📍 العنوان: ${customerData.address}`
+      if (orderData.name) fullMessage += `\n👤 الاسم: ${orderData.name}`
+      if (orderData.phone) fullMessage += `\n📱 رقم الهاتف: ${orderData.phone}`
+      if (orderData.address) fullMessage += `\n📍 العنوان: ${orderData.address}`
+      if (orderData.governorateName) fullMessage += `\n🗺️ المحافظة: ${orderData.governorateName}`
       fullMessage += `\n━━━━━━━━━━━━━━━━━━`
     }
 
     return fullMessage
-  }, [items, total, catalog.display_name, catalog.name, catalog.country_code, customerData])
+  }
 
-  const orderHref = `https://wa.me/${whatsappNumber.replace(/[^\d]/g, '')}?text=${encodeURIComponent(message)}`
+  const getWhatsAppLink = (orderData?: DirectOrderFormData | null) => {
+    const message = buildWhatsAppMessage(orderData)
+    return `https://wa.me/${whatsappNumber.replace(/[^\d]/g, '')}?text=${encodeURIComponent(message)}`
+  }
 
   const handleDirectOrderSubmit = (data: DirectOrderFormData) => {
-    setCustomerData(data)
     setShowDirectOrderDialog(false)
 
-    // Save customer data to database
     if (catalog.id && data.name && data.phone) {
       saveCustomerData(catalog.id, data.name, data.phone, data.address || '')
     }
 
-    // Open WhatsApp after form submission
-    window.open(orderHref, '_blank')
+    window.open(getWhatsAppLink(data), '_blank')
   }
 
   const handleInquiry = () => {
     setShowDirectOrderDialog(false)
-    // Open WhatsApp with inquiry message
     if (whatsappNumber) {
       const inquiryMessage = `استفسار بخصوص الطلب ..`
       const encodedMessage = encodeURIComponent(inquiryMessage)
@@ -80,7 +81,7 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
     if (directOrderEnabled) {
       setShowDirectOrderDialog(true)
     } else {
-      window.open(orderHref, '_blank')
+      window.open(getWhatsAppLink(), '_blank')
     }
   }
 
@@ -156,6 +157,11 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
           <span className="text-sm text-muted-foreground font-bold italic">الإجمالي</span>
           <span className="text-xl font-black text-brand-accent drop-shadow-sm">{formatPrice(total, catalog.country_code)}</span>
         </div>
+        {shippingEnabled && (
+          <p className="mt-2 text-center text-[11px] text-muted-foreground">
+            سيتم إضافة سعر الشحن حسب المحافظة عند إتمام الطلب.
+          </p>
+        )}
         <SheetFooter className="mt-3">
           <div className="flex w-full flex-col gap-2">
             <Button
@@ -171,7 +177,6 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
         </SheetFooter>
       </SheetContent>
 
-      {/* Direct Order Dialog */}
       <Dialog open={showDirectOrderDialog} onOpenChange={setShowDirectOrderDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -183,10 +188,12 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
           <DirectOrderForm
             onSubmit={handleDirectOrderSubmit}
             onInquiry={handleInquiry}
+            subtotal={shippingEnabled ? total : undefined}
+            shippingRates={shippingEnabled ? catalog.shipping_rates : undefined}
+            countryCode={catalog.country_code}
           />
         </DialogContent>
       </Dialog>
     </Sheet>
   )
 }
-

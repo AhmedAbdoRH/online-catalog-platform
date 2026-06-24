@@ -1,3 +1,5 @@
+import type { ShippingRates } from './shipping';
+
 // Temporary Database type definition
 interface Database {
   public: {
@@ -26,6 +28,7 @@ interface Database {
           snapchat_url: string | null;
           twitter_url: string | null;
           plan_expires_at: string | null;
+          shipping_rates: ShippingRates | null;
         };
         Insert: {
           id?: number;
@@ -49,6 +52,7 @@ interface Database {
           snapchat_url?: string | null;
           twitter_url?: string | null;
           plan_expires_at?: string | null;
+          shipping_rates?: ShippingRates | null;
         };
         Update: {
           id?: number;
@@ -73,6 +77,7 @@ interface Database {
           snapchat_url?: string | null;
           twitter_url?: string | null;
           plan_expires_at?: string | null;
+          shipping_rates?: ShippingRates | null;
         };
       };
       categories: {

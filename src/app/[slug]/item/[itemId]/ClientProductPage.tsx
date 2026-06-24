@@ -302,6 +302,7 @@ export default function ClientProductPage() {
                                 catalogId={catalog.id}
                                 productId={product.id}
                                 productImage={product.image_url}
+                                shippingRates={catalog.shipping_rates}
                             />
                         </div>
                     </section>

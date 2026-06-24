@@ -37,6 +37,7 @@ import { Switch } from '../ui/switch';
 import { compressImage } from '@/lib/image-utils';
 import { convertArabicNumerals } from '@/lib/utils';
 import { UpgradeAlert } from './UpgradeAlert';
+import { ShippingRatesDialog } from './ShippingRatesDialog';
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -812,7 +813,13 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
           )}
         </div>
 
-        {/* قسم إخفاء الفوتر */}
+        {/* قسم أسعار الشحن */}
+        <ShippingRatesDialog
+          catalogId={catalog.id}
+          shippingRates={catalog.shipping_rates}
+          disabled={isSubmitting}
+        />
+
         <div className="pt-6 border-t relative">
           {!isPro && (
             <div className="absolute top-1 left-0">
