@@ -24,7 +24,7 @@ export function UpgradeAlert({ open, onOpenChange, catalogId }: UpgradeAlertProp
                         <div className="bg-amber-100 dark:bg-amber-900/30 p-3 rounded-full">
                             <Crown className="h-8 w-8 text-amber-500" />
                         </div>
-                        ارتقِ بمتجرك مع باقة الـ PRO
+                        فعّل اشتراكك واستمر في النمو 🚀
                     </DialogTitle>
                 </DialogHeader>
 
@@ -33,7 +33,7 @@ export function UpgradeAlert({ open, onOpenChange, catalogId }: UpgradeAlertProp
                         <div className="flex items-center gap-2">
                              <span className="text-[10px] text-muted-foreground/60 line-through italic">السعر الأصلي: {formatPlanPrice(PRO_MONTHLY_ORIGINAL_PRICE_EGP)}</span>
                              <span className="text-sm font-black text-amber-600 flex items-center gap-1">
-                                الحالي: {formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} ✅
+                                الاشتراك الشهري: {formatPlanPrice(PRO_MONTHLY_PRICE_EGP)} ✅
                              </span>
                         </div>
                         <p className="text-[11px] font-black text-red-500 animate-pulse">🔥 عرض لفترة محدودة جداً</p>

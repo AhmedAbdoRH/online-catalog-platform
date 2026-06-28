@@ -2,10 +2,7 @@ import { Metadata } from "next";
 import { createPublicClient } from "@/lib/supabase/public";
 import ClientProductPage from "./ClientProductPage";
 import {
-  FREE_PLAN_MAX_CATEGORIES,
-  FREE_PLAN_MAX_PRODUCTS,
-  getPlanEntitlement,
-  isProPlan,
+  checkSubscriptionStatus,
 } from "@/lib/plans";
 import type { Catalog } from "@/lib/types";
 
@@ -46,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     const { data: catalog } = await supabase
       .from("catalogs")
-      .select("id, display_name, name, logo_url, plan, plan_expires_at")
+      .select("id, display_name, name, logo_url, plan, plan_expires_at, trial_started_at")
       .eq("id", product.catalog_id)
       .eq("name", slug)
       .single();
@@ -55,27 +52,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       return { title: "المنتج غير موجود" };
     }
 
-    if (!isProPlan(catalog as Catalog)) {
-      const [{ data: categories }, { data: products }] = await Promise.all([
-        supabase
-          .from("categories")
-          .select("id, created_at")
-          .eq("catalog_id", catalog.id),
-        supabase
-          .from("menu_items")
-          .select("id, category_id, created_at")
-          .eq("catalog_id", catalog.id),
-      ]);
-
-      const categoryEntitlement = getPlanEntitlement(categories || [], FREE_PLAN_MAX_CATEGORIES, false);
-      const productEntitlement = getPlanEntitlement(products || [], FREE_PLAN_MAX_PRODUCTS, false);
-
-      if (!productEntitlement.isEntitled(product.id) || !categoryEntitlement.isEntitled(product.category_id)) {
-        return {
-          title: "المنتج غير متاح حاليًا",
-          description: "هذا المنتج غير متاح للعرض حاليًا.",
-        };
-      }
+    const status = checkSubscriptionStatus(catalog as Catalog);
+    if (!status.isActive) {
+      return {
+        title: "المتجر مغلق مؤقتاً",
+        description: "هذا المتجر غير متاح حالياً.",
+      };
     }
 
     const { data: productImages } = await supabase

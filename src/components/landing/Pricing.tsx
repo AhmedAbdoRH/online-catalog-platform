@@ -1,41 +1,39 @@
-import { Check, Package, Zap, Building } from 'lucide-react';
+import { Check, Zap, Building, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import ScrollAnimation from './ScrollAnimation';
 import {
-  FREE_PLAN_MAX_PRODUCTS,
   formatPlanPrice,
   PRO_MONTHLY_ORIGINAL_PRICE_EGP,
   PRO_MONTHLY_PRICE_EGP,
-  PRO_YEARLY_ORIGINAL_PRICE_EGP,
-  PRO_YEARLY_PRICE_EGP,
 } from '@/lib/plans';
 
 const plans = [
   {
-    name: 'الأساسية (Basic)',
+    name: 'تجربة مجانية',
     price: 'مجاناً',
-    description: 'ابدأ وجرّب وانطلق في عالم التجارة الإلكترونية',
-    icon: Package,
+    period: '/ لمدة 30 يوم',
+    description: 'جرّب كل مميزات المنصة كاملةً لمدة شهر بدون أي تكلفة',
+    icon: Gift,
     features: [
-      { text: `${FREE_PLAN_MAX_PRODUCTS} منتج متاح`, included: true },
+      { text: 'منتجات وتصنيفات غير محدودة', included: true },
       { text: 'رابط متجر مخصص', included: true },
+      { text: 'تخصيص المظهر بالكامل', included: true },
+      { text: 'إزالة خلفية صور المنتجات', included: true },
       { text: 'مشاركة عبر واتساب وQR', included: true },
-      { text: 'دخول للمجتمع الأساسي', included: true },
-      { text: 'متابعة مبدئية للتفعيل', included: true },
     ],
-    cta: 'ابدأ معنا الآن',
+    cta: 'ابدأ تجربتك المجانية',
     ctaLink: 'https://play.google.com/store/apps/details?id=com.nextcatalog.app',
     popular: false,
   },
   {
-    name: 'المتقدمة (Pro)',
+    name: 'الاشتراك الاحترافي',
     price: formatPlanPrice(PRO_MONTHLY_PRICE_EGP),
     period: '/ شهرياً',
     secondaryPrice: (
       <div className="text-[10px] text-brand-accent font-black animate-pulse">عرض النمو لفترة محدودة ⏳</div>
     ),
-    description: 'لما تبدأ تكبر وتحتاج أدوات احترافية للنمو',
+    description: 'استمر في النمو بعد انتهاء التجربة المجانية مع كل المميزات',
     icon: Zap,
     features: [
       { text: 'منتجات وتصنيفات غير محدودة', included: true },
@@ -44,9 +42,9 @@ const plans = [
       { text: 'تصدير بيانات العملاء والطلبات', included: true },
       { text: 'أولوية في الدعم والمتابعة', included: true },
     ],
-    cta: 'طوّر للبرو الآن',
+    cta: 'اشترك الآن',
     ctaLink: `https://wa.me/201008116452?text=${encodeURIComponent(
-      `أرغب في الترقية لباقة البرو في منظومة تاجر أونلاين`
+      `أرغب في الاشتراك الاحترافي في منظومة تاجر أونلاين`
     )}`,
     popular: true,
   },
@@ -76,8 +74,8 @@ export default function Pricing() {
       <div className="container mx-auto px-4 relative z-10">
         <ScrollAnimation animation="blur-in" duration={1}>
           <div className="text-center mb-20 space-y-4">
-            <h2 className="text-3xl md:text-5xl font-black text-white">باقات الاستثمار في نجاحك</h2>
-            <p className="text-xl text-white/50">اختر المسار المناسب لمرحلة نمو تجارتك</p>
+            <h2 className="text-3xl md:text-5xl font-black text-white">ابدأ مجاناً، وانمُ بثقة</h2>
+            <p className="text-xl text-white/50">شهر كامل مجاناً تستمتع فيه بكل المميزات — بدون أي قيود</p>
           </div>
         </ScrollAnimation>
 
@@ -112,7 +110,7 @@ export default function Pricing() {
                   <div className="flex flex-col gap-1 items-center">
                     {plan.prefix && <span className="text-xs font-bold text-brand-accent uppercase tracking-wider mb-1">{plan.prefix}</span>}
                     <div className="flex items-baseline gap-1">
-                      {plan.name.includes('Pro') ? (
+                      {plan.popular ? (
                         <div className="flex flex-col items-center">
                            <span className="text-xs text-white/30 line-through italic mb-1">{formatPlanPrice(PRO_MONTHLY_ORIGINAL_PRICE_EGP)}</span>
                            <span className="text-4xl font-black text-white">{plan.price}</span>

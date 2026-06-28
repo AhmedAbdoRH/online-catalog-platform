@@ -381,3 +381,43 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   revalidatePath(`/${validatedName}`);
   return { message: 'تم تحديث الإعدادات بنجاح!' };
 }
+
+export async function startCatalogFreeTrial(catalogId: number) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: 'غير مصرح به' };
+  }
+
+  const { data: catalog, error: getError } = await supabase
+    .from('catalogs')
+    .select('id, user_id, trial_started_at')
+    .eq('id', catalogId)
+    .single();
+
+  if (getError || !catalog) {
+    return { error: 'الكتالوج غير موجود' };
+  }
+
+  if (catalog.user_id !== user.id) {
+    return { error: 'غير مصرح به' };
+  }
+
+  if (catalog.trial_started_at) {
+    return { error: 'تم تفعيل الفترة التجريبية بالفعل' };
+  }
+
+  const { error: updateError } = await supabase
+    .from('catalogs')
+    .update({ trial_started_at: new Date().toISOString() })
+    .eq('id', catalogId);
+
+  if (updateError) {
+    console.error('Failed to start trial:', updateError);
+    return { error: 'فشل تفعيل الفترة التجريبية' };
+  }
+
+  revalidatePath('/dashboard', 'layout');
+  return { success: true };
+}
