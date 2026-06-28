@@ -28,6 +28,8 @@ interface Database {
           snapchat_url: string | null;
           twitter_url: string | null;
           plan_expires_at: string | null;
+          trial_started_at: string | null;
+          is_legacy_basic: boolean | null;
           shipping_rates: ShippingRates | null;
         };
         Insert: {
@@ -52,6 +54,8 @@ interface Database {
           snapchat_url?: string | null;
           twitter_url?: string | null;
           plan_expires_at?: string | null;
+          trial_started_at?: string | null;
+          is_legacy_basic?: boolean | null;
           shipping_rates?: ShippingRates | null;
         };
         Update: {
@@ -77,6 +81,8 @@ interface Database {
           snapchat_url?: string | null;
           twitter_url?: string | null;
           plan_expires_at?: string | null;
+          trial_started_at?: string | null;
+          is_legacy_basic?: boolean | null;
           shipping_rates?: ShippingRates | null;
         };
       };

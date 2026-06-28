@@ -11,23 +11,185 @@ type PlanLimitedEntity = {
 export const FREE_PLAN_MAX_PRODUCTS = 25;
 export const FREE_PLAN_MAX_CATEGORIES = 5;
 
-export function isProPlan(catalog: Catalog | null | undefined): boolean {
-  if (!catalog || !catalog.plan) return false;
+export interface SubscriptionStatus {
+  isActive: boolean;
+  plan: string;
+  trialStartedAt: string | null;
+  planExpiresAt: string | null;
+  isTrial: boolean;
+  isGrace: boolean;
+  isExpired: boolean;
+  isNotStarted: boolean;
+  isLegacyBasic: boolean;
+  remainingDays: number;
+}
+
+export function checkSubscriptionStatus(catalog: Catalog | null | undefined): SubscriptionStatus {
+  const defaultStatus: SubscriptionStatus = {
+    isActive: false,
+    plan: 'basic',
+    trialStartedAt: null,
+    planExpiresAt: null,
+    isTrial: false,
+    isGrace: false,
+    isExpired: false,
+    isNotStarted: true,
+    isLegacyBasic: false,
+    remainingDays: 0,
+  };
+
+  if (!catalog) return defaultStatus;
+
+  const plan = (catalog.plan || 'basic').toLowerCase();
+  const trialStartedAt = catalog.trial_started_at || null;
+  const planExpiresAt = catalog.plan_expires_at || null;
+  const isLegacyBasic = catalog.is_legacy_basic || false;
+
+
+  // 1. If user is subscribed (legacy 'pro', 'business' or new 'subscribed')
+  const isSubscribedPlan = plan === 'subscribed' || plan === 'pro' || plan === 'business';
   
-  const plan = catalog.plan.toLowerCase();
-  const isPro = plan === 'pro' || plan === 'pro-trial' || plan === 'business';
-  
-  if (!isPro) return false;
-  
-  // If there's an expiration date, check it
-  if (catalog.plan_expires_at) {
-    const expiryDate = new Date(catalog.plan_expires_at);
-    const now = new Date();
-    return now < expiryDate;
+  if (isSubscribedPlan) {
+    if (planExpiresAt) {
+      const expiryDate = new Date(planExpiresAt);
+      const now = new Date();
+      if (now < expiryDate) {
+        const diffTime = expiryDate.getTime() - now.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return {
+          isActive: true,
+          plan,
+          trialStartedAt,
+          planExpiresAt,
+          isTrial: false,
+          isGrace: false,
+          isExpired: false,
+          isNotStarted: false,
+          isLegacyBasic: false,
+          remainingDays: diffDays,
+        };
+      } else {
+        return {
+          isActive: false,
+          plan,
+          trialStartedAt,
+          planExpiresAt,
+          isTrial: false,
+          isGrace: false,
+          isExpired: true,
+          isNotStarted: false,
+          isLegacyBasic: false,
+          remainingDays: 0,
+        };
+      }
+    } else {
+      // Admin manually set subscription to lifetime
+      return {
+        isActive: true,
+        plan,
+        trialStartedAt,
+        planExpiresAt: null,
+        isTrial: false,
+        isGrace: false,
+        isExpired: false,
+        isNotStarted: false,
+        isLegacyBasic: false,
+        remainingDays: 9999,
+      };
+    }
   }
-  
-  // If no expiration date is set, assume it's active (manually set by admin or lifetime)
-  return true;
+
+  // 2. If user is not subscribed (plan is 'basic' or anything else), check trial status
+  if (!trialStartedAt) {
+    // Legacy basic users are active with product limits
+    if (isLegacyBasic) {
+      return {
+        isActive: true,
+        plan,
+        trialStartedAt: null,
+        planExpiresAt,
+        isTrial: false,
+        isGrace: false,
+        isExpired: false,
+        isNotStarted: false,
+        isLegacyBasic: true,
+        remainingDays: 9999,
+      };
+    }
+    
+    // New users need to start trial
+    return {
+      isActive: false,
+      plan,
+      trialStartedAt: null,
+      planExpiresAt,
+      isTrial: false,
+      isGrace: false,
+      isExpired: false,
+      isNotStarted: true,
+      isLegacyBasic: false,
+      remainingDays: 30,
+    };
+  }
+
+  const startDate = new Date(trialStartedAt);
+  const now = new Date();
+  const diffTime = now.getTime() - startDate.getTime();
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+  if (diffDays < 30) {
+    const remaining = Math.ceil(30 - diffDays);
+    return {
+      isActive: true,
+      plan,
+      trialStartedAt,
+      planExpiresAt,
+      isTrial: true,
+      isGrace: false,
+      isExpired: false,
+      isNotStarted: false,
+      isLegacyBasic: false,
+      remainingDays: remaining,
+    };
+  } else if (diffDays < 40) {
+    const remaining = Math.ceil(40 - diffDays);
+    return {
+      isActive: true,
+      plan,
+      trialStartedAt,
+      planExpiresAt,
+      isTrial: false,
+      isGrace: true,
+      isExpired: false,
+      isNotStarted: false,
+      isLegacyBasic: false,
+      remainingDays: remaining,
+    };
+  } else {
+    return {
+      isActive: false,
+      plan,
+      trialStartedAt,
+      planExpiresAt,
+      isTrial: false,
+      isGrace: false,
+      isExpired: true,
+      isNotStarted: false,
+      isLegacyBasic: false,
+      remainingDays: 0,
+    };
+  }
+}
+
+export function isProPlan(catalog: Catalog | null | undefined): boolean {
+  return checkSubscriptionStatus(catalog).isActive;
+}
+
+export function isUnlimitedPlan(catalog: Catalog | null | undefined): boolean {
+  const status = checkSubscriptionStatus(catalog);
+  // Unlimited if: subscribed, in trial, or in grace period
+  // Legacy basic users have limits (25 products, 5 categories)
+  return status.isActive && !status.isLegacyBasic;
 }
 
 function getPlanEntityTime(entity: PlanLimitedEntity): number {
@@ -95,5 +257,5 @@ export function getProWhatsAppText(type: PlanBillingType): string {
   const price = formatPlanPrice(getProPlanPrice(type));
   const period = getProPlanLabel(type);
 
-  return `مرحباً، أريد الاشتراك في باقة البرو (${price} ${period}) لمتجري`;
+  return `مرحباً، أريد تفعيل الاشتراك في أونلاين كتالوج (${price} ${period}) لمتجري`;
 }

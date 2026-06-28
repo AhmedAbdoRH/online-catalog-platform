@@ -21,7 +21,8 @@ import {
     FREE_PLAN_MAX_PRODUCTS,
     getEffectiveCatalogSettings,
     getPlanEntitlement,
-    isProPlan,
+    isUnlimitedPlan,
+    checkSubscriptionStatus,
 } from "@/lib/plans";
 
 // Helper Functions
@@ -70,6 +71,7 @@ export default function ClientProductPage() {
     const [data, setData] = useState<ProductPageData | null>(null);
     const [loading, setLoading] = useState(true);
     const [unavailable, setUnavailable] = useState(false);
+    const [storeClosed, setStoreClosed] = useState(false);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
     // Fast initial logo before fetching
@@ -106,10 +108,17 @@ export default function ClientProductPage() {
                 setLogoUrl(catalog.logo_url);
             }
 
-            const isPro = isProPlan(catalog as Catalog);
+            const subscriptionStatus = checkSubscriptionStatus(catalog as Catalog);
+            if (!subscriptionStatus.isActive) {
+                setStoreClosed(true);
+                setLoading(false);
+                return;
+            }
+
+            const isUnlimited = isUnlimitedPlan(catalog as Catalog);
             let entitledProductIds: Set<number> | null = null;
 
-            if (!isPro) {
+            if (!isUnlimited) {
                 const [{ data: categories }, { data: products }] = await Promise.all([
                     supabase
                         .from("categories")
@@ -209,6 +218,27 @@ export default function ClientProductPage() {
     }, [slug, itemId]);
 
     if (loading) return <PageLoader logoUrl={logoUrl} />;
+    if (storeClosed) {
+        return (
+            <div className="min-h-[100dvh] flex flex-col items-center justify-center p-4 bg-[#03110f] text-white">
+                <div className="w-full max-w-md bg-white/5 border border-white/10 rounded-3xl p-8 text-center flex flex-col items-center gap-6 shadow-2xl backdrop-blur-md">
+                    {logoUrl ? (
+                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-white/10 p-1 flex items-center justify-center">
+                            <img src={logoUrl} alt="Logo" className="max-w-full max-h-full object-contain rounded-xl" />
+                        </div>
+                    ) : (
+                        <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-4xl">🏪</div>
+                    )}
+                    <div className="space-y-2">
+                        <h1 className="text-xl sm:text-2xl font-black">المتجر مغلق مؤقتاً 🏪</h1>
+                        <p className="text-sm text-white/60 leading-relaxed">
+                            عذراً، هذا المتجر الإلكتروني غير متاح حالياً. يرجى المحاولة مرة أخرى لاحقاً أو التواصل مع صاحب المتجر.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     if (unavailable) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-default px-4 text-center">

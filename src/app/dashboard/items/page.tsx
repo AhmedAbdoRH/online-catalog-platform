@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ItemsTable } from '@/components/dashboard/ItemsTable';
 import { AddItemButton } from '@/components/dashboard/AddItemButton';
-import { FREE_PLAN_MAX_CATEGORIES, FREE_PLAN_MAX_PRODUCTS, getPlanEntitlement, isProPlan } from '@/lib/plans';
+import { FREE_PLAN_MAX_CATEGORIES, FREE_PLAN_MAX_PRODUCTS, getPlanEntitlement, isUnlimitedPlan } from '@/lib/plans';
 import { Catalog } from '@/lib/types';
 
 async function getData() {
@@ -21,13 +21,13 @@ async function getData() {
         .eq('catalog_id', catalog.id)
         .order('created_at', { ascending: false });
 
-    const isPro = isProPlan(catalog as Catalog);
-    const itemEntitlement = getPlanEntitlement(items || [], FREE_PLAN_MAX_PRODUCTS, isPro);
-    const categoryEntitlement = getPlanEntitlement(categories || [], FREE_PLAN_MAX_CATEGORIES, isPro);
+    const isUnlimited = isUnlimitedPlan(catalog as Catalog);
+    const itemEntitlement = getPlanEntitlement(items || [], FREE_PLAN_MAX_PRODUCTS, isUnlimited);
+    const categoryEntitlement = getPlanEntitlement(categories || [], FREE_PLAN_MAX_CATEGORIES, isUnlimited);
 
     const normalizedItems = (items || []).map((item: any) => {
         const isHiddenByPlan =
-            !isPro &&
+            !isUnlimited &&
             (!itemEntitlement.isEntitled(item.id) || !categoryEntitlement.isEntitled(item.category_id));
 
         return {
@@ -57,11 +57,11 @@ export default async function ItemsPage() {
                         <CardDescription className="text-xs sm:text-sm">إدارة المنتجات في المتجر الخاص بك.</CardDescription>
                     </div>
                     <div className="w-full sm:w-auto">
-                        <AddItemButton catalogId={catalog.id} isPro={isProPlan(catalog)} categories={categories} countryCode={catalog.country_code} />
+                        <AddItemButton catalogId={catalog.id} isPro={isUnlimitedPlan(catalog)} categories={categories} countryCode={catalog.country_code} />
                     </div>
                 </CardHeader>
                 <CardContent className="px-2 sm:px-6 w-full max-w-full overflow-hidden">
-                    <ItemsTable items={items as any} catalogId={catalog.id} catalogName={catalog.name} isPro={isProPlan(catalog)} categories={categories} countryCode={catalog.country_code} />
+                    <ItemsTable items={items as any} catalogId={catalog.id} catalogName={catalog.name} isPro={isUnlimitedPlan(catalog)} categories={categories} countryCode={catalog.country_code} />
                 </CardContent>
                 <div className="h-24" /> {/* مسافة إضافية في نهاية الصفحة لتجنب التداخل مع شريط التنقل السفلي */}
             </Card>

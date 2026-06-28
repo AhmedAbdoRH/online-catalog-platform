@@ -13,7 +13,8 @@ import {
     FREE_PLAN_MAX_PRODUCTS,
     getEffectiveCatalogSettings,
     getPlanEntitlement,
-    isProPlan,
+    isUnlimitedPlan,
+    checkSubscriptionStatus,
 } from "@/lib/plans";
 
 type CatalogPageData = Catalog & {
@@ -42,6 +43,7 @@ export default function ClientCatalogPage() {
     const [data, setData] = useState<CatalogPageData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [storeClosed, setStoreClosed] = useState(false);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
     // Fast initial logo before fetching
@@ -72,6 +74,13 @@ export default function ClientCatalogPage() {
                     return;
                 }
 
+                const status = checkSubscriptionStatus(catalog as Catalog);
+                if (!status.isActive) {
+                    setStoreClosed(true);
+                    setLoading(false);
+                    return;
+                }
+
                 if (catalog.logo_url) {
                     sessionStorage.setItem(`store_logo_${slug}`, catalog.logo_url);
                     setLogoUrl(catalog.logo_url);
@@ -91,11 +100,11 @@ export default function ClientCatalogPage() {
                     return;
                 }
 
-                const isPro = isProPlan(catalog as Catalog);
+                const isUnlimited = isUnlimitedPlan(catalog as Catalog);
                 const allCategories = categories || [];
                 const allItems = allCategories.flatMap((category: any) => category.menu_items || []);
-                const categoryEntitlement = getPlanEntitlement(allCategories, FREE_PLAN_MAX_CATEGORIES, isPro);
-                const itemEntitlement = getPlanEntitlement(allItems, FREE_PLAN_MAX_PRODUCTS, isPro);
+                const categoryEntitlement = getPlanEntitlement(allCategories, FREE_PLAN_MAX_CATEGORIES, isUnlimited);
+                const itemEntitlement = getPlanEntitlement(allItems, FREE_PLAN_MAX_PRODUCTS, isUnlimited);
 
                 const categoriesMap = new Map<number, CategoryWithSubcategories>();
                 const rootCategories: CategoryWithSubcategories[] = [];
@@ -138,6 +147,27 @@ export default function ClientCatalogPage() {
     }, [slug]);
 
     if (loading) return <PageLoader logoUrl={logoUrl} />;
+    if (storeClosed) {
+        return (
+            <div className="min-h-[100dvh] flex flex-col items-center justify-center p-4 bg-[#03110f] text-white">
+                <div className="w-full max-w-md bg-white/5 border border-white/10 rounded-3xl p-8 text-center flex flex-col items-center gap-6 shadow-2xl backdrop-blur-md">
+                    {logoUrl ? (
+                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-white/10 p-1 flex items-center justify-center">
+                            <img src={logoUrl} alt="Logo" className="max-w-full max-h-full object-contain rounded-xl" />
+                        </div>
+                    ) : (
+                        <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-4xl">🏪</div>
+                    )}
+                    <div className="space-y-2">
+                        <h1 className="text-xl sm:text-2xl font-black">المتجر مغلق مؤقتاً 🏪</h1>
+                        <p className="text-sm text-white/60 leading-relaxed">
+                            عذراً، هذا المتجر الإلكتروني غير متاح حالياً. يرجى المحاولة مرة أخرى لاحقاً أو التواصل مع صاحب المتجر.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     if (error || !data) return <div className="min-h-screen flex items-center justify-center">Store not found</div>;
 
     const storeName = data.display_name || data.name;
