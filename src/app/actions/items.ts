@@ -235,6 +235,7 @@ export async function createItem(formData: FormData) {
       discount_price: discountPrice,
       category_id,
       image_url: mainImageUrl, // Backward compatibility
+      is_hidden: false,
     };
 
     const { data: insertedItem, error: dbError } = await supabase
@@ -357,6 +358,7 @@ export async function updateItem(itemId: number, formData: FormData) {
       price: price, // Uses min price if variants exist
       discount_price: Number.isFinite(discountPrice as number) ? discountPrice : null,
       category_id: parseInt(formData.get('category_id') as string),
+      is_hidden: formData.get('is_hidden') === 'true',
     };
 
     const uploadedUrls: string[] = [];
@@ -488,5 +490,37 @@ export async function deleteItem(itemId: number) {
   } catch (error: any) {
     console.error('Delete item error:', error);
     return { error: error.message || 'فشل حذف المنتج.' };
+  }
+}
+
+export async function toggleProductVisibility(itemId: number, isHidden: boolean) {
+  try {
+    const supabase = await createClient();
+    if (!supabase) {
+      return { error: 'فشل الاتصال بقاعدة البيانات' };
+    }
+
+    const { data, error: authError } = await supabase.auth.getUser();
+    const user = data?.user;
+
+    if (authError || !user) {
+      return { error: 'غير مصرح به' };
+    }
+
+    const { error } = await supabase
+      .from('menu_items')
+      .update({ is_hidden: isHidden })
+      .eq('id', itemId);
+
+    if (error) {
+      return { error: 'فشل تحديث حالة المنتج.' };
+    }
+
+    revalidatePath('/dashboard/items');
+    revalidatePath('/[slug]');
+    return { error: null };
+  } catch (error: any) {
+    console.error('Toggle product visibility error:', error);
+    return { error: error.message || 'فشل تحديث حالة المنتج.' };
   }
 }

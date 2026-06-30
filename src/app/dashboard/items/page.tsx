@@ -17,7 +17,7 @@ async function getData() {
     const { data: categories } = await supabase.from('categories').select('*').eq('catalog_id', catalog.id);
     const { data: items } = await supabase
         .from('menu_items')
-        .select('*, categories(name, parent_category_id, parent:parent_category_id(name)), product_images(*)')
+        .select('*, categories(name, parent_category_id, parent:parent_category_id(name)), product_images(*), is_hidden')
         .eq('catalog_id', catalog.id)
         .order('created_at', { ascending: false });
 

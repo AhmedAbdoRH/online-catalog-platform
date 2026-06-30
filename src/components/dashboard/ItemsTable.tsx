@@ -29,6 +29,7 @@ import { ItemForm } from './ItemForm';
 import { deleteItem } from '@/app/actions/items';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { ProductVisibilityToggle } from './ProductVisibilityToggle';
 
 type ItemWithCategory = MenuItemWithDetails & {
   hiddenReason?: 'plan_limit' | null;
@@ -50,6 +51,7 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
   const router = useRouter();
   const parentCategoryName = item.categories?.parent_category_name || null;
   const isHiddenByPlan = item.hiddenReason === 'plan_limit';
+  const isManuallyHidden = item.is_hidden === true;
   const hasDiscount =
     item.discount_price !== null &&
     item.discount_price !== undefined &&
@@ -68,7 +70,7 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
   }
 
   return (
-    <TableRow className={cn("hover:bg-muted/50 transition-colors", isHiddenByPlan && "bg-muted/20 opacity-65")}>
+    <TableRow className={cn("hover:bg-muted/50 transition-colors", (isHiddenByPlan || isManuallyHidden) && "bg-muted/20 opacity-65")}>
       <TableCell className="p-2 sm:p-5">
         <div className="relative h-14 w-14 sm:h-20 sm:w-20 shrink-0 overflow-hidden rounded-xl border border-border/50 shadow-sm">
           <Image
@@ -86,6 +88,12 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
             <Badge variant="outline" className="w-fit gap-1 border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-600">
               <EyeOff className="h-3 w-3" />
               مخفي حتى تجديد الاشتراك
+            </Badge>
+          )}
+          {isManuallyHidden && !isHiddenByPlan && (
+            <Badge variant="outline" className="w-fit gap-1 border-gray-500/40 bg-gray-500/10 px-2 py-0.5 text-[10px] font-bold text-gray-600">
+              <EyeOff className="h-3 w-3" />
+              مخفي يدوياً
             </Badge>
           )}
           <div className="sm:hidden">
@@ -120,6 +128,15 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
           </div>
         ) : (
           formatPrice(item.price, countryCode)
+        )}
+      </TableCell>
+      <TableCell className="p-2 sm:p-5 text-center">
+        {!isHiddenByPlan && (
+          <ProductVisibilityToggle
+            itemId={item.id}
+            isHidden={isManuallyHidden}
+            productName={item.name}
+          />
         )}
       </TableCell>
       <TableCell className="p-2 sm:p-5 text-left">
@@ -228,6 +245,7 @@ export function ItemsTable({ items, catalogId, catalogName, isPro, categories, c
             <TableHead className="sm:w-auto p-2 sm:p-5 text-right font-bold text-foreground">الاسم</TableHead>
             <TableHead className="hidden sm:table-cell p-5 text-right font-bold text-foreground">التصنيف</TableHead>
             <TableHead className="w-[90px] sm:w-[120px] p-2 sm:p-5 text-right font-bold text-foreground">السعر</TableHead>
+            <TableHead className="w-[60px] sm:w-[80px] p-2 sm:p-5 text-center font-bold text-foreground">الحالة</TableHead>
             <TableHead className="w-[45px] sm:w-[60px] p-2 sm:p-5 text-left">
               <span className="sr-only">الإجراءات</span>
             </TableHead>

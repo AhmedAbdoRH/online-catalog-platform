@@ -126,7 +126,7 @@ export default function ClientProductPage() {
                         .eq("catalog_id", catalog.id),
                     supabase
                         .from("menu_items")
-                        .select("id, category_id, created_at")
+                        .select("id, category_id, created_at, is_hidden")
                         .eq("catalog_id", catalog.id),
                 ]);
 
@@ -138,7 +138,8 @@ export default function ClientProductPage() {
                 if (
                     !productSummary ||
                     !productEntitlement.isEntitled(productSummary.id) ||
-                    !categoryEntitlement.isEntitled(productSummary.category_id)
+                    !categoryEntitlement.isEntitled(productSummary.category_id) ||
+                    productSummary.is_hidden
                 ) {
                     setUnavailable(true);
                     setLoading(false);

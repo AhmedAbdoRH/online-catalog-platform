@@ -114,7 +114,7 @@ export default function ClientCatalogPage() {
 
                     const sortedItems = (category.menu_items || []).sort((a: any, b: any) => {
                         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                    }).filter((item: any) => itemEntitlement.isEntitled(item.id));
+                    }).filter((item: any) => itemEntitlement.isEntitled(item.id) && !item.is_hidden);
 
                     categoriesMap.set(category.id, {
                         ...category,

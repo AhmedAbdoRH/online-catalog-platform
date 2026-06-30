@@ -120,6 +120,7 @@ interface Database {
           image_url: string | null;
           category_id: number;
           catalog_id: number;
+          is_hidden: boolean | null;
         };
         Insert: {
           id?: number;
@@ -131,6 +132,7 @@ interface Database {
           image_url?: string | null;
           category_id: number;
           catalog_id: number;
+          is_hidden?: boolean | null;
         };
         Update: {
           id?: number;
@@ -142,6 +144,7 @@ interface Database {
           image_url?: string | null;
           category_id?: number;
           catalog_id?: number;
+          is_hidden?: boolean | null;
         };
       };
       product_images: {
