@@ -190,7 +190,7 @@ export async function createItem(formData: FormData) {
     // Check for plan limits
     const { data: catalog } = await supabase
       .from('catalogs')
-      .select('id, plan, plan_expires_at')
+      .select('id, plan, plan_expires_at, trial_started_at, is_legacy_basic')
       .eq('id', catalogId)
       .single();
 
@@ -309,7 +309,7 @@ export async function updateItem(itemId: number, formData: FormData) {
 
     const { data: catalog } = await supabase
       .from('catalogs')
-      .select('plan, plan_expires_at')
+      .select('plan, plan_expires_at, trial_started_at, is_legacy_basic')
       .eq('id', existingItem.catalog_id)
       .single();
 

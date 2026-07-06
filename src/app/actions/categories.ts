@@ -72,7 +72,7 @@ export async function createCategory(prevState: any, formData: FormData) {
   // Check for plan limits
   const { data: catalog } = await supabase
     .from('catalogs')
-    .select('id, plan, plan_expires_at')
+    .select('id, plan, plan_expires_at, trial_started_at, is_legacy_basic')
     .eq('user_id', user.id)
     .single();
 

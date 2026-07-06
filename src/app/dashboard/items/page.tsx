@@ -11,7 +11,7 @@ async function getData() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect('/login');
 
-    const { data: catalog } = await supabase.from('catalogs').select('id, name, plan, plan_expires_at, country_code').eq('user_id', user.id).single();
+    const { data: catalog } = await supabase.from('catalogs').select('id, name, plan, plan_expires_at, trial_started_at, is_legacy_basic, country_code').eq('user_id', user.id).single();
     if (!catalog) notFound();
 
     const { data: categories } = await supabase.from('categories').select('*').eq('catalog_id', catalog.id);
