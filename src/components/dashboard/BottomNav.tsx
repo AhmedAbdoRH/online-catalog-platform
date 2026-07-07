@@ -272,7 +272,7 @@ export function BottomNav() {
               }}
               className={cn(
                 "absolute left-0 whitespace-nowrap",
-                itemsCount === 0 ? "bottom-32" : "bottom-20"
+                itemsCount === 0 ? "bottom-24" : "bottom-20"
               )}
             >
               <div className={cn(
