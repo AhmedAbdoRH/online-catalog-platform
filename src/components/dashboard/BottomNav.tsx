@@ -307,42 +307,57 @@ export function BottomNav() {
         >
           <motion.div
             initial={{ y: 0 }}
-            animate={{ 
+            animate={itemsCount === 0 ? {
               y: [0, -8, 0],
               scale: [1, 1.08, 1],
               rotate: [0, -3, 3, 0]
+            } : {
+              y: [0, -4, 0],
+              scale: [1, 1.02, 1]
             }}
-            transition={{ 
+            transition={itemsCount === 0 ? {
               y: { repeat: Infinity, duration: 2, ease: "easeInOut" },
               scale: { repeat: Infinity, duration: 2, ease: "easeInOut" },
               rotate: { repeat: Infinity, duration: 3.5, ease: "linear" }
+            } : {
+              y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
+              scale: { repeat: Infinity, duration: 3, ease: "easeInOut" }
             }}
-            whileHover={{ scale: 1.15, rotate: 10 }}
+            whileHover={{ scale: itemsCount === 0 ? 1.15 : 1.05 }}
             whileTap={{ scale: 0.9 }}
             className="relative"
           >
-            <div className="absolute -inset-8 rounded-full bg-[conic-gradient(from_0deg,rgba(251,191,36,0.4)_0%,transparent_20%,rgba(251,191,36,0.2)_50%,transparent_100%)] blur-3xl opacity-80" />
-            <motion.div 
-              animate={{ opacity: [0.3, 0.7, 0.3] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              className={cn(
-                "absolute -inset-3 rounded-full blur-lg",
-                itemsCount === 0 ? "bg-amber-400/50" : "bg-amber-400/20"
-              )} 
-            />
+            {itemsCount === 0 && (
+              <div className="absolute -inset-8 rounded-full bg-[conic-gradient(from_0deg,rgba(251,191,36,0.4)_0%,transparent_20%,rgba(251,191,36,0.2)_50%,transparent_100%)] blur-3xl opacity-80" />
+            )}
+            {itemsCount === 0 && (
+              <motion.div 
+                animate={{ opacity: [0.3, 0.7, 0.3] }}
+                transition={{ repeat: Infinity, duration: 1.5 }}
+                className="absolute -inset-3 rounded-full bg-amber-400/50 blur-lg"
+              />
+            )}
             <div className={cn(
-              "relative flex h-20 w-20 items-center justify-center rounded-full text-white ring-2 ring-white/50 transition-all duration-300",
+              "relative flex items-center justify-center rounded-full text-white ring-2 transition-all duration-300",
               itemsCount === 0 
-                ? "bg-gradient-to-tr from-amber-400 via-amber-500 to-yellow-300 shadow-[0_0_50px_rgba(245,158,11,1),0_0_20px_rgba(245,158,11,0.8)] scale-110" 
-                : "bg-gradient-to-tr from-amber-400 to-amber-500 shadow-[0_15px_40px_rgba(245,158,11,0.5)]"
+                ? "h-20 w-20 bg-gradient-to-tr from-amber-400 via-amber-500 to-yellow-300 ring-white/50 shadow-[0_0_50px_rgba(245,158,11,1),0_0_20px_rgba(245,158,11,0.8)] scale-110" 
+                : "h-14 w-14 bg-amber-400 ring-white/30 shadow-[0_10px_25px_rgba(245,158,11,0.3)]"
             )}>
-              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.5),_transparent_70%)] opacity-60" />
-              <div className="absolute inset-0.5 rounded-full ring-1 ring-white/30" />
-              <Plus className="relative h-12 w-12 stroke-[2px] text-brand-primary font-black" />
+              <div className={cn(
+                "absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.5),_transparent_70%)]",
+                itemsCount === 0 ? "opacity-60" : "opacity-40"
+              )} />
+              <div className="absolute inset-0.5 rounded-full ring-1 ring-white/20" />
+              <Plus className={cn(
+                "relative stroke-[2px] text-brand-primary font-black",
+                itemsCount === 0 ? "h-12 w-12" : "h-8 w-8"
+              )} />
             </div>
-            <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black text-amber-400 bg-slate-900/80 px-2 py-0.5 rounded-full border border-amber-400/30">
-              منتج جديد
-            </div>
+            {itemsCount === 0 && (
+              <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black text-amber-400 bg-slate-900/90 px-2.5 py-1 rounded-full border border-amber-400/40 shadow-lg">
+                منتج جديد
+              </div>
+            )}
           </motion.div>
         </button>
       </div>
