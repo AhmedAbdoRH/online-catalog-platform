@@ -303,42 +303,45 @@ export function BottomNav() {
           onClick={() => setIsAddItemOpen(true)} 
           aria-label="إضافة منتج جديد"
           disabled={!catalog}
-          className="relative"
+          className="relative group"
         >
           <motion.div
             initial={{ y: 0 }}
             animate={{ 
-              y: [0, -10, 0],
-              scale: [1, 1.05, 1],
-              rotate: [0, -2, 2, 0]
+              y: [0, -8, 0],
+              scale: [1, 1.08, 1],
+              rotate: [0, -3, 3, 0]
             }}
             transition={{ 
-              y: { repeat: Infinity, duration: 2.5, ease: "easeInOut" },
-              scale: { repeat: Infinity, duration: 2.5, ease: "easeInOut" },
-              rotate: { repeat: Infinity, duration: 4, ease: "linear" }
+              y: { repeat: Infinity, duration: 2, ease: "easeInOut" },
+              scale: { repeat: Infinity, duration: 2, ease: "easeInOut" },
+              rotate: { repeat: Infinity, duration: 3.5, ease: "linear" }
             }}
-            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileHover={{ scale: 1.15, rotate: 10 }}
             whileTap={{ scale: 0.9 }}
             className="relative"
           >
-            <div className="absolute -inset-5 rounded-full bg-[conic-gradient(from_0deg,rgba(251,191,36,0.2)_0%,transparent_25%,rgba(251,191,36,0.1)_60%,transparent_100%)] blur-2xl opacity-60" />
+            <div className="absolute -inset-8 rounded-full bg-[conic-gradient(from_0deg,rgba(251,191,36,0.4)_0%,transparent_20%,rgba(251,191,36,0.2)_50%,transparent_100%)] blur-3xl opacity-80" />
             <motion.div 
-              animate={{ opacity: [0.2, 0.5, 0.2] }}
-              transition={{ repeat: Infinity, duration: 2 }}
+              animate={{ opacity: [0.3, 0.7, 0.3] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
               className={cn(
-                "absolute -inset-1.5 rounded-full blur-md",
-                itemsCount === 0 ? "bg-amber-400/30" : "bg-amber-400/10"
+                "absolute -inset-3 rounded-full blur-lg",
+                itemsCount === 0 ? "bg-amber-400/50" : "bg-amber-400/20"
               )} 
             />
             <div className={cn(
-              "relative flex h-16 w-16 items-center justify-center rounded-full text-white ring-1 ring-white/40 transition-all duration-300",
+              "relative flex h-20 w-20 items-center justify-center rounded-full text-white ring-2 ring-white/50 transition-all duration-300",
               itemsCount === 0 
-                ? "bg-gradient-to-tr from-amber-400 via-amber-500 to-yellow-300 shadow-[0_0_30px_rgba(245,158,11,0.75)] scale-110" 
-                : "bg-amber-400 shadow-[0_15px_35px_rgba(245,158,11,0.25)]"
+                ? "bg-gradient-to-tr from-amber-400 via-amber-500 to-yellow-300 shadow-[0_0_50px_rgba(245,158,11,1),0_0_20px_rgba(245,158,11,0.8)] scale-110" 
+                : "bg-gradient-to-tr from-amber-400 to-amber-500 shadow-[0_15px_40px_rgba(245,158,11,0.5)]"
             )}>
-              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.4),_transparent_70%)] opacity-50" />
-              <div className="absolute inset-0.5 rounded-full ring-1 ring-white/20" />
-              <Plus className="relative h-10 w-10 stroke-[1.5px] text-brand-primary font-black" />
+              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.5),_transparent_70%)] opacity-60" />
+              <div className="absolute inset-0.5 rounded-full ring-1 ring-white/30" />
+              <Plus className="relative h-12 w-12 stroke-[2px] text-brand-primary font-black" />
+            </div>
+            <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black text-amber-400 bg-slate-900/80 px-2 py-0.5 rounded-full border border-amber-400/30">
+              منتج جديد
             </div>
           </motion.div>
         </button>
