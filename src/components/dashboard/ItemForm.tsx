@@ -911,36 +911,6 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
             </div>
           </div>
 
-          <div className="pt-4 border-t border-slate-700/50 mt-8">
-            <FormField
-              control={form.control}
-              name="is_hidden"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border border-slate-700/50 p-4 bg-slate-900/30">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base font-bold text-foreground">إخفاء المنتج</FormLabel>
-                    <p className="text-[11px] text-muted-foreground">إخفاء المنتج لن يحذفه، فقط يمنع ظهوره للعملاء في المتجر</p>
-                  </div>
-                  <FormControl>
-                    <button
-                      type="button"
-                      onClick={() => field.onChange(!field.value)}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                        field.value ? 'bg-gray-500' : 'bg-green-500'
-                      }`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${
-                          field.value ? 'translate-x-1' : 'translate-x-6'
-                        }`}
-                      />
-                    </button>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
-
           <div className="flex gap-4 pt-4 border-t border-slate-700/50 mt-8 sticky bottom-0 bg-emerald-950/40 backdrop-blur-md -mx-6 px-6 pb-4 rounded-b-3xl z-10 shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.5)]">
             <Button
               type="button"
