@@ -270,7 +270,10 @@ export function BottomNav() {
                 opacity: { duration: 0.3 },
                 scale: { duration: 0.3 }
               }}
-              className="absolute bottom-20 left-0 whitespace-nowrap"
+              className={cn(
+                "absolute left-0 whitespace-nowrap",
+                itemsCount === 0 ? "bottom-32" : "bottom-20"
+              )}
             >
               <div className={cn(
                 "relative rounded-2xl px-4 py-2.5 text-[13px] font-black shadow-[0_10px_25px_rgba(245,158,11,0.3)] ring-2",
