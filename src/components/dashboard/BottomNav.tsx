@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Package, Tags, Plus, X, Home } from "lucide-react";
+import { Package, Tags, Plus, X, Home, ArrowDown, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import * as motion from "framer-motion/client";
 import { useEffect, useState } from "react";
@@ -36,6 +36,21 @@ export function BottomNav() {
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [itemsCount, setItemsCount] = useState<number | null>(null);
+  const [dismissedOverlay, setDismissedOverlay] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("dismissedOnboardingOverlay");
+      if (stored === "true") {
+        setDismissedOverlay(true);
+      }
+    }
+  }, []);
+
+  const handleDismissOverlay = () => {
+    localStorage.setItem("dismissedOnboardingOverlay", "true");
+    setDismissedOverlay(true);
+  };
 
   const fetchData = async () => {
     const supabase = createClient();
@@ -204,8 +219,40 @@ export function BottomNav() {
         </div>
       </div>
       <div className="fixed bottom-28 left-4 z-[60] block sm:hidden">
+        {/* Onboarding Spotlight Guide Card */}
+        {itemsCount === 0 && !dismissedOverlay && !isAddItemOpen && (
+          <div className="absolute bottom-24 left-0 w-[calc(100vw-32px)] max-w-[340px] bg-slate-900/95 border border-amber-400/40 rounded-2xl p-5 text-right shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in fade-in slide-in-from-bottom-5 duration-500 z-[61]">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-1.5 text-amber-400 font-black text-[11px] uppercase tracking-wider">
+                <Sparkles className="h-3.5 w-3.5 animate-pulse" />
+                <span>دليل البدء السريع</span>
+              </div>
+              <button 
+                onClick={handleDismissOverlay}
+                className="text-slate-400 hover:text-white text-[11px] bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-md transition-all font-bold"
+              >
+                تخطي الإرشاد
+              </button>
+            </div>
+            <h4 className="text-white font-black text-sm mb-1">أضف منتجك الأول هنا 👇</h4>
+            <p className="text-slate-300 text-xs leading-relaxed">
+              اضغط على هذا الزر الذهبي المضيء لتبدأ في إضافة أول منتج وتفعيل متجرك الإلكتروني.
+            </p>
+            
+            {/* Arrow Pointer */}
+            <div className="absolute -bottom-7 left-5 text-amber-400">
+              <motion.div
+                animate={{ y: [0, 6, 0] }}
+                transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
+              >
+                <ArrowDown className="h-8 w-8 stroke-[2.5px]" />
+              </motion.div>
+            </div>
+          </div>
+        )}
+
         <AnimatePresence>
-          {showTooltip && (
+          {showTooltip && dismissedOverlay && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ 
@@ -225,9 +272,17 @@ export function BottomNav() {
               }}
               className="absolute bottom-20 left-0 whitespace-nowrap"
             >
-              <div className="relative rounded-2xl bg-brand-primary px-4 py-2 text-[13px] font-bold text-white shadow-[0_8px_20px_rgba(0,209,201,0.3)] ring-1 ring-white/20">
+              <div className={cn(
+                "relative rounded-2xl px-4 py-2.5 text-[13px] font-black shadow-[0_10px_25px_rgba(245,158,11,0.3)] ring-2",
+                itemsCount === 0 
+                  ? "bg-amber-400 text-brand-primary ring-amber-300"
+                  : "bg-brand-primary text-white ring-white/20"
+              )}>
                 أضف منتجاتك من هنا
-                <div className="absolute -bottom-1.5 left-6 h-3 w-3 rotate-45 bg-brand-primary" />
+                <div className={cn(
+                  "absolute -bottom-1.5 left-6 h-3 w-3 rotate-45",
+                  itemsCount === 0 ? "bg-amber-400" : "bg-brand-primary"
+                )} />
                 <button 
                   onClick={() => setShowTooltip(false)}
                   className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow-lg ring-1 ring-white/20"
@@ -238,11 +293,17 @@ export function BottomNav() {
             </motion.div>
           )}
         </AnimatePresence>
+        
+        {/* Glow effect surrounding the button if itemsCount === 0 */}
+        {itemsCount === 0 && (
+          <span className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-30 pointer-events-none" style={{ animationDuration: '2.5s' }} />
+        )}
 
         <button 
           onClick={() => setIsAddItemOpen(true)} 
           aria-label="إضافة منتج جديد"
           disabled={!catalog}
+          className="relative"
         >
           <motion.div
             initial={{ y: 0 }}
@@ -262,18 +323,34 @@ export function BottomNav() {
           >
             <div className="absolute -inset-5 rounded-full bg-[conic-gradient(from_0deg,rgba(251,191,36,0.2)_0%,transparent_25%,rgba(251,191,36,0.1)_60%,transparent_100%)] blur-2xl opacity-60" />
             <motion.div 
-              animate={{ opacity: [0.2, 0.4, 0.2] }}
+              animate={{ opacity: [0.2, 0.5, 0.2] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="absolute -inset-1 rounded-full bg-amber-400/10 blur-md" 
+              className={cn(
+                "absolute -inset-1.5 rounded-full blur-md",
+                itemsCount === 0 ? "bg-amber-400/30" : "bg-amber-400/10"
+              )} 
             />
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-amber-400 text-white shadow-[0_15px_35px_rgba(245,158,11,0.25)] ring-1 ring-white/40">
+            <div className={cn(
+              "relative flex h-16 w-16 items-center justify-center rounded-full text-white ring-1 ring-white/40 transition-all duration-300",
+              itemsCount === 0 
+                ? "bg-gradient-to-tr from-amber-400 via-amber-500 to-yellow-300 shadow-[0_0_30px_rgba(245,158,11,0.75)] scale-110" 
+                : "bg-amber-400 shadow-[0_15px_35px_rgba(245,158,11,0.25)]"
+            )}>
               <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.4),_transparent_70%)] opacity-50" />
               <div className="absolute inset-0.5 rounded-full ring-1 ring-white/20" />
-              <Plus className="relative h-10 w-10 stroke-[1.5px]" />
+              <Plus className="relative h-10 w-10 stroke-[1.5px] text-brand-primary font-black" />
             </div>
           </motion.div>
         </button>
       </div>
+
+      {/* Spotlight Backdrop Overlay */}
+      {itemsCount === 0 && !dismissedOverlay && !isAddItemOpen && (
+        <div 
+          className="fixed inset-0 z-[58] block sm:hidden bg-black/65 backdrop-blur-sm transition-all duration-300 animate-in fade-in cursor-pointer"
+          onClick={handleDismissOverlay}
+        />
+      )}
 
       <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
         <DialogContent className="w-full h-[100dvh] sm:max-w-[500px] sm:h-auto sm:max-h-[90vh] top-1/2 sm:top-1/2 translate-y-[-50%] p-0 sm:p-6 overflow-y-auto rounded-none sm:rounded-lg border-none sm:border">

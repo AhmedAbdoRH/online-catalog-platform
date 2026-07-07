@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -15,7 +16,23 @@ interface AddItemButtonProps {
 }
 
 export function AddItemButton({ catalogId, isPro, categories, countryCode }: AddItemButtonProps) {
+    const searchParams = useSearchParams();
     const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        if (searchParams?.get('add') === 'true') {
+            setOpen(true);
+            
+            // Clean up URL parameter to prevent auto-opening if page is refreshed or user navigates
+            try {
+                const url = new URL(window.location.href);
+                url.searchParams.delete('add');
+                window.history.replaceState({}, '', url.toString());
+            } catch (err) {
+                console.error("Failed to clean query param:", err);
+            }
+        }
+    }, [searchParams]);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

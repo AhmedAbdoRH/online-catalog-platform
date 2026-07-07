@@ -30,6 +30,7 @@ import { deleteItem } from '@/app/actions/items';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { ProductVisibilityToggle } from './ProductVisibilityToggle';
+import { AddItemButton } from './AddItemButton';
 
 type ItemWithCategory = MenuItemWithDetails & {
   hiddenReason?: 'plan_limit' | null;
@@ -222,14 +223,28 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
 export function ItemsTable({ items, catalogId, catalogName, isPro, categories, countryCode }: ItemsTableProps) {
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/25 bg-muted/10 py-16 text-center">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-          <Package className="h-8 w-8 text-muted-foreground/50" />
+      <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-white/[0.02] py-16 px-4 text-center max-w-lg mx-auto my-8 relative overflow-hidden">
+        {/* Background decorative gradients */}
+        <div className="absolute top-0 right-0 w-24 h-24 bg-brand-primary/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-brand-luxury/10 rounded-full blur-2xl pointer-events-none" />
+        
+        <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 relative z-10 animate-pulse" style={{ animationDuration: '3s' }}>
+          <Package className="h-10 w-10" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold">لا توجد منتجات</h3>
-        <p className="mb-6 max-w-sm text-sm text-muted-foreground">
-          لم تقم بإضافة أي منتجات بعد.
+        
+        <h3 className="mb-2 text-xl font-black text-white relative z-10">قائمة المنتجات فارغة</h3>
+        <p className="mb-8 max-w-xs text-sm text-muted-foreground relative z-10 leading-relaxed">
+          لم تقم بإضافة أي منتجات إلى متجرك الإلكتروني حتى الآن. أضف منتجك الأول لتبدأ البيع!
         </p>
+
+        <div className="relative z-10">
+          <AddItemButton 
+            catalogId={catalogId} 
+            isPro={isPro} 
+            categories={categories} 
+            countryCode={countryCode} 
+          />
+        </div>
       </div>
     );
   }

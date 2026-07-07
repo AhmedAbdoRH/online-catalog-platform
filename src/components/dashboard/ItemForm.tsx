@@ -187,7 +187,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
       description: item?.description || '',
       price: item?.price || undefined,
       discount_price: item?.discount_price ?? undefined,
-      category_id: item?.category_id?.toString() || '',
+      category_id: item?.category_id?.toString() || (categories.find(c => c.name === 'عام')?.id.toString() || ''),
       pricing_type: item?.variants && item.variants.length > 0 ? 'multi' : 'unified',
       variants: item?.variants || [],
       is_hidden: item?.is_hidden || false,
@@ -461,7 +461,13 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                   name="category_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-bold text-slate-200 mb-2 block">التصنيف</FormLabel>
+                      <div className="flex items-center justify-between mb-2">
+                        <FormLabel className="text-base font-bold text-slate-200 block">التصنيف</FormLabel>
+                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full animate-pulse border border-emerald-400/20">
+                          <Sparkles className="h-3 w-3" />
+                          <span>يمكنك إضافة تصنيف جديد من هنا</span>
+                        </div>
+                      </div>
                       <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                         <FormControl>
                           <SelectTrigger className="h-12 bg-slate-800/50 border-slate-700 focus:ring-brand-primary transition-none rounded-xl text-white text-right overflow-hidden">
@@ -478,10 +484,10 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                                 router.push('/dashboard/categories');
                               }}
                               className={cn(
-                                "w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-black transition-all rounded-xl group",
+                                "w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-black transition-all rounded-xl group relative overflow-hidden shadow-sm",
                                 categories.length === 0 
                                   ? "bg-yellow-400/20 text-yellow-400 animate-pulse shadow-[0_0_12px_rgba(250,204,21,0.3)] border-2 border-yellow-400/40" 
-                                  : "text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 border-2 border-emerald-300 dark:border-emerald-500/40 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:border-emerald-400 dark:hover:bg-emerald-500/60"
+                                  : "text-emerald-900 dark:text-emerald-100 bg-gradient-to-r from-emerald-200 to-teal-200 dark:from-emerald-600/30 dark:to-teal-600/30 border-2 border-emerald-400/50 dark:border-emerald-500/50 hover:scale-[1.02] hover:shadow-md hover:from-emerald-300 hover:to-teal-300 dark:hover:from-emerald-500/40 dark:hover:to-teal-500/40 active:scale-95"
                               )}
                             >
                               <PlusCircle className={cn("h-5 w-5 transition-transform duration-300", categories.length > 0 && "group-hover:rotate-90")} />
