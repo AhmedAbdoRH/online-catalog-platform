@@ -220,7 +220,7 @@ export function BottomNav() {
       </div>
       <div className="fixed bottom-28 left-4 z-[60] block sm:hidden">
         {/* Onboarding Spotlight Guide Card */}
-        {itemsCount === 0 && !dismissedOverlay && !isAddItemOpen && (
+        {itemsCount === 0 && !dismissedOverlay && !isAddItemOpen && pathname !== '/dashboard/categories' && (
           <div className="absolute bottom-24 left-0 w-[calc(100vw-32px)] max-w-[340px] bg-slate-900/95 border border-amber-400/40 rounded-2xl p-5 text-right shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in fade-in slide-in-from-bottom-5 duration-500 z-[61]">
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-1.5 text-amber-400 font-black text-[11px] uppercase tracking-wider">
@@ -229,9 +229,9 @@ export function BottomNav() {
               </div>
               <button 
                 onClick={handleDismissOverlay}
-                className="text-slate-400 hover:text-white text-[11px] bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-md transition-all font-bold"
+                className="flex items-center justify-center h-7 w-7 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all shadow-sm"
               >
-                تخطي الإرشاد
+                <X className="h-4 w-4" />
               </button>
             </div>
             <h4 className="text-white font-black text-sm mb-1">أضف منتجك الأول هنا 👇</h4>
@@ -345,7 +345,7 @@ export function BottomNav() {
       </div>
 
       {/* Spotlight Backdrop Overlay */}
-      {itemsCount === 0 && !dismissedOverlay && !isAddItemOpen && (
+      {itemsCount === 0 && !dismissedOverlay && !isAddItemOpen && pathname !== '/dashboard/categories' && (
         <div 
           className="fixed inset-0 z-[58] block sm:hidden bg-black/65 backdrop-blur-sm transition-all duration-300 animate-in fade-in cursor-pointer"
           onClick={handleDismissOverlay}

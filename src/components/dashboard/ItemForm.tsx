@@ -146,21 +146,48 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
     const options: JSX.Element[] = [];
 
     cats.forEach((cat) => {
-      const indent = '\u00A0\u00A0\u00A0\u00A0'.repeat(level);
-      const prefix = level > 0 ? '┘─ ' : '• ';
-
       options.push(
         <SelectItem
           key={cat.id}
           value={cat.id.toString()}
-          className="relative py-3 mb-2 focus:bg-brand-primary focus:text-white cursor-pointer transition-colors pr-8 pl-4 group border-r-4 border-brand-primary bg-brand-primary/5 dark:bg-brand-primary/10"
+          className={cn(
+            "relative py-3 px-2 mb-2 outline-none cursor-pointer transition-all duration-300 rounded-xl overflow-hidden group",
+            "border border-slate-700/40 bg-slate-800/40 hover:bg-slate-700/80 hover:border-slate-600 focus:bg-slate-700/80 focus:border-slate-600",
+            "data-[state=checked]:bg-brand-primary/10 data-[state=checked]:border-brand-primary/50 data-[state=checked]:shadow-[0_0_15px_rgba(var(--brand-primary),0.1)]",
+            level > 0 && "mr-6 bg-slate-800/20"
+          )}
         >
-          <span className="font-bold text-right block w-full">
-            {indent}
-            <span className={level > 0 ? "text-slate-300" : "text-white"}>
-              {prefix}{cat.name}
+          {/* Animated subtle gradient on hover */}
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-primary/0 via-brand-primary/5 to-brand-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <div className="flex items-center gap-3 relative z-10 w-full pr-8">
+            {level > 0 && (
+              <div className="w-3 border-t-2 border-r-2 border-slate-600 rounded-tr-md h-5 -mt-3 shrink-0 opacity-40 group-hover:opacity-70 group-hover:border-slate-400 transition-all" />
+            )}
+            
+            <div className={cn(
+              "flex items-center justify-center w-6 h-6 rounded-lg shrink-0 transition-all duration-300",
+              level === 0 
+                ? "bg-slate-700/50 group-hover:bg-brand-primary/20 group-data-[state=checked]:bg-brand-primary" 
+                : "bg-slate-800/50 group-hover:bg-slate-600/50 group-data-[state=checked]:bg-brand-primary/80"
+            )}>
+              <div className={cn(
+                "w-1.5 h-1.5 rounded-full transition-all duration-300",
+                level === 0 
+                  ? "bg-slate-400 group-hover:bg-brand-primary group-data-[state=checked]:bg-white group-data-[state=checked]:scale-150" 
+                  : "bg-slate-500 group-hover:bg-slate-300 group-data-[state=checked]:bg-white group-data-[state=checked]:scale-150"
+              )} />
+            </div>
+
+            <span className={cn(
+              "font-bold text-right block truncate transition-colors duration-300",
+              level === 0 
+                ? "text-slate-300 group-hover:text-slate-100 group-data-[state=checked]:text-white text-[15px]" 
+                : "text-slate-400 group-hover:text-slate-200 group-data-[state=checked]:text-white text-[14px]"
+            )}>
+              {cat.name}
             </span>
-          </span>
+          </div>
         </SelectItem>
       );
 

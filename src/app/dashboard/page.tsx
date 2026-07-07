@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { APP_URL } from "@/lib/constants";
-import { Eye, Settings, Package, Tags, ArrowRight, Zap, Crown, Building, PlusCircle, Palette, Sparkles, Smartphone, ArrowDown } from "lucide-react";
+import { Eye, Settings, Package, Tags, ArrowRight, Zap, Crown, Building, PlusCircle, Palette } from "lucide-react";
 import * as motion from "framer-motion/client";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -129,89 +129,6 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </motion.div>
-
-      {itemsCount === 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="glass-surface border-amber-500/30 overflow-hidden relative p-6 sm:p-8"
-        >
-          {/* Decorative gradients */}
-          <div className="absolute -top-12 -right-12 w-48 h-48 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none animate-pulse" style={{ animationDuration: '3s' }} />
-          <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-brand-primary/10 rounded-full blur-[80px] pointer-events-none" />
-
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-4 flex-1">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-black">
-                <Sparkles className="h-3.5 w-3.5 animate-spin" style={{ animationDuration: '4s' }} />
-                <span>خطوة واحدة متبقية لإطلاق متجرك 🚀</span>
-              </div>
-              
-              <h2 className="text-xl sm:text-2xl font-black text-white leading-tight">
-                ابدأ بإضافة منتجك الأول الآن ✨
-              </h2>
-              
-              <p className="text-sm sm:text-base text-muted-foreground max-w-2xl leading-relaxed">
-                لقد قمنا بإنشاء متجرك بنجاح وتجهيز تصنيف افتراضي باسم <strong className="text-amber-400">"عام"</strong> من أجلك. كل ما تحتاجه الآن هو إضافة منتجك الأول لتفعيل المتجر والبدء في عرض كتالوجك واستقبال الطلبات!
-              </p>
-
-              {/* Step Checklist */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-xs font-bold text-amber-400">
-                    ١
-                  </div>
-                  <div className="space-y-0.5">
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-200">تفاصيل المنتج</h4>
-                    <p className="text-[11px] sm:text-xs text-muted-foreground">أدخل اسم المنتج، سعره، وصورته الجذابة.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white/[0.02] border border-white/5 opacity-60">
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-slate-400">
-                    ٢
-                  </div>
-                  <div className="space-y-0.5">
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-300">نشر ورؤية طلباتك</h4>
-                    <p className="text-[11px] sm:text-xs text-muted-foreground">سيظهر فوراً للعملاء ليرسلوا طلباتهم للواتساب الخاص بك.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Container */}
-            <div className="w-full md:w-auto shrink-0 flex flex-col items-center justify-center mt-2 md:mt-0">
-              {/* Desktop Button */}
-              <div className="hidden sm:block">
-                <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-brand-primary font-black shadow-xl shadow-amber-400/20 px-8 py-6 rounded-xl text-base transition-all hover:scale-105 active:scale-95 cursor-pointer">
-                  <Link href="/dashboard/items?add=true">
-                    <PlusCircle className="h-5 w-5 ml-2" />
-                    أضف منتجك الأول الآن
-                  </Link>
-                </Button>
-              </div>
-
-              {/* Mobile visual guide */}
-              <div className="block sm:hidden w-full text-center bg-amber-500/5 border border-amber-500/20 p-5 rounded-2xl relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_center,_rgba(251,191,36,0.1),_transparent_70%)] pointer-events-none" />
-                <p className="text-[14px] font-bold text-amber-400 flex flex-col items-center gap-2.5 leading-relaxed relative z-10">
-                  <Smartphone className="h-7 w-7 text-amber-400 animate-bounce" />
-                  <span>اضغط على الزر الدائري الأصفر العائم <strong className="text-white bg-amber-500/30 px-2.5 py-0.5 rounded-full inline-flex items-center justify-center font-black text-xs mx-1">+</strong> في أسفل الشاشة لإضافة أول منتج.</span>
-                </p>
-                <div className="mt-3 flex justify-center relative z-10">
-                  <motion.div
-                    animate={{ y: [0, 8, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                  >
-                    <ArrowDown className="h-5 w-5 text-amber-400" />
-                  </motion.div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
 
       <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
         {/* Categories Section */}
