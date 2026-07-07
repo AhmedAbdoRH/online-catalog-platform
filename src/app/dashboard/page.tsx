@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { APP_URL } from "@/lib/constants";
-import { Eye, Settings, Package, Tags, ArrowRight, Zap, Crown, Building, PlusCircle, Palette } from "lucide-react";
+import { Eye, Settings, Package, Tags, ArrowRight, Zap, Crown, Building, PlusCircle, Palette, Sparkles } from "lucide-react";
 import * as motion from "framer-motion/client";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -129,6 +129,32 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </motion.div>
+
+      {itemsCount === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="glass-surface border-amber-500/30 overflow-hidden relative p-5 sm:p-6"
+        >
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none" />
+          <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-brand-primary/10 rounded-full blur-[80px] pointer-events-none" />
+
+          <div className="relative z-10 flex items-start gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/15 border border-amber-500/30">
+              <Sparkles className="h-5 w-5 text-amber-400" />
+            </div>
+            <div className="space-y-1.5 flex-1">
+              <h2 className="text-base sm:text-lg font-black text-white leading-tight">
+                ابدأ بإضافة منتجك الأول الآن ✨
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                لقد قمنا بإنشاء متجرك بنجاح وتجهيز تصنيف افتراضي باسم <strong className="text-amber-400">"عام"</strong> من أجلك. كل ما تحتاجه الآن هو إضافة منتجك الأول لتفعيل المتجر والبدء في عرض كتالوجك واستقبال الطلبات!
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
         {/* Categories Section */}
