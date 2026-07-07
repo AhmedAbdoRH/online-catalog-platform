@@ -146,11 +146,22 @@ export default async function DashboardPage() {
             </div>
             <div className="space-y-1.5 flex-1">
               <h2 className="text-base sm:text-lg font-black text-white leading-tight">
-                ابدأ بإضافة منتجك الأول الآن ✨
+                ابدأ بإضافة منتجك الأول ✨
               </h2>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                لقد قمنا بإنشاء متجرك بنجاح وتجهيز تصنيف افتراضي باسم <strong className="text-amber-400">"عام"</strong> من أجلك. كل ما تحتاجه هو الضغط على الزر <strong className="text-amber-400">+</strong> الدائري العائم في الأسفل لإضافة منتجك الأول وبدء عرض كتالوجك واستقبال الطلبات!
-              </p>
+              <ul className="text-xs sm:text-sm text-muted-foreground leading-relaxed space-y-1.5 list-none">
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-400 font-black shrink-0">١.</span>
+                  <span>اضغط على الزر <strong className="text-amber-400">+</strong> الدائري العائم في الأسفل.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-400 font-black shrink-0">٢.</span>
+                  <span>أدخل اسم المنتج وسعره وصورته في النموذج.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-400 font-black shrink-0">٣.</span>
+                  <span>انشر المنتج ليظهر للعملاء ويستقبل طلباتك عبر واتساب.</span>
+                </li>
+              </ul>
             </div>
           </div>
         </motion.div>
