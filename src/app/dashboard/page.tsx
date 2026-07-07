@@ -149,7 +149,7 @@ export default async function DashboardPage() {
                 ابدأ بإضافة منتجك الأول الآن ✨
               </h2>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                لقد قمنا بإنشاء متجرك بنجاح وتجهيز تصنيف افتراضي باسم <strong className="text-amber-400">"عام"</strong> من أجلك. كل ما تحتاجه الآن هو إضافة منتجك الأول لتفعيل المتجر والبدء في عرض كتالوجك واستقبال الطلبات!
+                لقد قمنا بإنشاء متجرك بنجاح وتجهيز تصنيف افتراضي باسم <strong className="text-amber-400">"عام"</strong> من أجلك. كل ما تحتاجه هو الضغط على الزر <strong className="text-amber-400">+</strong> الدائري العائم في الأسفل لإضافة منتجك الأول وبدء عرض كتالوجك واستقبال الطلبات!
               </p>
             </div>
           </div>
