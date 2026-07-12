@@ -1,5 +1,5 @@
 {
-    "kiroAgent.configureMCP": "Disabled",
+    "kiroAgent.configureMCP": "Enabled",
     "typescript.autoClosingTags": false,
     "java.configuration.updateBuildConfiguration": "interactive",
     "codium.codeCompletion.enable": false
