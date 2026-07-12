@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { checkSubscriptionStatus, getProWhatsAppText } from "@/lib/plans";
 import { startCatalogFreeTrial } from "@/app/actions/catalog";
 import { Button } from "@/components/ui/button";
+import { StartTrialButton } from "@/components/dashboard/StartTrialButton";
 import Link from "next/link";
 import { Crown, Lock, MessageCircle, Sparkles } from "lucide-react";
 import type { Catalog } from "@/lib/types";
@@ -54,9 +55,7 @@ export default async function DashboardLayout({
             "use server";
             await startCatalogFreeTrial(catalog.id);
           }} className="w-full">
-            <Button type="submit" className="w-full bg-brand-primary hover:bg-brand-primary/90 text-white font-black h-12 rounded-xl text-base shadow-lg shadow-brand-primary/25">
-              الحصول على شهر مجاناً
-            </Button>
+            <StartTrialButton />
           </form>
         </div>
       </div>
