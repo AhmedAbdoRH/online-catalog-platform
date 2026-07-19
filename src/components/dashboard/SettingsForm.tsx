@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -31,7 +31,7 @@ import type { Catalog } from '@/lib/types';
 import { isProPlan } from '@/lib/plans';
 import NextImage from 'next/image';
 import { Capacitor } from '@capacitor/core';
-import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp, Download, Facebook, Instagram, Twitter, Music2, Share2 } from 'lucide-react';
+import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp, Download, Facebook, Instagram, Twitter, Music2, Share2, Copy } from 'lucide-react';
 import { ProUpgradeButton } from './ProUpgradeButton';
 import { Switch } from '../ui/switch';
 import { compressImage } from '@/lib/image-utils';
@@ -273,6 +273,22 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
       twitter_url: catalog.twitter_url || '',
     },
   });
+
+  // Live preview of the final store URL based on the slug typed by the user
+  const watchedName = useWatch({ control: form.control, name: 'name' });
+  const previewSlug = (watchedName || catalog.name || '').trim().toLowerCase().replace(/\s+/g, '-');
+  const finalStoreUrl = `https://tagr-online.com/${previewSlug || 'your-store'}`;
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyPreviewUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(finalStoreUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy store URL:', err);
+    }
+  };
 
   // Upload image directly WITHOUT form validation - completely decoupled from WhatsApp field
   const uploadImageDirectly = async (imageType: 'logo' | 'cover', file: File) => {
@@ -668,6 +684,26 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                     </Button>
                   )}
                 </div>
+
+                {/* محاكاة مباشرة للرابط النهائي */}
+                <div className="flex items-center gap-2 flex-wrap rounded-lg border border-[#38bdf8]/40 bg-gradient-to-r from-[#38bdf8]/10 to-[#0ea5e9]/5 px-3 py-2.5 shadow-[0_0_12px_rgba(56,189,248,0.18)]" dir="ltr">
+                  <button
+                    type="button"
+                    onClick={handleCopyPreviewUrl}
+                    className="inline-flex items-center justify-center rounded-md border border-[#38bdf8]/50 bg-[#38bdf8]/10 p-1.5 text-[#38bdf8] transition-colors hover:bg-[#38bdf8]/20"
+                    aria-label="نسخ الرابط"
+                  >
+                    {copied ? (
+                      <Check className="h-3.5 w-3.5" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" />
+                    )}
+                  </button>
+                  <span className="text-[#38bdf8] shrink-0" aria-hidden="true">🔗</span>
+                  <span className="text-sm md:text-base text-muted-foreground">tagr-online.com/</span>
+                  <span className="font-extrabold text-[#38bdf8] break-all text-sm md:text-base drop-shadow-[0_0_6px_rgba(56,189,248,0.55)]">{previewSlug || 'your-store'}</span>
+                </div>
+
                 <FormDescription>
                   {isPro
                     ? 'يمكنك تغيير رابط المتجر الخاص بك.'
