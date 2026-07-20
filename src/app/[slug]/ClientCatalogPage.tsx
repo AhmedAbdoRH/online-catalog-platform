@@ -180,8 +180,10 @@ export default function ClientCatalogPage() {
                 storeName={titleWithSlogan}
             />
             <InstallPrompt
+                slug={data.name}
                 storeName={data.display_name || data.name}
                 storeLogo={data.logo_url || undefined}
+                themeColor="#00D1C9"
             />
             <StorefrontView catalog={data} categories={data.categories} />
         </>

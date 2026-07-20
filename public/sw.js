@@ -1,10 +1,11 @@
 // This is a basic service worker for caching assets.
-const CACHE_NAME = 'online-menu-cache-v2';
+const CACHE_NAME = 'online-menu-cache-v3';
 const urlsToCache = [
   '/',
   '/manifest.json',
   '/favicon.ico',
-  // Add other static assets here, e.g., fonts, images
+  '/logo.png',
+  // Per-merchant manifests are cached on-demand (see fetch handler).
 ];
 
 self.addEventListener('install', (event) => {
