@@ -199,10 +199,10 @@ export function InstallPrompt({
         </DialogClose>
 
         <div className="flex flex-col items-center px-6 pb-6 pt-8 sm:px-8 sm:pb-8 sm:pt-10">
-          <DialogHeader className="mb-3 w-full items-center space-y-3 text-center sm:text-center">
+          <DialogHeader className="mb-5 w-full items-center space-y-4 text-center sm:text-center">
             {/* شعار المتجر */}
             <div
-              className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl ring-1 ring-black/5"
+              className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl ring-1 ring-black/5"
               style={{ backgroundColor: `${themeColor}12` }}
             >
               {storeLogo ? (
@@ -214,7 +214,7 @@ export function InstallPrompt({
                 />
               ) : (
                 <span
-                  className="text-2xl font-extrabold"
+                  className="text-3xl font-extrabold"
                   style={{ color: themeColor }}
                 >
                   {displayName.charAt(0)}
@@ -223,34 +223,34 @@ export function InstallPrompt({
             </div>
 
             <DialogTitle
-              className="text-xl font-extrabold leading-snug text-foreground"
+              className="text-2xl font-extrabold leading-snug text-foreground"
               style={{ color: themeColor }}
             >
               ثبّت تطبيق {displayName}
             </DialogTitle>
 
-            <DialogDescription className="text-center text-sm leading-relaxed text-muted-foreground">
+            <DialogDescription className="text-center text-base leading-relaxed text-muted-foreground">
               أضف المتجر إلى شاشتك لتجربة أسرع وأسهل.
               <br />
               التطبيق مجاني وخفيف.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="mt-5 flex w-full flex-col-reverse gap-2 sm:flex-row-reverse">
+          <div className="mt-6 flex w-full flex-col-reverse gap-3 sm:flex-row-reverse">
             <button
               type="button"
               onClick={handleInstall}
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold text-white shadow-md transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
+              className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-base font-bold text-white shadow-md transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
               style={{ backgroundColor: themeColor }}
               disabled={!deferredPrompt}
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-5 w-5" />
               تثبيت التطبيق
             </button>
             <button
               type="button"
               onClick={handleLater}
-              className="inline-flex h-11 flex-1 items-center justify-center rounded-xl border border-foreground/15 bg-white px-4 text-sm font-semibold text-foreground/80 transition-colors hover:bg-black/[0.03] hover:text-foreground"
+              className="inline-flex h-12 flex-1 items-center justify-center rounded-xl border border-foreground/15 bg-white px-4 text-base font-semibold text-foreground/80 transition-colors hover:bg-black/[0.03] hover:text-foreground"
             >
               لاحقاً
             </button>
