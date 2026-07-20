@@ -73,6 +73,35 @@ function detectInstalled(): boolean {
   );
 }
 
+/**
+ * يفتّح أو يغمّق لون Hex بنسبة معيّنة، عشان نبني تدرج (gradient) وظل ملوّن
+ * من نفس لون هوية المتجر (themeColor) بدل ما نستورد ألوان غريبة عن الهوية.
+ * لو اللون مش Hex صالح، بيرجّع اللون زي ما هو من غير ما يكسر التصميم.
+ */
+function shadeColor(hex: string, percent: number): string {
+  const cleaned = hex.replace('#', '');
+  const isValidHex = /^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(cleaned);
+  if (!isValidHex) return hex;
+
+  const normalized =
+    cleaned.length === 3
+      ? cleaned
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : cleaned;
+
+  const num = parseInt(normalized, 16);
+  const amt = Math.round(2.55 * percent);
+  const clamp = (v: number) => Math.max(0, Math.min(255, v));
+
+  const R = clamp((num >> 16) + amt);
+  const G = clamp(((num >> 8) & 0x00ff) + amt);
+  const B = clamp((num & 0x0000ff) + amt);
+
+  return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+}
+
 export function InstallPrompt({
   slug = 'default',
   storeName,
@@ -175,6 +204,10 @@ export function InstallPrompt({
 
   const displayName = useMemo(() => storeName || 'المتجر', [storeName]);
 
+  // تدرّج وظل الزرار متولّدين من نفس لون هوية المتجر، مش من ألوان تعسفية
+  const gradientFrom = useMemo(() => shadeColor(themeColor, 16), [themeColor]);
+  const gradientTo = useMemo(() => shadeColor(themeColor, -14), [themeColor]);
+
   if (!hydrated) return null;
 
   return (
@@ -187,23 +220,33 @@ export function InstallPrompt({
     >
       <DialogContent
         dir="rtl"
-        className="w-[calc(100%-2rem)] max-w-sm gap-0 rounded-2xl border-0 bg-white p-0 text-foreground shadow-2xl sm:rounded-2xl"
-        // إخفاء زرار الإغلاق الافتراضي في أعلى يمين — استبدلناه بمكان أنسب بصرياً
+        className="w-[calc(100%-2rem)] max-w-xl gap-0 overflow-hidden rounded-3xl border border-white/40 bg-white/55 p-0 text-foreground shadow-[0_25px_70px_-20px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.6)] backdrop-blur-2xl supports-[backdrop-filter]:bg-white/35"
         style={{ '--primary': themeColor } as React.CSSProperties}
       >
+        {/* توهّج زجاجي خفيف بلون هوية المتجر، يدي البطاقة عمق بدل الأبيض الفاضي */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: `linear-gradient(160deg, ${themeColor}2b 0%, transparent 55%)`,
+          }}
+        />
+
         <DialogClose
-          className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-foreground/60 transition-colors hover:bg-black/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-offset-2"
+          className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/50 bg-white/50 text-foreground/70 backdrop-blur-md transition-colors hover:bg-white/80 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-offset-2"
           aria-label="إغلاق"
         >
           <span className="text-lg leading-none">×</span>
         </DialogClose>
 
-        <div className="flex flex-col items-center px-6 pb-6 pt-8 sm:px-8 sm:pb-8 sm:pt-10">
-          <DialogHeader className="mb-5 w-full items-center space-y-4 text-center sm:text-center">
+        <div className="relative z-10 flex flex-col items-center px-6 pb-7 pt-9 sm:px-8 sm:pb-9 sm:pt-11">
+          <DialogHeader className="mb-6 w-full items-center space-y-4 text-center sm:text-center">
             {/* شعار المتجر */}
             <div
-              className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl ring-1 ring-black/5"
-              style={{ backgroundColor: `${themeColor}12` }}
+              className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border border-white/50 shadow-lg ring-1 ring-black/5 backdrop-blur-sm"
+              style={{
+                background: `linear-gradient(145deg, ${themeColor}29, ${themeColor}0d)`,
+              }}
             >
               {storeLogo ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -213,17 +256,14 @@ export function InstallPrompt({
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <span
-                  className="text-3xl font-extrabold"
-                  style={{ color: themeColor }}
-                >
+                <span className="text-3xl font-extrabold" style={{ color: themeColor }}>
                   {displayName.charAt(0)}
                 </span>
               )}
             </div>
 
             <DialogTitle
-              className="text-2xl font-extrabold leading-snug text-foreground"
+              className="text-3xl font-bold leading-snug text-foreground"
               style={{ color: themeColor }}
             >
               ثبّت تطبيق {displayName}
@@ -236,21 +276,24 @@ export function InstallPrompt({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="mt-6 flex w-full flex-col-reverse gap-3 sm:flex-row-reverse">
+          <div className="mt-2 flex w-full flex-col-reverse gap-3 sm:flex-row-reverse">
             <button
               type="button"
               onClick={handleInstall}
-              className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-base font-bold text-white shadow-md transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
-              style={{ backgroundColor: themeColor }}
+              className="inline-flex h-16 flex-1 items-center justify-center gap-2 rounded-2xl px-6 text-lg font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+              style={{
+                background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})`,
+                boxShadow: `0 14px 30px -10px ${themeColor}80`,
+              }}
               disabled={!deferredPrompt}
             >
-              <Download className="h-5 w-5" />
+              <Download className="h-6 w-6" />
               تثبيت التطبيق
             </button>
             <button
               type="button"
               onClick={handleLater}
-              className="inline-flex h-12 flex-1 items-center justify-center rounded-xl border border-foreground/15 bg-white px-4 text-base font-semibold text-foreground/80 transition-colors hover:bg-black/[0.03] hover:text-foreground"
+              className="inline-flex h-16 flex-1 items-center justify-center rounded-2xl border border-white/50 bg-white/40 px-6 text-base font-semibold text-foreground/80 backdrop-blur-md transition-colors hover:bg-white/65 hover:text-foreground"
             >
               لاحقاً
             </button>
