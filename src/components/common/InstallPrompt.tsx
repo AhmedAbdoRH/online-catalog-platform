@@ -1,8 +1,15 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { X, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from '@/components/ui/dialog';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -70,7 +77,7 @@ export function InstallPrompt({
   slug = 'default',
   storeName,
   storeLogo,
-  themeColor = '#00D1C9',
+  themeColor = '#1e3a8a',
 }: InstallPromptProps) {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [open, setOpen] = useState(false);
@@ -81,7 +88,6 @@ export function InstallPrompt({
   });
   const [hydrated, setHydrated] = useState(false);
 
-  // Hydrate from localStorage
   useEffect(() => {
     const initial = readState(slug);
     const installed = detectInstalled();
@@ -91,7 +97,6 @@ export function InstallPrompt({
     setHydrated(true);
   }, [slug]);
 
-  // Increment visit counter once per mount
   useEffect(() => {
     if (!hydrated) return;
     if (state.installed || state.permanentlyDismissed) return;
@@ -102,7 +107,6 @@ export function InstallPrompt({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hydrated]);
 
-  // Listen for beforeinstallprompt + appinstalled
   useEffect(() => {
     if (!hydrated) return;
 
@@ -126,7 +130,6 @@ export function InstallPrompt({
     };
   }, [hydrated, slug, state]);
 
-  // Decide whether to show
   useEffect(() => {
     if (!hydrated) return;
     if (state.installed || state.permanentlyDismissed) return;
@@ -159,62 +162,101 @@ export function InstallPrompt({
     }
   }, [deferredPrompt, state, slug]);
 
-  const handleDismiss = useCallback(() => {
+  const handleLater = useCallback(() => {
     const next: VisitState = { ...state, visits: MAX_VISITS_BEFORE_HIDE };
     setState(next);
     writeState(slug, next);
     setOpen(false);
   }, [state, slug]);
 
+  const handleClose = useCallback(() => {
+    handleLater();
+  }, [handleLater]);
+
   const displayName = useMemo(() => storeName || 'المتجر', [storeName]);
 
-  if (!hydrated || !open) return null;
+  if (!hydrated) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-label="تثبيت التطبيق"
-      className="fixed inset-x-0 bottom-3 z-[60] mx-auto flex w-[calc(100%-1.5rem)] max-w-md items-center gap-3 rounded-full border border-border bg-background/95 py-1.5 pl-2 pr-2 shadow-lg backdrop-blur-sm transition-all animate-in slide-in-from-bottom duration-300 sm:bottom-5"
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) handleClose();
+        setOpen(next);
+      }}
     >
-      {storeLogo ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={storeLogo}
-          alt={displayName}
-          className="h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-border"
-        />
-      ) : (
-        <span
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-          style={{ backgroundColor: themeColor }}
+      <DialogContent
+        dir="rtl"
+        className="w-[calc(100%-2rem)] max-w-sm gap-0 rounded-2xl border-0 bg-white p-0 text-foreground shadow-2xl sm:rounded-2xl"
+        // إخفاء زرار الإغلاق الافتراضي في أعلى يمين — استبدلناه بمكان أنسب بصرياً
+        style={{ '--primary': themeColor } as React.CSSProperties}
+      >
+        <DialogClose
+          className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-foreground/60 transition-colors hover:bg-black/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-offset-2"
+          aria-label="إغلاق"
         >
-          {displayName.charAt(0)}
-        </span>
-      )}
+          <span className="text-lg leading-none">×</span>
+        </DialogClose>
 
-      <p className="flex-1 truncate text-sm font-medium text-foreground">
-        ثبّت {displayName} على جهازك
-      </p>
+        <div className="flex flex-col items-center px-6 pb-6 pt-8 sm:px-8 sm:pb-8 sm:pt-10">
+          <DialogHeader className="mb-3 w-full items-center space-y-3 text-center sm:text-center">
+            {/* شعار المتجر */}
+            <div
+              className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl ring-1 ring-black/5"
+              style={{ backgroundColor: `${themeColor}12` }}
+            >
+              {storeLogo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={storeLogo}
+                  alt={displayName}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span
+                  className="text-2xl font-extrabold"
+                  style={{ color: themeColor }}
+                >
+                  {displayName.charAt(0)}
+                </span>
+              )}
+            </div>
 
-      <Button
-        type="button"
-        onClick={handleInstall}
-        size="sm"
-        className="h-8 gap-1.5 rounded-full px-3 text-xs font-semibold text-white"
-        style={{ backgroundColor: themeColor }}
-      >
-        <Download className="h-3.5 w-3.5" />
-        تثبيت
-      </Button>
+            <DialogTitle
+              className="text-xl font-extrabold leading-snug text-foreground"
+              style={{ color: themeColor }}
+            >
+              ثبّت تطبيق {displayName}
+            </DialogTitle>
 
-      <button
-        type="button"
-        onClick={handleDismiss}
-        aria-label="إغلاق"
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-      >
-        <X className="h-3.5 w-3.5" />
-      </button>
-    </div>
+            <DialogDescription className="text-center text-sm leading-relaxed text-muted-foreground">
+              أضف المتجر إلى شاشتك لتجربة أسرع وأسهل.
+              <br />
+              التطبيق مجاني وخفيف.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-5 flex w-full flex-col-reverse gap-2 sm:flex-row-reverse">
+            <button
+              type="button"
+              onClick={handleInstall}
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold text-white shadow-md transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
+              style={{ backgroundColor: themeColor }}
+              disabled={!deferredPrompt}
+            >
+              <Download className="h-4 w-4" />
+              تثبيت التطبيق
+            </button>
+            <button
+              type="button"
+              onClick={handleLater}
+              className="inline-flex h-11 flex-1 items-center justify-center rounded-xl border border-foreground/15 bg-white px-4 text-sm font-semibold text-foreground/80 transition-colors hover:bg-black/[0.03] hover:text-foreground"
+            >
+              لاحقاً
+            </button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
