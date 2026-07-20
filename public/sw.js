@@ -1,15 +1,27 @@
-// This is a basic service worker for caching assets.
+// Service worker for per-merchant catalog app.
+// IMPORTANT: This SW must only handle requests for the CURRENT merchant's
+// slug. Requests for other merchants are passed straight to the network so
+// that an installed PWA for /store-a never serves cached content for /store-b.
+
 const CACHE_NAME = 'online-menu-cache-v3';
 const urlsToCache = [
   '/',
   '/manifest.json',
   '/favicon.ico',
   '/logo.png',
-  // Per-merchant manifests are cached on-demand (see fetch handler).
 ];
 
+// The active merchant slug, set from the page via postMessage.
+let currentSlug = null;
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SET_SLUG') {
+    currentSlug = event.data.slug || null;
+    console.log('[SW] active slug set to:', currentSlug);
+  }
+});
+
 self.addEventListener('install', (event) => {
-  // Perform install steps
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -20,10 +32,31 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
+// Returns true if the request belongs to the current merchant's scope.
+function isInCurrentScope(url) {
+  if (url.origin !== self.location.origin) return false;
+  const pathSlug = url.pathname.split('/')[1] || '';
+  // No slug (e.g. "/", "/dashboard", "/login") → treat as platform-level, safe to cache.
+  if (!pathSlug) return true;
+  // If we know the current slug, only handle matching slug.
+  if (currentSlug) {
+    return pathSlug === currentSlug;
+  }
+  // Fallback: if slug unknown, allow same-origin GETs (caching still works).
+  return true;
+}
+
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests for caching; pass through others
   if (event.request.method !== 'GET') {
-    return; // Let the browser handle non-GET normally
+    return;
+  }
+
+  const url = new URL(event.request.url);
+
+  // Cross-merchant or out-of-scope request → do NOT intercept, let the
+  // browser fetch normally so the correct merchant's page is loaded.
+  if (!isInCurrentScope(url)) {
+    return;
   }
 
   event.respondWith(
@@ -34,7 +67,6 @@ self.addEventListener('fetch', (event) => {
 
       const fetchRequest = event.request.clone();
       return fetch(fetchRequest).then((response) => {
-        // Valid same-origin, successful response only
         if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
         }
