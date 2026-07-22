@@ -65,13 +65,27 @@
     @apply text-white;
   }
 
+  html,
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  html {
+    /* Prevent any element from causing horizontal scroll on small screens in RTL */
+    overflow-x: clip;
+  }
+
+  body {
     font-size: 17px;
     font-family: 'Tajawal', 'Cairo', 'system-ui', 'sans-serif';
     font-display: swap;
     unicode-bidi: plaintext;
     direction: rtl;
+    /* Defensive: ensure body never exceeds viewport width even if children overflow */
+    width: 100%;
+    max-width: 100vw;
   }
 
   @media (min-width: 1024px) {

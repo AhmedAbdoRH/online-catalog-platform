@@ -149,9 +149,9 @@ export function BottomNav() {
         </div>
 
         {/* Nav Items Container */}
-        <div className="flex w-full items-center justify-between px-2 translate-y-1.5">
+        <div className="flex w-full items-center justify-between px-1 translate-y-1.5">
           {/* Left Side Items */}
-          <div className="flex flex-1 items-center justify-start gap-1">
+          <div className="flex flex-1 items-center justify-start gap-0.5 min-w-0">
             {leftNavItems.map((item) => {
               const isActive = pathname === item.href;
               const Icon = item.icon;
@@ -161,18 +161,18 @@ export function BottomNav() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex flex-col items-center justify-center py-2 transition-all duration-300 min-w-[100px]",
+                    "flex flex-col items-center justify-center py-2 transition-all duration-300 min-w-0 flex-1 max-w-[120px]",
                     isActive ? "scale-120 opacity-100" : "opacity-80 hover:opacity-100"
                   )}
                 >
-                  <Icon className={cn("h-9 w-9 mb-2", isActive ? "text-brand-accent" : "text-white")} />
-                  <span className={cn("text-[16px] font-black tracking-tight", isActive ? "text-brand-accent" : "text-white/95")}>
+                  <Icon className={cn("h-7 w-7 sm:h-9 sm:w-9 mb-1.5 sm:mb-2", isActive ? "text-brand-accent" : "text-white")} />
+                  <span className={cn("text-[12px] sm:text-[16px] font-black tracking-tight truncate w-full text-center", isActive ? "text-brand-accent" : "text-white/95")}>
                     {item.label}
                   </span>
                   {isActive && (
                     <motion.div
                       layoutId="active-indicator"
-                      className="absolute -bottom-1 h-[2px] w-12 rounded-full bg-brand-accent"
+                      className="absolute -bottom-1 h-[2px] w-10 sm:w-12 rounded-full bg-brand-accent"
                       transition={{ type: "spring", stiffness: 380, damping: 28 }}
                     />
                   )}
@@ -182,12 +182,12 @@ export function BottomNav() {
           </div>
 
           {/* Vertical Separator under Home Button */}
-          <div className="relative flex h-12 w-16 items-center justify-center">
+          <div className="relative flex h-12 w-12 sm:w-16 items-center justify-center shrink-0">
             <div className="h-8 w-[1px] bg-white/20" />
           </div>
 
           {/* Right Side Items */}
-          <div className="flex flex-1 items-center justify-end gap-1">
+          <div className="flex flex-1 items-center justify-end gap-0.5 min-w-0">
             {rightNavItems.map((item) => {
               const isActive = pathname === item.href;
               const Icon = item.icon;
@@ -197,18 +197,18 @@ export function BottomNav() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex flex-col items-center justify-center py-2 transition-all duration-300 min-w-[100px]",
+                    "flex flex-col items-center justify-center py-2 transition-all duration-300 min-w-0 flex-1 max-w-[120px]",
                     isActive ? "scale-120 opacity-100" : "opacity-80 hover:opacity-100"
                   )}
                 >
-                  <Icon className={cn("h-9 w-9 mb-2", isActive ? "text-brand-accent" : "text-white")} />
-                  <span className={cn("text-[16px] font-black tracking-tight", isActive ? "text-brand-accent" : "text-white/95")}>
+                  <Icon className={cn("h-7 w-7 sm:h-9 sm:w-9 mb-1.5 sm:mb-2", isActive ? "text-brand-accent" : "text-white")} />
+                  <span className={cn("text-[12px] sm:text-[16px] font-black tracking-tight truncate w-full text-center", isActive ? "text-brand-accent" : "text-white/95")}>
                     {item.label}
                   </span>
                   {isActive && (
                     <motion.div
                       layoutId="active-indicator"
-                      className="absolute -bottom-1 h-[2px] w-12 rounded-full bg-brand-accent"
+                      className="absolute -bottom-1 h-[2px] w-10 sm:w-12 rounded-full bg-brand-accent"
                       transition={{ type: "spring", stiffness: 380, damping: 28 }}
                     />
                   )}

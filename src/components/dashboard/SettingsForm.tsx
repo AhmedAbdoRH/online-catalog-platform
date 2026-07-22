@@ -552,9 +552,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             render={({ field }) => (
               <FormItem>
                 <FormLabel>اسم المتجر المعروض</FormLabel>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full max-w-full min-w-0 flex-wrap sm:flex-nowrap">
                   <FormControl>
-                    <Input {...field} disabled={isSubmitting} className="bg-white text-[#1e3a5f] text-lg flex-1" />
+                    <Input {...field} disabled={isSubmitting} className="bg-white text-[#1e3a5f] text-lg flex-1 min-w-0" />
                   </FormControl>
                   <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
                     حفظ
@@ -574,12 +574,12 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             render={({ field }) => (
               <FormItem>
                 <FormLabel>رقم الواتساب</FormLabel>
-                <div className="flex gap-2 w-full max-w-full" dir="ltr">
-                  <div className="relative">
+                <div className="flex gap-2 w-full max-w-full min-w-0 flex-wrap sm:flex-nowrap" dir="ltr">
+                  <div className="relative shrink-0">
                     <select
                       value={form.watch('country_code')}
                       onChange={(e) => form.setValue('country_code', e.target.value)}
-                      className="h-12 bg-white border-2 border-slate-200 rounded-xl px-4 appearance-none focus:outline-none focus:border-brand-primary font-bold text-slate-700 min-w-[100px] text-center"
+                      className="h-12 bg-white border-2 border-slate-200 rounded-xl px-3 sm:px-4 appearance-none focus:outline-none focus:border-brand-primary font-bold text-slate-700 min-w-[80px] sm:min-w-[100px] text-center text-sm sm:text-base"
                     >
                       {countries.map((c) => (
                         <option key={c.code} value={c.code}>
@@ -599,7 +599,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                       }}
                       disabled={isSubmitting}
                       placeholder="رقم الواتساب بدون كود الدولة"
-                      className="bg-white text-[#1e3a5f] text-lg flex-1 h-12"
+                      className="bg-white text-[#1e3a5f] text-base sm:text-lg flex-1 min-w-0 h-12 w-full"
                     />
                   </FormControl>
                   <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
@@ -620,9 +620,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             render={({ field }) => (
               <FormItem>
                 <FormLabel>شعار نصي (سلوغان)</FormLabel>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full max-w-full min-w-0 flex-wrap sm:flex-nowrap">
                   <FormControl>
-                    <Input {...field} disabled={isSubmitting} placeholder="شعار متجرك أو جملة ترويجية" className="bg-white text-[#1e3a5f] text-lg flex-1" />
+                    <Input {...field} disabled={isSubmitting} placeholder="شعار متجرك أو جملة ترويجية" className="bg-white text-[#1e3a5f] text-lg flex-1 min-w-0" />
                   </FormControl>
                   <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
                     حفظ
@@ -657,10 +657,10 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                   </button>
                 )}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full max-w-full min-w-0 flex-wrap sm:flex-nowrap">
                   <FormControl>
                     <div
-                      className={`relative flex-1 ${!isPro ? 'cursor-pointer' : ''}`}
+                      className={`relative flex-1 min-w-0 ${!isPro ? 'cursor-pointer' : ''}`}
                       role={!isPro ? 'button' : undefined}
                       tabIndex={!isPro ? 0 : undefined}
                       onClick={!isPro ? () => setIsUpgradeOpen(true) : undefined}
@@ -669,7 +669,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                       <Input
                         {...field}
                         disabled={isSubmitting || !isPro}
-                        className={`bg-white text-[#1e3a5f] text-lg ${!isPro ? 'opacity-60 cursor-not-allowed pointer-events-none' : ''}`}
+                        className={`bg-white text-[#1e3a5f] text-lg w-full min-w-0 ${!isPro ? 'opacity-60 cursor-not-allowed pointer-events-none' : ''}`}
                       />
                       {!isPro && (
                         <div className="absolute left-3 top-1/2 -translate-y-1/2">

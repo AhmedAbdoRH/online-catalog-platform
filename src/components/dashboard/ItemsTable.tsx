@@ -250,18 +250,18 @@ export function ItemsTable({ items, catalogId, catalogName, isPro, categories, c
   }
 
   return (
-    <div className="rounded-xl border bg-card text-card-foreground shadow-sm w-full max-w-full overflow-hidden overflow-x-auto">
-      <Table className="w-full table-fixed min-w-[320px]">
+    <div className="rounded-xl border bg-card text-card-foreground shadow-sm w-full max-w-full overflow-x-auto">
+      <Table className="w-full table-fixed min-w-full sm:min-w-[600px]">
         <TableHeader className="bg-muted/50">
           <TableRow>
-            <TableHead className="w-[70px] sm:w-[120px] p-2 sm:p-5 text-right font-bold text-foreground">
+            <TableHead className="w-[60px] sm:w-[120px] p-2 sm:p-5 text-right font-bold text-foreground">
               الصورة
             </TableHead>
             <TableHead className="sm:w-auto p-2 sm:p-5 text-right font-bold text-foreground">الاسم</TableHead>
             <TableHead className="hidden sm:table-cell p-5 text-right font-bold text-foreground">التصنيف</TableHead>
-            <TableHead className="w-[90px] sm:w-[120px] p-2 sm:p-5 text-right font-bold text-foreground">السعر</TableHead>
-            <TableHead className="w-[60px] sm:w-[80px] p-2 sm:p-5 text-center font-bold text-foreground">الحالة</TableHead>
-            <TableHead className="w-[45px] sm:w-[60px] p-2 sm:p-5 text-left">
+            <TableHead className="w-[80px] sm:w-[120px] p-2 sm:p-5 text-right font-bold text-foreground">السعر</TableHead>
+            <TableHead className="w-[55px] sm:w-[80px] p-2 sm:p-5 text-center font-bold text-foreground">الحالة</TableHead>
+            <TableHead className="w-[40px] sm:w-[60px] p-2 sm:p-5 text-left">
               <span className="sr-only">الإجراءات</span>
             </TableHead>
           </TableRow>
