@@ -204,7 +204,7 @@ export function WelcomePopup() {
                   {generatedSlug.length >= 7 && (
                     <div className="flex items-center justify-end gap-2 text-xs" dir="ltr">
                       <span className="text-white/40">رابط متجرك:</span>
-                      <span className="text-[#4ade80] font-mono">tagr-online.com/{generatedSlug}</span>
+                      <span className="text-[#4ade80] font-mono">{generatedSlug}.tagr-online.com</span>
                       {isSlugAvailable && <span className="text-[#4ade80]">✓</span>}
                     </div>
                   )}
@@ -247,7 +247,7 @@ export function WelcomePopup() {
                     ابدأ متجرك الآن بضغطة واحدة
                   </p>
                   <div className="mt-2 text-xs text-[#4ade80] font-mono" dir="ltr">
-                    tagr-online.com/{generatedSlug}
+                    {generatedSlug}.tagr-online.com
                   </div>
                 </div>
 

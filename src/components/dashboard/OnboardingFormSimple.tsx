@@ -191,7 +191,7 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
             {generatedSlug.length >= 7 && (
               <div className="flex items-center justify-end gap-2 text-sm md:text-base px-1" dir="ltr">
                 <span className="text-white/40">رابط متجرك:</span>
-                <span className="text-[#4ade80] font-mono truncate max-w-[200px] md:max-w-none">tagr-online.com/{generatedSlug}</span>
+                <span className="text-[#4ade80] font-mono truncate max-w-[200px] md:max-w-none">{generatedSlug}.tagr-online.com</span>
                 {isSlugAvailable && <span className="text-[#4ade80]">✓</span>}
               </div>
             )}

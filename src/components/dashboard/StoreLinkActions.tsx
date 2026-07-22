@@ -11,7 +11,7 @@ interface StoreLinkActionsProps {
 
 export function StoreLinkActions({ storeId }: StoreLinkActionsProps) {
   const [copied, setCopied] = useState(false);
-  const storeUrl = `https://tagr-online.com/${storeId}`;
+  const storeUrl = `https://${storeId}.tagr-online.com`;
 
   const handleCopy = async () => {
     try {

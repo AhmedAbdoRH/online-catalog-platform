@@ -91,12 +91,13 @@ export default async function DashboardPage() {
     .select("*", { count: 'exact', head: true })
     .eq("catalog_id", catalog.id);
 
+  // Primary URL: subdomain format (new). Fallback path-based URL still works.
   const catalogUrl = process.env.NODE_ENV === 'production'
-    ? `https://tagr-online.com/${catalog.name}`
+    ? `https://${catalog.name}.tagr-online.com`
     : `${APP_URL}/${catalog.name}`;
 
-  // Always use production URL for QR code
-  const qrCodeUrl = `https://tagr-online.com/${catalog.name}`;
+  // Always use production subdomain URL for QR code
+  const qrCodeUrl = `https://${catalog.name}.tagr-online.com`;
 
   return (
     <div className="space-y-8">
