@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     const url = new URL(request.url)
-    const hostname = request.headers.get('host') || ''
+    const hostname = request.headers.get('x-forwarded-host') || request.headers.get('host') || ''
     const subdomain = getSubdomain(hostname)
 
     // 1. System paths that shouldn't be rewritten to store subdomain
