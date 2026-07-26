@@ -35,6 +35,7 @@ import { Input } from '@/components/ui/input';
 import { useOnClickOutside } from '@/hooks/use-click-outside';
 import { cn, formatPrice } from "@/lib/utils";
 import { CartProvider } from '@/components/cart/CartContext';
+import { StoreTheme } from '@/components/theme/StoreTheme';
 import { useCart } from '@/components/cart/CartContext';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { CartButton } from '@/components/cart/CartButton';
@@ -375,6 +376,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
       case 'gradient-7': return 'bg-gradient-7';
       case 'gradient-8': return 'bg-gradient-8';
       case 'gradient-9': return 'bg-gradient-9';
+      case 'custom': return 'bg-custom-theme';
       default: return 'bg-gradient-default';
     }
   };
@@ -389,6 +391,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
 
 
   return (
+    <StoreTheme theme={luxeCatalog.theme} color={luxeCatalog.custom_theme_color}>
     <CartProvider storageKey={`oc_cart_${catalog.name}`}>
       <motion.div
         initial={{ opacity: 0 }}
@@ -902,5 +905,6 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
         <Footer hideFooter={catalog.hide_footer || false} />
       </motion.div>
     </CartProvider>
+    </StoreTheme>
   );
 }

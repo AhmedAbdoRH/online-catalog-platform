@@ -38,6 +38,7 @@ import { compressImage } from '@/lib/image-utils';
 import { convertArabicNumerals } from '@/lib/utils';
 import { UpgradeAlert } from './UpgradeAlert';
 import { ShippingRatesDialog } from './ShippingRatesDialog';
+import { CustomThemeControls } from './CustomThemeControls';
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -58,6 +59,7 @@ const THEME_OPTIONS = [
   { id: 'gradient-8', name: 'تركوازي', gradient: 'bg-gradient-8' },
   { id: 'gradient-9', name: 'رمادي', gradient: 'bg-gradient-9' },
 ];
+THEME_OPTIONS.push({ id: 'custom', name: 'مخصص', gradient: 'bg-gradient-to-br from-brand-primary/60 to-brand-accent/60' });
 
 const formSchema = z.object({
   name: z.string()
@@ -100,6 +102,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
   const [hideFooter, setHideFooter] = useState(catalog.hide_footer || false);
   const [directOrderEnabled, setDirectOrderEnabled] = useState(catalog.direct_order_enabled ?? true);
   const [showAllThemes, setShowAllThemes] = useState(false);
+  const [customThemeColor, setCustomThemeColor] = useState(catalog.custom_theme_color || '#2563EB');
 
   // Auto-save direct_order_enabled when toggled
   useEffect(() => {
@@ -304,6 +307,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
       formData.append('whatsapp_number', catalog.whatsapp_number || '');
       formData.append('country_code', catalog.country_code || '+20');
       formData.append('theme', selectedTheme);
+      formData.append('custom_theme_color', customThemeColor);
       formData.append('hide_footer', hideFooter.toString());
       formData.append('direct_order_enabled', directOrderEnabled.toString());
       formData.append(imageType, file, file.name || 'image.webp');
@@ -379,6 +383,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
       formData.append('country_code', values.country_code || '+20');
 
       formData.append('theme', selectedTheme);
+      formData.append('custom_theme_color', customThemeColor);
       formData.append('hide_footer', hideFooter.toString());
       formData.append('direct_order_enabled', directOrderEnabled.toString());
 
@@ -774,6 +779,10 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
               );
             })}
           </div>
+
+          {selectedTheme === 'custom' && (
+            <CustomThemeControls color={customThemeColor} onColorChange={setCustomThemeColor} disabled={isSubmitting} />
+          )}
 
           <div className="flex gap-2 items-center">
             <Button

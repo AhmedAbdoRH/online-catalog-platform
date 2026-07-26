@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     const { data: catalog } = await supabase
       .from("catalogs")
-      .select("id, display_name, name, logo_url, plan, plan_expires_at, trial_started_at")
+      .select("id, display_name, name, logo_url, plan, plan_expires_at, trial_started_at, theme, custom_theme_mode, custom_theme_color")
       .eq("id", product.catalog_id)
       .eq("name", slug)
       .single();

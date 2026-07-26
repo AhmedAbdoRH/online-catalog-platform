@@ -20,6 +20,8 @@ interface Database {
           slogan: string | null;
           country_code: string | null;
           theme: string | null;
+          custom_theme_mode: 'light' | 'dark' | null;
+          custom_theme_color: string | null;
           hide_footer: boolean | null;
           direct_order_enabled: boolean | null;
           facebook_url: string | null;
@@ -46,6 +48,8 @@ interface Database {
           slogan?: string | null;
           country_code?: string | null;
           theme?: string | null;
+          custom_theme_mode?: 'light' | 'dark' | null;
+          custom_theme_color?: string | null;
           hide_footer?: boolean | null;
           direct_order_enabled?: boolean | null;
           facebook_url?: string | null;
@@ -73,6 +77,8 @@ interface Database {
           slogan?: string | null;
           country_code?: string | null;
           theme?: string | null;
+          custom_theme_mode?: 'light' | 'dark' | null;
+          custom_theme_color?: string | null;
           hide_footer?: boolean | null;
           direct_order_enabled?: boolean | null;
           facebook_url?: string | null;

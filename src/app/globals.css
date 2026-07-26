@@ -56,6 +56,27 @@
   }
 }
 
+[data-theme='custom'] {
+  background: var(--store-background);
+  color: var(--store-foreground);
+}
+[data-theme='custom'] .bg-custom-theme {
+  background: var(--store-background);
+  color: var(--store-foreground);
+}
+[data-theme='custom'][data-theme-mode='light'] h1,
+[data-theme='custom'][data-theme-mode='light'] h2,
+[data-theme='custom'][data-theme-mode='light'] h3,
+[data-theme='custom'][data-theme-mode='light'] h4,
+[data-theme='custom'][data-theme-mode='light'] h5,
+[data-theme='custom'][data-theme-mode='light'] h6,
+[data-theme='custom'][data-theme-mode='light'] .headline-text,
+[data-theme='custom'][data-theme-mode='light'] [class*='text-white'] {
+  color: var(--store-foreground) !important;
+}
+[data-theme='custom'] .store-surface { background: var(--store-surface); border-color: var(--store-border); }
+[data-theme='custom'] .store-primary { background: var(--store-brand); color: var(--store-brand-foreground); }
+
 @layer base {
   * {
     @apply border-border;

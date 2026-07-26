@@ -14,6 +14,7 @@ import { PageLoader } from "@/components/common/PageLoader";
 import { Head } from "@/components/common/Head";
 import { Button } from "@/components/ui/button";
 import { CartProvider } from "@/components/cart/CartContext";
+import { StoreTheme } from "@/components/theme/StoreTheme";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CartButton } from "@/components/cart/CartButton";
 import {
@@ -37,6 +38,7 @@ const getThemeClass = (theme: string) => {
         case 'gradient-7': return 'bg-gradient-7';
         case 'gradient-8': return 'bg-gradient-8';
         case 'gradient-9': return 'bg-gradient-9';
+        case 'custom': return 'bg-custom-theme';
         default: return 'bg-gradient-default';
     }
 };
@@ -268,6 +270,7 @@ export default function ClientProductPage() {
     const cardColors = getCardColors(theme);
 
     return (
+        <StoreTheme theme={catalog.theme} color={catalog.custom_theme_color}>
         <CartProvider storageKey={`oc_cart_${catalog.name}`}>
             <div className={cn("relative min-h-screen pb-24", themeClass)}>
                 <Head
@@ -400,5 +403,6 @@ export default function ClientProductPage() {
                 <CartButton />
             </div>
         </CartProvider>
+        </StoreTheme>
     );
 }

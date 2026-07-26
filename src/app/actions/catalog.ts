@@ -5,8 +5,18 @@ import { normalizeShippingRatesInput } from "@/lib/shipping";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { buildCustomThemeTokens, detectCustomThemeMode, isCustomThemeColor } from "@/lib/custom-theme";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+function parseCustomThemeInput(theme: string | null, color: string | null) {
+  const allowedThemes = new Set(['default', ...Array.from({ length: 9 }, (_, i) => `gradient-${i + 1}`), 'custom']);
+  if (!theme || !allowedThemes.has(theme)) throw new Error('ثيم غير صالح');
+  if (theme !== 'custom') return { theme, customThemeMode: null, customThemeColor: null };
+  if (!isCustomThemeColor(color)) throw new Error('لون الثيم غير صالح');
+  buildCustomThemeTokens({ color });
+  return { theme, customThemeMode: detectCustomThemeMode(color), customThemeColor: color.toUpperCase() };
+}
 
 /**
  * Extracts the storage path from a Supabase public URL
@@ -285,6 +295,13 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   const cover = isImageFile(coverFile) ? (coverFile as File) : null;
 
   const theme = formData.get('theme') as string | null;
+  const customThemeColor = formData.get('custom_theme_color') as string | null;
+  let customTheme;
+  try {
+    customTheme = parseCustomThemeInput(theme, customThemeColor);
+  } catch (error) {
+    return { message: error instanceof Error ? error.message : 'إعدادات الثيم غير صالحة' };
+  }
   const hideFooterStr = formData.get('hide_footer') as string | null;
   const hideFooter = hideFooterStr === 'true';
   const directOrderEnabledStr = formData.get('direct_order_enabled') as string | null;
@@ -302,7 +319,9 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     display_name: validatedDisplayName,
     whatsapp_number: whatsappToSave,
     slogan: slogan,
-    theme: theme || null,
+    theme: customTheme.theme,
+    custom_theme_mode: customTheme.customThemeMode,
+    custom_theme_color: customTheme.customThemeColor,
     hide_footer: hideFooter,
     direct_order_enabled: directOrderEnabled,
     facebook_url: facebook_url || null,
