@@ -34,15 +34,37 @@ function getSubdomain(hostname: string): string | null {
 
 export async function middleware(request: NextRequest) {
   try {
-    const { supabase, response } = createClient(request)
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
     const url = new URL(request.url)
     const hostname = request.headers.get('x-forwarded-host') || request.headers.get('host') || ''
     const subdomain = getSubdomain(hostname)
+
+    // Public storefronts only need subdomain routing. Avoid an Auth request to
+    // Supabase for every visitor; it does not affect catalog loading or visit
+    // tracking, which are handled by the storefront itself.
+    const needsAuth =
+      url.pathname.startsWith('/dashboard') ||
+      url.pathname === '/login' ||
+      url.pathname === '/signup' ||
+      url.pathname === '/home' ||
+      url.pathname === '/go'
+
+    if (needsAuth) {
+      const { supabase, response } = createClient(request)
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      // Auth protection & redirects.
+      if (user && (url.pathname === '/login' || url.pathname === '/signup' || url.pathname === '/home' || url.pathname === '/go')) {
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      }
+
+      if (!user && url.pathname.startsWith('/dashboard')) {
+        return NextResponse.redirect(new URL('/login', request.url))
+      }
+
+      return response
+    }
 
     // 1. System paths that shouldn't be rewritten to store subdomain
     const isSystemPath = 
@@ -60,16 +82,7 @@ export async function middleware(request: NextRequest) {
       url.pathname.startsWith('/api') ||
       url.pathname.startsWith('/_next')
 
-    // 2. Auth protection & redirects
-    if (user && (url.pathname === '/login' || url.pathname === '/signup' || url.pathname === '/home' || url.pathname === '/go')) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
-
-    if (!user && url.pathname.startsWith('/dashboard')) {
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
-
-    // 3. Subdomain Routing logic:
+    // 2. Subdomain Routing logic:
     // If request comes from storename.tagr-online.com and it's NOT a system path,
     // rewrite internally to /storename or /storename/path
     if (subdomain && !isSystemPath) {
@@ -85,7 +98,11 @@ export async function middleware(request: NextRequest) {
       })
     }
 
-    return response
+    return NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    })
   } catch (e) {
     console.error('Middleware Error:', e);
     const url = new URL(request.url);
