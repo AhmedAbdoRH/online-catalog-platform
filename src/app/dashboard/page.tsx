@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { APP_URL } from "@/lib/constants";
-import { Eye, Settings, Package, Tags, ArrowRight, Zap, Crown, Building, PlusCircle, Palette, Sparkles, TrendingUp } from "lucide-react";
+import { Settings, Package, Tags, ArrowRight, Zap, Building, PlusCircle, Palette, Sparkles } from "lucide-react";
+import { VisitorStatsCard } from "@/components/dashboard/VisitorStatsCard";
 import * as motion from "framer-motion/client";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -112,6 +113,7 @@ export default async function DashboardPage() {
       >
         <Card className="bg-gradient-to-br from-brand-primary/10 to-brand-luxury/5 border-brand-primary/20 overflow-hidden relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl -mr-24 -mt-24 pointer-events-none" />
           <CardHeader className="py-4 px-4 sm:py-5 sm:px-6">
             <CardTitle className="flex items-center gap-2">
               <span className="text-base sm:text-lg">المتجر الخاص بك نشط ✨</span>
@@ -135,83 +137,9 @@ export default async function DashboardPage() {
         </Card>
       </motion.div>
 
-      {/* Visitor Stats Grid */}
+      {/* Visitor Stats Card */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-        >
-          <Card className="glass-surface border-white/10 relative overflow-hidden transition-all hover:scale-[1.01]">
-            <CardHeader className="p-3 sm:p-4 flex flex-row items-center justify-between pb-1 sm:pb-2 space-y-0">
-              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">زوار اليوم</CardTitle>
-              <div className="p-1 sm:p-1.5 rounded-lg bg-brand-primary/20 text-brand-primary">
-                <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </div>
-            </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
-              <div className="text-base sm:text-2xl font-black text-white">{visitorStats.today}</div>
-              <p className="text-[9px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">حركة المرور اليوم</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="glass-surface border-white/10 relative overflow-hidden transition-all hover:scale-[1.01]">
-            <CardHeader className="p-3 sm:p-4 flex flex-row items-center justify-between pb-1 sm:pb-2 space-y-0">
-              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">زوار الأسبوع</CardTitle>
-              <div className="p-1 sm:p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400">
-                <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </div>
-            </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
-              <div className="text-base sm:text-2xl font-black text-white">{visitorStats.week}</div>
-              <p className="text-[9px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">آخر ٧ أيام</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-        >
-          <Card className="glass-surface border-white/10 relative overflow-hidden transition-all hover:scale-[1.01]">
-            <CardHeader className="p-3 sm:p-4 flex flex-row items-center justify-between pb-1 sm:pb-2 space-y-0">
-              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">زوار الشهر</CardTitle>
-              <div className="p-1 sm:p-1.5 rounded-lg bg-pink-500/20 text-pink-400">
-                <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </div>
-            </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
-              <div className="text-base sm:text-2xl font-black text-white">{visitorStats.month}</div>
-              <p className="text-[9px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">آخر ٣٠ يوماً</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="glass-surface border-white/10 relative overflow-hidden transition-all hover:scale-[1.01]">
-            <CardHeader className="p-3 sm:p-4 flex flex-row items-center justify-between pb-1 sm:pb-2 space-y-0">
-              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">زوار إجمالي</CardTitle>
-              <div className="p-1 sm:p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
-                <Crown className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </div>
-            </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
-              <div className="text-base sm:text-2xl font-black text-white">{visitorStats.total}</div>
-              <p className="text-[9px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">منذ إنشاء المتجر</p>
-            </CardContent>
-          </Card>
-        </motion.div>
+        <VisitorStatsCard stats={visitorStats} storeName={catalog.display_name || catalog.name} />
       </div>
 
       {itemsCount === 0 && (

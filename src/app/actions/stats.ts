@@ -52,7 +52,8 @@ export async function recordStoreVisit(catalogId: number, sessionId: string) {
  */
 export async function getStoreVisitorStats(catalogId: number) {
   try {
-    const supabase = await createClient();
+    // Use admin client to bypass RLS on store_visits table
+    const supabase = createAdminClient();
 
     // 1. Get total views from catalog cache
     const { data: catalogData, error: catalogError } = await supabase
@@ -71,10 +72,11 @@ export async function getStoreVisitorStats(catalogId: number) {
     
     // Start of Today (00:00:00 local time)
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-    
-    // Start of Week (Sunday)
-    const dayOfWeek = now.getDay();
-    const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek).toISOString();
+
+    // Start of Week (Wednesday) - fixed anchor day for weekly stats
+    const WEDNESDAY = 3;
+    const daysSinceWednesday = (now.getDay() - WEDNESDAY + 7) % 7;
+    const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysSinceWednesday).toISOString();
     
     // Start of Month (1st day)
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
