@@ -8,6 +8,7 @@ import { StorefrontView } from "@/components/menu/StorefrontView";
 import { Head } from "@/components/common/Head";
 import { InstallPrompt } from "@/components/common/InstallPrompt";
 import { PageLoader } from "@/components/common/PageLoader";
+import { recordStoreVisit } from "@/app/actions/stats";
 import {
     FREE_PLAN_MAX_CATEGORIES,
     FREE_PLAN_MAX_PRODUCTS,
@@ -84,6 +85,19 @@ export default function ClientCatalogPage() {
                 if (catalog.logo_url) {
                     sessionStorage.setItem(`store_logo_${slug}`, catalog.logo_url);
                     setLogoUrl(catalog.logo_url);
+                }
+
+                // Record store visit
+                const sessionKey = `visited_store_${catalog.id}`;
+                if (typeof window !== 'undefined' && !sessionStorage.getItem(sessionKey)) {
+                    const sessionId = Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+                    recordStoreVisit(catalog.id, sessionId)
+                        .then((res) => {
+                            if (res.success) {
+                                sessionStorage.setItem(sessionKey, 'true');
+                            }
+                        })
+                        .catch((err) => console.error("Failed to record visit:", err));
                 }
 
                 const { data: categories, error: categoriesError } = await supabase
