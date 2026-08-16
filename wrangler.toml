@@ -1,7 +1,32 @@
-name = "online-catalog-platform"
+name = "tagr-online-platform"
+main = ".open-next/worker.js"
 compatibility_date = "2024-09-23"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
-[build]
-command = "npm run build"
-cwd = "."
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "tagr-online-platform"
+
+[[routes]]
+pattern = "tagr-online.com/*"
+zone_name = "tagr-online.com"
+
+[[routes]]
+pattern = "www.tagr-online.com/*"
+zone_name = "tagr-online.com"
+
+[[routes]]
+pattern = "*.tagr-online.com/*"
+zone_name = "tagr-online.com"
+
+[[routes]]
+pattern = "online-catalog.net/*"
+zone_name = "online-catalog.net"
+
+[[routes]]
+pattern = "www.online-catalog.net/*"
+zone_name = "online-catalog.net"
