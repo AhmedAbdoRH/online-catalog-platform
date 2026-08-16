@@ -1,15 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Download } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-} from '@/components/ui/dialog';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Download, Smartphone, Store, X } from 'lucide-react';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -73,11 +68,6 @@ function detectInstalled(): boolean {
   );
 }
 
-/**
- * يفتّح أو يغمّق لون Hex بنسبة معيّنة، عشان نبني تدرج (gradient) وظل ملوّن
- * من نفس لون هوية المتجر (themeColor) بدل ما نستورد ألوان غريبة عن الهوية.
- * لو اللون مش Hex صالح، بيرجّع اللون زي ما هو من غير ما يكسر التصميم.
- */
 function shadeColor(hex: string, percent: number): string {
   const cleaned = hex.replace('#', '');
   const isValidHex = /^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(cleaned);
@@ -102,6 +92,71 @@ function shadeColor(hex: string, percent: number): string {
   return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
 }
 
+function getOptimizedLogoUrl(logoUrl: string): string {
+  const trimmed = logoUrl.trim();
+  if (!trimmed) return '';
+  const base = trimmed.split('?')[0];
+  return `${base}?w=128&h=128&fit=crop&q=90`;
+}
+
+function StoreLogo({
+  storeLogo,
+  displayName,
+  themeColor,
+}: {
+  storeLogo?: string;
+  displayName: string;
+  themeColor: string;
+}) {
+  const [logoSrc, setLogoSrc] = useState<string | null>(null);
+  const [showFallback, setShowFallback] = useState(false);
+
+  const rawLogo = storeLogo?.trim() ?? '';
+
+  useEffect(() => {
+    setShowFallback(false);
+    setLogoSrc(rawLogo ? getOptimizedLogoUrl(rawLogo) : null);
+  }, [rawLogo]);
+
+  const fallbackLetter = displayName.trim().charAt(0);
+
+  if (!logoSrc || showFallback) {
+    return (
+      <div
+        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/30 bg-white/90 text-lg font-black shadow-sm"
+        style={{ color: themeColor }}
+        aria-hidden
+      >
+        {fallbackLetter ? (
+          fallbackLetter
+        ) : (
+          <Store className="h-5 w-5" style={{ color: themeColor }} />
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl border border-white/30 bg-white shadow-sm ring-1 ring-black/5">
+      <Image
+        src={logoSrc}
+        alt={displayName}
+        fill
+        sizes="48px"
+        className="object-cover"
+        onError={() => {
+          const plainUrl = rawLogo.split('?')[0];
+          if (logoSrc !== plainUrl) {
+            setLogoSrc(plainUrl);
+            return;
+          }
+          setShowFallback(true);
+        }}
+      />
+    </div>
+  );
+}
+
 export function InstallPrompt({
   slug = 'default',
   storeName,
@@ -109,7 +164,7 @@ export function InstallPrompt({
   themeColor = '#1e3a8a',
 }: InstallPromptProps) {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [open, setOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [state, setState] = useState<VisitState>({
     visits: 0,
     installed: false,
@@ -148,7 +203,7 @@ export function InstallPrompt({
       const next: VisitState = { ...state, installed: true };
       setState(next);
       writeState(slug, next);
-      setOpen(false);
+      setVisible(false);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -165,7 +220,7 @@ export function InstallPrompt({
     if (state.visits < 1 || state.visits > MAX_VISITS_BEFORE_HIDE) return;
     if (!deferredPrompt) return;
 
-    const timer = window.setTimeout(() => setOpen(true), SHOW_DELAY_MS);
+    const timer = window.setTimeout(() => setVisible(true), SHOW_DELAY_MS);
     return () => window.clearTimeout(timer);
   }, [hydrated, state, deferredPrompt]);
 
@@ -187,119 +242,123 @@ export function InstallPrompt({
       console.error('Install prompt error:', err);
     } finally {
       setDeferredPrompt(null);
-      setOpen(false);
+      setVisible(false);
     }
   }, [deferredPrompt, state, slug]);
 
-  const handleLater = useCallback(() => {
+  const handleDismiss = useCallback(() => {
     const next: VisitState = { ...state, visits: MAX_VISITS_BEFORE_HIDE };
     setState(next);
     writeState(slug, next);
-    setOpen(false);
+    setVisible(false);
   }, [state, slug]);
 
-  const handleClose = useCallback(() => {
-    handleLater();
-  }, [handleLater]);
-
-  const displayName = useMemo(() => storeName || 'المتجر', [storeName]);
-
-  // تدرّج وظل الزرار متولّدين من نفس لون هوية المتجر، مش من ألوان تعسفية
-  const gradientFrom = useMemo(() => shadeColor(themeColor, 16), [themeColor]);
-  const gradientTo = useMemo(() => shadeColor(themeColor, -14), [themeColor]);
+  const displayName = useMemo(() => storeName?.trim() || 'المتجر', [storeName]);
+  const gradientFrom = useMemo(() => shadeColor(themeColor, 12), [themeColor]);
+  const gradientTo = useMemo(() => shadeColor(themeColor, -10), [themeColor]);
 
   if (!hydrated) return null;
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        if (!next) handleClose();
-        setOpen(next);
-      }}
-    >
-      <DialogContent
-        dir="rtl"
-        className="w-[calc(100%-2rem)] max-w-xl gap-0 overflow-hidden rounded-3xl border border-white/40 bg-white/55 p-0 text-foreground shadow-[0_25px_70px_-20px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.6)] backdrop-blur-2xl supports-[backdrop-filter]:bg-white/35"
-        style={{ '--primary': themeColor } as React.CSSProperties}
-      >
-        {/* توهّج زجاجي خفيف بلون هوية المتجر، يدي البطاقة عمق بدل الأبيض الفاضي */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background: `linear-gradient(160deg, ${themeColor}2b 0%, transparent 55%)`,
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          dir="rtl"
+          role="dialog"
+          aria-labelledby="install-prompt-title"
+          aria-describedby="install-prompt-desc"
+          initial={{ opacity: 0, y: 48, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 32, scale: 0.97 }}
+          transition={{
+            type: 'spring',
+            stiffness: 420,
+            damping: 32,
+            mass: 0.85,
           }}
-        />
-
-        <DialogClose
-          className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/50 bg-white/50 text-foreground/70 backdrop-blur-md transition-colors hover:bg-white/80 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-offset-2"
-          aria-label="إغلاق"
+          className={cn(
+            'pointer-events-auto fixed inset-x-3 z-[60] mx-auto max-w-md',
+            'bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] sm:bottom-5'
+          )}
         >
-          <span className="text-lg leading-none">×</span>
-        </DialogClose>
-
-        <div className="relative z-10 flex flex-col items-center px-6 pb-7 pt-9 sm:px-8 sm:pb-9 sm:pt-11">
-          <DialogHeader className="mb-6 w-full items-center space-y-4 text-center sm:text-center">
-            {/* شعار المتجر */}
+          <div
+            className="relative overflow-hidden rounded-2xl border border-white/25 bg-white/90 p-3 shadow-[0_12px_40px_-8px_rgba(15,23,42,0.35)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/80"
+            style={{
+              boxShadow: `0 16px 48px -12px ${themeColor}40, 0 4px 16px -4px rgba(15,23,42,0.12)`,
+            }}
+          >
             <div
-              className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border border-white/50 shadow-lg ring-1 ring-black/5 backdrop-blur-sm"
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-70"
               style={{
-                background: `linear-gradient(145deg, ${themeColor}29, ${themeColor}0d)`,
+                background: `linear-gradient(135deg, ${themeColor}18 0%, transparent 55%)`,
               }}
+            />
+
+            <button
+              type="button"
+              onClick={handleDismiss}
+              className="absolute left-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/5 text-foreground/50 transition-colors hover:bg-black/10 hover:text-foreground/80"
+              aria-label="إغلاق"
             >
-              {storeLogo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={storeLogo}
-                  alt={displayName}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <span className="text-3xl font-extrabold" style={{ color: themeColor }}>
-                  {displayName.charAt(0)}
-                </span>
-              )}
+              <X className="h-3.5 w-3.5" />
+            </button>
+
+            <div className="relative flex items-center gap-3 pl-7">
+              <StoreLogo
+                storeLogo={storeLogo}
+                displayName={displayName}
+                themeColor={themeColor}
+              />
+
+              <div className="min-w-0 flex-1">
+                <p
+                  id="install-prompt-title"
+                  className="truncate text-sm font-bold text-foreground"
+                >
+                  ثبّت تطبيق {displayName}
+                </p>
+                <p
+                  id="install-prompt-desc"
+                  className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-muted-foreground"
+                >
+                  وصول أسرع من الشاشة الرئيسية — مجاني وخفيف
+                </p>
+              </div>
+
+              <div className="flex shrink-0 flex-col gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleInstall}
+                  disabled={!deferredPrompt}
+                  className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-bold text-white transition-all hover:brightness-110 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{
+                    background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})`,
+                    boxShadow: `0 8px 20px -8px ${themeColor}90`,
+                  }}
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  تثبيت
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDismiss}
+                  className="text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  لاحقاً
+                </button>
+              </div>
             </div>
 
-            <DialogTitle
-              className="text-3xl font-bold leading-snug text-foreground"
-              style={{ color: themeColor }}
-            >
-              ثبّت تطبيق {displayName}
-            </DialogTitle>
-
-            <DialogDescription className="text-center text-base leading-relaxed text-muted-foreground">
-              أضف المتجر إلى شاشتك لتجربة أسرع وأسهل.
-              <br />
-              التطبيق مجاني وخفيف.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="mt-2 flex w-full flex-col-reverse gap-3 sm:flex-row-reverse">
-            <button
-              type="button"
-              onClick={handleInstall}
-              className="inline-flex h-16 flex-1 items-center justify-center gap-2 rounded-2xl px-6 text-lg font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-              style={{
-                background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})`,
-                boxShadow: `0 14px 30px -10px ${themeColor}80`,
-              }}
-              disabled={!deferredPrompt}
-            >
-              <Download className="h-6 w-6" />
-              تثبيت التطبيق
-            </button>
-            <button
-              type="button"
-              onClick={handleLater}
-              className="inline-flex h-16 flex-1 items-center justify-center rounded-2xl border border-white/50 bg-white/40 px-6 text-base font-semibold text-foreground/80 backdrop-blur-md transition-colors hover:bg-white/65 hover:text-foreground"
-            >
-              لاحقاً
-            </button>
+            <div className="relative mt-2 flex items-center justify-center gap-1.5 border-t border-black/5 pt-2">
+              <Smartphone className="h-3 w-3 text-muted-foreground/70" />
+              <span className="text-[10px] text-muted-foreground/80">
+                يعمل بدون متجر التطبيقات
+              </span>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -899,8 +899,8 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
 
         </div>
 
-        {/* Bottom spacing */}
-        <div className="h-16"></div>
+        {/* Bottom spacing for floating actions + install banner */}
+        <div className="h-28 sm:h-20" />
 
         <Footer hideFooter={catalog.hide_footer || false} />
       </motion.div>
