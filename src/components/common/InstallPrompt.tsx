@@ -314,13 +314,13 @@ export function InstallPrompt({
               <div className="min-w-0 flex-1">
                 <p
                   id="install-prompt-title"
-                  className="truncate text-sm font-black text-foreground"
+                  className="truncate text-sm font-black text-black"
                 >
                   ثبّت تطبيق {displayName}
                 </p>
                 <p
                   id="install-prompt-desc"
-                  className="mt-0.5 line-clamp-2 text-[11px] leading-snug font-bold text-foreground"
+                  className="mt-0.5 line-clamp-2 text-[11px] leading-snug font-bold text-black"
                 >
                   وصول أسرع من الشاشة الرئيسية — مجاني وخفيف
                 </p>
@@ -331,7 +331,7 @@ export function InstallPrompt({
                   type="button"
                   onClick={handleInstall}
                   disabled={!deferredPrompt}
-                  className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-black text-foreground transition-all hover:brightness-110 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-black text-white transition-all hover:brightness-110 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60"
                   style={{
                     background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})`,
                     boxShadow: `0 8px 20px -8px ${themeColor}90`,
@@ -343,7 +343,7 @@ export function InstallPrompt({
                 <button
                   type="button"
                   onClick={handleDismiss}
-                  className="text-[10px] font-bold text-foreground transition-colors hover:text-foreground/80"
+                  className="text-[10px] font-bold text-black transition-colors hover:text-black/80"
                 >
                   لاحقاً
                 </button>
@@ -352,7 +352,7 @@ export function InstallPrompt({
 
             <div className="relative mt-2 flex items-center justify-center gap-1.5 border-t border-black/5 pt-2">
               <Smartphone className="h-3 w-3 text-muted-foreground/70" />
-              <span className="text-[10px] font-bold text-foreground">
+              <span className="text-[10px] font-bold text-black">
                 يعمل بدون متجر التطبيقات
               </span>
             </div>
