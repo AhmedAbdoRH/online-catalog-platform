@@ -22,7 +22,7 @@ interface InstallPromptProps {
   themeColor?: string;
 }
 
-const MAX_VISITS_BEFORE_HIDE = 2;
+const MAX_VISITS_BEFORE_HIDE = 10;
 const SHOW_DELAY_MS = 2500;
 const STORAGE_PREFIX = 'pwa-prompt:';
 
@@ -217,7 +217,7 @@ export function InstallPrompt({
   useEffect(() => {
     if (!hydrated) return;
     if (state.installed || state.permanentlyDismissed) return;
-    if (state.visits < 1 || state.visits > MAX_VISITS_BEFORE_HIDE) return;
+    if (state.visits < 1) return;
     if (!deferredPrompt) return;
 
     const timer = window.setTimeout(() => setVisible(true), SHOW_DELAY_MS);
