@@ -217,12 +217,10 @@ export function InstallPrompt({
   useEffect(() => {
     if (!hydrated) return;
     if (state.installed || state.permanentlyDismissed) return;
-    if (state.visits < 1) return;
-    if (!deferredPrompt) return;
-
+    // Always show for testing
     const timer = window.setTimeout(() => setVisible(true), SHOW_DELAY_MS);
     return () => window.clearTimeout(timer);
-  }, [hydrated, state, deferredPrompt]);
+  }, [hydrated, state]);
 
   const handleInstall = useCallback(async () => {
     if (!deferredPrompt) return;
