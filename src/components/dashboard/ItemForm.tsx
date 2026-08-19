@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Plus, Trash2, Image as ImageIcon, PlusCircle, X, Eraser, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Plus, Trash2, Image as ImageIcon, PlusCircle, X, Eraser, Loader2, Sparkles, CheckCircle2, BadgePercent, Tag } from 'lucide-react';
 import { extractYouTubeId, getYouTubeThumbnailUrl } from '@/lib/youtube';
 import { Button } from '@/components/ui/button';
 import {
@@ -57,9 +57,12 @@ function YouTubeMark({ className }: { className?: string }) {
 const formSchema = z.object({
   name: z.string().min(2, 'الاسم مطلوب').max(100),
   description: z.string().optional().or(z.literal('')),
-  price: z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً').optional().or(z.literal(undefined)),
+  price: z.preprocess(
+    (val) => val === '' || val === null || val === undefined ? undefined : val,
+    z.coerce.number().min(0, 'يجب أن يكون السعر إيجابياً').optional()
+  ),
   discount_price: z.preprocess(
-    (val) => val === '' || val === null ? undefined : val,
+    (val) => val === '' || val === null || val === undefined ? undefined : val,
     z.coerce.number().min(0, 'يجب أن يكون السعر المخفض إيجابياً').optional()
   ),
   category_id: z.string().min(1, 'التصنيف مطلوب'),
@@ -83,15 +86,21 @@ const formSchema = z.object({
     ),
 }).refine((data) => {
   if (data.pricing_type === 'unified') {
-    return data.price !== undefined && data.price !== null;
+    return data.price !== undefined && data.price !== null && !isNaN(Number(data.price));
   }
   return true;
 }, {
   message: "السعر مطلوب في حال السعر الموحد",
   path: ["price"],
 }).refine((data) => {
-  if (data.pricing_type === 'unified' && data.discount_price !== undefined && data.price !== undefined) {
-    return data.discount_price < data.price;
+  if (
+    data.pricing_type === 'unified' &&
+    data.discount_price !== undefined &&
+    data.discount_price !== null &&
+    data.price !== undefined &&
+    data.price !== null
+  ) {
+    return Number(data.discount_price) < Number(data.price);
   }
   return true;
 }, {
@@ -126,6 +135,9 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
   const [bgRemovalTarget, setBgRemovalTarget] = useState<'main' | number | null>(null);
   const [bgRemovalProgress, setBgRemovalProgress] = useState(0);
   const [youtubeFieldOpen, setYoutubeFieldOpen] = useState(Boolean(item?.youtube_url));
+  const [discountFieldOpen, setDiscountFieldOpen] = useState(
+    Boolean(item?.discount_price !== undefined && item?.discount_price !== null && item?.discount_price !== '')
+  );
 
   useEffect(() => {
     if (!isPro) return;
@@ -368,6 +380,22 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
   const youtubeVideoId = youtubeUrlValue ? extractYouTubeId(youtubeUrlValue) : null;
   const youtubeThumbnail = youtubeUrlValue ? getYouTubeThumbnailUrl(youtubeUrlValue) : null;
 
+  const priceValue = form.watch('price');
+  const discountPriceValue = form.watch('discount_price');
+  const originalPrice = Number(priceValue) || 0;
+  const discountedPrice =
+    discountPriceValue !== undefined && discountPriceValue !== null && !isNaN(Number(discountPriceValue))
+      ? Number(discountPriceValue)
+      : null;
+  const hasValidDiscount =
+    discountedPrice !== null && !isNaN(discountedPrice) && originalPrice > 0 && discountedPrice < originalPrice;
+  const discountPercentage = hasValidDiscount
+    ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+    : null;
+  const discountSavings = hasValidDiscount
+    ? (originalPrice - discountedPrice).toFixed(2).replace(/\.00$/, '')
+    : null;
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     let currentStep = 'بداية المعالجة';
     try {
@@ -593,16 +621,21 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                   <button
                     type="button"
                     onClick={() => setYoutubeFieldOpen(true)}
-                    className="w-full flex items-center gap-3 rounded-xl border-2 border-dashed border-slate-700 bg-slate-800/30 hover:border-red-500/50 hover:bg-red-500/5 p-4 transition-all group text-right"
+                    className="w-full flex items-center justify-between rounded-xl border border-dashed border-slate-700 bg-slate-800/30 hover:border-red-500/50 hover:bg-red-500/5 p-3.5 transition-all group text-right"
                   >
                     <input type="hidden" {...form.register('youtube_url')} />
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FF0000] text-white shadow-lg shadow-red-600/25 group-hover:scale-105 transition-transform">
-                      <YouTubeMark className="h-6 w-6" />
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-500/10 text-red-500 group-hover:bg-red-500/20 group-hover:scale-105 transition-all">
+                        <YouTubeMark className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-slate-200">إضافة فيديو YouTube (اختياري)</p>
+                        <p className="text-xs text-slate-400">سيظهر الفيديو تحت وصف المنتج في صفحة المتجر</p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="font-bold text-slate-200">إضافة رابط فيديو YouTube (اختياري)</p>
-                      <p className="text-xs text-slate-400 mt-0.5">سيظهر الفيديو تحت وصف المنتج في صفحة المتجر</p>
-                    </div>
+                    <span className="text-xs font-bold text-red-400 bg-red-400/10 px-2.5 py-1 rounded-full border border-red-400/20 shrink-0">
+                      + إضافة فيديو
+                    </span>
                   </button>
                 ) : (
                   <FormField
@@ -610,62 +643,80 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                     name="youtube_url"
                     render={({ field }) => (
                       <FormItem className="animate-in fade-in slide-in-from-top-2 duration-300">
-                        <FormLabel className="flex items-center gap-2 text-base font-bold text-slate-200 mb-2">
-                          <YouTubeMark className="h-5 w-5 text-[#FF0000]" />
-                          رابط فيديو YouTube (اختياري)
-                        </FormLabel>
-                        <FormControl>
-                          <div className="space-y-3">
+                        <div className="space-y-3 p-4 rounded-xl bg-slate-800/40 border border-red-500/30">
+                          <div className="flex items-center justify-between">
+                            <FormLabel className="flex items-center gap-2 text-sm font-bold text-slate-200">
+                              <YouTubeMark className="h-4 w-4 text-red-500" />
+                              رابط فيديو YouTube (اختياري)
+                            </FormLabel>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                field.onChange('');
+                                setYoutubeFieldOpen(false);
+                              }}
+                              className="h-7 px-2 text-xs text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg gap-1"
+                            >
+                              <X className="h-3.5 w-3.5" />
+                              إلغاء الفيديو
+                            </Button>
+                          </div>
+
+                          <FormControl>
                             <div className="relative">
                               <Input
                                 placeholder="https://www.youtube.com/watch?v=..."
                                 {...field}
-                                className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-red-500/40 transition-all rounded-xl text-white pl-12"
+                                value={field.value ?? ''}
+                                className="h-12 bg-slate-800/80 border-slate-700 focus:bg-slate-800 focus:ring-red-500/40 transition-all rounded-xl pl-12 text-white"
                                 dir="ltr"
                               />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  field.onChange('');
-                                  setYoutubeFieldOpen(false);
-                                }}
-                                className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors flex items-center justify-center"
-                                title="مسح الرابط"
-                                aria-label="مسح رابط يوتيوب"
-                              >
-                                <X className="h-4 w-4" />
-                              </button>
+                              {field.value && (
+                                <button
+                                  type="button"
+                                  onClick={() => field.onChange('')}
+                                  className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors flex items-center justify-center"
+                                  title="تفريغ الحقل"
+                                  aria-label="تفريغ رابط يوتيوب"
+                                >
+                                  <X className="h-4 w-4" />
+                                </button>
+                              )}
                             </div>
-                            {youtubeVideoId && youtubeThumbnail ? (
-                              <div className="flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-2.5">
-                                <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-black/40">
-                                  <img
-                                    src={youtubeThumbnail}
-                                    alt="معاينة فيديو يوتيوب"
-                                    className="h-full w-full object-cover"
-                                  />
-                                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                                    <YouTubeMark className="h-6 w-6 text-white drop-shadow" />
-                                  </div>
-                                </div>
-                                <div className="min-w-0">
-                                  <p className="flex items-center gap-1.5 text-sm font-bold text-emerald-300">
-                                    <CheckCircle2 className="h-4 w-4 shrink-0" />
-                                    تم التعرف على الفيديو
-                                  </p>
-                                  <p className="text-[11px] text-slate-400 mt-0.5 truncate" dir="ltr">
-                                    {youtubeVideoId}
-                                  </p>
+                          </FormControl>
+
+                          {youtubeVideoId && youtubeThumbnail ? (
+                            <div className="flex items-center gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-2.5">
+                              <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded-md bg-black/40">
+                                <img
+                                  src={youtubeThumbnail}
+                                  alt="معاينة فيديو يوتيوب"
+                                  className="h-full w-full object-cover"
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                  <YouTubeMark className="h-4 w-4 text-white drop-shadow" />
                                 </div>
                               </div>
-                            ) : field.value ? (
-                              <p className="text-xs text-amber-400">أدخل رابط يوتيوب صالحاً لمعاينة الفيديو</p>
-                            ) : (
-                              <p className="text-xs text-slate-500">يدعم watch و youtu.be و shorts و embed</p>
-                            )}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
+                              <div className="min-w-0">
+                                <p className="flex items-center gap-1 text-xs font-bold text-emerald-300">
+                                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                                  تم التعرف على الفيديو
+                                </p>
+                                <p className="text-[11px] text-slate-400 mt-0.5 truncate" dir="ltr">
+                                  معرّف الفيديو: {youtubeVideoId}
+                                </p>
+                              </div>
+                            </div>
+                          ) : field.value ? (
+                            <p className="text-xs text-amber-400">أدخل رابط يوتيوب صالحاً لمعاينة الفيديو</p>
+                          ) : (
+                            <p className="text-xs text-slate-400">يدعم روابط يوتيوب القياسية و youtu.be و shorts</p>
+                          )}
+
+                          <FormMessage />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -712,58 +763,113 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                 </div>
 
                 {pricingType === 'unified' ? (
-                  <>
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem className="animate-in fade-in slide-in-from-top-2 duration-300">
-                        <FormLabel className="text-base font-bold text-slate-200 mb-2 block">السعر</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              {...field}
-                              className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl pl-12 text-white"
-                            />
-                            <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-500">
-                              {countryCode === '+966' ? 'ر.س' : 'ج.م'}
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="price"
+                      render={({ field }) => (
+                        <FormItem className="animate-in fade-in slide-in-from-top-2 duration-300">
+                          <FormLabel className="text-base font-bold text-slate-200 mb-2 block">السعر الأساسي</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                {...field}
+                                value={field.value ?? ''}
+                                className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl pl-12 text-white"
+                              />
+                              <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-500">
+                                {countryCode === '+966' ? 'ر.س' : 'ج.م'}
+                              </div>
                             </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
+                    {!discountFieldOpen ? (
+                      <button
+                        type="button"
+                        onClick={() => setDiscountFieldOpen(true)}
+                        className="w-full flex items-center justify-between rounded-xl border border-dashed border-slate-700 bg-slate-800/30 hover:border-amber-500/50 hover:bg-amber-500/5 p-3.5 transition-all group text-right"
+                      >
+                        <input type="hidden" {...form.register('discount_price')} />
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500/20 group-hover:scale-105 transition-all">
+                            <BadgePercent className="h-5 w-5" />
                           </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="discount_price"
-                    render={({ field }) => (
-                      <FormItem className="animate-in fade-in slide-in-from-top-2 duration-300">
-                        <FormLabel className="text-base font-bold text-slate-200 mb-2 block">السعر المخفض</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="اختياري"
-                              {...field}
-                              value={field.value ?? ''}
-                              className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-brand-primary transition-all rounded-xl pl-12 text-white"
-                            />
-                            <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-500">
-                              {countryCode === '+966' ? 'ر.س' : 'ج.م'}
+                          <div>
+                            <p className="text-sm font-bold text-slate-200">إضافة سعر مخفض / عرض خاص (اختياري)</p>
+                            <p className="text-xs text-slate-400">سيظهر السعر القديم مشطوباً مع السعر الجديد لجذب الزبائن</p>
+                          </div>
+                        </div>
+                        <span className="text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full border border-amber-400/20 shrink-0">
+                          + إضافة خصم
+                        </span>
+                      </button>
+                    ) : (
+                      <FormField
+                        control={form.control}
+                        name="discount_price"
+                        render={({ field }) => (
+                          <FormItem className="animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="space-y-3 p-4 rounded-xl bg-slate-800/40 border border-amber-500/30">
+                              <div className="flex items-center justify-between">
+                                <FormLabel className="flex items-center gap-2 text-sm font-bold text-slate-200">
+                                  <BadgePercent className="h-4 w-4 text-amber-400" />
+                                  السعر المخفض (اختياري)
+                                </FormLabel>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    field.onChange(undefined);
+                                    setDiscountFieldOpen(false);
+                                  }}
+                                  className="h-7 px-2 text-xs text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg gap-1"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                  إلغاء الخصم
+                                </Button>
+                              </div>
+
+                              <FormControl>
+                                <div className="relative">
+                                  <Input
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="أدخل السعر بعد الخصم..."
+                                    {...field}
+                                    value={field.value ?? ''}
+                                    className="h-12 bg-slate-800/80 border-slate-700 focus:bg-slate-800 focus:ring-amber-500/40 transition-all rounded-xl pl-12 text-white"
+                                  />
+                                  <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-500">
+                                    {countryCode === '+966' ? 'ر.س' : 'ج.م'}
+                                  </div>
+                                </div>
+                              </FormControl>
+
+                              {hasValidDiscount ? (
+                                <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold animate-in fade-in">
+                                  <Sparkles className="h-4 w-4 shrink-0 text-emerald-400" />
+                                  <span>نسبة الخصم: <strong>{discountPercentage}%</strong> (توفير {discountSavings} {countryCode === '+966' ? 'ر.س' : 'ج.م'})</span>
+                                </div>
+                              ) : discountedPrice !== null && originalPrice > 0 && discountedPrice >= originalPrice ? (
+                                <p className="text-xs text-red-400 font-medium">السعر المخفض يجب أن يكون أقل من السعر الأساسي ({originalPrice})</p>
+                              ) : (
+                                <p className="text-xs text-slate-400">سيتم عرض شارة الخصم تلقائياً للعملاء في المتجر</p>
+                              )}
+                              <FormMessage />
                             </div>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                          </FormItem>
+                        )}
+                      />
                     )}
-                  />
-                  </>
+                  </div>
                 ) : (
                   <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 p-4 bg-slate-800/30 rounded-xl border border-slate-700">
                     <div className="flex items-center justify-between mb-2">

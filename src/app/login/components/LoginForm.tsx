@@ -24,7 +24,7 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState("01100434503@catalog.app")
-  const [password, setPassword] = useState("Anaahmedgedo1001")
+  const [password, setPassword] = useState("123456")
   const [error, setError] = useState("")
 
   useEffect(() => {

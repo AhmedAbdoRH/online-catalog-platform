@@ -188,7 +188,9 @@ export async function createItem(formData: FormData) {
     }
 
     const { catalogId, name, description, category_id, variants, youtube_url } = validatedFields.data;
-    let price = validatedFields.data.price || 0;
+    let price = validatedFields.data.price !== undefined && validatedFields.data.price !== null
+      ? validatedFields.data.price
+      : null;
     let discountPrice = validatedFields.data.discount_price ?? null;
 
     // Determine price from variants if valid
@@ -200,7 +202,7 @@ export async function createItem(formData: FormData) {
       }
       discountPrice = null;
     }
-    if (discountPrice !== null && discountPrice >= price) {
+    if (discountPrice !== null && price !== null && discountPrice >= price) {
       return { error: 'السعر المخفض يجب أن يكون أقل من السعر الأساسي.' };
     }
 
@@ -351,7 +353,12 @@ export async function updateItem(itemId: number, formData: FormData) {
       return { error: 'LIMIT_REACHED' };
     }
 
-    let price = parseFloat(formData.get('price') as string);
+    const rawPrice = formData.get('price') as string;
+    let price: number | null = null;
+    if (typeof rawPrice === 'string' && rawPrice.trim() !== '') {
+      const parsed = parseFloat(rawPrice);
+      price = Number.isFinite(parsed) ? parsed : null;
+    }
     const rawDiscountPrice = formData.get('discount_price');
     let discountPrice =
       typeof rawDiscountPrice === 'string' && rawDiscountPrice.trim() !== ''
@@ -366,7 +373,7 @@ export async function updateItem(itemId: number, formData: FormData) {
       }
       discountPrice = null;
     }
-    if (discountPrice !== null && discountPrice >= price) {
+    if (discountPrice !== null && price !== null && discountPrice >= price) {
       return { error: 'السعر المخفض يجب أن يكون أقل من السعر الأساسي.' };
     }
 

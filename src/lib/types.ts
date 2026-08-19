@@ -121,7 +121,7 @@ interface Database {
           created_at: string;
           name: string;
           description: string | null;
-          price: number;
+          price: number | null;
           discount_price: number | null;
           image_url: string | null;
           category_id: number;
@@ -134,7 +134,7 @@ interface Database {
           created_at?: string;
           name: string;
           description?: string | null;
-          price: number;
+          price?: number | null;
           discount_price?: number | null;
           image_url?: string | null;
           category_id: number;
@@ -147,7 +147,7 @@ interface Database {
           created_at?: string;
           name?: string;
           description?: string | null;
-          price?: number;
+          price?: number | null;
           discount_price?: number | null;
           image_url?: string | null;
           category_id?: number;

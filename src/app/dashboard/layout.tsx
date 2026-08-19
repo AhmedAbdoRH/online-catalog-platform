@@ -89,7 +89,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-[100dvh] w-full max-w-[100vw] flex-col bg-background relative overflow-x-hidden">
+    <div className="flex min-h-[100dvh] w-full max-w-full flex-col bg-background relative overflow-x-hidden">
       {catalog && <DashboardActionFeedback />}
       {catalog && <DashboardNav user={user} catalog={catalog} />}
       <div className={cn(

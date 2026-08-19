@@ -13,7 +13,7 @@ import { saveCustomerData } from '@/app/actions/customer';
 import { useCart } from '@/components/cart/CartContext';
 
 interface ProductActionsProps {
-    basePrice: number;
+    basePrice: number | null;
     baseDiscountPrice?: number | null;
     variants: ItemVariant[];
     productName: string;
@@ -55,6 +55,7 @@ export function ProductActions({
 
     const hasBaseDiscount =
         !selectedVariant &&
+        basePrice !== null &&
         typeof baseDiscountPrice === 'number' &&
         baseDiscountPrice >= 0 &&
         baseDiscountPrice < basePrice;
@@ -69,11 +70,14 @@ export function ProductActions({
             message += ` (${selectedVariant.name})`;
         }
         message += ` من ${catalogName}`;
-        message += `.\nالسعر: ${formatPrice(currentPrice, countryCode)}`;
+        message += `.\nالسعر: ${currentPrice !== null ? formatPrice(currentPrice, countryCode) : 'تواصل للسعر'}`;
 
         if (orderData?.governorateName && typeof orderData.shippingPrice === 'number') {
             message += `\nالشحن (${orderData.governorateName}): ${formatPrice(orderData.shippingPrice, countryCode)}`;
-            message += `\nالإجمالي: ${formatPrice(orderData.orderTotal ?? currentPrice + orderData.shippingPrice, countryCode)}`;
+            const total = currentPrice !== null && typeof orderData.shippingPrice === 'number'
+                ? orderData.orderTotal ?? currentPrice + orderData.shippingPrice
+                : orderData.orderTotal;
+            message += `\nالإجمالي: ${formatPrice(total, countryCode)}`;
         }
 
         message += `\nالتفاصيل: ${productUrl}`;
@@ -196,12 +200,16 @@ export function ProductActions({
                         const itemName = selectedVariant
                             ? `${productName} (${selectedVariant.name})`
                             : productName;
-                        addItem({
-                            id: selectedVariant ? Number(`${productId}${selectedVariant.id}`) : productId,
-                            name: itemName,
-                            price: currentPrice,
-                            image_url: productImage || undefined,
-                        }, 1);
+                        if (currentPrice !== null) {
+                            addItem({
+                                id: selectedVariant ? Number(`${productId}${selectedVariant.id}`) : productId,
+                                name: itemName,
+                                price: currentPrice,
+                                image_url: productImage || undefined,
+                            }, 1);
+                        } else {
+                            window.open(whatsappLink, '_blank');
+                        }
                         openCart();
                     }}
                     className="group relative flex h-12 w-12 items-center justify-center gap-0.5 overflow-hidden rounded-full border border-white/20 bg-gradient-to-br from-teal-500 to-blue-600 text-white shadow-[0_15px_35px_rgba(20,184,166,0.3)] transition-all duration-500 hover:scale-110 hover:shadow-[0_20px_45px_rgba(20,184,166,0.45)]"
