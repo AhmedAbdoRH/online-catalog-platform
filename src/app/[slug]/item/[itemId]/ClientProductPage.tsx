@@ -10,6 +10,7 @@ import RelatedProductImage from "@/components/RelatedProductImage";
 import { ProductGallery } from "@/components/menu/ProductGallery";
 import { useEffect, useState } from "react";
 import { Catalog, MenuItem, ItemVariant } from "@/lib/types";
+import { getYouTubeEmbedUrl } from "@/lib/youtube";
 import { PageLoader } from "@/components/common/PageLoader";
 import { Head } from "@/components/common/Head";
 import { Button } from "@/components/ui/button";
@@ -264,6 +265,9 @@ export default function ClientProductPage() {
 
     const { catalog, product, categoryName, related, images } = data;
     const productUrl = `https://${catalog.name}.tagr-online.com/item/${product.id}`;
+    const youtubeEmbedUrl = product.youtube_url
+        ? getYouTubeEmbedUrl(product.youtube_url)
+        : null;
 
     const theme = (catalog as any).theme;
     const themeClass = getThemeClass(theme);
@@ -322,6 +326,22 @@ export default function ClientProductPage() {
                             <p className="text-base leading-relaxed text-foreground/80">
                                 {product.description ?? "وصف المنتج سيتم إضافته قريبًا لإبراز القصة والنكهة الفريدة."}
                             </p>
+
+                            {youtubeEmbedUrl && (
+                                <div className="overflow-hidden rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)] ring-1 ring-white/15">
+                                    <div className="relative aspect-video w-full bg-black/40">
+                                        <iframe
+                                            src={youtubeEmbedUrl}
+                                            title={`فيديو ${product.name}`}
+                                            className="absolute inset-0 h-full w-full"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            allowFullScreen
+                                            loading="lazy"
+                                            referrerPolicy="strict-origin-when-cross-origin"
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
                             <ProductActions
                                 basePrice={product.price}

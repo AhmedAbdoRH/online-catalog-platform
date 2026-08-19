@@ -6,6 +6,7 @@ import { z } from 'zod';
 import type { NewMenuItem, UpdateMenuItem, NewProductImage } from '@/lib/types';
 import { FREE_PLAN_MAX_PRODUCTS, isProPlan } from '@/lib/plans';
 import { Catalog } from '@/lib/types';
+import { extractYouTubeId, normalizeYouTubeUrl } from '@/lib/youtube';
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
@@ -65,6 +66,21 @@ const itemSchema = z.object({
       return [];
     }
   }),
+  youtube_url: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return null;
+      const trimmed = String(val).trim();
+      return trimmed === '' ? null : trimmed;
+    },
+    z
+      .string()
+      .nullable()
+      .optional()
+      .refine(
+        (val) => val == null || extractYouTubeId(val) !== null,
+        'رابط يوتيوب غير صالح'
+      )
+  ),
 });
 
 async function uploadImage(
@@ -163,6 +179,7 @@ export async function createItem(formData: FormData) {
       category_id: formData.get('category_id'),
       images: images,
       variants: formData.get('variants'),
+      youtube_url: formData.get('youtube_url'),
     });
 
     if (!validatedFields.success) {
@@ -170,7 +187,7 @@ export async function createItem(formData: FormData) {
       return { error: 'بيانات غير صالحة.' };
     }
 
-    const { catalogId, name, description, category_id, variants } = validatedFields.data;
+    const { catalogId, name, description, category_id, variants, youtube_url } = validatedFields.data;
     let price = validatedFields.data.price || 0;
     let discountPrice = validatedFields.data.discount_price ?? null;
 
@@ -236,6 +253,7 @@ export async function createItem(formData: FormData) {
       category_id,
       image_url: mainImageUrl, // Backward compatibility
       is_hidden: false,
+      youtube_url: youtube_url ?? null,
     };
 
     const { data: insertedItem, error: dbError } = await supabase
@@ -352,6 +370,13 @@ export async function updateItem(itemId: number, formData: FormData) {
       return { error: 'السعر المخفض يجب أن يكون أقل من السعر الأساسي.' };
     }
 
+    const rawYoutubeUrl = formData.get('youtube_url');
+    const youtubeUrlValue =
+      typeof rawYoutubeUrl === 'string' ? rawYoutubeUrl.trim() : '';
+    if (youtubeUrlValue && !extractYouTubeId(youtubeUrlValue)) {
+      return { error: 'رابط يوتيوب غير صالح.' };
+    }
+
     const updatePayload: UpdateMenuItem = {
       name: formData.get('name') as string,
       description: formData.get('description') as string,
@@ -359,6 +384,7 @@ export async function updateItem(itemId: number, formData: FormData) {
       discount_price: Number.isFinite(discountPrice as number) ? discountPrice : null,
       category_id: parseInt(formData.get('category_id') as string),
       is_hidden: formData.get('is_hidden') === 'true',
+      youtube_url: youtubeUrlValue ? normalizeYouTubeUrl(youtubeUrlValue) : null,
     };
 
     const uploadedUrls: string[] = [];

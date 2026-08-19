@@ -5,6 +5,7 @@ export interface MenuItem {
   price: number | string | null;
   discount_price?: number | string | null;
   image_url?: string | null;
+  youtube_url?: string | null;
   created_at?: string;
   is_featured?: boolean;
   is_popular?: boolean;

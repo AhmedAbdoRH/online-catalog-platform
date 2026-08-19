@@ -127,6 +127,7 @@ interface Database {
           category_id: number;
           catalog_id: number;
           is_hidden: boolean | null;
+          youtube_url: string | null;
         };
         Insert: {
           id?: number;
@@ -139,6 +140,7 @@ interface Database {
           category_id: number;
           catalog_id: number;
           is_hidden?: boolean | null;
+          youtube_url?: string | null;
         };
         Update: {
           id?: number;
@@ -151,6 +153,7 @@ interface Database {
           category_id?: number;
           catalog_id?: number;
           is_hidden?: boolean | null;
+          youtube_url?: string | null;
         };
       };
       product_images: {

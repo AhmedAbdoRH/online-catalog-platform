@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Plus, Trash2, Image as ImageIcon, PlusCircle, X, Eraser, Loader2, Sparkles, RotateCcw, CheckSquare } from 'lucide-react';
+import { Plus, Trash2, Image as ImageIcon, PlusCircle, X, Eraser, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
+import { extractYouTubeId, getYouTubeThumbnailUrl } from '@/lib/youtube';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -45,6 +46,14 @@ const fileSchema = z.custom<File>((val) => {
   return val instanceof File || val instanceof Blob || (typeof val === 'object' && val !== null && 'size' in val && 'type' in val);
 }, "الملف غير صالح");
 
+function YouTubeMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="currentColor">
+      <path d="M23.5 6.2a3.05 3.05 0 0 0-2.15-2.16C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.35.44A3.05 3.05 0 0 0 .5 6.2 31.9 31.9 0 0 0 0 12a31.9 31.9 0 0 0 .5 5.8 3.05 3.05 0 0 0 2.15 2.16C4.5 20.4 12 20.4 12 20.4s7.5 0 9.35-.44a3.05 3.05 0 0 0 2.15-2.16A31.9 31.9 0 0 0 24 12a31.9 31.9 0 0 0-.5-5.8zM9.75 15.57V8.43L15.84 12l-6.09 3.57z" />
+    </svg>
+  );
+}
+
 const formSchema = z.object({
   name: z.string().min(2, 'الاسم مطلوب').max(100),
   description: z.string().optional().or(z.literal('')),
@@ -64,6 +73,14 @@ const formSchema = z.object({
     price: z.coerce.number().min(0, 'السعر مطلوب')
   })).optional(),
   is_hidden: z.boolean().default(false),
+  youtube_url: z
+    .string()
+    .optional()
+    .or(z.literal(''))
+    .refine(
+      (val) => !val || extractYouTubeId(val) !== null,
+      'رابط يوتيوب غير صالح. استخدم رابط فيديو من YouTube.'
+    ),
 }).refine((data) => {
   if (data.pricing_type === 'unified') {
     return data.price !== undefined && data.price !== null;
@@ -108,6 +125,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
   const [additionalPreviews, setAdditionalPreviews] = useState<string[]>(item?.images?.map((img: any) => img.image_url) || []);
   const [bgRemovalTarget, setBgRemovalTarget] = useState<'main' | number | null>(null);
   const [bgRemovalProgress, setBgRemovalProgress] = useState(0);
+  const [youtubeFieldOpen, setYoutubeFieldOpen] = useState(Boolean(item?.youtube_url));
 
   useEffect(() => {
     if (!isPro) return;
@@ -218,6 +236,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
       pricing_type: item?.variants && item.variants.length > 0 ? 'multi' : 'unified',
       variants: item?.variants || [],
       is_hidden: item?.is_hidden || false,
+      youtube_url: item?.youtube_url || '',
     },
   } as any);
 
@@ -345,6 +364,9 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
   });
 
   const pricingType = form.watch('pricing_type');
+  const youtubeUrlValue = form.watch('youtube_url');
+  const youtubeVideoId = youtubeUrlValue ? extractYouTubeId(youtubeUrlValue) : null;
+  const youtubeThumbnail = youtubeUrlValue ? getYouTubeThumbnailUrl(youtubeUrlValue) : null;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     let currentStep = 'بداية المعالجة';
@@ -372,6 +394,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
 
       formData.append('category_id', values.category_id);
       formData.append('is_hidden', values.is_hidden.toString());
+      formData.append('youtube_url', values.youtube_url?.trim() || '');
 
       currentStep = 'ضغط ومعالجة الصور';
 
@@ -565,6 +588,88 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                     </FormItem>
                   )}
                 />
+
+                {!youtubeFieldOpen ? (
+                  <button
+                    type="button"
+                    onClick={() => setYoutubeFieldOpen(true)}
+                    className="w-full flex items-center gap-3 rounded-xl border-2 border-dashed border-slate-700 bg-slate-800/30 hover:border-red-500/50 hover:bg-red-500/5 p-4 transition-all group text-right"
+                  >
+                    <input type="hidden" {...form.register('youtube_url')} />
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FF0000] text-white shadow-lg shadow-red-600/25 group-hover:scale-105 transition-transform">
+                      <YouTubeMark className="h-6 w-6" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-slate-200">إضافة رابط فيديو YouTube (اختياري)</p>
+                      <p className="text-xs text-slate-400 mt-0.5">سيظهر الفيديو تحت وصف المنتج في صفحة المتجر</p>
+                    </div>
+                  </button>
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="youtube_url"
+                    render={({ field }) => (
+                      <FormItem className="animate-in fade-in slide-in-from-top-2 duration-300">
+                        <FormLabel className="flex items-center gap-2 text-base font-bold text-slate-200 mb-2">
+                          <YouTubeMark className="h-5 w-5 text-[#FF0000]" />
+                          رابط فيديو YouTube (اختياري)
+                        </FormLabel>
+                        <FormControl>
+                          <div className="space-y-3">
+                            <div className="relative">
+                              <Input
+                                placeholder="https://www.youtube.com/watch?v=..."
+                                {...field}
+                                className="h-12 bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-red-500/40 transition-all rounded-xl text-white pl-12"
+                                dir="ltr"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  field.onChange('');
+                                  setYoutubeFieldOpen(false);
+                                }}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors flex items-center justify-center"
+                                title="مسح الرابط"
+                                aria-label="مسح رابط يوتيوب"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                            {youtubeVideoId && youtubeThumbnail ? (
+                              <div className="flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-2.5">
+                                <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-black/40">
+                                  <img
+                                    src={youtubeThumbnail}
+                                    alt="معاينة فيديو يوتيوب"
+                                    className="h-full w-full object-cover"
+                                  />
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                    <YouTubeMark className="h-6 w-6 text-white drop-shadow" />
+                                  </div>
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="flex items-center gap-1.5 text-sm font-bold text-emerald-300">
+                                    <CheckCircle2 className="h-4 w-4 shrink-0" />
+                                    تم التعرف على الفيديو
+                                  </p>
+                                  <p className="text-[11px] text-slate-400 mt-0.5 truncate" dir="ltr">
+                                    {youtubeVideoId}
+                                  </p>
+                                </div>
+                              </div>
+                            ) : field.value ? (
+                              <p className="text-xs text-amber-400">أدخل رابط يوتيوب صالحاً لمعاينة الفيديو</p>
+                            ) : (
+                              <p className="text-xs text-slate-500">يدعم watch و youtu.be و shorts و embed</p>
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <div className="pt-4">
                   <FormField

@@ -351,7 +351,7 @@ export function InstallPrompt({
             <div className="relative mt-2 flex items-center justify-center gap-1.5 border-t border-black/5 pt-2">
               <Smartphone className="h-3 w-3 text-muted-foreground/70" />
               <span className="text-[10px] font-medium text-black">
-                يعمل بدون متجر التطبيقات
+                يتم التثبيت من خلال المتصفح خلال ثوانٍي
               </span>
             </div>
           </div>
