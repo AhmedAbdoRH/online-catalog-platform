@@ -50,11 +50,10 @@ export function Head({ faviconUrl, storeName }: HeadProps) {
       // Set dynamic manifest for PWA
       const manifest = document.createElement('link');
       manifest.rel = 'manifest';
-      // Use dynamic manifest route based on current URL with cache busting
+      // Keep the manifest URL stable so the browser and Cloudflare can cache it.
       const currentPath = window.location.pathname;
       const slug = currentPath.split('/')[1];
-      const timestamp = Date.now();
-      manifest.href = slug ? `/${slug}/manifest?v=${timestamp}` : '/manifest.json';
+      manifest.href = slug ? `/${slug}/manifest` : '/manifest.json';
       document.head.appendChild(manifest);
 
       // Add theme-color meta tag

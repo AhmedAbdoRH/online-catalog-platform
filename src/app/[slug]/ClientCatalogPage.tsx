@@ -87,17 +87,33 @@ export default function ClientCatalogPage() {
                     setLogoUrl(catalog.logo_url);
                 }
 
-                // Record store visit
-                const sessionKey = `visited_store_${catalog.id}`;
-                if (typeof window !== 'undefined' && !sessionStorage.getItem(sessionKey)) {
-                    const sessionId = Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-                    recordStoreVisit(catalog.id, sessionId)
-                        .then((res) => {
-                            if (res.success) {
-                                sessionStorage.setItem(sessionKey, 'true');
-                            }
-                        })
-                        .catch((err) => console.error("Failed to record visit:", err));
+                // Record at most one visit per store per browser every 24 hours.
+                // This prevents opening another tab or revisiting the catalog from
+                // creating a new Server Action request each time.
+                const visitKey = `visited_store_${catalog.id}`;
+                const visitWindowMs = 24 * 60 * 60 * 1000;
+                if (typeof window !== 'undefined') {
+                    let lastVisitAt = 0;
+                    try {
+                        lastVisitAt = Number(window.localStorage.getItem(visitKey) || 0);
+                    } catch {
+                        // Storage may be blocked; the visit can still be recorded once.
+                    }
+
+                    if (!lastVisitAt || Date.now() - lastVisitAt >= visitWindowMs) {
+                        const sessionId = Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+                        recordStoreVisit(catalog.id, sessionId)
+                            .then((res) => {
+                                if (res.success) {
+                                    try {
+                                        window.localStorage.setItem(visitKey, String(Date.now()));
+                                    } catch {
+                                        // Ignore storage failures after a successful record.
+                                    }
+                                }
+                            })
+                            .catch((err) => console.error("Failed to record visit:", err));
+                    }
                 }
 
                 const { data: categories, error: categoriesError } = await supabase

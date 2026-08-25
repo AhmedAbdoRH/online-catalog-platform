@@ -91,11 +91,21 @@ export async function middleware(request: NextRequest) {
         ? url.pathname
         : `/${subdomain}${url.pathname === '/' ? '' : url.pathname}`
 
-      return NextResponse.rewrite(new URL(rewritePath, request.url), {
+      const response = NextResponse.rewrite(new URL(rewritePath, request.url), {
         request: {
           headers: request.headers,
         },
-      })
+      });
+
+      // Public subdomain storefronts are safe to cache only when the request
+      // does not carry user credentials or cookies. This lets Cloudflare serve
+      // repeat public visits without running the Worker while protecting private sessions.
+      const hasPrivateCredentials = request.headers.has('authorization') || request.headers.has('cookie');
+      if (!hasPrivateCredentials && request.method === 'GET') {
+        response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400');
+      }
+
+      return response;
     }
 
     return NextResponse.next({

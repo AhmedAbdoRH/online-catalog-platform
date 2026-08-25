@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-export const dynamic = 'force-dynamic';
+// The response is public and already carries a short CDN cache lifetime.
+// Allow Next/OpenNext to reuse it instead of forcing a fresh render every time.
+export const revalidate = 300;
+export const dynamicParams = true;
 
 interface ManifestIcon {
   src: string;
@@ -102,7 +105,7 @@ export async function GET(
     return NextResponse.json(payload, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, max-age=60, s-maxage=300',
+        'Cache-Control': 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
         'Content-Type': 'application/manifest+json; charset=utf-8',
       },
     });
