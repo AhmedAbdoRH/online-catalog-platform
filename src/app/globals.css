@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -111,6 +111,12 @@
     width: 100%;
     max-width: 100%;
     min-width: 0;
+  }
+
+  /* Prevent horizontal blowout in RTL mode across all dashboard containers */
+  main, section, article, form, [class*="Card"], .glass-surface {
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   @media (min-width: 1024px) {

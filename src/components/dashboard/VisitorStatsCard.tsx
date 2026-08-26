@@ -92,7 +92,7 @@ export function VisitorStatsCard({ stats, storeName }: VisitorStatsCardProps) {
     >
       <Card
         dir="rtl"
-        className="glass-surface border-white/10 relative overflow-hidden transition-all hover:scale-[1.005]"
+        className="glass-surface border-white/10 relative overflow-hidden transition-all hover:scale-[1.005] w-full max-w-full min-w-0"
       >
         {/* توهّج خلفي بيتغيّر لونه مع الفترة */}
         <AnimatePresence mode="wait">
@@ -106,7 +106,7 @@ export function VisitorStatsCard({ stats, storeName }: VisitorStatsCardProps) {
           />
         </AnimatePresence>
 
-        <CardHeader className="relative p-4 sm:p-5 pb-2 space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <CardHeader className="relative p-3.5 sm:p-5 pb-2 space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4 w-full min-w-0">
           <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             <motion.div
               animate={{ scale: [0.9, 1] }}
@@ -116,7 +116,7 @@ export function VisitorStatsCard({ stats, storeName }: VisitorStatsCardProps) {
               <Store className="h-4 w-4 sm:h-5 sm:w-5" />
             </motion.div>
 
-            <CardTitle className="text-sm sm:text-lg font-bold text-white min-w-0">
+            <CardTitle className="text-sm sm:text-lg font-bold text-white min-w-0 truncate">
               عدد زوار متجرك
             </CardTitle>
           </div>
@@ -125,7 +125,7 @@ export function VisitorStatsCard({ stats, storeName }: VisitorStatsCardProps) {
           <div
             role="tablist"
             aria-label="فترة الإحصائيات"
-            className="grid grid-cols-4 gap-1 w-full sm:w-auto sm:inline-flex rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-sm"
+            className="grid grid-cols-4 gap-0.5 sm:gap-1 w-full sm:w-auto sm:inline-flex rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-sm min-w-0"
           >
             {PERIOD_ORDER.map((key) => {
               const item = PERIOD_CONFIG[key];
@@ -138,7 +138,7 @@ export function VisitorStatsCard({ stats, storeName }: VisitorStatsCardProps) {
                   role="tab"
                   aria-selected={isActive}
                   onClick={() => setPeriod(key)}
-                  className={`relative rounded-lg px-1.5 sm:px-3.5 py-1.5 text-[11px] sm:text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${
+                  className={`relative rounded-lg px-1 sm:px-3.5 py-1.5 text-[10px] sm:text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 min-w-0 flex items-center justify-center ${
                     isActive
                       ? item.activeText
                       : "text-muted-foreground hover:text-white/80"
@@ -151,7 +151,7 @@ export function VisitorStatsCard({ stats, storeName }: VisitorStatsCardProps) {
                       className={`absolute inset-0 rounded-lg ${item.pill}`}
                     />
                   )}
-                  <span className="relative z-10 whitespace-nowrap">
+                  <span className="relative z-10 truncate text-center">
                     {item.label}
                   </span>
                 </button>
@@ -160,7 +160,7 @@ export function VisitorStatsCard({ stats, storeName }: VisitorStatsCardProps) {
           </div>
         </CardHeader>
 
-        <CardContent className="relative p-4 sm:p-5 pt-0">
+        <CardContent className="relative p-3.5 sm:p-5 pt-0 w-full min-w-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={period}

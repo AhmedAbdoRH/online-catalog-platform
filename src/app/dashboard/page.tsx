@@ -105,31 +105,32 @@ export default async function DashboardPage() {
   const qrCodeUrl = `https://${catalog.name}.tagr-online.com`;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 w-full max-w-full min-w-0">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
+        className="w-full max-w-full min-w-0"
       >
-        <Card className="bg-gradient-to-br from-brand-primary/10 to-brand-luxury/5 border-brand-primary/20 overflow-hidden relative">
+        <Card className="bg-gradient-to-br from-brand-primary/10 to-brand-luxury/5 border-brand-primary/20 overflow-hidden relative w-full max-w-full">
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
           <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl -mr-24 -mt-24 pointer-events-none" />
-          <CardHeader className="py-4 px-4 sm:py-5 sm:px-6">
+          <CardHeader className="py-3 px-3.5 sm:py-5 sm:px-6">
             <CardTitle className="flex items-center gap-2">
               <span className="text-base sm:text-lg">المتجر الخاص بك نشط ✨</span>
             </CardTitle>
             <CardDescription className="hidden sm:block text-xs">شارك هذا الرابط مع عملائك للوصول إلى متجرك.</CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 z-10 relative py-4 px-4 sm:px-6 pt-0">
-            <div className="flex-1 bg-background/50 p-2 sm:p-3 rounded-lg border border-border/50 w-full font-mono text-xs sm:text-sm flex items-center justify-between gap-2 min-w-0">
-              <Link href={catalogUrl} target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary transition-colors truncate min-w-0">
+          <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 z-10 relative py-3 px-3.5 sm:py-5 sm:px-6 pt-0 w-full max-w-full min-w-0">
+            <div className="flex-1 bg-background/50 p-2 sm:p-3 rounded-lg border border-border/50 w-full font-mono text-xs sm:text-sm flex items-center justify-between gap-2 min-w-0 overflow-hidden">
+              <Link href={catalogUrl} target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary transition-colors truncate min-w-0 flex-1">
                 {catalogUrl}
               </Link>
               <div className="shrink-0">
                 <QRCodeButton url={qrCodeUrl} storeName={catalog.name} />
               </div>
             </div>
-            <div className="flex gap-2 w-full sm:w-auto">
+            <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex shrink-0">
               <StorePreviewModal url={catalogUrl} storeName={catalog.display_name || catalog.name} logoUrl={catalog.logo_url} />
               <CopyLinkButton url={catalogUrl} />
             </div>
@@ -138,7 +139,7 @@ export default async function DashboardPage() {
       </motion.div>
 
       {/* Visitor Stats Card */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+      <div className="w-full max-w-full min-w-0">
         <VisitorStatsCard stats={visitorStats} storeName={catalog.display_name || catalog.name} />
       </div>
 
@@ -263,9 +264,10 @@ export default async function DashboardPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
+        className="w-full max-w-full min-w-0"
       >
-        <Card className="glass-surface border-white/10 overflow-hidden w-full max-w-full">
-          <CardContent className="p-4 sm:p-6 w-full max-w-full overflow-x-hidden">
+        <Card className="glass-surface border-white/10 overflow-hidden w-full max-w-full min-w-0">
+          <CardContent className="p-3.5 sm:p-6 w-full max-w-full min-w-0 overflow-hidden">
             <SettingsForm catalog={catalog} userPhone={userPhone} />
           </CardContent>
         </Card>
