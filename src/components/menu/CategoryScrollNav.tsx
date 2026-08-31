@@ -33,6 +33,8 @@ export function CategoryScrollNav({
   const introAnimationRef = useRef(false);
   const animationTimeoutRef = useRef<number | null>(null);
   const returnTimeoutRef = useRef<number | null>(null);
+  const introFrameRef = useRef<number | null>(null);
+  const returnFrameRef = useRef<number | null>(null);
 
   // Check scroll state and overflow
   const updateScrollState = useCallback(() => {
@@ -61,7 +63,7 @@ export function CategoryScrollNav({
     return () => window.removeEventListener("resize", updateScrollState);
   }, [categories, updateScrollState]);
 
-  // Teaser intro animation: start at the far end, then return to the beginning once.
+  // Teaser intro animation: move to the far end once, then ease back to the natural start.
   useEffect(() => {
     const el = containerRef.current;
     if (!el || hasInteracted || introAnimationRef.current) return;
@@ -71,20 +73,52 @@ export function CategoryScrollNav({
 
     introAnimationRef.current = true;
 
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const animateTo = (
+      from: number,
+      to: number,
+      duration: number,
+      onComplete?: () => void,
+      frameRef?: { current: number | null }
+    ) => {
+      const startTime = performance.now();
+
+      const tick = (now: number) => {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = easeOutCubic(progress);
+        const next = from + (to - from) * eased;
+
+        if (containerRef.current) {
+          containerRef.current.scrollLeft = next;
+        }
+
+        if (progress < 1) {
+          frameRef!.current = window.requestAnimationFrame(tick);
+        } else {
+          onComplete?.();
+        }
+      };
+
+      frameRef!.current = window.requestAnimationFrame(tick);
+    };
+
     animationTimeoutRef.current = window.setTimeout(() => {
       if (!containerRef.current || hasInteracted) return;
 
       const container = containerRef.current;
+      const startScroll = container.scrollLeft;
       const endScroll = Math.max(container.scrollWidth - container.clientWidth, 0);
 
-      // Move to the far end first to create a polished reveal.
-      container.scrollTo({ left: endScroll, behavior: "smooth" });
+      animateTo(startScroll, endScroll, 900, () => {
+        returnTimeoutRef.current = window.setTimeout(() => {
+          if (!containerRef.current || hasInteracted) return;
 
-      returnTimeoutRef.current = window.setTimeout(() => {
-        if (!containerRef.current || hasInteracted) return;
-        containerRef.current.scrollTo({ left: 0, behavior: "smooth" });
-      }, 900);
-    }, 1200);
+          const returnStart = containerRef.current.scrollLeft;
+          animateTo(returnStart, 0, 700, undefined, returnFrameRef);
+        }, 220);
+      }, introFrameRef);
+    }, 800);
 
     return () => {
       if (animationTimeoutRef.current) {
@@ -92,6 +126,12 @@ export function CategoryScrollNav({
       }
       if (returnTimeoutRef.current) {
         window.clearTimeout(returnTimeoutRef.current);
+      }
+      if (introFrameRef.current) {
+        window.cancelAnimationFrame(introFrameRef.current);
+      }
+      if (returnFrameRef.current) {
+        window.cancelAnimationFrame(returnFrameRef.current);
       }
     };
   }, [categories, hasInteracted]);
