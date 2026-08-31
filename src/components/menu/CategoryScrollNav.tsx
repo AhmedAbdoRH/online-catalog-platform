@@ -30,7 +30,9 @@ export function CategoryScrollNav({
   const startXRef = useRef(0);
   const startScrollLeftRef = useRef(0);
   const hasMovedRef = useRef(false);
-  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const introAnimationRef = useRef(false);
+  const animationTimeoutRef = useRef<number | null>(null);
+  const returnTimeoutRef = useRef<number | null>(null);
 
   // Check scroll state and overflow
   const updateScrollState = useCallback(() => {
@@ -59,43 +61,40 @@ export function CategoryScrollNav({
     return () => window.removeEventListener("resize", updateScrollState);
   }, [categories, updateScrollState]);
 
-  // Teaser Intro Scroll Animation (Reverse scroll from end back to start after 2 seconds)
+  // Teaser intro animation: start at the far end, then return to the beginning once.
   useEffect(() => {
     const el = containerRef.current;
-    if (!el) return;
+    if (!el || hasInteracted || introAnimationRef.current) return;
 
-    // Check if there is actual overflow
     const maxScroll = el.scrollWidth - el.clientWidth;
     if (maxScroll <= 15) return;
 
-    // 2-second delay before animation triggers
-    animationTimeoutRef.current = setTimeout(() => {
-      if (hasInteracted || !containerRef.current) return;
+    introAnimationRef.current = true;
+
+    animationTimeoutRef.current = window.setTimeout(() => {
+      if (!containerRef.current || hasInteracted) return;
 
       const container = containerRef.current;
-      const targetPeek = Math.min(container.scrollWidth - container.clientWidth, 320);
+      const endScroll = Math.max(container.scrollWidth - container.clientWidth, 0);
 
-      // Determine RTL scroll direction factor
-      // In standard RTL, scrolling left (to view next items) is negative
-      const isRTLNegative = container.scrollLeft <= 0;
-      const peekOffset = isRTLNegative ? -targetPeek : targetPeek;
+      // Move to the far end first to create a polished reveal.
+      container.scrollTo({ left: endScroll, behavior: "smooth" });
 
-      // Phase 1: Smoothly glide left to reveal upcoming categories
-      container.scrollBy({ left: peekOffset, behavior: "smooth" });
-
-      // Phase 2: After brief pause, smoothly glide back from the end to the start ("الكل")
-      const returnTimeout = setTimeout(() => {
-        if (!containerRef.current) return;
+      returnTimeoutRef.current = window.setTimeout(() => {
+        if (!containerRef.current || hasInteracted) return;
         containerRef.current.scrollTo({ left: 0, behavior: "smooth" });
-      }, 750);
-
-      return () => clearTimeout(returnTimeout);
-    }, 2000);
+      }, 900);
+    }, 1200);
 
     return () => {
-      if (animationTimeoutRef.current) clearTimeout(animationTimeoutRef.current);
+      if (animationTimeoutRef.current) {
+        window.clearTimeout(animationTimeoutRef.current);
+      }
+      if (returnTimeoutRef.current) {
+        window.clearTimeout(returnTimeoutRef.current);
+      }
     };
-  }, [hasInteracted, categories]);
+  }, [categories, hasInteracted]);
 
   // Scroll manually via buttons
   const handleScrollBy = (distance: number) => {
