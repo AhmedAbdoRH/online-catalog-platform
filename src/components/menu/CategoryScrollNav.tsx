@@ -30,11 +30,7 @@ export function CategoryScrollNav({
   const startXRef = useRef(0);
   const startScrollLeftRef = useRef(0);
   const hasMovedRef = useRef(false);
-  const introAnimationRef = useRef(false);
-  const animationTimeoutRef = useRef<number | null>(null);
-  const returnTimeoutRef = useRef<number | null>(null);
-  const introFrameRef = useRef<number | null>(null);
-  const returnFrameRef = useRef<number | null>(null);
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Check scroll state and overflow
   const updateScrollState = useCallback(() => {
@@ -63,78 +59,43 @@ export function CategoryScrollNav({
     return () => window.removeEventListener("resize", updateScrollState);
   }, [categories, updateScrollState]);
 
-  // Teaser intro animation: move to the far end once, then ease back to the natural start.
+  // Teaser Intro Scroll Animation (Reverse scroll from end back to start after 2 seconds)
   useEffect(() => {
     const el = containerRef.current;
-    if (!el || hasInteracted || introAnimationRef.current) return;
+    if (!el) return;
 
+    // Check if there is actual overflow
     const maxScroll = el.scrollWidth - el.clientWidth;
     if (maxScroll <= 15) return;
 
-    introAnimationRef.current = true;
-
-    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-
-    const animateTo = (
-      from: number,
-      to: number,
-      duration: number,
-      onComplete?: () => void,
-      frameRef?: { current: number | null }
-    ) => {
-      const startTime = performance.now();
-
-      const tick = (now: number) => {
-        const progress = Math.min((now - startTime) / duration, 1);
-        const eased = easeOutCubic(progress);
-        const next = from + (to - from) * eased;
-
-        if (containerRef.current) {
-          containerRef.current.scrollLeft = next;
-        }
-
-        if (progress < 1) {
-          frameRef!.current = window.requestAnimationFrame(tick);
-        } else {
-          onComplete?.();
-        }
-      };
-
-      frameRef!.current = window.requestAnimationFrame(tick);
-    };
-
-    animationTimeoutRef.current = window.setTimeout(() => {
-      if (!containerRef.current || hasInteracted) return;
+    // 2-second delay before animation triggers
+    animationTimeoutRef.current = setTimeout(() => {
+      if (hasInteracted || !containerRef.current) return;
 
       const container = containerRef.current;
-      const startScroll = container.scrollLeft;
-      const endScroll = Math.max(container.scrollWidth - container.clientWidth, 0);
+      const targetPeek = Math.min(container.scrollWidth - container.clientWidth, 320);
 
-      animateTo(startScroll, endScroll, 900, () => {
-        returnTimeoutRef.current = window.setTimeout(() => {
-          if (!containerRef.current || hasInteracted) return;
+      // Determine RTL scroll direction factor
+      // In standard RTL, scrolling left (to view next items) is negative
+      const isRTLNegative = container.scrollLeft <= 0;
+      const peekOffset = isRTLNegative ? -targetPeek : targetPeek;
 
-          const returnStart = containerRef.current.scrollLeft;
-          animateTo(returnStart, 0, 700, undefined, returnFrameRef);
-        }, 220);
-      }, introFrameRef);
-    }, 800);
+      // Phase 1: Smoothly glide left to reveal upcoming categories
+      container.scrollBy({ left: peekOffset, behavior: "smooth" });
+
+      // Phase 2: After brief pause, smoothly glide back from the end to the start ("الكل")
+      const returnTimeout = setTimeout(() => {
+        if (!containerRef.current) return;
+        containerRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      }, 750);
+
+      return () => clearTimeout(returnTimeout);
+    }, 2000);
 
     return () => {
-      if (animationTimeoutRef.current) {
-        window.clearTimeout(animationTimeoutRef.current);
-      }
-      if (returnTimeoutRef.current) {
-        window.clearTimeout(returnTimeoutRef.current);
-      }
-      if (introFrameRef.current) {
-        window.cancelAnimationFrame(introFrameRef.current);
-      }
-      if (returnFrameRef.current) {
-        window.cancelAnimationFrame(returnFrameRef.current);
-      }
+      if (animationTimeoutRef.current) clearTimeout(animationTimeoutRef.current);
     };
-  }, [categories, hasInteracted]);
+  }, [hasInteracted, categories]);
 
   // Scroll manually via buttons
   const handleScrollBy = (distance: number) => {
