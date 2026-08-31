@@ -43,6 +43,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Footer } from '@/components/layout/Footer';
 import { PageLoader } from '@/components/common/PageLoader';
+import { CategoryScrollNav } from '@/components/menu/CategoryScrollNav';
 import type { Catalog, CategoryWithSubcategories, MenuItem } from '@/lib/types';
 
 type ViewMode = "masonry" | "grid" | "list" | "compact";
@@ -633,78 +634,15 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
               </motion.div>
             </div>
 
-            {/* Category filter toolbar (pills style) */}
-            <div className="mx-auto w-full mt-6">
-              <div className="flex items-center gap-3 overflow-x-auto pb-3 px-2">
-                <button
-                  onClick={() => { setSelectedCategoryId(null); setSelectedSubcategoryId(null); }}
-                  aria-pressed={!selectedCategoryId}
-                  className={cn(
-                    "flex-shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all",
-                    !selectedCategoryId
-                      ? "bg-gradient-to-r from-[#FFC800] to-[#61ffd0] text-white shadow-lg scale-[1.02]"
-                      : "bg-white/15 text-foreground/80 hover:bg-white/20 hover:text-foreground"
-                  )}
-                >
-                  الكل
-                </button>
-
-                {categories.map((cat) => {
-                  const catItemCount = flattenMenuItems([cat]).length;
-                  if (catItemCount === 0) return null;
-
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => { setSelectedCategoryId(cat.id); setSelectedSubcategoryId(null); }}
-                      aria-pressed={selectedCategoryId === cat.id}
-                      className={cn(
-                        "flex items-center gap-2 flex-shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all",
-                        selectedCategoryId === cat.id
-                          ? "bg-gradient-to-r from-[#FFC800] to-[#61ffd0] text-white shadow-lg scale-[1.02]"
-                          : "bg-white/15 text-foreground/80 hover:bg-white/20 hover:text-foreground"
-                      )}
-                    >
-                      <span>{cat.name}</span>
-                      <span className="text-xs opacity-70">({catItemCount})</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Subcategory strip appears only when a main category is selected */}
-              {selectedCategoryId && (() => {
-                const main = categories.find((c) => c.id === selectedCategoryId);
-                if (!main || !main.subcategories || main.subcategories.length === 0) return null;
-                return (
-                  <div className="mt-2 flex items-center gap-2 overflow-x-auto px-2">
-                    <button
-                      onClick={() => setSelectedSubcategoryId(null)}
-                      className={cn(
-                        "flex-shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition",
-                        selectedSubcategoryId === null ? "bg-brand-primary text-white" : "bg-white/15 text-foreground/80 hover:bg-white/20 hover:text-foreground"
-                      )}
-                    >
-                      الكل
-                    </button>
-
-                    {main.subcategories.map((sub) => (
-                      <button
-                        key={sub.id}
-                        onClick={() => setSelectedSubcategoryId(sub.id)}
-                        className={cn(
-                          "flex-shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition",
-                          selectedSubcategoryId === sub.id ? "bg-brand-primary text-white" : "bg-white/15 text-foreground/80 hover:bg-white/20 hover:text-foreground"
-                        )}
-                      >
-                        <span>{sub.name}</span>
-                        <span className="ml-2 inline-flex items-center justify-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium">{sub.menu_items.length}</span>
-                      </button>
-                    ))}
-                  </div>
-                );
-              })()}
-            </div>
+            {/* Category filter toolbar with navigation arrows, masks & 2s teaser scroll */}
+            <CategoryScrollNav
+              categories={categories}
+              selectedCategoryId={selectedCategoryId}
+              selectedSubcategoryId={selectedSubcategoryId}
+              onSelectCategory={setSelectedCategoryId}
+              onSelectSubcategory={setSelectedSubcategoryId}
+              flattenMenuItems={flattenMenuItems}
+            />
             <section className="space-y-6">
               {categories.length === 0 && (
                 <div className="rounded-[2rem] border border-dashed border-white/25 bg-white/5 px-6 py-16 text-center text-sm text-muted-foreground">
