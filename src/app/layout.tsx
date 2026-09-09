@@ -23,7 +23,10 @@ export const metadata: Metadata = {
     template: '%s | تاجر أونلاين'
   },
     description: 'منصة تاجر أونلاين: منصة إنشاء المتجر الرقمي للمحال والمتاجر. سجل مجاناً وأنشئ متجرك خلال دقائق.',
-  icons: {},
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
   openGraph: {
     type: 'website',
     locale: 'ar_SA',

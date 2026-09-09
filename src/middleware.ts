@@ -22,6 +22,13 @@ function getSubdomain(hostname: string): string | null {
 
   // Main domain check
   const rootDomain = 'tagr-online.com'
+
+  // Handle direct access to root domain
+  if (host === rootDomain || host === `www.${rootDomain}`) {
+    return null
+  }
+
+  // Handle subdomains
   if (host.endsWith(`.${rootDomain}`)) {
     const sub = host.replace(`.${rootDomain}`, '')
     if (sub && sub !== 'www' && sub !== 'app' && sub !== 'admin' && sub !== 'api') {
@@ -67,7 +74,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // 1. System paths that shouldn't be rewritten to store subdomain
-    const isSystemPath = 
+    const isSystemPath =
       url.pathname.startsWith('/login') ||
       url.pathname.startsWith('/signup') ||
       url.pathname.startsWith('/dashboard') ||
@@ -80,7 +87,8 @@ export async function middleware(request: NextRequest) {
       url.pathname.startsWith('/home') ||
       url.pathname.startsWith('/auth') ||
       url.pathname.startsWith('/api') ||
-      url.pathname.startsWith('/_next')
+      url.pathname.startsWith('/_next') ||
+      url.pathname === '/favicon.ico'
 
     // 2. Subdomain Routing logic:
     // If request comes from storename.tagr-online.com and it's NOT a system path,
@@ -132,7 +140,9 @@ export const config = {
     /*
      * Match all request paths except for static files & assets
      */
-    '/((?!_next/.*|favicon.ico|api/.*|.*\\..*).*)',
+    {
+      source: '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf|eot)$).*)',
+    },
   ],
 }
 
