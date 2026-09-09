@@ -92,7 +92,8 @@ export async function middleware(request: NextRequest) {
 
     // 2. Subdomain Routing logic:
     // If request comes from storename.tagr-online.com and it's NOT a system path,
-    // rewrite internally to /storename or /storename/path
+    // rewrite internally to /storename or /storename/path so the dynamic
+    // [slug] route is the single source of truth for storefront rendering.
     if (subdomain && !isSystemPath) {
       // Avoid double prefixing if path already starts with /subdomain
       const rewritePath = url.pathname.startsWith(`/${subdomain}`)
@@ -116,6 +117,14 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
+    // 3. Path-based fallback on the root domain (e.g. tagr-online.com/mediaconnecthub)
+    // is routed to the same dynamic [slug] handler. This is the exact same target
+    // Next.js would pick up naturally, but doing the rewrite here keeps both access
+    // methods identical (same headers, same rewrite semantics) so the storefront
+    // works regardless of whether the visitor uses a subdomain or the path.
+    // We also do NOT add a Cache-Control header for path-based access because
+    // mixing the public site (root domain landing pages) with cached storefront
+    // responses can cause cross-store pollution.
     return NextResponse.next({
       request: {
         headers: request.headers,

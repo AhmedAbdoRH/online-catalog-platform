@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// The response is public and already carries a short CDN cache lifetime.
-// Allow Next/OpenNext to reuse it instead of forcing a fresh render every time.
-export const revalidate = 300;
+// The response is public and uses a short CDN cache lifetime.
+// `force-dynamic` keeps it working on Cloudflare Workers / OpenNext where ISR
+// is unreliable for fully dynamic merchant slugs.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 export const dynamicParams = true;
 
 interface ManifestIcon {
