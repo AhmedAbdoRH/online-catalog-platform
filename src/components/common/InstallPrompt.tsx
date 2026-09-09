@@ -22,31 +22,28 @@ interface InstallPromptProps {
   themeColor?: string;
 }
 
-const MAX_VISITS_BEFORE_HIDE = 10;
 const SHOW_DELAY_MS = 2500;
 const STORAGE_PREFIX = 'pwa-prompt:';
 
 interface VisitState {
-  visits: number;
   installed: boolean;
   permanentlyDismissed: boolean;
 }
 
 function readState(slug: string): VisitState {
   if (typeof window === 'undefined') {
-    return { visits: 0, installed: false, permanentlyDismissed: false };
+    return { installed: false, permanentlyDismissed: false };
   }
   try {
     const raw = window.localStorage.getItem(STORAGE_PREFIX + slug);
-    if (!raw) return { visits: 0, installed: false, permanentlyDismissed: false };
+    if (!raw) return { installed: false, permanentlyDismissed: false };
     const parsed = JSON.parse(raw) as Partial<VisitState>;
     return {
-      visits: typeof parsed.visits === 'number' ? parsed.visits : 0,
       installed: !!parsed.installed,
       permanentlyDismissed: !!parsed.permanentlyDismissed,
     };
   } catch {
-    return { visits: 0, installed: false, permanentlyDismissed: false };
+    return { installed: false, permanentlyDismissed: false };
   }
 }
 
@@ -166,7 +163,6 @@ export function InstallPrompt({
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
   const [state, setState] = useState<VisitState>({
-    visits: 0,
     installed: false,
     permanentlyDismissed: false,
   });
@@ -180,16 +176,6 @@ export function InstallPrompt({
     if (installed) writeState(slug, next);
     setHydrated(true);
   }, [slug]);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    if (state.installed || state.permanentlyDismissed) return;
-
-    const next: VisitState = { ...state, visits: state.visits + 1 };
-    setState(next);
-    writeState(slug, next);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -217,7 +203,7 @@ export function InstallPrompt({
   useEffect(() => {
     if (!hydrated) return;
     if (state.installed || state.permanentlyDismissed) return;
-    // Always show for testing
+
     const timer = window.setTimeout(() => setVisible(true), SHOW_DELAY_MS);
     return () => window.clearTimeout(timer);
   }, [hydrated, state]);
@@ -232,7 +218,8 @@ export function InstallPrompt({
         setState(next);
         writeState(slug, next);
       } else {
-        const next: VisitState = { ...state, visits: MAX_VISITS_BEFORE_HIDE };
+        // User dismissed the native install prompt → never show our prompt again.
+        const next: VisitState = { ...state, permanentlyDismissed: true };
         setState(next);
         writeState(slug, next);
       }
@@ -245,7 +232,9 @@ export function InstallPrompt({
   }, [deferredPrompt, state, slug]);
 
   const handleDismiss = useCallback(() => {
-    const next: VisitState = { ...state, visits: MAX_VISITS_BEFORE_HIDE };
+    // User closed the prompt → never show it again for this store, even on
+    // future visits. This is a one-shot prompt by design.
+    const next: VisitState = { ...state, permanentlyDismissed: true };
     setState(next);
     writeState(slug, next);
     setVisible(false);
