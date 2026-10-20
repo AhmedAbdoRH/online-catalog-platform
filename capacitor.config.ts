@@ -5,9 +5,9 @@ const config: CapacitorConfig = {
   appName: 'تاجر أونلاين',
   webDir: 'out',
   server: {
-    url: 'https://tagr-online.com/home?native_android=1',
+    url: 'https://tagr-online.com/login?native_android=1',
     cleartext: true,
-    allowNavigation: ['https://tagr-online.com/*', 'https://*.tagr-online.com/*']
+    allowNavigation: ['https://tagr-online.com/*', 'https://*.tagr-online.com/*', 'https://online-catalog.net/*', 'https://*.online-catalog.net/*']
   },
   android: {
     allowMixedContent: true
