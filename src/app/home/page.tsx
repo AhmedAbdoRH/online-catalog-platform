@@ -11,6 +11,7 @@ import { Capacitor } from '@capacitor/core';
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Store, Phone, ChevronDown } from "lucide-react";
+import { convertArabicNumerals } from "@/lib/utils";
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -45,10 +46,11 @@ function UnifiedHomeContent() {
       const supabase = createClient();
 
       if (isSignup) {
+        const cleanPhone = convertArabicNumerals(whatsapp).replace(/[^\d]/g, '');
         // Save store data for the dashboard onboarding to pick up
-        localStorage.setItem('pendingStoreName', storeName);
-        localStorage.setItem('pendingWhatsApp', selectedCountry.code + whatsapp);
-        localStorage.setItem('pendingStoreSlug', whatsapp.replace(/[^\d]/g, ''));
+        localStorage.setItem('pendingStoreName', storeName.trim());
+        localStorage.setItem('pendingWhatsApp', selectedCountry.code + cleanPhone);
+        localStorage.setItem('pendingStoreSlug', cleanPhone);
       }
 
       if (Capacitor.isNativePlatform()) {
@@ -203,12 +205,14 @@ function UnifiedHomeContent() {
 
                   <div className="relative flex-1">
                     <Input
+                      type="tel"
+                      inputMode="numeric"
                       placeholder="رقم الواتساب"
-                      className="h-14 pr-12 text-lg border-0 bg-transparent text-right focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-gray-600"
+                      className="h-14 pr-12 text-lg border-0 bg-transparent text-right focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-gray-600 font-mono"
                       value={whatsapp}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/[^\d]/g, '');
-                        setWhatsapp(value);
+                        const converted = convertArabicNumerals(e.target.value);
+                        setWhatsapp(converted.replace(/[^\d]/g, ''));
                       }}
                     />
                     <Phone className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-600" />
@@ -218,13 +222,15 @@ function UnifiedHomeContent() {
 
               <Button
                 onClick={() => {
-                  if (storeName && whatsapp) {
+                  const cleanPhone = convertArabicNumerals(whatsapp).replace(/[^\d]/g, '');
+                  if (storeName.trim() && cleanPhone) {
+                    setWhatsapp(cleanPhone);
                     setStep('registration');
                   } else {
                     toast({
                       variant: "destructive",
                       title: "بيانات ناقصة",
-                      description: "يرجى إدخال اسم المتجر ورقم الواتساب"
+                      description: "يرجى إدخال اسم المتجر ورقم الواتساب بشكل صحيح"
                     });
                   }
                 }}

@@ -163,19 +163,36 @@ export default function ClientProductPage() {
                 return;
             }
 
-            // 3. Get Variants
-            const { data: variants } = await supabase
-                .from("item_variants")
-                .select("*")
-                .eq("menu_item_id", product.id)
-                .order('price', { ascending: true });
-
-            // 4. Get Images
-            const { data: productImages } = await supabase
-                .from("product_images")
-                .select("image_url")
-                .eq("menu_item_id", product.id)
-                .order('created_at', { ascending: true });
+            // Fetch variants, images, category name, and related items concurrently
+            const [
+                { data: variants },
+                { data: productImages },
+                { data: category },
+                { data: related }
+            ] = await Promise.all([
+                supabase
+                    .from("item_variants")
+                    .select("*")
+                    .eq("menu_item_id", product.id)
+                    .order('price', { ascending: true }),
+                supabase
+                    .from("product_images")
+                    .select("image_url")
+                    .eq("menu_item_id", product.id)
+                    .order('created_at', { ascending: true }),
+                supabase
+                    .from("categories")
+                    .select("name")
+                    .eq("id", product.category_id)
+                    .maybeSingle(),
+                supabase
+                    .from("menu_items")
+                    .select("*")
+                    .eq("catalog_id", catalog.id)
+                    .eq("category_id", product.category_id)
+                    .neq("id", product.id)
+                    .order('created_at', { ascending: false })
+            ]);
 
             const dbImages = productImages ? productImages.map((i: { image_url: string }) => i.image_url) : [];
             let images: string[] = [];
@@ -188,22 +205,6 @@ export default function ClientProductPage() {
             } else {
                 images = product.image_url ? [product.image_url] : [];
             }
-
-            // 5. Get Category Name
-            const { data: category } = await supabase
-                .from("categories")
-                .select("name")
-                .eq("id", product.category_id)
-                .maybeSingle();
-
-            // 6. Get Related (filtered by entitlement for non-pro)
-            const { data: related } = await supabase
-                .from("menu_items")
-                .select("*")
-                .eq("catalog_id", catalog.id)
-                .eq("category_id", product.category_id)
-                .neq("id", product.id)
-                .order('created_at', { ascending: false });
 
             const visibleRelated = entitledProductIds
                 ? (related || []).filter((item: any) => entitledProductIds?.has(item.id)).slice(0, 4)
@@ -357,6 +358,8 @@ export default function ClientProductPage() {
                                 productId={product.id}
                                 productImage={product.image_url}
                                 shippingRates={catalog.shipping_rates}
+                                tableNumbers={catalog.table_numbers}
+                                restaurantMode={catalog.restaurant_mode_enabled ?? false}
                             />
                         </div>
                     </section>

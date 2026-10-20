@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/middleware'
+import { isSystemPath, isAnonymousStorefrontRequest, setStorefrontCacheHeaders } from '@/lib/storefront-cache'
 
 // Extract subdomain from hostname if present
 function getSubdomain(hostname: string): string | null {
@@ -58,43 +59,45 @@ export async function middleware(request: NextRequest) {
     if (needsAuth) {
       const { supabase, response } = createClient(request)
       const {
-        data: { user },
+        data: { user: validatedUser },
       } = await supabase.auth.getUser()
+
+      // If Supabase auth API is unreachable, getUser() returns null even with a
+      // valid cookie session. Fall back to the local session so email/password
+      // login is not immediately undone by a transient fetch failure.
+      let user = validatedUser
+      if (!user) {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+        user = session?.user ?? null
+      }
 
       // Auth protection & redirects.
       if (user && (url.pathname === '/login' || url.pathname === '/signup' || url.pathname === '/home' || url.pathname === '/go')) {
-        return NextResponse.redirect(new URL('/dashboard', request.url))
+        const redirect = NextResponse.redirect(new URL('/dashboard', request.url))
+        setStorefrontCacheHeaders(redirect.headers, false)
+        return redirect
       }
 
       if (!user && url.pathname.startsWith('/dashboard')) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        const redirect = NextResponse.redirect(new URL('/login', request.url))
+        setStorefrontCacheHeaders(redirect.headers, false)
+        return redirect
       }
 
+      setStorefrontCacheHeaders(response.headers, false)
       return response
     }
 
-    // 1. System paths that shouldn't be rewritten to store subdomain
-    const isSystemPath =
-      url.pathname.startsWith('/login') ||
-      url.pathname.startsWith('/signup') ||
-      url.pathname.startsWith('/dashboard') ||
-      url.pathname.startsWith('/forgot-password') ||
-      url.pathname.startsWith('/reset-password') ||
-      url.pathname.startsWith('/verify-otp') ||
-      url.pathname.startsWith('/privacy') ||
-      url.pathname.startsWith('/health') ||
-      url.pathname.startsWith('/go') ||
-      url.pathname.startsWith('/home') ||
-      url.pathname.startsWith('/auth') ||
-      url.pathname.startsWith('/api') ||
-      url.pathname.startsWith('/_next') ||
-      url.pathname === '/favicon.ico'
+    // 1. System paths that shouldn't be treated or rewritten as a store
+    const isSys = isSystemPath(url.pathname);
 
     // 2. Subdomain Routing logic:
     // If request comes from storename.tagr-online.com and it's NOT a system path,
     // rewrite internally to /storename or /storename/path so the dynamic
     // [slug] route is the single source of truth for storefront rendering.
-    if (subdomain && !isSystemPath) {
+    if (subdomain && !isSys) {
       // Avoid double prefixing if path already starts with /subdomain
       const rewritePath = url.pathname.startsWith(`/${subdomain}`)
         ? url.pathname
@@ -106,41 +109,47 @@ export async function middleware(request: NextRequest) {
         },
       });
 
-      // Public subdomain storefronts are safe to cache only when the request
-      // does not carry user credentials or cookies. This lets Cloudflare serve
-      // repeat public visits without running the Worker while protecting private sessions.
-      const hasPrivateCredentials = request.headers.has('authorization') || request.headers.has('cookie');
-      if (!hasPrivateCredentials && request.method === 'GET') {
-        response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400');
-      }
+      // Host-based storefront URLs (e.g. merchant.tagr-online.com/) must vary
+      // by hostname because Cloudflare's default Worker cache key omits it.
+      setStorefrontCacheHeaders(response.headers, isAnonymousStorefrontRequest(request));
 
       return response;
     }
 
-    // 3. Path-based fallback on the root domain (e.g. tagr-online.com/mediaconnecthub)
-    // is routed to the same dynamic [slug] handler. This is the exact same target
-    // Next.js would pick up naturally, but doing the rewrite here keeps both access
-    // methods identical (same headers, same rewrite semantics) so the storefront
-    // works regardless of whether the visitor uses a subdomain or the path.
-    // We also do NOT add a Cache-Control header for path-based access because
-    // mixing the public site (root domain landing pages) with cached storefront
-    // responses can cause cross-store pollution.
-    return NextResponse.next({
-      request: {
-        headers: request.headers,
-      },
-    })
-  } catch (e) {
-    console.error('Middleware Error:', e);
-    const url = new URL(request.url);
-    if (url.pathname.startsWith('/dashboard')) {
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
-    return NextResponse.next({
+    // 3. Path-based storefront on root domain (e.g. tagr-online.com/mediaconnecthub)
+    // If it is an anonymous GET on a non-system path (a merchant slug or product page),
+    // apply the same public storefront cache policy.
+    const response = NextResponse.next({
       request: {
         headers: request.headers,
       },
     });
+
+    setStorefrontCacheHeaders(
+      response.headers,
+      url.pathname !== '/' && !isSys && isAnonymousStorefrontRequest(request),
+    );
+
+    return response;
+  } catch (e) {
+    console.error('Middleware Error:', e);
+    const url = new URL(request.url);
+    if (url.pathname.startsWith('/dashboard')) {
+      const response = NextResponse.next({
+        request: {
+          headers: request.headers,
+        },
+      })
+      setStorefrontCacheHeaders(response.headers, false)
+      return response
+    }
+    const response = NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    });
+    setStorefrontCacheHeaders(response.headers, false)
+    return response
   }
 }
 

@@ -1,4 +1,5 @@
 import type { ShippingRates } from './shipping';
+import type { TableNumbers } from './tables';
 
 // Temporary Database type definition
 interface Database {
@@ -33,6 +34,8 @@ interface Database {
           trial_started_at: string | null;
           is_legacy_basic: boolean | null;
           shipping_rates: ShippingRates | null;
+          table_numbers: TableNumbers | null;
+          restaurant_mode_enabled: boolean | null;
         };
         Insert: {
           id?: number;
@@ -90,6 +93,8 @@ interface Database {
           trial_started_at?: string | null;
           is_legacy_basic?: boolean | null;
           shipping_rates?: ShippingRates | null;
+          table_numbers?: TableNumbers | null;
+          restaurant_mode_enabled?: boolean | null;
         };
       };
       categories: {

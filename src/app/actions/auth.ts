@@ -4,6 +4,46 @@ import { createClient } from "@/lib/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+function mapSignInError(message: string): string {
+    if (message.includes("Invalid login credentials")) {
+        return "البريد الإلكتروني أو كلمة المرور غير صحيحة";
+    }
+    if (message.includes("Email not confirmed")) {
+        return "يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول";
+    }
+    if (
+        message.includes("fetch failed") ||
+        message.includes("Failed to fetch") ||
+        message.includes("AuthRetryableFetchError")
+    ) {
+        return "تعذر الاتصال بخادم المصادقة. تحقق من اتصال الإنترنت وحاول مرة أخرى";
+    }
+    return message;
+}
+
+export async function signInWithEmail(formData: FormData) {
+    const email = (formData.get("email") as string)?.trim();
+    const password = formData.get("password") as string;
+
+    if (!email || !password) {
+        return { error: "البريد الإلكتروني وكلمة المرور مطلوبان" };
+    }
+
+    const supabase = await createClient();
+
+    const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+    });
+
+    if (error) {
+        console.error("Email sign in error:", error.message);
+        return { error: mapSignInError(error.message) };
+    }
+
+    redirect("/dashboard");
+}
+
 export async function signInWithGoogle() {
     const supabase = await createClient();
     const origin = (await headers()).get("origin") || "http://localhost:9004";

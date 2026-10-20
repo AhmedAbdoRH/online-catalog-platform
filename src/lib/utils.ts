@@ -16,15 +16,20 @@ export function slugify(text: string) {
 }
 
 export function convertArabicNumerals(text: string): string {
-  const arabicNumerals = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
-  const englishNumerals = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-
-  let result = text;
-  for (let i = 0; i < 10; i++) {
-    result = result.replace(arabicNumerals[i], englishNumerals[i]);
-  }
-  return result;
+  if (!text || typeof text !== 'string') return '';
+  return text
+    .replace(/[٠۰]/g, '0')
+    .replace(/[١۱]/g, '1')
+    .replace(/[٢۲]/g, '2')
+    .replace(/[٣۳]/g, '3')
+    .replace(/[٤۴]/g, '4')
+    .replace(/[٥۵]/g, '5')
+    .replace(/[٦۶]/g, '6')
+    .replace(/[٧۷]/g, '7')
+    .replace(/[٨۸]/g, '8')
+    .replace(/[٩۹]/g, '9');
 }
+
 
 export function formatPrice(price: number | string | null | undefined, countryCode?: string | null) {
   if (price === null || price === undefined) return "—";

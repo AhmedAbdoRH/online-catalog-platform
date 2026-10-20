@@ -38,7 +38,10 @@ import { compressImage } from '@/lib/image-utils';
 import { convertArabicNumerals } from '@/lib/utils';
 import { UpgradeAlert } from './UpgradeAlert';
 import { ShippingRatesDialog } from './ShippingRatesDialog';
+import { TableNumbersDialog } from './TableNumbersDialog';
 import { CustomThemeControls } from './CustomThemeControls';
+import { hasConfiguredShippingRates } from '@/lib/shipping';
+import { updateRestaurantMode } from '@/app/actions/catalog';
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -103,6 +106,48 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
   const [directOrderEnabled, setDirectOrderEnabled] = useState(catalog.direct_order_enabled ?? true);
   const [showAllThemes, setShowAllThemes] = useState(false);
   const [customThemeColor, setCustomThemeColor] = useState(catalog.custom_theme_color || '#2563EB');
+  const [shippingSystemEnabled, setShippingSystemEnabled] = useState(false);
+  const [restaurantModeEnabled, setRestaurantModeEnabled] = useState(catalog.restaurant_mode_enabled ?? false);
+
+  // Check if shipping system is enabled based on configured rates
+  useEffect(() => {
+    setShippingSystemEnabled(hasConfiguredShippingRates(catalog.shipping_rates));
+  }, [catalog.shipping_rates]);
+
+  // Auto-save restaurant_mode_enabled when toggled
+  useEffect(() => {
+    const autoSaveRestaurantMode = async () => {
+      if (restaurantModeEnabled !== catalog.restaurant_mode_enabled) {
+        try {
+          const result = await updateRestaurantMode(catalog.id, restaurantModeEnabled);
+          if (result.message && result.message.includes('خطأ')) {
+            console.error('Error auto-saving restaurant_mode:', result.message);
+            toast({
+              title: 'فشل الحفظ التلقائي',
+              description: result.message,
+              variant: 'destructive',
+            });
+            // Revert on error
+            setRestaurantModeEnabled(catalog.restaurant_mode_enabled ?? false);
+          } else if (result.message && result.message.includes('تم')) {
+            toast({
+              title: 'تم الحفظ',
+              description: result.message,
+            });
+            router.refresh();
+          }
+        } catch (error) {
+          console.error('Error auto-saving restaurant_mode:', error);
+        }
+      }
+    };
+
+    const timeoutId = setTimeout(() => {
+      autoSaveRestaurantMode();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [restaurantModeEnabled, catalog.restaurant_mode_enabled, catalog.id]);
 
   // Auto-save direct_order_enabled when toggled
   useEffect(() => {
@@ -561,7 +606,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                   <FormControl>
                     <Input {...field} disabled={isSubmitting} className="bg-white text-[#1e3a5f] text-lg flex-1 min-w-0" />
                   </FormControl>
-                  <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
+                  <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold">
                     حفظ
                   </Button>
                 </div>
@@ -580,6 +625,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
               <FormItem>
                 <FormLabel>رقم الواتساب</FormLabel>
                 <div className="flex gap-2 w-full max-w-full min-w-0 flex-wrap sm:flex-nowrap" dir="ltr">
+                  <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold">
+                    حفظ
+                  </Button>
                   <div className="relative shrink-0">
                     <select
                       value={form.watch('country_code')}
@@ -597,6 +645,8 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                   <FormControl>
                     <Input
                       {...field}
+                      type="tel"
+                      inputMode="numeric"
                       onChange={(e) => {
                         const converted = convertArabicNumerals(e.target.value);
                         const cleaned = converted.replace(/[^\d]/g, '');
@@ -607,9 +657,6 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                       className="bg-white text-[#1e3a5f] text-base sm:text-lg flex-1 min-w-0 h-12 w-full"
                     />
                   </FormControl>
-                  <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
-                    حفظ
-                  </Button>
                 </div>
                 <FormDescription>
                   سيتم توجيه طلبات العملاء إلى هذا الرقم. العملة ستتغير تلقائياً حسب كود الدولة المختار.
@@ -629,7 +676,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                   <FormControl>
                     <Input {...field} disabled={isSubmitting} placeholder="شعار متجرك أو جملة ترويجية" className="bg-white text-[#1e3a5f] text-lg flex-1 min-w-0" />
                   </FormControl>
-                  <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
+                  <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold">
                     حفظ
                   </Button>
                 </div>
@@ -684,7 +731,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                     </div>
                   </FormControl>
                   {isPro && (
-                    <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
+                    <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold">
                       حفظ
                     </Button>
                   )}
@@ -805,7 +852,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
               )}
             </Button>
             {isPro && (
-              <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-8 px-4 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-bold">
+              <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-8 px-4 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold">
                 حفظ
               </Button>
             )}
@@ -863,6 +910,31 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
           catalogId={catalog.id}
           shippingRates={catalog.shipping_rates}
           disabled={isSubmitting}
+          shippingEnabled={shippingSystemEnabled}
+          onToggleEnabled={(enabled) => {
+            // Shipping is controlled by having configured rates
+            // So we just show a message to guide user
+            if (enabled) {
+              toast({
+                title: 'إضافة أسعار الشحن',
+                description: 'اضغط "إدارة الأسعار" لتفعيل نظام الشحن عن طريق إضافة أسعار المحافظات',
+              });
+            } else {
+              toast({
+                title: 'تعطيل نظام الشحن',
+                description: 'لتعطيل نظام الشحن، قم بحذف جميع أسعار المحافظات',
+              });
+            }
+          }}
+        />
+
+        {/* قسم أرقام الطاولات للمطاعم */}
+        <TableNumbersDialog
+          catalogId={catalog.id}
+          tableNumbers={catalog.table_numbers}
+          disabled={isSubmitting}
+          restaurantEnabled={restaurantModeEnabled}
+          onToggleEnabled={setRestaurantModeEnabled}
         />
 
         <div className="pt-6 border-t relative">
@@ -900,7 +972,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 disabled={!isPro || isSubmitting}
               />
               {isPro && (
-                <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-8 px-3 bg-brand-primary hover:bg-brand-primary/90 text-white text-[10px] font-bold">
+                <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-8 px-3 bg-yellow-500 hover:bg-yellow-600 text-black text-[10px] font-bold">
                   حفظ
                 </Button>
               )}
@@ -934,7 +1006,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                       <FormControl>
                         <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://..." className="bg-white/80 h-9 text-xs border-slate-200 focus:border-brand-primary text-black font-medium" />
                       </FormControl>
-                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold">حفظ</Button>
+                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-yellow-500 hover:bg-yellow-600 text-black text-[10px] font-bold">حفظ</Button>
                     </div>
                     <FormMessage className="text-[9px]" />
                   </FormItem>
@@ -954,7 +1026,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                       <FormControl>
                         <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://..." className="bg-white/80 h-9 text-xs border-slate-200 focus:border-brand-primary text-black font-medium" />
                       </FormControl>
-                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 hover:opacity-90 text-white text-[10px] font-bold">حفظ</Button>
+                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-yellow-500 hover:bg-yellow-600 text-black text-[10px] font-bold">حفظ</Button>
                     </div>
                     <FormMessage className="text-[9px]" />
                   </FormItem>
@@ -974,7 +1046,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                       <FormControl>
                         <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://..." className="bg-white/80 h-9 text-xs border-slate-200 focus:border-brand-primary text-black font-medium" />
                       </FormControl>
-                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-black hover:bg-gray-900 text-white text-[10px] font-bold">حفظ</Button>
+                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-yellow-500 hover:bg-yellow-600 text-black text-[10px] font-bold">حفظ</Button>
                     </div>
                     <FormMessage className="text-[9px]" />
                   </FormItem>
@@ -994,7 +1066,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                       <FormControl>
                         <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://..." className="bg-white/80 h-9 text-xs border-slate-200 focus:border-brand-primary text-black font-medium" />
                       </FormControl>
-                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-[#FFFC00] hover:bg-[#E6E300] text-black text-[10px] font-bold">حفظ</Button>
+                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-yellow-500 hover:bg-yellow-600 text-black text-[10px] font-bold">حفظ</Button>
                     </div>
                     <FormMessage className="text-[9px]" />
                   </FormItem>
@@ -1014,7 +1086,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                       <FormControl>
                         <Input {...field} disabled={isSubmitting} dir="ltr" placeholder="https://..." className="bg-white/80 h-9 text-xs border-slate-200 focus:border-brand-primary text-black font-medium" />
                       </FormControl>
-                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-gray-800 hover:bg-gray-900 text-white text-[10px] font-bold">حفظ</Button>
+                      <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-9 px-3 bg-yellow-500 hover:bg-yellow-600 text-black text-[10px] font-bold">حفظ</Button>
                     </div>
                     <FormMessage className="text-[9px]" />
                   </FormItem>
@@ -1024,7 +1096,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
           </div>
         </div>
 
-        <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>
+        <Button type="submit" className="w-full mt-6 bg-yellow-500 hover:bg-yellow-600 text-black font-bold" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isSubmitting ? 'جاري الحفظ...' : 'حفظ التغييرات'}
         </Button>

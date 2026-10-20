@@ -618,25 +618,16 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
                 />
 
                 {!youtubeFieldOpen ? (
-                  <button
-                    type="button"
-                    onClick={() => setYoutubeFieldOpen(true)}
-                    className="w-full flex items-center justify-between rounded-xl border border-dashed border-slate-700 bg-slate-800/30 hover:border-red-500/50 hover:bg-red-500/5 p-3.5 transition-all group text-right"
-                  >
+                  <div className="-mt-1 flex justify-end">
                     <input type="hidden" {...form.register('youtube_url')} />
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-500/10 text-red-500 group-hover:bg-red-500/20 group-hover:scale-105 transition-all">
-                        <YouTubeMark className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-200">إضافة فيديو YouTube (اختياري)</p>
-                        <p className="text-xs text-slate-400">سيظهر الفيديو تحت وصف المنتج في صفحة المتجر</p>
-                      </div>
-                    </div>
-                    <span className="text-xs font-bold text-red-400 bg-red-400/10 px-2.5 py-1 rounded-full border border-red-400/20 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setYoutubeFieldOpen(true)}
+                      className="text-xs font-bold text-red-400 bg-slate-800/80 px-2.5 py-1 rounded-full border border-red-400/20 hover:bg-red-400/10 transition-colors"
+                    >
                       + إضافة فيديو
-                    </span>
-                  </button>
+                    </button>
+                  </div>
                 ) : (
                   <FormField
                     control={form.control}
@@ -1134,7 +1125,7 @@ export function ItemForm({ catalogId, categories, item, onSuccess, onCancel, isP
             <Button
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="flex-[2] h-11 text-base font-black bg-brand-primary hover:bg-brand-primary/90 text-white shadow-lg shadow-brand-primary/20 transform active:scale-95 transition-all rounded-xl border-none"
+              className="flex-[2] h-11 text-base font-black bg-yellow-500 hover:bg-yellow-600 text-black shadow-lg shadow-yellow-500/20 transform active:scale-95 transition-all rounded-xl border-none"
             >
               {form.formState.isSubmitting ? (
                 <div className="flex items-center gap-3">

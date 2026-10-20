@@ -11,6 +11,7 @@ import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { Capacitor } from '@capacitor/core';
 import { useToast } from "@/hooks/use-toast"
 import { convertArabicNumerals } from "@/lib/utils"
+import { signInWithEmail } from "@/app/actions/auth"
 
 interface LoginFormProps {
   message: string
@@ -23,8 +24,8 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
   const router = useRouter()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
-  const [email, setEmail] = useState("01100434503@catalog.app")
-  const [password, setPassword] = useState("123456")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   const [error, setError] = useState("")
 
   useEffect(() => {
@@ -43,19 +44,14 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
     setError("")
 
     try {
-      const supabase = createClient()
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+      const formData = new FormData()
+      formData.set("email", email.trim())
+      formData.set("password", password)
 
-      if (error) {
-        setError(error.message)
-        return
+      const result = await signInWithEmail(formData)
+      if (result?.error) {
+        setError(result.error)
       }
-
-      router.push('/dashboard')
-      router.refresh()
     } catch (err: any) {
       setError(err.message || 'حدث خطأ أثناء تسجيل الدخول')
     } finally {

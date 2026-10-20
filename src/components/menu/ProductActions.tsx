@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { cn, formatPrice } from '@/lib/utils';
-import { MessageCircle, Package, Plus, ShoppingCart } from 'lucide-react';
+import { MessageCircle, Package, Plus, ShoppingCart, UtensilsCrossed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { ItemVariant } from '@/lib/types';
 import { hasConfiguredShippingRates, type ShippingRates } from '@/lib/shipping';
+import { hasConfiguredTableNumbers, type TableNumbers } from '@/lib/tables';
 import { ShareButtons } from './ShareButtons';
 import { DirectOrderForm, type DirectOrderFormData } from './DirectOrderForm';
 import { saveCustomerData } from '@/app/actions/customer';
@@ -27,6 +28,8 @@ interface ProductActionsProps {
     productId: number;
     productImage?: string | null;
     shippingRates?: ShippingRates | null;
+    tableNumbers?: TableNumbers | null;
+    restaurantMode?: boolean;
 }
 
 export function ProductActions({
@@ -43,6 +46,8 @@ export function ProductActions({
     productId,
     productImage,
     shippingRates,
+    tableNumbers,
+    restaurantMode = false,
 }: ProductActionsProps) {
     const { addItem, openCart } = useCart();
     const sortedVariants = [...variants].sort((a, b) => a.price - b.price);
@@ -61,6 +66,15 @@ export function ProductActions({
         baseDiscountPrice < basePrice;
     const currentPrice = selectedVariant ? selectedVariant.price : hasBaseDiscount ? Number(baseDiscountPrice) : basePrice;
     const shippingEnabled = hasConfiguredShippingRates(shippingRates);
+    const restaurantEnabled = restaurantMode && hasConfiguredTableNumbers(tableNumbers);
+
+    // Show DirectOrderForm if: 
+    // 1. Direct order is enabled, OR
+    // 2. Restaurant mode is enabled (even if direct order is disabled)
+    const shouldShowOrderForm = directOrderEnabled || restaurantEnabled;
+    
+    // Show inquiry button only when direct order is enabled
+    const showInquiryButton = directOrderEnabled;
 
     const getWhatsAppLink = (orderData?: DirectOrderFormData | null) => {
         if (!catalogPhone) return null;
@@ -72,6 +86,12 @@ export function ProductActions({
         message += ` من ${catalogName}`;
         message += `.\nالسعر: ${currentPrice !== null ? formatPrice(currentPrice, countryCode) : 'تواصل للسعر'}`;
 
+        // Add table number for restaurant mode
+        if (orderData?.tableNumber) {
+            message += `\n🪑 رقم الطاولة: ${orderData.tableNumber}`;
+        }
+
+        // Add shipping details for shipping mode
         if (orderData?.governorateName && typeof orderData.shippingPrice === 'number') {
             message += `\nالشحن (${orderData.governorateName}): ${formatPrice(orderData.shippingPrice, countryCode)}`;
             const total = currentPrice !== null && typeof orderData.shippingPrice === 'number'
@@ -86,7 +106,7 @@ export function ProductActions({
             message += `\n\nبيانات العميل:`;
             if (orderData.name) message += `\nالاسم: ${orderData.name}`;
             if (orderData.phone) message += `\nرقم الهاتف: ${orderData.phone}`;
-            if (orderData.address) message += `\nالعنوان: ${orderData.address}`;
+            if (orderData.address) message += `\n${restaurantEnabled ? 'ملاحظات' : 'العنوان'}: ${orderData.address}`;
             if (orderData.governorateName) message += `\nالمحافظة: ${orderData.governorateName}`;
         }
 
@@ -169,7 +189,7 @@ export function ProductActions({
 
             <div className="flex flex-wrap gap-3">
                 {whatsappLink ? (
-                    directOrderEnabled ? (
+                    shouldShowOrderForm ? (
                         <Button
                             onClick={() => setShowDirectOrderDialog(true)}
                             className="h-12 flex-1 rounded-full bg-[#25D366] text-sm font-semibold shadow-[0_18px_40px_rgba(37,211,102,0.35)] hover:bg-[#1fb55b]"
@@ -208,7 +228,10 @@ export function ProductActions({
                                 image_url: productImage || undefined,
                             }, 1);
                         } else {
-                            window.open(whatsappLink, '_blank');
+                            const link = whatsappLink;
+                            if (link) {
+                                window.open(link, '_blank');
+                            }
                         }
                         openCart();
                     }}
@@ -227,15 +250,26 @@ export function ProductActions({
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
-                            <Package className="h-5 w-5" />
-                            بيانات التوصيل
+                            {restaurantEnabled ? (
+                                <>
+                                    <UtensilsCrossed className="h-5 w-5" />
+                                    اختر رقم الطاولة
+                                </>
+                            ) : (
+                                <>
+                                    <Package className="h-5 w-5" />
+                                    بيانات التوصيل
+                                </>
+                            )}
                         </DialogTitle>
                     </DialogHeader>
                     <DirectOrderForm
                         onSubmit={handleDirectOrderSubmit}
-                        onInquiry={handleInquiry}
-                        subtotal={shippingEnabled ? currentPrice : undefined}
+                        onInquiry={showInquiryButton ? handleInquiry : undefined}
+                        subtotal={shippingEnabled && currentPrice !== null ? currentPrice : undefined}
                         shippingRates={shippingEnabled ? shippingRates : undefined}
+                        tableNumbers={restaurantEnabled ? tableNumbers : undefined}
+                        restaurantMode={restaurantEnabled}
                         countryCode={countryCode}
                     />
                 </DialogContent>

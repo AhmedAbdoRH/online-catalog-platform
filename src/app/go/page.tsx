@@ -10,6 +10,7 @@ import { Capacitor } from '@capacitor/core';
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Store, Phone, ChevronDown } from "lucide-react";
+import { convertArabicNumerals } from "@/lib/utils";
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -43,9 +44,11 @@ function GoPageContent() {
       const supabase = createClient();
 
       if (isSignup) {
-        localStorage.setItem('pendingStoreName', storeName);
-        localStorage.setItem('pendingWhatsapp', selectedCountry.code + whatsapp);
-        localStorage.setItem('pendingStoreSlug', whatsapp.replace(/[^\d]/g, ''));
+        const cleanPhone = convertArabicNumerals(whatsapp).replace(/[^\d]/g, '');
+        localStorage.setItem('pendingStoreName', storeName.trim());
+        localStorage.setItem('pendingWhatsapp', selectedCountry.code + cleanPhone);
+        localStorage.setItem('pendingWhatsApp', selectedCountry.code + cleanPhone);
+        localStorage.setItem('pendingStoreSlug', cleanPhone);
       }
 
       if (Capacitor.isNativePlatform()) {
@@ -111,9 +114,34 @@ function GoPageContent() {
                     {countries.map((c) => <option key={c.code} value={c.code} className="bg-[#1a1a1a]">{c.flag} {c.code}</option>)}
                   </select>
                 </div>
-                <Input placeholder="رقم الواتساب" className="h-14 pr-4 border-0 bg-transparent text-right text-white" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value.replace(/[^\d]/g, ''))} />
+                <Input
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="رقم الواتساب"
+                  className="h-14 pr-4 border-0 bg-transparent text-right text-white font-mono"
+                  value={whatsapp}
+                  onChange={(e) => {
+                    const converted = convertArabicNumerals(e.target.value);
+                    setWhatsapp(converted.replace(/[^\d]/g, ''));
+                  }}
+                />
               </div>
-              <Button onClick={() => storeName && whatsapp ? setStep('registration') : toast({ variant: "destructive", title: "بيانات ناقصة", description: "اسم المتجر ورقم الواتساب مطلوب" })} className="w-full h-14 bg-[#2eb872] hover:bg-[#25965d] text-[#05110d] font-bold text-xl rounded-xl">
+              <Button
+                onClick={() => {
+                  const cleanPhone = convertArabicNumerals(whatsapp).replace(/[^\d]/g, '');
+                  if (storeName.trim() && cleanPhone) {
+                    setWhatsapp(cleanPhone);
+                    setStep('registration');
+                  } else {
+                    toast({
+                      variant: "destructive",
+                      title: "بيانات ناقصة",
+                      description: "اسم المتجر ورقم الواتساب مطلوب"
+                    });
+                  }
+                }}
+                className="w-full h-14 bg-[#2eb872] hover:bg-[#25965d] text-[#05110d] font-bold text-xl rounded-xl"
+              >
                 أنشئ متجرك الآن ✨
               </Button>
               <div className="pt-8 border-t border-gray-800 space-y-6">

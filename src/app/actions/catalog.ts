@@ -2,10 +2,12 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { normalizeShippingRatesInput } from "@/lib/shipping";
+import { normalizeTableNumbers } from "@/lib/tables";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { buildCustomThemeTokens, detectCustomThemeMode, isCustomThemeColor } from "@/lib/custom-theme";
+import { convertArabicNumerals } from "@/lib/utils";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -110,7 +112,7 @@ export async function checkCatalogName(name: string): Promise<boolean> {
   const { data, error } = await supabase
     .from('catalogs')
     .select('name')
-    .eq('name', name)
+    .eq('name', convertArabicNumerals(name).trim())
     .single();
 
   return !data;
@@ -127,11 +129,11 @@ export async function createCatalog(prevState: any, formData: FormData) {
   const logoFile = formData.get('logo');
 
   const rawWhatsappCreate = formData.get('whatsapp_number');
-  const whatsappCreateStr = typeof rawWhatsappCreate === 'string' ? rawWhatsappCreate.trim() : '';
+  const whatsappCreateStr = typeof rawWhatsappCreate === 'string' ? convertArabicNumerals(rawWhatsappCreate).trim() : '';
   const whatsappCreateValidated = whatsappCreateStr ? whatsappCreateStr : undefined;
 
   const validatedFields = catalogSchema.safeParse({
-    name: (formData.get('name') as string || ''),
+    name: convertArabicNumerals((formData.get('name') as string || '')).trim(),
     display_name: (formData.get('display_name') as string || ''),
     whatsapp_number: whatsappCreateValidated,
     slogan: (formData.get('slogan') as string || ''),
@@ -255,7 +257,7 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   const coverFile = formData.get('cover');
   const rawWhatsappUpdate = formData.get('whatsapp_number');
   const whatsappUpdateCandidate = typeof rawWhatsappUpdate === 'string' && rawWhatsappUpdate.trim()
-    ? rawWhatsappUpdate.trim()
+    ? convertArabicNumerals(rawWhatsappUpdate).trim()
     : null;
 
   // Determine the final WhatsApp number to use:
@@ -439,4 +441,92 @@ export async function startCatalogFreeTrial(catalogId: number) {
 
   revalidatePath('/dashboard', 'layout');
   return { success: true };
+}
+
+export async function updateTableNumbers(catalogId: number, rawTableNumbers: unknown) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, message: 'غير مصرح به' };
+  }
+
+  if (!Number.isInteger(catalogId) || catalogId <= 0) {
+    return { success: false, message: 'معرف الكتالوج غير صالح' };
+  }
+
+  const { tableNumbers, errors } = normalizeTableNumbers(rawTableNumbers);
+  if (errors.length > 0) {
+    return { success: false, message: errors[0] };
+  }
+
+  const { data: catalog, error: catalogError } = await supabase
+    .from('catalogs')
+    .select('id, name')
+    .eq('id', catalogId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (catalogError || !catalog) {
+    return { success: false, message: 'الكتالوج غير موجود أو لا تملك صلاحية تعديله' };
+  }
+
+  const { error: dbError } = await supabase
+    .from('catalogs')
+    .update({ table_numbers: tableNumbers })
+    .match({ id: catalogId, user_id: user.id });
+
+  if (dbError) {
+    console.error('Table numbers update error:', dbError);
+    return { success: false, message: `فشل حفظ أرقام الطاولات: ${dbError.message}` };
+  }
+
+  revalidatePath('/dashboard', 'layout');
+  revalidatePath('/dashboard/settings', 'page');
+  revalidatePath(`/${catalog.name}`);
+
+  return { success: true, message: 'تم حفظ أرقام الطاولات بنجاح' };
+}
+
+export async function updateRestaurantMode(catalogId: number, enabled: boolean) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, message: 'غير مصرح به' };
+  }
+
+  if (!Number.isInteger(catalogId) || catalogId <= 0) {
+    return { success: false, message: 'معرف الكتالوج غير صالح' };
+  }
+
+  const { data: catalog, error: catalogError } = await supabase
+    .from('catalogs')
+    .select('id, name')
+    .eq('id', catalogId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (catalogError || !catalog) {
+    return { success: false, message: 'الكتالوج غير موجود أو لا تملك صلاحية تعديله' };
+  }
+
+  const { error: dbError } = await supabase
+    .from('catalogs')
+    .update({ restaurant_mode_enabled: enabled })
+    .match({ id: catalogId, user_id: user.id });
+
+  if (dbError) {
+    console.error('Restaurant mode update error:', dbError);
+    return { success: false, message: `فشل تحديث نظام المطعم: ${dbError.message}` };
+  }
+
+  revalidatePath('/dashboard', 'layout');
+  revalidatePath('/dashboard/settings', 'page');
+  revalidatePath(`/${catalog.name}`);
+
+  return { 
+    success: true, 
+    message: enabled ? 'تم تفعيل نظام المطعم/الكافيه' : 'تم تعطيل نظام المطعم/الكافيه' 
+  };
 }

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createCatalog, checkCatalogName } from '@/app/actions/catalog';
 import { Loader2, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { slugify } from '@/lib/utils';
+import { slugify, convertArabicNumerals } from '@/lib/utils';
 import { OnboardingFormSimple } from './OnboardingFormSimple';
 
 export function AutoCatalogCreator({
@@ -24,23 +24,26 @@ export function AutoCatalogCreator({
 
     const handleCreateCatalog = useCallback(async (displayName: string, slug: string, whatsapp: string) => {
         setIsCreating(true);
+        const cleanSlug = convertArabicNumerals(slug).replace(/[^\d]/g, '');
+        const cleanWhatsapp = convertArabicNumerals(whatsapp).replace(/[^\d+]/g, '');
+
         const formData = new FormData();
-        formData.append('display_name', displayName);
-        formData.append('name', slug);
+        formData.append('display_name', displayName.trim());
+        formData.append('name', cleanSlug);
         // Extract country code if present, otherwise default to +20
         let countryCode = '+20';
-        if (whatsapp.startsWith('+966')) countryCode = '+966';
-        else if (whatsapp.startsWith('+971')) countryCode = '+971';
-        else if (whatsapp.startsWith('+212')) countryCode = '+212';
-        else if (whatsapp.startsWith('+20')) countryCode = '+20';
+        if (cleanWhatsapp.startsWith('+966')) countryCode = '+966';
+        else if (cleanWhatsapp.startsWith('+971')) countryCode = '+971';
+        else if (cleanWhatsapp.startsWith('+212')) countryCode = '+212';
+        else if (cleanWhatsapp.startsWith('+20')) countryCode = '+20';
 
         formData.append('country_code', countryCode);
 
         // Ensure whatsapp is properly saved
-        if (!whatsapp.startsWith('+')) {
-            formData.set('whatsapp_number', countryCode + whatsapp);
+        if (!cleanWhatsapp.startsWith('+')) {
+            formData.set('whatsapp_number', countryCode + cleanWhatsapp.replace(/[^\d]/g, ''));
         } else {
-            formData.set('whatsapp_number', whatsapp);
+            formData.set('whatsapp_number', cleanWhatsapp);
         }
 
         try {

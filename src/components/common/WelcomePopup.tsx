@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
+import { convertArabicNumerals } from '@/lib/utils';
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -25,7 +26,7 @@ export function WelcomePopup() {
   const [slugError, setSlugError] = useState('');
 
   // Generate slug from phone number
-  const generatedSlug = phoneNumber.replace(/[^0-9]/g, '');
+  const generatedSlug = convertArabicNumerals(phoneNumber).replace(/[^0-9]/g, '');
 
   useEffect(() => {
     const hasSeenPopup = localStorage.getItem('hasSeenWelcomePopup');
@@ -80,7 +81,9 @@ export function WelcomePopup() {
   };
 
   const handleReserveName = () => {
-    if (storeName.trim().length >= 2 && generatedSlug.length >= 7 && isSlugAvailable) {
+    const cleanPhone = convertArabicNumerals(phoneNumber).replace(/[^0-9]/g, '');
+    if (storeName.trim().length >= 2 && cleanPhone.length >= 7 && isSlugAvailable) {
+      setPhoneNumber(cleanPhone);
       setStage('confirm');
     }
   };
@@ -90,10 +93,11 @@ export function WelcomePopup() {
     if (storeName.trim()) {
       localStorage.setItem('pendingStoreName', storeName.trim());
     }
-    if (generatedSlug) {
-      localStorage.setItem('pendingStoreSlug', generatedSlug);
+    const cleanPhone = convertArabicNumerals(phoneNumber).replace(/[^0-9]/g, '');
+    if (cleanPhone) {
+      localStorage.setItem('pendingStoreSlug', cleanPhone);
     }
-    const fullPhone = selectedCountry.code + phoneNumber;
+    const fullPhone = selectedCountry.code + cleanPhone;
     localStorage.setItem('pendingWhatsApp', fullPhone);
     localStorage.setItem('hasSeenWelcomePopup', 'true');
   };
@@ -181,9 +185,13 @@ export function WelcomePopup() {
                       <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         type="tel"
+                        inputMode="numeric"
                         placeholder="رقم الواتساب"
                         value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, ''))}
+                        onChange={(e) => {
+                          const converted = convertArabicNumerals(e.target.value);
+                          setPhoneNumber(converted.replace(/[^0-9]/g, ''));
+                        }}
                         onKeyDown={(e) => e.key === 'Enter' && handleReserveName()}
                         className="h-11 pl-9 border-0 bg-transparent text-white placeholder:text-white/50 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 font-mono text-sm"
                         dir="ltr"

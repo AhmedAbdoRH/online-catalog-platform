@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { DirectOrderForm, type DirectOrderFormData } from '@/components/menu/DirectOrderForm'
 import { saveCustomerData } from '@/app/actions/customer'
 import { hasConfiguredShippingRates } from '@/lib/shipping'
+import { hasConfiguredTableNumbers } from '@/lib/tables'
 
 export function CartDrawer({ catalog }: { catalog: Catalog }) {
   const { items, total, isOpen, closeCart, removeItem, updateQuantity, clear } = useCart()
@@ -21,6 +22,13 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
   const canOrder = items.length > 0 && !!whatsappNumber
   const directOrderEnabled = catalog.direct_order_enabled ?? true
   const shippingEnabled = hasConfiguredShippingRates(catalog.shipping_rates)
+  const restaurantMode = catalog.restaurant_mode_enabled ?? false
+  const restaurantEnabled = restaurantMode && hasConfiguredTableNumbers(catalog.table_numbers)
+
+  // Show DirectOrderForm if: 
+  // 1. Direct order is enabled, OR
+  // 2. Restaurant mode is enabled (even if direct order is disabled)
+  const shouldShowOrderForm = directOrderEnabled || restaurantEnabled
 
   const [showDirectOrderDialog, setShowDirectOrderDialog] = useState(false)
 
@@ -29,6 +37,12 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
     const header = `طلب جديد من كتالوج ${catalog.display_name || catalog.name}:\n\n`
     let fullMessage = `${header}${lines.join('\n')}`
 
+    // Add table number for restaurant mode
+    if (orderData?.tableNumber) {
+      fullMessage += `\n\n🪑 رقم الطاولة: ${orderData.tableNumber}`
+    }
+
+    // Add shipping details for shipping mode
     if (orderData?.governorateName && typeof orderData.shippingPrice === 'number') {
       fullMessage += `\n\nقيمة المنتجات: ${formatPrice(total, catalog.country_code)}`
       fullMessage += `\nالشحن (${orderData.governorateName}): ${formatPrice(orderData.shippingPrice, catalog.country_code)}`
@@ -43,7 +57,7 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
       fullMessage += `\n━━━━━━━━━━━━━━━━━━`
       if (orderData.name) fullMessage += `\n👤 الاسم: ${orderData.name}`
       if (orderData.phone) fullMessage += `\n📱 رقم الهاتف: ${orderData.phone}`
-      if (orderData.address) fullMessage += `\n📍 العنوان: ${orderData.address}`
+      if (orderData.address) fullMessage += `\n📍 ${restaurantEnabled ? 'ملاحظات' : 'العنوان'}: ${orderData.address}`
       if (orderData.governorateName) fullMessage += `\n🗺️ المحافظة: ${orderData.governorateName}`
       fullMessage += `\n━━━━━━━━━━━━━━━━━━`
     }
@@ -78,7 +92,7 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
   }
 
   const handleOrderClick = () => {
-    if (directOrderEnabled) {
+    if (shouldShowOrderForm) {
       setShowDirectOrderDialog(true)
     } else {
       window.open(getWhatsAppLink(), '_blank')
@@ -157,9 +171,14 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
           <span className="text-sm text-muted-foreground font-bold italic">الإجمالي</span>
           <span className="text-xl font-black text-brand-accent drop-shadow-sm">{formatPrice(total, catalog.country_code)}</span>
         </div>
-        {shippingEnabled && (
+        {shippingEnabled && !restaurantEnabled && (
           <p className="mt-2 text-center text-[11px] text-muted-foreground">
             سيتم إضافة سعر الشحن حسب المحافظة عند إتمام الطلب.
+          </p>
+        )}
+        {restaurantEnabled && (
+          <p className="mt-2 text-center text-[11px] text-muted-foreground">
+            🪑 يرجى اختيار رقم الطاولة عند إتمام الطلب.
           </p>
         )}
         <SheetFooter className="mt-3">
@@ -182,7 +201,7 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
-              بيانات التوصيل
+              {restaurantEnabled ? 'بيانات الطلب' : 'بيانات التوصيل'}
             </DialogTitle>
           </DialogHeader>
           <DirectOrderForm
@@ -190,6 +209,8 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
             onInquiry={handleInquiry}
             subtotal={shippingEnabled ? total : undefined}
             shippingRates={shippingEnabled ? catalog.shipping_rates : undefined}
+            tableNumbers={restaurantEnabled ? catalog.table_numbers : undefined}
+            restaurantMode={restaurantEnabled}
             countryCode={catalog.country_code}
           />
         </DialogContent>

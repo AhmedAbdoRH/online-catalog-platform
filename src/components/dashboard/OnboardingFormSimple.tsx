@@ -50,7 +50,7 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
   const [slugError, setSlugError] = useState('');
 
   // Generate slug from phone number (consistent with WelcomePopup logic)
-  const generatedSlug = phoneNumber.replace(/[^0-9]/g, '');
+  const generatedSlug = convertArabicNumerals(phoneNumber).replace(/[^0-9]/g, '');
 
   const checkSlugAvailability = useCallback(async (slug: string) => {
     if (!slug || slug.length < 7) {
@@ -87,11 +87,12 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (storeName.trim().length >= 2 && generatedSlug.length >= 7 && isSlugAvailable === true) {
+    const cleanPhone = convertArabicNumerals(phoneNumber).replace(/[^0-9]/g, '');
+    if (storeName.trim().length >= 2 && cleanPhone.length >= 7 && isSlugAvailable === true) {
       onSubmit({
         displayName: storeName.trim(),
-        slug: generatedSlug,
-        whatsapp: selectedCountry.code + phoneNumber,
+        slug: cleanPhone,
+        whatsapp: selectedCountry.code + cleanPhone,
       });
     }
   };
@@ -163,8 +164,7 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
                   type="tel"
-                  inputMode="tel"
-                  pattern="[0-9]*"
+                  inputMode="numeric"
                   placeholder="رقم الواتساب"
                   value={phoneNumber}
                   onChange={(e) => {
@@ -204,7 +204,7 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
               <Button
                 type="submit"
                 disabled={!canProceed}
-                className="w-full h-14 md:h-16 bg-[#4ade80] hover:bg-[#22c55e] text-[#1a3a4a] font-black text-lg md:text-xl rounded-xl md:rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 shadow-xl shadow-[#4ade80]/20"
+                className="w-full h-14 md:h-16 bg-yellow-500 hover:bg-yellow-600 text-black font-black text-lg md:text-xl rounded-xl md:rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 shadow-xl shadow-yellow-500/20"
               >
                 {isSubmitting ? (
                   <Loader2 className="h-6 w-6 md:h-7 md:w-7 ml-3 animate-spin" />

@@ -3,6 +3,16 @@ main = ".open-next/worker.js"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
+[observability]
+enabled = true
+head_sampling_rate = 0.1
+
+# Cache eligible public responses before the Worker runs. The middleware marks
+# every non-storefront response private/no-store and Varies public storefront
+# shells by Host and Cookie to prevent cross-tenant or session cache leaks.
+[cache]
+enabled = true
+
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from 'react';
-import { Truck, MapPinned, Loader2 } from 'lucide-react';
+import { Truck, MapPinned, Loader2, Power } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -56,10 +56,14 @@ export function ShippingRatesDialog({
   catalogId,
   shippingRates,
   disabled = false,
+  shippingEnabled = false,
+  onToggleEnabled,
 }: {
   catalogId: number;
   shippingRates: ShippingRates | null | undefined;
   disabled?: boolean;
+  shippingEnabled?: boolean;
+  onToggleEnabled?: (enabled: boolean) => void;
 }) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -130,29 +134,46 @@ export function ShippingRatesDialog({
 
   return (
     <div className="pt-6 border-t">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 flex-col">
-          <Label className="text-base font-semibold">أسعار الشحن حسب المحافظة</Label>
-          <p className="text-[11px] leading-tight text-muted-foreground">
-            حدد سعر الشحن لكل محافظة مصرية. الخانة الفارغة تعني أن الشحن غير متاح لهذه المحافظة.
-          </p>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex min-w-0 flex-col">
+            <Label className="text-base font-semibold">أسعار الشحن حسب المحافظة</Label>
+            <p className="text-[11px] leading-tight text-muted-foreground">
+              حدد سعر الشحن لكل محافظة مصرية. الخانة الفارغة تعني أن الشحن غير متاح لهذه المحافظة.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant={shippingEnabled ? "default" : "outline"}
+              size="sm"
+              onClick={() => onToggleEnabled?.(!shippingEnabled)}
+              disabled={disabled}
+              className={`gap-2 ${shippingEnabled ? 'bg-green-600 hover:bg-green-700' : ''}`}
+            >
+              <Power className="h-3.5 w-3.5" />
+              {shippingEnabled ? 'مفعّل' : 'معطّل'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(true)}
+              disabled={disabled || !shippingEnabled}
+              className="gap-2"
+            >
+              <Truck className="h-4 w-4" />
+              إدارة الأسعار
+            </Button>
+          </div>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => setOpen(true)}
-          disabled={disabled}
-          className="gap-2"
-        >
-          <Truck className="h-4 w-4" />
-          إدارة الأسعار
-        </Button>
       </div>
 
-      <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-        <MapPinned className="h-4 w-4 text-brand-primary" />
-        <span>{configuredCount} من {EGYPT_GOVERNORATES.length} محافظة لها سعر شحن محدد.</span>
-      </div>
+      {shippingEnabled && (
+        <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+          <MapPinned className="h-4 w-4 text-brand-primary" />
+          <span>{configuredCount} من {EGYPT_GOVERNORATES.length} محافظة لها سعر شحن محدد.</span>
+        </div>
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="w-[calc(100vw-2rem)] max-w-2xl p-0">
@@ -202,7 +223,7 @@ export function ShippingRatesDialog({
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="flex-1"
+              className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black font-bold"
             >
               {isSaving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
               حفظ أسعار الشحن

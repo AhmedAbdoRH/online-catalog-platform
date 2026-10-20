@@ -11,7 +11,7 @@ export function StartTrialButton() {
     <Button
       type="submit"
       disabled={pending}
-      className="w-full bg-brand-primary hover:bg-brand-primary/90 text-white font-black h-12 rounded-xl text-base shadow-lg shadow-brand-primary/25 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+      className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-black h-12 rounded-xl text-base shadow-lg shadow-yellow-500/25 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
     >
       {pending ? (
         <>
