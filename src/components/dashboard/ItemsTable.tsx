@@ -8,10 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { Category, MenuItemWithDetails } from '@/lib/types';
+import type { Category, MenuItemWithDetails, BusinessType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { EyeOff, MoreHorizontal, Package, Share2 } from 'lucide-react';
 import { cn, formatPrice } from '@/lib/utils';
+import { getItemUrl } from '@/lib/store-urls';
 
 import {
   DropdownMenu,
@@ -43,9 +44,11 @@ interface ItemsTableProps {
   isPro: boolean;
   categories: Category[];
   countryCode?: string | null;
+  /** Business segment of the catalog — decides the storefront domain */
+  businessType?: BusinessType;
 }
 
-function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode }: { item: ItemWithCategory, catalogId: number, catalogName: string, isPro: boolean, categories: Category[], countryCode?: string | null }) {
+function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode, businessType }: { item: ItemWithCategory, catalogId: number, catalogName: string, isPro: boolean, categories: Category[], countryCode?: string | null, businessType?: BusinessType }) {
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -150,7 +153,7 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
             title="نسخ رابط المنتج"
             onClick={(e) => {
               e.stopPropagation();
-              const url = `https://${catalogName}.tagr-online.com/item/${item.id}`;
+              const url = getItemUrl(catalogName, item.id, businessType);
               navigator.clipboard.writeText(url);
               toast({ title: 'نجاح', description: 'تم نسخ رابط المنتج.' });
             }}
@@ -220,7 +223,7 @@ function ItemRow({ item, catalogId, catalogName, isPro, categories, countryCode 
   )
 }
 
-export function ItemsTable({ items, catalogId, catalogName, isPro, categories, countryCode }: ItemsTableProps) {
+export function ItemsTable({ items, catalogId, catalogName, isPro, categories, countryCode, businessType }: ItemsTableProps) {
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-white/[0.02] py-16 px-4 text-center max-w-lg mx-auto my-8 relative overflow-hidden">
@@ -268,7 +271,7 @@ export function ItemsTable({ items, catalogId, catalogName, isPro, categories, c
         </TableHeader>
         <TableBody>
           {items.map((item) => (
-            <ItemRow key={item.id} item={item} catalogId={catalogId} catalogName={catalogName} isPro={isPro} categories={categories} countryCode={countryCode} />
+            <ItemRow key={item.id} item={item} catalogId={catalogId} catalogName={catalogName} isPro={isPro} categories={categories} countryCode={countryCode} businessType={businessType} />
           ))}
         </TableBody>
       </Table>

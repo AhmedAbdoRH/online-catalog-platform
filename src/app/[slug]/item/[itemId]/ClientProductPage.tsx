@@ -18,6 +18,7 @@ import { CartProvider } from "@/components/cart/CartContext";
 import { StoreTheme } from "@/components/theme/StoreTheme";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CartButton } from "@/components/cart/CartButton";
+import { getItemUrl } from "@/lib/store-urls";
 import {
     FREE_PLAN_MAX_CATEGORIES,
     FREE_PLAN_MAX_PRODUCTS,
@@ -265,7 +266,7 @@ export default function ClientProductPage() {
     if (!data) return <div className="min-h-screen flex items-center justify-center">المنتج غير موجود</div>;
 
     const { catalog, product, categoryName, related, images } = data;
-    const productUrl = `https://${catalog.name}.tagr-online.com/item/${product.id}`;
+    const productUrl = getItemUrl(catalog.name, product.id, catalog.business_type);
     const youtubeEmbedUrl = product.youtube_url
         ? getYouTubeEmbedUrl(product.youtube_url)
         : null;

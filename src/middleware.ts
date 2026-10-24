@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/middleware'
 import { isSystemPath, isAnonymousStorefrontRequest, setStorefrontCacheHeaders } from '@/lib/storefront-cache'
+import { ROOT_DOMAINS, RESERVED_SUBDOMAINS } from '@/lib/store-urls'
 
 // Extract subdomain from hostname if present
 function getSubdomain(hostname: string): string | null {
@@ -21,19 +22,20 @@ function getSubdomain(hostname: string): string | null {
     return null
   }
 
-  // Main domain check
-  const rootDomain = 'tagr-online.com'
+  // Main domain checks — storefronts are served under both root domains
+  // (stores on tagr-online.com, restaurants on online-catalog.net).
+  for (const rootDomain of ROOT_DOMAINS) {
+    // Handle direct access to the root domain (apex or www)
+    if (host === rootDomain || host === `www.${rootDomain}`) {
+      return null
+    }
 
-  // Handle direct access to root domain
-  if (host === rootDomain || host === `www.${rootDomain}`) {
-    return null
-  }
-
-  // Handle subdomains
-  if (host.endsWith(`.${rootDomain}`)) {
-    const sub = host.replace(`.${rootDomain}`, '')
-    if (sub && sub !== 'www' && sub !== 'app' && sub !== 'admin' && sub !== 'api') {
-      return sub
+    // Handle subdomains on any known root domain
+    if (host.endsWith(`.${rootDomain}`)) {
+      const sub = host.replace(`.${rootDomain}`, '')
+      if (sub && !RESERVED_SUBDOMAINS.includes(sub as typeof RESERVED_SUBDOMAINS[number])) {
+        return sub
+      }
     }
   }
 
@@ -94,7 +96,8 @@ export async function middleware(request: NextRequest) {
     const isSys = isSystemPath(url.pathname);
 
     // 2. Subdomain Routing logic:
-    // If request comes from storename.tagr-online.com and it's NOT a system path,
+    // If request comes from storename.tagr-online.com or
+    // storename.online-catalog.net and it's NOT a system path,
     // rewrite internally to /storename or /storename/path so the dynamic
     // [slug] route is the single source of truth for storefront rendering.
     if (subdomain && !isSys) {
@@ -109,7 +112,8 @@ export async function middleware(request: NextRequest) {
         },
       });
 
-      // Host-based storefront URLs (e.g. merchant.tagr-online.com/) must vary
+      // Host-based storefront URLs (e.g. merchant.tagr-online.com/ or
+      // merchant.online-catalog.net/) must vary
       // by hostname because Cloudflare's default Worker cache key omits it.
       setStorefrontCacheHeaders(response.headers, isAnonymousStorefrontRequest(request));
 

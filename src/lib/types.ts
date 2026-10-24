@@ -1,6 +1,14 @@
 import type { ShippingRates } from './shipping';
 import type { TableNumbers } from './tables';
 
+/**
+ * Business segment of a catalog owner.
+ * - 'store'      → متجر (default for every existing catalog)
+ * - 'restaurant' → مطعم / كافيه
+ * Chosen once at signup, then used to gate segment-specific behaviour.
+ */
+export type BusinessType = 'store' | 'restaurant';
+
 // Temporary Database type definition
 interface Database {
   public: {
@@ -36,6 +44,7 @@ interface Database {
           shipping_rates: ShippingRates | null;
           table_numbers: TableNumbers | null;
           restaurant_mode_enabled: boolean | null;
+          business_type: BusinessType;
         };
         Insert: {
           id?: number;
@@ -64,6 +73,9 @@ interface Database {
           trial_started_at?: string | null;
           is_legacy_basic?: boolean | null;
           shipping_rates?: ShippingRates | null;
+          table_numbers?: TableNumbers | null;
+          restaurant_mode_enabled?: boolean | null;
+          business_type?: BusinessType;
         };
         Update: {
           id?: number;
@@ -95,6 +107,7 @@ interface Database {
           shipping_rates?: ShippingRates | null;
           table_numbers?: TableNumbers | null;
           restaurant_mode_enabled?: boolean | null;
+          business_type?: BusinessType;
         };
       };
       categories: {

@@ -105,6 +105,7 @@ const catalogSchema = z.object({
   whatsapp_number: z.string().optional()
     .refine((val) => !val || /^\+?[0-9]{7,15}$/.test(val), 'رقم الهاتف غير صحيح'),
   theme: z.string().optional(),
+  business_type: z.enum(['store', 'restaurant']).optional().default('store'),
 });
 
 export async function checkCatalogName(name: string): Promise<boolean> {
@@ -140,6 +141,7 @@ export async function createCatalog(prevState: any, formData: FormData) {
     logo: logoFile instanceof File && logoFile.size > 0 ? logoFile : undefined,
     cover: formData.get('cover') instanceof File && (formData.get('cover') as File).size > 0 ? formData.get('cover') as File : undefined,
     country_code: (formData.get('country_code') as string) || '+20',
+    business_type: (formData.get('business_type') as string) || 'store',
   });
 
   if (!validatedFields.success) {
@@ -148,7 +150,7 @@ export async function createCatalog(prevState: any, formData: FormData) {
     return { message: firstError };
   }
 
-  const { name, display_name, logo, cover, whatsapp_number, slogan, country_code } = validatedFields.data;
+  const { name, display_name, logo, cover, whatsapp_number, slogan, country_code, business_type } = validatedFields.data;
 
   // Re-check uniqueness on the server to be safe
   const isAvailable = await checkCatalogName(name);
@@ -210,6 +212,9 @@ export async function createCatalog(prevState: any, formData: FormData) {
     logo_url: publicUrl,
     cover_url: coverPublicUrl,
     country_code: country_code || '+20',
+    business_type,
+    // Restaurant owners get restaurant mode (table numbers) active from day one
+    restaurant_mode_enabled: business_type === 'restaurant',
   });
 
   if (dbError) {

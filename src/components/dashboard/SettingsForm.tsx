@@ -36,6 +36,7 @@ import { ProUpgradeButton } from './ProUpgradeButton';
 import { Switch } from '../ui/switch';
 import { compressImage } from '@/lib/image-utils';
 import { convertArabicNumerals } from '@/lib/utils';
+import { getStoreUrl, getDomainLabel } from '@/lib/store-urls';
 import { UpgradeAlert } from './UpgradeAlert';
 import { ShippingRatesDialog } from './ShippingRatesDialog';
 import { TableNumbersDialog } from './TableNumbersDialog';
@@ -325,7 +326,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
   // Live preview of the final store URL based on the slug typed by the user
   const watchedName = useWatch({ control: form.control, name: 'name' });
   const previewSlug = (watchedName || catalog.name || '').trim().toLowerCase().replace(/\s+/g, '-');
-  const finalStoreUrl = `https://${previewSlug || 'your-store'}.tagr-online.com`;
+  const finalStoreUrl = getStoreUrl(previewSlug || 'your-store', catalog.business_type);
   const [copied, setCopied] = useState(false);
 
   const handleCopyPreviewUrl = async () => {
@@ -753,13 +754,13 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                   </button>
                   <span className="text-[#38bdf8] shrink-0" aria-hidden="true">🔗</span>
                   <span className="font-extrabold text-[#38bdf8] break-all text-sm md:text-base drop-shadow-[0_0_6px_rgba(56,189,248,0.55)]">{previewSlug || 'your-store'}</span>
-                  <span className="text-sm md:text-base text-muted-foreground">.tagr-online.com</span>
+                  <span className="text-sm md:text-base text-muted-foreground">{getDomainLabel(catalog.business_type)}</span>
                 </div>
 
                 <FormDescription>
                   {isPro
                     ? 'يمكنك تغيير رابط المتجر الخاص بك.'
-                    : 'احصل على رابط احترافي مخصص (مثل: brand.tagr-online.com) بدلاً من رقم الهاتف.'
+                    : `احصل على رابط احترافي مخصص (مثل: brand${getDomainLabel(catalog.business_type)}) بدلاً من رقم الهاتف.`
                   }
                 </FormDescription>
                 <FormMessage />

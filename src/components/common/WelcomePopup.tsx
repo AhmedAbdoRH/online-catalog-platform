@@ -7,6 +7,9 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { convertArabicNumerals } from '@/lib/utils';
+import { BusinessTypeSelector } from './BusinessTypeSelector';
+import type { BusinessType } from '@/lib/types';
+import { getDomainLabel } from '@/lib/store-urls';
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -20,6 +23,7 @@ export function WelcomePopup() {
   const [storeName, setStoreName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [businessType, setBusinessType] = useState<BusinessType>('store');
   const [stage, setStage] = useState<'input' | 'confirm'>('input');
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null);
@@ -99,6 +103,7 @@ export function WelcomePopup() {
     }
     const fullPhone = selectedCountry.code + cleanPhone;
     localStorage.setItem('pendingWhatsApp', fullPhone);
+    localStorage.setItem('pendingBusinessType', businessType);
     localStorage.setItem('hasSeenWelcomePopup', 'true');
   };
 
@@ -203,16 +208,24 @@ export function WelcomePopup() {
                         <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#4ade80]" />
                       )}
                       {!isCheckingSlug && isSlugAvailable === false && (
-                        <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-red-400" />
-                      )}
-                    </div>
+                    <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-red-400" />
+                    )}
                   </div>
+                </div>
 
-                  {/* Live URL Preview */}
+                {/* Business type selector — under the phone field, above the create button */}
+                <BusinessTypeSelector
+                  value={businessType}
+                  onChange={setBusinessType}
+                  accentColor="#4ade80"
+                  size="sm"
+                />
+
+                {/* Live URL Preview */}
                   {generatedSlug.length >= 7 && (
                     <div className="flex items-center justify-end gap-2 text-xs" dir="ltr">
                       <span className="text-white/40">رابط متجرك:</span>
-                      <span className="text-[#4ade80] font-mono">{generatedSlug}.tagr-online.com</span>
+                      <span className="text-[#4ade80] font-mono">{generatedSlug}{getDomainLabel(businessType)}</span>
                       {isSlugAvailable && <span className="text-[#4ade80]">✓</span>}
                     </div>
                   )}
@@ -255,7 +268,7 @@ export function WelcomePopup() {
                     ابدأ متجرك الآن بضغطة واحدة
                   </p>
                   <div className="mt-2 text-xs text-[#4ade80] font-mono" dir="ltr">
-                    {generatedSlug}.tagr-online.com
+                    {generatedSlug}{getDomainLabel(businessType)}
                   </div>
                 </div>
 

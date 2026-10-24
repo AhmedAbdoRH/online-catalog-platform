@@ -11,7 +11,7 @@ async function getData() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect('/login');
 
-    const { data: catalog } = await supabase.from('catalogs').select('id, name, plan, plan_expires_at, trial_started_at, is_legacy_basic, country_code').eq('user_id', user.id).single();
+    const { data: catalog } = await supabase.from('catalogs').select('id, name, business_type, plan, plan_expires_at, trial_started_at, is_legacy_basic, country_code').eq('user_id', user.id).single();
     if (!catalog) notFound();
 
     const { data: categories } = await supabase.from('categories').select('*').eq('catalog_id', catalog.id);
@@ -61,7 +61,7 @@ export default async function ItemsPage() {
                     </div>
                 </CardHeader>
                 <CardContent className="px-2 sm:px-6 w-full max-w-full overflow-hidden">
-                    <ItemsTable items={items as any} catalogId={catalog.id} catalogName={catalog.name} isPro={isUnlimitedPlan(catalog)} categories={categories} countryCode={catalog.country_code} />
+                    <ItemsTable items={items as any} catalogId={catalog.id} catalogName={catalog.name} businessType={catalog.business_type} isPro={isUnlimitedPlan(catalog)} categories={categories} countryCode={catalog.country_code} />
                 </CardContent>
                 <div className="h-24" /> {/* مسافة إضافية في نهاية الصفحة لتجنب التداخل مع شريط التنقل السفلي */}
             </Card>

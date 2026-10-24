@@ -83,3 +83,4 @@ debug_*.sql
 .wrangler
 .dev.vars*
 !.dev.vars.example
+supabase/.temp/

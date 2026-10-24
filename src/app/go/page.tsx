@@ -11,6 +11,8 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Store, Phone, ChevronDown } from "lucide-react";
 import { convertArabicNumerals } from "@/lib/utils";
+import { BusinessTypeSelector } from "@/components/common/BusinessTypeSelector";
+import type { BusinessType } from "@/lib/types";
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -26,6 +28,7 @@ function GoPageContent() {
   const [storeName, setStoreName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [businessType, setBusinessType] = useState<BusinessType>('store');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -49,6 +52,7 @@ function GoPageContent() {
         localStorage.setItem('pendingWhatsapp', selectedCountry.code + cleanPhone);
         localStorage.setItem('pendingWhatsApp', selectedCountry.code + cleanPhone);
         localStorage.setItem('pendingStoreSlug', cleanPhone);
+        localStorage.setItem('pendingBusinessType', businessType);
       }
 
       if (Capacitor.isNativePlatform()) {
@@ -126,6 +130,7 @@ function GoPageContent() {
                   }}
                 />
               </div>
+              <BusinessTypeSelector value={businessType} onChange={setBusinessType} />
               <Button
                 onClick={() => {
                   const cleanPhone = convertArabicNumerals(whatsapp).replace(/[^\d]/g, '');

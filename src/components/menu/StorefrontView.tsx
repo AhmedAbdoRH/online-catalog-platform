@@ -34,6 +34,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useOnClickOutside } from '@/hooks/use-click-outside';
 import { cn, formatPrice } from "@/lib/utils";
+import { getStoreUrl } from "@/lib/store-urls";
 import { CartProvider } from '@/components/cart/CartContext';
 import { StoreTheme } from '@/components/theme/StoreTheme';
 import { useCart } from '@/components/cart/CartContext';
@@ -347,7 +348,7 @@ export function StorefrontView({ catalog, categories }: StorefrontViewProps) {
   const catalogUrl =
     typeof window !== "undefined"
       ? window.location.href
-      : `https://online-catalog.net/${catalog.name}`;
+      : getStoreUrl(catalog.name, catalog.business_type);
 
   // Apply search filtering first, then category filtering
   const searchFilteredCategories = useMemo(

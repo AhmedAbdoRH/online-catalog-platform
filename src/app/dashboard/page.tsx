@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { APP_URL } from "@/lib/constants";
+import { getStoreUrl } from "@/lib/store-urls";
 import { Settings, Package, Tags, ArrowRight, Zap, Building, PlusCircle, Palette, Sparkles } from "lucide-react";
 import { VisitorStatsCard } from "@/components/dashboard/VisitorStatsCard";
 import * as motion from "framer-motion/client";
@@ -97,12 +98,13 @@ export default async function DashboardPage() {
   const visitorStats = await getStoreVisitorStats(catalog.id);
 
   // Primary URL: subdomain format (new). Fallback path-based URL still works.
+  // Domain depends on the business segment: restaurants → online-catalog.net
   const catalogUrl = process.env.NODE_ENV === 'production'
-    ? `https://${catalog.name}.tagr-online.com`
+    ? getStoreUrl(catalog.name, catalog.business_type)
     : `${APP_URL}/${catalog.name}`;
 
   // Always use production subdomain URL for QR code
-  const qrCodeUrl = `https://${catalog.name}.tagr-online.com`;
+  const qrCodeUrl = getStoreUrl(catalog.name, catalog.business_type);
 
   return (
     <div className="space-y-6 sm:space-y-8 w-full max-w-full min-w-0">

@@ -8,6 +8,7 @@ import { Label } from '../ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { convertArabicNumerals } from '@/lib/utils';
+import { STORE_DOMAIN } from '@/lib/store-urls';
 import {
   Store,
   Link2,
@@ -130,6 +131,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
       localStorage.removeItem('pendingStoreName');
       localStorage.removeItem('pendingStoreSlug');
       localStorage.removeItem('pendingWhatsApp');
+      localStorage.removeItem('pendingBusinessType');
     }
   }, []);
 
@@ -438,7 +440,7 @@ export function OnboardingForm({ userPhone }: OnboardingFormProps) {
                             {isNameAvailable === true && (
                               <div className="text-sm font-mono text-muted-foreground flex items-center justify-center gap-2 pt-1 border-t border-brand-success/10" dir="ltr">
                                 <Link2 className="h-4 w-4" />
-                                tagr-online.com/{formData.name}
+                                {STORE_DOMAIN}/{formData.name}
                               </div>
                             )}
                           </motion.div>

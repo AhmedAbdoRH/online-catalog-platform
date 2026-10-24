@@ -22,7 +22,7 @@ export function AutoCatalogCreator({
     const [isCreating, setIsCreating] = useState(false);
     const [showForm, setShowForm] = useState(false);
 
-    const handleCreateCatalog = useCallback(async (displayName: string, slug: string, whatsapp: string) => {
+    const handleCreateCatalog = useCallback(async (displayName: string, slug: string, whatsapp: string, businessType: string) => {
         setIsCreating(true);
         const cleanSlug = convertArabicNumerals(slug).replace(/[^\d]/g, '');
         const cleanWhatsapp = convertArabicNumerals(whatsapp).replace(/[^\d+]/g, '');
@@ -46,6 +46,9 @@ export function AutoCatalogCreator({
             formData.set('whatsapp_number', cleanWhatsapp);
         }
 
+        // Business segment chosen at signup (defaults to 'store' for older pending data)
+        formData.append('business_type', businessType === 'restaurant' ? 'restaurant' : 'store');
+
         try {
             const result = await createCatalog(null, formData);
 
@@ -54,6 +57,7 @@ export function AutoCatalogCreator({
                 localStorage.removeItem('pendingStoreName');
                 localStorage.removeItem('pendingStoreSlug');
                 localStorage.removeItem('pendingWhatsApp');
+                localStorage.removeItem('pendingBusinessType');
                 router.refresh();
             } else if (result && result.message) {
                 toast({
@@ -75,7 +79,9 @@ export function AutoCatalogCreator({
         const pendingWhatsApp = localStorage.getItem('pendingWhatsApp');
 
         if (pendingStoreName && pendingStoreSlug && pendingWhatsApp) {
-            handleCreateCatalog(pendingStoreName, pendingStoreSlug, pendingWhatsApp);
+            // Older pending data (started before this feature) defaults to 'store'
+            const pendingBusinessType = localStorage.getItem('pendingBusinessType') || 'store';
+            handleCreateCatalog(pendingStoreName, pendingStoreSlug, pendingWhatsApp, pendingBusinessType);
         } else {
             setShowForm(true);
         }
@@ -84,7 +90,7 @@ export function AutoCatalogCreator({
     if (showForm && !isCreating) {
         return (
             <OnboardingFormSimple
-                onSubmit={(data) => handleCreateCatalog(data.displayName, data.slug, data.whatsapp)}
+                onSubmit={(data) => handleCreateCatalog(data.displayName, data.slug, data.whatsapp, data.businessType)}
                 isSubmitting={isCreating}
             />
         );

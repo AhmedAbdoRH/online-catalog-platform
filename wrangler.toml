@@ -40,3 +40,7 @@ zone_name = "online-catalog.net"
 [[routes]]
 pattern = "www.online-catalog.net/*"
 zone_name = "online-catalog.net"
+
+[[routes]]
+pattern = "*.online-catalog.net/*"
+zone_name = "online-catalog.net"

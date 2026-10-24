@@ -4,14 +4,18 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Copy, Share2, Check } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { getStoreUrl } from '@/lib/store-urls';
+import type { BusinessType } from '@/lib/types';
 
 interface StoreLinkActionsProps {
   storeId: string;
+  /** Business segment of the catalog — decides the storefront domain */
+  businessType?: BusinessType;
 }
 
-export function StoreLinkActions({ storeId }: StoreLinkActionsProps) {
+export function StoreLinkActions({ storeId, businessType }: StoreLinkActionsProps) {
   const [copied, setCopied] = useState(false);
-  const storeUrl = `https://${storeId}.tagr-online.com`;
+  const storeUrl = getStoreUrl(storeId, businessType);
 
   const handleCopy = async () => {
     try {
