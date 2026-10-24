@@ -12,6 +12,8 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Store, Phone, ChevronDown } from "lucide-react";
 import { convertArabicNumerals } from "@/lib/utils";
+import { BusinessTypeSelector } from "@/components/common/BusinessTypeSelector";
+import type { BusinessType } from "@/lib/types";
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -28,7 +30,17 @@ function UnifiedHomeContent() {
   const [storeName, setStoreName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  // Dedicated restaurant app passes ?segment=restaurant → the segment is fixed to restaurant
+  const isRestaurantApp = searchParams.get('segment') === 'restaurant';
+  const [businessType, setBusinessType] = useState<BusinessType>(isRestaurantApp ? 'restaurant' : 'store');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isRestaurantApp) {
+      // Persist immediately so every later step (auth, catalog creation) knows the segment
+      localStorage.setItem('pendingBusinessType', 'restaurant');
+    }
+  }, [isRestaurantApp]);
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
@@ -51,6 +63,7 @@ function UnifiedHomeContent() {
         localStorage.setItem('pendingStoreName', storeName.trim());
         localStorage.setItem('pendingWhatsApp', selectedCountry.code + cleanPhone);
         localStorage.setItem('pendingStoreSlug', cleanPhone);
+        localStorage.setItem('pendingBusinessType', businessType);
       }
 
       if (Capacitor.isNativePlatform()) {
@@ -218,6 +231,12 @@ function UnifiedHomeContent() {
                     <Phone className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-600" />
                   </div>
                 </div>
+
+                <BusinessTypeSelector
+                  value={businessType}
+                  onChange={setBusinessType}
+                  locked={isRestaurantApp}
+                />
               </div>
 
               <Button

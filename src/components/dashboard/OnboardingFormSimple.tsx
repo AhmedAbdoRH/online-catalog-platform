@@ -9,6 +9,9 @@ import { createClient } from '@/lib/supabase/client';
 import { checkCatalogName } from '@/app/actions/catalog';
 import { useRouter } from 'next/navigation';
 import { convertArabicNumerals } from '@/lib/utils';
+import { BusinessTypeSelector } from '@/components/common/BusinessTypeSelector';
+import type { BusinessType } from '@/lib/types';
+import { getDomainLabel } from '@/lib/store-urls';
 
 const countries = [
   { code: '+20', name: 'مصر', flag: '🇪🇬' },
@@ -24,7 +27,7 @@ const benefits = [
 ];
 
 interface OnboardingFormSimpleProps {
-  onSubmit: (data: { displayName: string; slug: string; whatsapp: string }) => void;
+  onSubmit: (data: { displayName: string; slug: string; whatsapp: string; businessType: BusinessType }) => void;
   isSubmitting?: boolean;
 }
 
@@ -45,6 +48,13 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
   }, []);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [businessType, setBusinessType] = useState<BusinessType>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('pendingBusinessType');
+      if (saved === 'store' || saved === 'restaurant') return saved;
+    }
+    return 'store';
+  });
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null);
   const [slugError, setSlugError] = useState('');
@@ -93,6 +103,7 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
         displayName: storeName.trim(),
         slug: cleanPhone,
         whatsapp: selectedCountry.code + cleanPhone,
+        businessType,
       });
     }
   };
@@ -187,11 +198,14 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
               </div>
             </div>
 
+            {/* Business type selector — under the phone field */}
+            <BusinessTypeSelector value={businessType} onChange={setBusinessType} accentColor="#4ade80" />
+
             {/* URL Preview */}
             {generatedSlug.length >= 7 && (
               <div className="flex items-center justify-end gap-2 text-sm md:text-base px-1" dir="ltr">
                 <span className="text-white/40">رابط متجرك:</span>
-                <span className="text-[#4ade80] font-mono truncate max-w-[200px] md:max-w-none">{generatedSlug}.tagr-online.com</span>
+                <span className="text-[#4ade80] font-mono truncate max-w-[200px] md:max-w-none">{generatedSlug}{getDomainLabel(businessType)}</span>
                 {isSlugAvailable && <span className="text-[#4ade80]">✓</span>}
               </div>
             )}

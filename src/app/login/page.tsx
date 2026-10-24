@@ -19,6 +19,7 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const message = searchParams.get("message") || "";
   const shouldShowEmail = searchParams.get("showEmail") === "true";
+  const isRestaurantApp = searchParams.get("segment") === "restaurant";
   const [showEmailForm, setShowEmailForm] = useState(shouldShowEmail);
 
   useEffect(() => {
@@ -26,6 +27,13 @@ function LoginContent() {
       setShowEmailForm(true);
     }
   }, [shouldShowEmail]);
+
+  useEffect(() => {
+    if (isRestaurantApp) {
+      // Dedicated restaurant app: remember the segment for the whole signup flow
+      localStorage.setItem('pendingBusinessType', 'restaurant');
+    }
+  }, [isRestaurantApp]);
 
   const [lastTap, setLastTap] = useState(0);
 
@@ -68,7 +76,7 @@ function LoginContent() {
               مرحباً بعودتك.
             </h1>
             <p className="text-lg text-gray-400">
-              سجل دخولك للوصول إلى لوحة التحكم
+              {isRestaurantApp ? 'سجل دخولك للوصول إلى لوحة تحكم مطعمك' : 'سجل دخولك للوصول إلى لوحة التحكم'}
             </p>
           </div>
         </div>
@@ -83,7 +91,7 @@ function LoginContent() {
           <div className="pt-8 border-t border-gray-800 text-center">
             <p className="text-white font-bold text-lg mb-4">ليس لديك حساب؟</p>
             <Link
-              href="https://tagr-online.com/home"
+              href={isRestaurantApp ? "https://tagr-online.com/home?segment=restaurant" : "https://tagr-online.com/home"}
               className="inline-flex h-14 w-full items-center justify-center bg-[#2eb872] hover:bg-[#25965d] text-[#05110d] font-bold text-xl rounded-xl shadow-[0_0_20px_rgba(46,184,114,0.3)] transition-all active:scale-95"
               target="_blank"
               rel="noopener noreferrer"

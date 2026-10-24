@@ -1,0 +1,22 @@
+{
+  "name": "online-catalog-restaurants-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "تطبيق اونلاين كاتلوج للمطاعم والكافيهات — نسخة أندرويد مستقلة (نفس المصادقة والداتابيز)",
+  "scripts": {
+    "sync": "cap sync android",
+    "copy": "cap copy android",
+    "open": "cap open android",
+    "build:aab": "cd android && ./gradlew bundleRelease",
+    "build:apk": "cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/camera": "^8.0.0",
+    "@capacitor/cli": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/filesystem": "^8.0.0",
+    "@capacitor/share": "^8.0.0",
+    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4"
+  }
+}
