@@ -11,7 +11,6 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Store, Phone, ChevronDown } from "lucide-react";
 import { convertArabicNumerals } from "@/lib/utils";
-import { BusinessTypeSelector } from "@/components/common/BusinessTypeSelector";
 import type { BusinessType } from "@/lib/types";
 
 const countries = [
@@ -30,7 +29,7 @@ function GoPageContent() {
   const [whatsapp, setWhatsapp] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const isRestaurantApp = searchParams.get('segment') === 'restaurant';
-  const [businessType, setBusinessType] = useState<BusinessType>(isRestaurantApp ? 'restaurant' : 'store');
+  const [businessType] = useState<BusinessType>(isRestaurantApp ? 'restaurant' : 'store');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -138,7 +137,6 @@ function GoPageContent() {
                   }}
                 />
               </div>
-              <BusinessTypeSelector value={businessType} onChange={setBusinessType} locked={isRestaurantApp} />
               <Button
                 onClick={() => {
                   const cleanPhone = convertArabicNumerals(whatsapp).replace(/[^\d]/g, '');

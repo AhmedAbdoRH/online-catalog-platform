@@ -9,7 +9,6 @@ import { createClient } from '@/lib/supabase/client';
 import { checkCatalogName } from '@/app/actions/catalog';
 import { useRouter } from 'next/navigation';
 import { convertArabicNumerals } from '@/lib/utils';
-import { BusinessTypeSelector } from '@/components/common/BusinessTypeSelector';
 import type { BusinessType } from '@/lib/types';
 import { getDomainLabel } from '@/lib/store-urls';
 
@@ -48,7 +47,7 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
   }, []);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
-  const [businessType, setBusinessType] = useState<BusinessType>(() => {
+  const [businessType] = useState<BusinessType>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('pendingBusinessType');
       if (saved === 'store' || saved === 'restaurant') return saved;
@@ -197,9 +196,6 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
                 )}
               </div>
             </div>
-
-            {/* Business type selector — under the phone field */}
-            <BusinessTypeSelector value={businessType} onChange={setBusinessType} accentColor="#4ade80" />
 
             {/* URL Preview */}
             {generatedSlug.length >= 7 && (

@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { convertArabicNumerals } from '@/lib/utils';
-import { BusinessTypeSelector } from './BusinessTypeSelector';
 import type { BusinessType } from '@/lib/types';
 import { getDomainLabel } from '@/lib/store-urls';
 
@@ -23,7 +22,7 @@ export function WelcomePopup() {
   const [storeName, setStoreName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
-  const [businessType, setBusinessType] = useState<BusinessType>('store');
+  const [businessType] = useState<BusinessType>('store');
   const [stage, setStage] = useState<'input' | 'confirm'>('input');
   const isRestaurant = businessType === 'restaurant';
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
@@ -213,15 +212,6 @@ export function WelcomePopup() {
                     )}
                   </div>
                 </div>
-
-                {/* Business type selector — under the phone field, above the create button */}
-                <BusinessTypeSelector
-                  value={businessType}
-                  onChange={setBusinessType}
-                  accentColor="#4ade80"
-                  size="sm"
-                />
-
                 {/* Live URL Preview */}
                   {generatedSlug.length >= 7 && (
                     <div className="flex items-center justify-end gap-2 text-xs" dir="ltr">
