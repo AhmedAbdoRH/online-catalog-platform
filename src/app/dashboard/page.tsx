@@ -119,9 +119,15 @@ export default async function DashboardPage() {
           <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl -mr-24 -mt-24 pointer-events-none" />
           <CardHeader className="py-3 px-3.5 sm:py-5 sm:px-6">
             <CardTitle className="flex items-center gap-2">
-              <span className="text-base sm:text-lg">المتجر الخاص بك نشط ✨</span>
+              <span className="text-base sm:text-lg">
+                {catalog.business_type === 'restaurant' ? 'المطعم الخاص بك نشط ✨' : 'المتجر الخاص بك نشط ✨'}
+              </span>
             </CardTitle>
-            <CardDescription className="hidden sm:block text-xs">شارك هذا الرابط مع عملائك للوصول إلى متجرك.</CardDescription>
+            <CardDescription className="hidden sm:block text-xs">
+              {catalog.business_type === 'restaurant'
+                ? 'شارك هذا الرابط مع عملائك للوصول إلى مطعمك.'
+                : 'شارك هذا الرابط مع عملائك للوصول إلى متجرك.'}
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 z-10 relative py-3 px-3.5 sm:py-5 sm:px-6 pt-0 w-full max-w-full min-w-0">
             <div className="flex-1 bg-background/50 p-2 sm:p-3 rounded-lg border border-border/50 w-full font-mono text-xs sm:text-sm flex items-center justify-between gap-2 min-w-0 overflow-hidden">
@@ -129,12 +135,12 @@ export default async function DashboardPage() {
                 {catalogUrl}
               </Link>
               <div className="shrink-0">
-                <QRCodeButton url={qrCodeUrl} storeName={catalog.name} />
+                <QRCodeButton url={qrCodeUrl} storeName={catalog.name} businessType={catalog.business_type} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex shrink-0">
-              <StorePreviewModal url={catalogUrl} storeName={catalog.display_name || catalog.name} logoUrl={catalog.logo_url} />
-              <CopyLinkButton url={catalogUrl} />
+              <StorePreviewModal url={catalogUrl} storeName={catalog.display_name || catalog.name} logoUrl={catalog.logo_url} businessType={catalog.business_type} />
+              <CopyLinkButton url={catalogUrl} businessType={catalog.business_type} />
             </div>
           </CardContent>
         </Card>
@@ -142,7 +148,7 @@ export default async function DashboardPage() {
 
       {/* Visitor Stats Card */}
       <div className="w-full max-w-full min-w-0">
-        <VisitorStatsCard stats={visitorStats} storeName={catalog.display_name || catalog.name} />
+        <VisitorStatsCard stats={visitorStats} storeName={catalog.display_name || catalog.name} businessType={catalog.business_type} />
       </div>
 
       {itemsCount === 0 && (
@@ -161,7 +167,7 @@ export default async function DashboardPage() {
             </div>
             <div className="space-y-1.5 flex-1">
               <h2 className="text-base sm:text-lg font-black text-white leading-tight">
-                ابدأ بإضافة منتجك الأول ✨
+                {catalog.business_type === 'restaurant' ? 'ابدأ بإضافة أول صنف ✨' : 'ابدأ بإضافة منتجك الأول ✨'}
               </h2>
               <ul className="text-sm sm:text-base text-muted-foreground leading-relaxed space-y-2 list-none">
                 <li className="flex items-start gap-2.5">
@@ -170,7 +176,7 @@ export default async function DashboardPage() {
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-amber-400 font-black shrink-0 text-base sm:text-lg">٢.</span>
-                  <span>أدخل اسم المنتج وسعره وصورته في النموذج.</span>
+                  <span>{catalog.business_type === 'restaurant' ? 'أدخل اسم الصنف وسعره وصورته في النموذج.' : 'أدخل اسم المنتج وسعره وصورته في النموذج.'}</span>
                 </li>
               </ul>
             </div>
@@ -235,27 +241,29 @@ export default async function DashboardPage() {
                     <Package className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
                   <span className="text-[10px] sm:text-xs text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
-                    {itemsCount || 0} منتج
+                    {itemsCount || 0} {catalog.business_type === 'restaurant' ? 'صنف' : 'منتج'}
                   </span>
                 </div>
                 <CardTitle className="text-sm sm:text-lg mt-3">
-                  أضف منتجاتك الآن
+                  {catalog.business_type === 'restaurant' ? 'أضف أصنافك الآن' : 'أضف منتجاتك الآن'}
                 </CardTitle>
                 <CardDescription className="text-[10px] sm:text-xs line-clamp-1">
-                  أضف صوراً وأسعاراً لمنتجاتك
+                  {catalog.business_type === 'restaurant' ? 'أضف صوراً وأسعاراً لأصنافك' : 'أضف صوراً وأسعاراً لمنتجاتك'}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-3 sm:p-5 pt-0">
                 <div className="w-full bg-brand-luxury hover:bg-brand-luxury/90 text-white rounded-lg px-3 py-2 flex items-center justify-center gap-2 text-[11px] sm:text-sm font-medium transition-all group-hover:shadow-lg group-hover:shadow-brand-luxury/30">
                   <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  <span>إضافة منتج جديد</span>
+                  <span>{catalog.business_type === 'restaurant' ? 'إضافة صنف جديد' : 'إضافة منتج جديد'}</span>
                 </div>
               </CardContent>
             </Card>
           </Link>
           <Link href="/dashboard/items" className="block group">
             <div className="glass-surface-hover border border-t-0 p-2 sm:p-3 rounded-b-xl flex items-center justify-between transition-all hover:bg-white/5">
-              <span className="text-[10px] sm:text-xs font-medium text-muted-foreground group-hover:text-foreground">إدارة المنتجات</span>
+              <span className="text-[10px] sm:text-xs font-medium text-muted-foreground group-hover:text-foreground">
+                {catalog.business_type === 'restaurant' ? 'إدارة الأصناف' : 'إدارة المنتجات'}
+              </span>
               <ArrowRight className="h-3 w-3 text-muted-foreground group-hover:text-foreground group-hover:translate-x-[-2px] transition-all" />
             </div>
           </Link>

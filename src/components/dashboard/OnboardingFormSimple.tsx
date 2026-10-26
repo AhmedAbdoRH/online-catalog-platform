@@ -21,9 +21,9 @@ const countries = [
 ];
 
 const benefits = [
-  { icon: Globe, text: 'رابط خاص بمتجرك' },
-  { icon: Zap, text: 'سرعة فائقة في التصفح' },
-  { icon: ShieldCheck, text: 'إدارة سهلة لمنتجاتك' },
+  { icon: Globe, textStore: 'رابط خاص بمتجرك', textRestaurant: 'رابط خاص بمطعمك' },
+  { icon: Zap, textStore: 'سرعة فائقة في التصفح', textRestaurant: 'سرعة فائقة في التصفح' },
+  { icon: ShieldCheck, textStore: 'إدارة سهلة لمنتجاتك', textRestaurant: 'إدارة سهلة لطلباتك' },
 ];
 
 interface OnboardingFormSimpleProps {
@@ -131,11 +131,11 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
         </div>
 
         <div className="flex-1 text-right w-full animate-in fade-in slide-in-from-bottom-4 md:slide-in-from-left-8 duration-700">
-          <h2 className="text-3xl md:text-4xl font-black text-white leading-tight mb-3 md:mb-4 !text-white">
-            متجرك جاهز للانطلاق.
+            <h2 className="text-3xl md:text-4xl font-black text-white leading-tight mb-3 md:mb-4 !text-white">
+            {businessType === 'restaurant' ? 'مطعمك جاهز للانطلاق.' : 'متجرك جاهز للانطلاق.'}
           </h2>
           <p className="text-white/80 text-base md:text-xl leading-relaxed mb-8 md:mb-10">
-            امتلك متجرك في 3 دقائق.
+            {businessType === 'restaurant' ? 'امتلك مطعمك في 3 دقائق.' : 'امتلك متجرك في 3 دقائق.'}
             <span className="text-[#4ade80] font-bold"> مجاناً!</span>
           </p>
 
@@ -146,7 +146,7 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
               <Input
                 ref={inputRef}
                 type="text"
-                placeholder="اسم متجرك"
+                placeholder={businessType === 'restaurant' ? 'اسم مطعمك / كافيهك' : 'اسم متجرك'}
                 value={storeName}
                 onChange={(e) => setStoreName(e.target.value)}
                 className="h-14 md:h-16 pr-10 md:pr-12 text-right bg-white/5 border-white/10 text-white placeholder:text-white/30 rounded-xl md:rounded-2xl focus:border-[#4ade80] focus:ring-[#4ade80] text-lg md:text-xl transition-all"
@@ -204,7 +204,7 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
             {/* URL Preview */}
             {generatedSlug.length >= 7 && (
               <div className="flex items-center justify-end gap-2 text-sm md:text-base px-1" dir="ltr">
-                <span className="text-white/40">رابط متجرك:</span>
+                <span className="text-white/40">{businessType === 'restaurant' ? 'رابط مطعمك:' : 'رابط متجرك:'}</span>
                 <span className="text-[#4ade80] font-mono truncate max-w-[200px] md:max-w-none">{generatedSlug}{getDomainLabel(businessType)}</span>
                 {isSlugAvailable && <span className="text-[#4ade80]">✓</span>}
               </div>
@@ -225,7 +225,7 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
                 ) : (
                   <Sparkles className="h-6 w-6 md:h-7 md:w-7 ml-3" />
                 )}
-                أنشئ متجرك الآن
+                {businessType === 'restaurant' ? 'أنشئ مطعمك الآن' : 'أنشئ متجرك الآن'}
               </Button>
             </div>
           </form>
@@ -236,7 +236,7 @@ export function OnboardingFormSimple({ onSubmit, isSubmitting }: OnboardingFormS
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 pt-6 border-t border-white/10 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
         {benefits.map((benefit, index) => (
           <div key={index} className="flex items-center justify-end gap-2 text-white/60 text-xs md:text-sm bg-white/5 p-3 rounded-xl border border-white/5">
-            <span>{benefit.text}</span>
+            <span>{businessType === 'restaurant' ? benefit.textRestaurant : benefit.textStore}</span>
             <benefit.icon className="h-4 w-4 text-[#4ade80]" />
           </div>
         ))}

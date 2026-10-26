@@ -48,7 +48,9 @@ export default async function DashboardLayout({
           <div className="space-y-2">
             <h1 className="text-2xl font-black text-foreground">ابدأ شهرك المجاني الآن 🎁</h1>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              احصل على 30 يوم تجربة مجانية لتفعيل كافة ميزات التطبيق وإنشاء متجرك الإلكتروني. لن يتم خصم أي مبالغ منك الآن.
+              {catalog?.business_type === 'restaurant'
+                ? 'احصل على 30 يوم تجربة مجانية لتفعيل كافة ميزات التطبيق وإنشاء مطعمك الإلكتروني. لن يتم خصم أي مبالغ منك الآن.'
+                : 'احصل على 30 يوم تجربة مجانية لتفعيل كافة ميزات التطبيق وإنشاء متجرك الإلكتروني. لن يتم خصم أي مبالغ منك الآن.'}
             </p>
           </div>
           <form action={async () => {
@@ -67,8 +69,10 @@ export default async function DashboardLayout({
     const benefits = [
       {
         icon: Store,
-        title: "خلي منتجاتك متاحة لعملائك",
-        desc: "متجرك يفضل مفتوح ومنتجاتك جاهزة للمشاهدة في أي وقت.",
+        title: catalog?.business_type === 'restaurant' ? "خلي قائمتك متاحة لعملائك" : "خلي منتجاتك متاحة لعملائك",
+        desc: catalog?.business_type === 'restaurant'
+          ? "مطعمك يفضل مفتوح وقائمتك جاهزة للمشاهدة في أي وقت."
+          : "متجرك يفضل مفتوح ومنتجاتك جاهزة للمشاهدة في أي وقت.",
         tone: "border-emerald-500/25 bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent text-emerald-600 dark:text-emerald-400",
       },
       {
@@ -79,13 +83,13 @@ export default async function DashboardLayout({
       },
       {
         icon: Link2,
-        title: "رابط متجرك يفضل شغال",
+        title: catalog?.business_type === 'restaurant' ? "رابط مطعمك يفضل شغال" : "رابط متجرك يفضل شغال",
         desc: "شارك رابط واحد ثابت بدل إرسال الصور والأسعار يدويًا كل مرة.",
         tone: "border-sky-500/25 bg-gradient-to-br from-sky-500/15 via-sky-500/5 to-transparent text-sky-600 dark:text-sky-400",
       },
       {
         icon: BarChart3,
-        title: "تابع زيارات متجرك",
+        title: catalog?.business_type === 'restaurant' ? "تابع زيارات مطعمك" : "تابع زيارات متجرك",
         desc: "اعرف عدد الزيارات واهتمام العملاء علشان تبيع بشكل أذكى.",
         tone: "border-violet-500/25 bg-gradient-to-br from-violet-500/15 via-violet-500/5 to-transparent text-violet-600 dark:text-violet-400",
       },
@@ -123,7 +127,7 @@ export default async function DashboardLayout({
               </span>
 
               <h1 className="text-2xl font-black leading-snug text-foreground sm:text-3xl">
-                متجرك جاهز يكمل…{" "}
+                {catalog?.business_type === 'restaurant' ? 'مطعمك جاهز يكمل…' : 'متجرك جاهز يكمل…'}{" "}
                 <span className="bg-gradient-to-l from-emerald-600 to-teal-400 bg-clip-text text-transparent dark:from-emerald-400 dark:to-teal-300">
                   فعّل الاشتراك
                 </span>{" "}
@@ -131,7 +135,9 @@ export default async function DashboardLayout({
               </h1>
 
               <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
-                فترتك المجانية انتهت، لكن كل شغلك لسه مكانه. فعّل الاشتراك الآن لاستعادة المتجر ومواصلة استقبال الطلبات من نفس اللحظة.
+                {catalog?.business_type === 'restaurant'
+                  ? 'فترتك المجانية انتهت، لكن كل شغلك لسه مكانه. فعّل الاشتراك الآن لاستعادة المطعم ومواصلة استقبال الطلبات من نفس اللحظة.'
+                  : 'فترتك المجانية انتهت، لكن كل شغلك لسه مكانه. فعّل الاشتراك الآن لاستعادة المتجر ومواصلة استقبال الطلبات من نفس اللحظة.'}
               </p>
             </div>
 
@@ -175,7 +181,7 @@ export default async function DashboardLayout({
               <Button asChild className="h-12 w-full rounded-xl bg-emerald-600 text-base font-black text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-700">
                 <Link href={`https://wa.me/201008116452?text=${encodeURIComponent(getProWhatsAppText('monthly'))}`} target="_blank">
                   <MessageCircle className="ml-2 h-5 w-5" />
-                  فعّل متجرك الآن
+                  {catalog?.business_type === 'restaurant' ? 'فعّل مطعمك الآن' : 'فعّل متجرك الآن'}
                 </Link>
               </Button>
 
@@ -219,7 +225,7 @@ export default async function DashboardLayout({
         
         {catalog && status && status.isGrace && (
           <div className="bg-gradient-to-r from-amber-500 to-red-600 text-white py-2.5 px-4 text-center text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm border-b border-white/5 animate-pulse">
-            <span>⚠️ فترة السماح: متبقي لديك <strong>{status.remainingDays}</strong> أيام لتفعيل الاشتراك قبل إغلاق متجرك تلقائياً.</span>
+            <span>⚠️ فترة السماح: متبقي لديك <strong>{status.remainingDays}</strong> أيام لتفعيل الاشتراك قبل {catalog?.business_type === 'restaurant' ? 'إغلاق مطعمك' : 'إغلاق متجرك'} تلقائياً.</span>
             <Link href={`https://wa.me/201008116452?text=${encodeURIComponent(getProWhatsAppText('monthly'))}`} target="_blank" className="underline hover:text-amber-200 transition-colors mr-2 font-black">
               اشترك الآن وتجنب الإيقاف 💳
             </Link>

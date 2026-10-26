@@ -167,7 +167,7 @@ export function BottomNav() {
                 >
                   <Icon className={cn("h-7 w-7 sm:h-9 sm:w-9 mb-1.5 sm:mb-2", isActive ? "text-brand-accent" : "text-white")} />
                   <span className={cn("text-[12px] sm:text-[16px] font-black tracking-tight truncate w-full text-center", isActive ? "text-brand-accent" : "text-white/95")}>
-                    {item.label}
+                    {item.label === 'المنتجات' && catalog?.business_type === 'restaurant' ? 'الأصناف' : item.label}
                   </span>
                   {isActive && (
                     <motion.div
@@ -203,7 +203,7 @@ export function BottomNav() {
                 >
                   <Icon className={cn("h-7 w-7 sm:h-9 sm:w-9 mb-1.5 sm:mb-2", isActive ? "text-brand-accent" : "text-white")} />
                   <span className={cn("text-[12px] sm:text-[16px] font-black tracking-tight truncate w-full text-center", isActive ? "text-brand-accent" : "text-white/95")}>
-                    {item.label}
+                    {item.label === 'المنتجات' && catalog?.business_type === 'restaurant' ? 'الأصناف' : item.label}
                   </span>
                   {isActive && (
                     <motion.div
@@ -234,9 +234,13 @@ export function BottomNav() {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <h4 className="text-white font-black text-sm mb-1">أضف منتجك الأول هنا 👇</h4>
+            <h4 className="text-white font-black text-sm mb-1">
+              {catalog?.business_type === 'restaurant' ? 'أضف أول صنف هنا 👇' : 'أضف منتجك الأول هنا 👇'}
+            </h4>
             <p className="text-slate-300 text-xs leading-relaxed">
-              اضغط على هذا الزر الذهبي المضيء لتبدأ في إضافة أول منتج وتفعيل متجرك الإلكتروني.
+              {catalog?.business_type === 'restaurant'
+                ? 'اضغط على هذا الزر الذهبي المضيء لتبدأ في إضافة أول صنف وتفعيل مطعمك الإلكتروني.'
+                : 'اضغط على هذا الزر الذهبي المضيء لتبدأ في إضافة أول منتج وتفعيل متجرك الإلكتروني.'}
             </p>
             
             {/* Arrow Pointer */}

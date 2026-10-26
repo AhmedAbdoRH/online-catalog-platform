@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:471992011728:android:c51bcb3f56fc21f0d4c7d5",
+        "mobilesdk_app_id": "1:471992011728:android:776fe9074f597b2bd4c7d5",
         "android_client_info": {
           "package_name": "com.nextcatalog.restaurants"
         }
       },
       "oauth_client": [
         {
-          "client_id": "471992011728-1n4quq623he5rpvd09hebe3lsbtbvmrt.apps.googleusercontent.com",
+          "client_id": "471992011728-lsphs7di1c4rt4ssmoq3tcdp4md362dt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.nextcatalog.restaurants",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "certificate_hash": "1523c55a95794907369e3492a5df37150d83a2d2"
           }
         },
         {

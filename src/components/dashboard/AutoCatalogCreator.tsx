@@ -108,7 +108,9 @@ export function AutoCatalogCreator({
             </div>
             <div className="space-y-2 relative z-10">
                 <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-                    جار إنشاء المتجر...
+                    {typeof window !== 'undefined' && localStorage.getItem('pendingBusinessType') === 'restaurant'
+                        ? 'جار إنشاء المطعم...'
+                        : 'جار إنشاء المتجر...'}
                     <Sparkles className="h-5 w-5 text-amber-500 animate-bounce" />
                 </h2>
                 <p className="text-muted-foreground">ثواني ونكون انتهينا من إعداد كل شيء لك</p>

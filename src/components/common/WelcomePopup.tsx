@@ -25,6 +25,7 @@ export function WelcomePopup() {
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [businessType, setBusinessType] = useState<BusinessType>('store');
   const [stage, setStage] = useState<'input' | 'confirm'>('input');
+  const isRestaurant = businessType === 'restaurant';
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null);
   const [slugError, setSlugError] = useState('');
@@ -150,10 +151,10 @@ export function WelcomePopup() {
                   لحظة من فضلك!
                 </h2>
                 <h3 className="text-lg font-bold text-white leading-tight mb-3">
-                  متجرك جاهز للانطلاق.
+                  {isRestaurant ? 'مطعمك جاهز للانطلاق.' : 'متجرك جاهز للانطلاق.'}
                 </h3>
                 <p className="text-white/80 text-sm leading-relaxed mb-4">
-                  امتلك متجرك في 3 دقائق.
+                  {isRestaurant ? 'امتلك مطعمك في 3 دقائق.' : 'امتلك متجرك في 3 دقائق.'}
                   <span className="text-[#4ade80] font-bold"> مجاناً!</span>
                 </p>
 
@@ -163,7 +164,7 @@ export function WelcomePopup() {
                     <Store className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                       type="text"
-                      placeholder="اسم متجرك"
+                      placeholder={isRestaurant ? 'اسم مطعمك / كافيهك' : 'اسم متجرك'}
                       value={storeName}
                       onChange={(e) => setStoreName(e.target.value)}
                       className="h-11 pr-9 text-right bg-white/10 border-white/20 text-white placeholder:text-white/50 rounded-xl focus:border-[#4ade80] focus:ring-[#4ade80] text-sm"

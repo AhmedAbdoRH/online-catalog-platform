@@ -51,3 +51,16 @@ export function getItemUrl(
 ): string {
   return `${getStoreUrl(slug, businessType)}/item/${itemId}`;
 }
+
+/** Arabic business label helpers based on segment. */
+export function getBusinessLabel(
+  businessType?: BusinessType | string | null,
+  form: 'standalone' | 'possessive' | 'definite' = 'standalone',
+): string {
+  const isRestaurant = businessType === 'restaurant';
+  switch (form) {
+    case 'possessive': return isRestaurant ? 'مطعمك' : 'متجرك';
+    case 'definite': return isRestaurant ? 'المطعم' : 'المتجر';
+    default: return isRestaurant ? 'مطعم' : 'متجر';
+  }
+}

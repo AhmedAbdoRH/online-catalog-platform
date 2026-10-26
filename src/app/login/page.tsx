@@ -76,7 +76,7 @@ function LoginContent() {
               مرحباً بعودتك.
             </h1>
             <p className="text-lg text-gray-400">
-              {isRestaurantApp ? 'سجل دخولك للوصول إلى لوحة تحكم مطعمك' : 'سجل دخولك للوصول إلى لوحة التحكم'}
+              {isRestaurantApp ? 'سجل دخولك للوصول إلى لوحة تحكم مطعمك / كافيهك' : 'سجل دخولك للوصول إلى لوحة التحكم'}
             </p>
           </div>
         </div>
@@ -91,12 +91,10 @@ function LoginContent() {
           <div className="pt-8 border-t border-gray-800 text-center">
             <p className="text-white font-bold text-lg mb-4">ليس لديك حساب؟</p>
             <Link
-              href={isRestaurantApp ? "https://tagr-online.com/home?segment=restaurant" : "https://tagr-online.com/home"}
+              href={isRestaurantApp ? "/home?segment=restaurant" : "/home"}
               className="inline-flex h-14 w-full items-center justify-center bg-[#2eb872] hover:bg-[#25965d] text-[#05110d] font-bold text-xl rounded-xl shadow-[0_0_20px_rgba(46,184,114,0.3)] transition-all active:scale-95"
-              target="_blank"
-              rel="noopener noreferrer"
             >
-              إنشاء متجرك الآن ✨
+              {isRestaurantApp ? 'إنشاء مطعمك الآن ✨' : 'إنشاء متجرك الآن ✨'}
             </Link>
           </div>
         </div>

@@ -6,9 +6,10 @@ import { Clipboard } from 'lucide-react';
 
 interface CopyLinkButtonProps {
   url: string;
+  businessType?: string | null;
 }
 
-export function CopyLinkButton({ url }: CopyLinkButtonProps) {
+export function CopyLinkButton({ url, businessType }: CopyLinkButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -29,7 +30,7 @@ export function CopyLinkButton({ url }: CopyLinkButtonProps) {
       onClick={handleCopy}
     >
       <Clipboard className="h-4 w-4" />
-      {copied ? 'تم النسخ!' : 'نسخ رابط المتجر'}
+      {copied ? 'تم النسخ!' : (businessType === 'restaurant' ? 'نسخ رابط المطعم' : 'نسخ رابط المتجر')}
     </Button>
   );
 }

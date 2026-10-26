@@ -483,7 +483,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
         {/* Visual Header Preview/Upload Section */}
         <div className="relative mb-14 pt-4">
           <div className="flex flex-col gap-2 mb-4">
-            <FormLabel className="text-lg font-bold">هوية المتجر البصرية</FormLabel>
+            <FormLabel className="text-lg font-bold">
+              {catalog.business_type === 'restaurant' ? 'هوية المطعم البصرية' : 'هوية المتجر البصرية'}
+            </FormLabel>
             <FormDescription>اضبط الغلاف والشعار لتمييز علامتك التجارية.</FormDescription>
           </div>
 
@@ -492,14 +494,16 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             {coverPreview ? (
               <NextImage
                 src={coverPreview}
-                alt="Store Cover"
+                alt={catalog.business_type === 'restaurant' ? 'Restaurant Cover' : 'Store Cover'}
                 fill
                 className="object-cover transition-transform group-hover:scale-105"
               />
             ) : (
               <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground bg-muted/50">
                 <Upload className="h-10 w-10 mb-2 opacity-20" />
-                <span className="text-sm font-medium">اضغط لرفع غلاف المتجر</span>
+                <span className="text-sm font-medium">
+                  {catalog.business_type === 'restaurant' ? 'اضغط لرفع غلاف المطعم' : 'اضغط لرفع غلاف المتجر'}
+                </span>
                 <span className="text-[10px] mt-1">(مقاس مستطيل)</span>
               </div>
             )}
@@ -545,7 +549,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                   <div className="bg-brand-primary text-white p-3 sm:p-4 rounded-2xl shadow-2xl flex flex-col items-center gap-2 border border-white/20 pointer-events-auto text-center relative mx-auto">
                     <div className="flex items-center gap-2 justify-center">
                       <Camera className="h-5 w-5 shrink-0" />
-                      <p className="text-sm font-black leading-tight">أضف شعار / غلاف لمتجرك</p>
+                      <p className="text-sm font-black leading-tight">
+                        {catalog.business_type === 'restaurant' ? 'أضف شعار / غلاف لمطعمك' : 'أضف شعار / غلاف لمتجرك'}
+                      </p>
                     </div>
 
                     <button
@@ -566,14 +572,16 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
               {logoPreview ? (
                 <NextImage
                   src={logoPreview}
-                  alt="Store Logo"
+                  alt={catalog.business_type === 'restaurant' ? 'Restaurant Logo' : 'Store Logo'}
                   fill
                   className="object-cover transition-transform group-hover:scale-110"
                 />
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground p-4 text-center bg-muted/30">
                   <Camera className="h-8 w-8 mb-1 opacity-20" />
-                  <span className="text-[10px] font-bold">شعار المتجر</span>
+                  <span className="text-[10px] font-bold">
+                    {catalog.business_type === 'restaurant' ? 'شعار المطعم' : 'شعار المتجر'}
+                  </span>
                 </div>
               )}
 
@@ -602,7 +610,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             name="display_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>اسم المتجر المعروض</FormLabel>
+                <FormLabel>
+                  {catalog.business_type === 'restaurant' ? 'اسم المطعم المعروض' : 'اسم المتجر المعروض'}
+                </FormLabel>
                 <div className="flex gap-2 w-full max-w-full min-w-0 flex-wrap sm:flex-nowrap">
                   <FormControl>
                     <Input {...field} disabled={isSubmitting} className="bg-white text-[#1e3a5f] text-lg flex-1 min-w-0" />
@@ -612,7 +622,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                   </Button>
                 </div>
                 <FormDescription>
-                  سيظهر هذا الاسم في واجهة المتجر الخاصة بك.
+                  {catalog.business_type === 'restaurant'
+                    ? 'سيظهر هذا الاسم في واجهة المطعم الخاصة بك.'
+                    : 'سيظهر هذا الاسم في واجهة المتجر الخاصة بك.'}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -675,14 +687,16 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 <FormLabel>شعار نصي (سلوغان)</FormLabel>
                 <div className="flex gap-2 w-full max-w-full min-w-0 flex-wrap sm:flex-nowrap">
                   <FormControl>
-                    <Input {...field} disabled={isSubmitting} placeholder="شعار متجرك أو جملة ترويجية" className="bg-white text-[#1e3a5f] text-lg flex-1 min-w-0" />
+                    <Input {...field} disabled={isSubmitting} placeholder={catalog.business_type === 'restaurant' ? 'شعار مطعمك أو جملة ترويجية' : 'شعار متجرك أو جملة ترويجية'} className="bg-white text-[#1e3a5f] text-lg flex-1 min-w-0" />
                   </FormControl>
                   <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-12 px-4 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold">
                     حفظ
                   </Button>
                 </div>
                 <FormDescription>
-                  سيظهر هذا النص بخط صغير تحت اسم المتجر.
+                  {catalog.business_type === 'restaurant'
+                    ? 'سيظهر هذا النص بخط صغير تحت اسم المطعم.'
+                    : 'سيظهر هذا النص بخط صغير تحت اسم المتجر.'}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -698,7 +712,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center justify-between">
-                  <FormLabel>تخصيص رابط المتجر</FormLabel>
+                  <FormLabel>
+                    {catalog.business_type === 'restaurant' ? 'تخصيص رابط المطعم' : 'تخصيص رابط المتجر'}
+                  </FormLabel>
                   {!isPro && (
                   <button
                     type="button"
@@ -759,7 +775,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
 
                 <FormDescription>
                   {isPro
-                    ? 'يمكنك تغيير رابط المتجر الخاص بك.'
+                    ? (catalog.business_type === 'restaurant' ? 'يمكنك تغيير رابط المطعم الخاص بك.' : 'يمكنك تغيير رابط المتجر الخاص بك.')
                     : `احصل على رابط احترافي مخصص (مثل: brand${getDomainLabel(catalog.business_type)}) بدلاً من رقم الهاتف.`
                   }
                 </FormDescription>
@@ -772,7 +788,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
         {/* قسم تخصيص مظهر المتجر */}
         <div className="space-y-4 pt-4 border-t">
           <div className="flex items-center justify-between">
-            <FormLabel className="text-lg font-semibold">تخصيص خلفية المتجر</FormLabel>
+            <FormLabel className="text-lg font-semibold">
+              {catalog.business_type === 'restaurant' ? 'تخصيص خلفية المطعم' : 'تخصيص خلفية المتجر'}
+            </FormLabel>
             {!isPro && (
               <button
                 type="button"
@@ -785,7 +803,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
             )}
           </div>
           <FormDescription>
-            اختر نمط الخلفية لمتجرك
+            {catalog.business_type === 'restaurant' ? 'اختر نمط الخلفية لمطعمك' : 'اختر نمط الخلفية لمتجرك'}
           </FormDescription>
 
           <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 sm:gap-3">
@@ -963,7 +981,9 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 إخفاء فوتر "أونلاين كتالوج"
               </FormLabel>
               <FormDescription className="text-[11px] leading-tight">
-                إزالة شعار المنصة من أسفل صفحة المتجر
+                {catalog.business_type === 'restaurant'
+                  ? 'إزالة شعار المنصة من أسفل صفحة المطعم'
+                  : 'إزالة شعار المنصة من أسفل صفحة المتجر'}
               </FormDescription>
             </div>
             <div className={`flex items-center gap-3 ${!isPro ? 'pointer-events-none' : ''}`}>
@@ -990,7 +1010,11 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 <Share2 className="h-4 w-4 text-white" />
                 روابط التواصل الاجتماعي
               </FormLabel>
-              <FormDescription className="text-[11px] text-white/80">أضف روابط حساباتك لتظهر في واجهة المتجر</FormDescription>
+              <FormDescription className="text-[11px] text-white/80">
+                {catalog.business_type === 'restaurant'
+                  ? 'أضف روابط حساباتك لتظهر في واجهة المطعم'
+                  : 'أضف روابط حساباتك لتظهر في واجهة المتجر'}
+              </FormDescription>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">

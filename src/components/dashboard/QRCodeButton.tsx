@@ -15,6 +15,7 @@ import { QrCode } from 'lucide-react';
 interface QRCodeButtonProps {
   url: string;
   storeName: string;
+  businessType?: string | null;
 }
 
 // Create a wrapper component for QRCode
@@ -32,7 +33,7 @@ const QRCodeCanvas = dynamic(
   }
 );
 
-export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
+export function QRCodeButton({ url, storeName, businessType }: QRCodeButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -61,7 +62,7 @@ export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">رمز QR للمتجر</DialogTitle>
+          <DialogTitle className="text-center">{businessType === 'restaurant' ? 'رمز QR للمطعم' : 'رمز QR للمتجر'}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center gap-4 py-4">
           <div className="relative group">
@@ -80,7 +81,9 @@ export function QRCodeButton({ url, storeName }: QRCodeButtonProps) {
           </div>
 
           <p className="text-sm text-muted-foreground text-center px-4">
-            امسح هذا الرمز للوصول إلى متجرك أو شاركه مع عملائك
+            {businessType === 'restaurant'
+              ? 'امسح هذا الرمز للوصول إلى مطعمك أو شاركه مع عملائك'
+              : 'امسح هذا الرمز للوصول إلى متجرك أو شاركه مع عملائك'}
           </p>
           
           {/* Hidden image for mobile long-press - always present but invisible except for system context menu */}

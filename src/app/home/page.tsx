@@ -151,10 +151,10 @@ function UnifiedHomeContent() {
 
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold tracking-tight">
-              متجرك جاهز للانطلاق.
+              {isRestaurantApp ? 'مطعمك جاهز للانطلاق.' : 'متجرك جاهز للانطلاق.'}
             </h1>
             <p className="text-base text-gray-400">
-              امتلك متجرك في 3 دقائق. <span className="text-[#2eb872] font-bold">مجاناً!</span>
+              {isRestaurantApp ? 'امتلك مطعمك في 3 دقائق.' : 'امتلك متجرك في 3 دقائق.'} <span className="text-[#2eb872] font-bold">مجاناً!</span>
             </p>
           </div>
         </div>
@@ -167,7 +167,9 @@ function UnifiedHomeContent() {
                 <div className="max-w-sm mx-auto space-y-3">
                   <div className="flex items-center justify-between text-sm font-medium">
                     <span className="text-[#2eb872] animate-pulse">
-                      {step === 'registration' ? 'جاري إنشاء متجرك...' : 'جاري تسجيل الدخول...'}
+                      {step === 'registration'
+                        ? (isRestaurantApp ? 'جاري إنشاء مطعمك...' : 'جاري إنشاء متجرك...')
+                        : 'جاري تسجيل الدخول...'}
                     </span>
                     <span className="text-gray-400">يرجى الانتظار قليلاً</span>
                   </div>
@@ -184,7 +186,7 @@ function UnifiedHomeContent() {
               <div className="space-y-4">
                 <div className="relative group">
                   <Input
-                    placeholder="اسم متجرك"
+                    placeholder={isRestaurantApp ? 'اسم مطعمك / كافيهك' : 'اسم متجرك'}
                     className={`bg-black/40 border-2 h-14 pr-12 text-lg rounded-xl transition-all duration-300 focus-visible:ring-1 focus-visible:ring-[#2eb872] text-right ${!storeName
                       ? "border-gray-800"
                       : "border-[#2eb872]/30 bg-[#121f1a]"
@@ -249,13 +251,13 @@ function UnifiedHomeContent() {
                     toast({
                       variant: "destructive",
                       title: "بيانات ناقصة",
-                      description: "يرجى إدخال اسم المتجر ورقم الواتساب بشكل صحيح"
+                      description: isRestaurantApp ? "يرجى إدخال اسم المطعم ورقم الواتساب بشكل صحيح" : "يرجى إدخال اسم المتجر ورقم الواتساب بشكل صحيح"
                     });
                   }
                 }}
                 className="w-full h-14 bg-[#2eb872] hover:bg-[#25965d] text-[#05110d] font-bold text-xl rounded-xl shadow-lg transition-all active:scale-95"
               >
-                أنشئ متجرك الآن ✨
+                {isRestaurantApp ? 'أنشئ مطعمك الآن ✨' : 'أنشئ متجرك الآن ✨'}
               </Button>
 
               <div className="pt-8 border-t border-gray-800 space-y-6">
@@ -287,8 +289,14 @@ function UnifiedHomeContent() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-[#2eb872]">رائع! ابدأ متجرك الآن</h2>
-                <p className="text-gray-400 text-sm">الخطوة الأخيرة: سجل دخولك بجوجل لتفعيل متجرك</p>
+                <h2 className="text-2xl font-bold text-[#2eb872]">
+                  {isRestaurantApp ? 'رائع! ابدأ مطعمك الآن' : 'رائع! ابدأ متجرك الآن'}
+                </h2>
+                <p className="text-gray-400 text-sm">
+                  {isRestaurantApp
+                    ? 'الخطوة الأخيرة: سجل دخولك بجوجل لتفعيل مطعمك'
+                    : 'الخطوة الأخيرة: سجل دخولك بجوجل لتفعيل متجرك'}
+                </p>
               </div>
 
               <Button
@@ -309,7 +317,7 @@ function UnifiedHomeContent() {
                 onClick={() => setStep('onboarding')}
                 className="w-full text-gray-500 hover:text-gray-300 text-sm font-medium transition-colors"
               >
-                تعديل بيانات المتجر
+                {isRestaurantApp ? 'تعديل بيانات المطعم' : 'تعديل بيانات المتجر'}
               </button>
             </div>
           )}

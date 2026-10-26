@@ -15,6 +15,7 @@ interface VisitorStatsCardProps {
     total: number;
   };
   storeName?: string;
+  businessType?: string | null;
 }
 
 const PERIOD_CONFIG: Record<
@@ -79,7 +80,7 @@ const PERIOD_CONFIG: Record<
 
 const PERIOD_ORDER: PeriodKey[] = ["today", "week", "month", "total"];
 
-export function VisitorStatsCard({ stats, storeName }: VisitorStatsCardProps) {
+export function VisitorStatsCard({ stats, storeName, businessType }: VisitorStatsCardProps) {
   const [period, setPeriod] = useState<PeriodKey>("total");
   const config = PERIOD_CONFIG[period];
 
@@ -117,7 +118,7 @@ export function VisitorStatsCard({ stats, storeName }: VisitorStatsCardProps) {
             </motion.div>
 
             <CardTitle className="text-sm sm:text-lg font-bold text-white min-w-0 truncate">
-              عدد زوار متجرك
+              {businessType === 'restaurant' ? 'عدد زوار مطعمك' : 'عدد زوار متجرك'}
             </CardTitle>
           </div>
 
@@ -176,7 +177,7 @@ export function VisitorStatsCard({ stats, storeName }: VisitorStatsCardProps) {
                 <TrendingUp
                   className={`h-3.5 w-3.5 shrink-0 transition-colors duration-500 ${config.accent}`}
                 />
-                {config.subtitle}
+                {period === "total" && businessType === 'restaurant' ? "منذ إنشاء المطعم" : config.subtitle}
               </p>
             </motion.div>
           </AnimatePresence>

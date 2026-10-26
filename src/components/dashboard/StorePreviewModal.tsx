@@ -18,9 +18,10 @@ interface StorePreviewModalProps {
   url: string
   storeName: string
   logoUrl?: string | null
+  businessType?: string | null
 }
 
-export function StorePreviewModal({ url, storeName, logoUrl }: StorePreviewModalProps) {
+export function StorePreviewModal({ url, storeName, logoUrl, businessType }: StorePreviewModalProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [iframeKey, setIframeKey] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
@@ -39,7 +40,7 @@ export function StorePreviewModal({ url, storeName, logoUrl }: StorePreviewModal
           className="flex-1 sm:flex-none gap-1.5 text-xs sm:text-sm bg-gradient-to-r from-[#006060] to-[#8B8000] hover:brightness-110 transition-all shadow-lg border-0 text-white font-bold"
         >
           <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-          عرض المتجر
+          {businessType === 'restaurant' ? 'عرض المطعم' : 'عرض المتجر'}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[95vw] w-full h-[90vh] p-0 overflow-hidden border-white/10 glass-surface flex flex-col [&>button]:hidden">
@@ -61,10 +62,12 @@ export function StorePreviewModal({ url, storeName, logoUrl }: StorePreviewModal
               </div>
               <div>
                 <DialogTitle className="text-right text-lg font-bold text-white">
-                  معاينة المتجر: {storeName}
+                  {businessType === 'restaurant' ? `معاينة المطعم: ${storeName}` : `معاينة المتجر: ${storeName}`}
                 </DialogTitle>
                 <p className="text-xs text-slate-400 text-right">
-                  هذه هي الطريقة التي يرى بها العملاء متجرك
+                  {businessType === 'restaurant'
+                    ? 'هذه هي الطريقة التي يرى بها العملاء مطعمك'
+                    : 'هذه هي الطريقة التي يرى بها العملاء متجرك'}
                 </p>
               </div>
             </div>

@@ -349,7 +349,9 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
                 {pathname === '/dashboard' ? 'لوحة التحكم' :
                   pathname === '/dashboard/categories' ? 'التصنيفات' :
                     pathname === '/dashboard/items' ? 'المنتجات' :
-                      pathname === '/dashboard/settings' ? 'إعدادات المتجر' : 'لوحة التحكم'}
+                      pathname === '/dashboard/settings'
+                        ? (catalog.business_type === 'restaurant' ? 'إعدادات المطعم' : 'إعدادات المتجر')
+                        : 'لوحة التحكم'}
               </h1>
               <Badge className={cn(getPlanDetails(catalog).className, "text-[9px] sm:text-xs px-1.5 sm:px-3 py-0 sm:py-0.5 items-center gap-1 font-bold rounded-full shrink-0 w-fit")}>
                 {(() => {
@@ -363,7 +365,9 @@ export function DashboardNav({ user, catalog }: { user: User; catalog: Catalog |
                 })()}
               </Badge>
             </div>
-            <p className="hidden md:block text-xs text-muted-foreground border-r pr-4 truncate">نظرة عامة على متجرك الإلكتروني</p>
+            <p className="hidden md:block text-xs text-muted-foreground border-r pr-4 truncate">
+              {catalog.business_type === 'restaurant' ? 'نظرة عامة على مطعمك الإلكتروني' : 'نظرة عامة على متجرك الإلكتروني'}
+            </p>
           </div>
         )}
 
