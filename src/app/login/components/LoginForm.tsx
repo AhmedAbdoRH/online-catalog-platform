@@ -104,6 +104,7 @@ export function LoginForm({ message, onLogoDoubleClick, onToggleEmailForm, showE
                 });
 
                 if (error) throw error;
+                try { localStorage.setItem('hasLoggedIn', '1'); } catch {}
                 router.push('/dashboard');
                 router.refresh();
               } else {

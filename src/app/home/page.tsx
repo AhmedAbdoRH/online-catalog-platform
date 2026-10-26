@@ -79,9 +79,11 @@ function UnifiedHomeContent() {
 
         if (error) throw error;
 
+        try { localStorage.setItem('hasLoggedIn', '1'); } catch {}
         router.push('/dashboard');
         router.refresh();
       } else {
+        try { localStorage.setItem('hasLoggedIn', '1'); } catch {}
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {

@@ -13,6 +13,7 @@ import {
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 function LoginContent() {
   const router = useRouter();
@@ -20,7 +21,42 @@ function LoginContent() {
   const message = searchParams.get("message") || "";
   const shouldShowEmail = searchParams.get("showEmail") === "true";
   const isRestaurantApp = searchParams.get("segment") === "restaurant";
+  const isNativeApp = searchParams.get("native_android") === "1";
   const [showEmailForm, setShowEmailForm] = useState(shouldShowEmail);
+
+  // Restaurant app first-run experience:
+  // - First launch (never signed in)  → go to the signup page
+  // - Returning user with a session   → go straight to the dashboard
+  // - Returning user without session  → stay on login
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isNativeApp || !isRestaurantApp) return;
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (cancelled) return;
+        if (session) {
+          router.replace("/dashboard");
+          return;
+        }
+      } catch {
+        // ignore — fall through to the first-run check
+      }
+
+      if (cancelled) return;
+      if (localStorage.getItem("hasLoggedIn") !== "1") {
+        router.replace("/home?segment=restaurant&native_android=1");
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isNativeApp, isRestaurantApp, router]);
 
   useEffect(() => {
     if (shouldShowEmail) {
