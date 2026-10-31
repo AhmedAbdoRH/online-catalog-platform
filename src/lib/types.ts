@@ -45,6 +45,7 @@ interface Database {
           table_numbers: TableNumbers | null;
           restaurant_mode_enabled: boolean | null;
           business_type: BusinessType;
+          meta_pixel_id: string | null;
         };
         Insert: {
           id?: number;
@@ -76,6 +77,7 @@ interface Database {
           table_numbers?: TableNumbers | null;
           restaurant_mode_enabled?: boolean | null;
           business_type?: BusinessType;
+          meta_pixel_id?: string | null;
         };
         Update: {
           id?: number;
@@ -108,6 +110,7 @@ interface Database {
           table_numbers?: TableNumbers | null;
           restaurant_mode_enabled?: boolean | null;
           business_type?: BusinessType;
+          meta_pixel_id?: string | null;
         };
       };
       categories: {

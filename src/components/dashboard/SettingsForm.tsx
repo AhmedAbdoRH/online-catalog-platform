@@ -31,7 +31,7 @@ import type { Catalog } from '@/lib/types';
 import { isProPlan } from '@/lib/plans';
 import NextImage from 'next/image';
 import { Capacitor } from '@capacitor/core';
-import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp, Download, Facebook, Instagram, Twitter, Music2, Share2, Copy } from 'lucide-react';
+import { Loader2, Lock, Check, Crown, Palette, Sparkles, EyeOff, Camera, Upload, X, ChevronDown, ChevronUp, Download, Facebook, Instagram, Twitter, Music2, Share2, Copy, Megaphone, ExternalLink } from 'lucide-react';
 import { ProUpgradeButton } from './ProUpgradeButton';
 import { Switch } from '../ui/switch';
 import { compressImage } from '@/lib/image-utils';
@@ -87,6 +87,10 @@ const formSchema = z.object({
   tiktok_url: z.string().url('رابط تيك توك غير صالح').optional().or(z.literal('')),
   snapchat_url: z.string().url('رابط سناب شات غير صالح').optional().or(z.literal('')),
   twitter_url: z.string().url('رابط تويتر غير صالح').optional().or(z.literal('')),
+  meta_pixel_id: z.string().optional().refine(
+    (val) => !val || /^\d{15,16}$/.test(val.trim()),
+    'Pixel ID لازم يكون أرقام فقط (15 أو 16 رقم)'
+  ),
 });
 
 export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPhone?: string }) {
@@ -320,11 +324,13 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
       tiktok_url: catalog.tiktok_url || '',
       snapchat_url: catalog.snapchat_url || '',
       twitter_url: catalog.twitter_url || '',
+      meta_pixel_id: catalog.meta_pixel_id || '',
     },
   });
 
   // Live preview of the final store URL based on the slug typed by the user
   const watchedName = useWatch({ control: form.control, name: 'name' });
+  const watchedPixelId = useWatch({ control: form.control, name: 'meta_pixel_id' });
   const previewSlug = (watchedName || catalog.name || '').trim().toLowerCase().replace(/\s+/g, '-');
   const finalStoreUrl = getStoreUrl(previewSlug || 'your-store', catalog.business_type);
   const [copied, setCopied] = useState(false);
@@ -438,6 +444,7 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
       formData.append('tiktok_url', values.tiktok_url || '');
       formData.append('snapchat_url', values.snapchat_url || '');
       formData.append('twitter_url', values.twitter_url || '');
+      formData.append('meta_pixel_id', values.meta_pixel_id?.trim() || '');
 
       // Use manually passed file or state file
       const finalLogo = manualLogo !== undefined ? manualLogo : logoFile;
@@ -996,6 +1003,80 @@ export function SettingsForm({ catalog, userPhone }: { catalog: Catalog, userPho
                 <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-8 px-3 bg-yellow-500 hover:bg-yellow-600 text-black text-[10px] font-bold">
                   حفظ
                 </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* التسويق والتتبّع */}
+        <div className="pt-6 border-t">
+          <div className="bg-gradient-to-br from-sky-500/10 to-blue-600/5 rounded-xl p-4 border border-sky-500/20 shadow-sm space-y-4 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/5 rounded-full blur-2xl -mr-12 -mt-12 pointer-events-none" />
+            <div className="flex flex-col">
+              <FormLabel className="text-base font-bold text-white flex items-center gap-2">
+                <Megaphone className="h-4 w-4 text-white" />
+                التسويق والتتبّع
+              </FormLabel>
+              <FormDescription className="text-[11px] text-white/80">
+                {catalog.business_type === 'restaurant'
+                  ? 'اربط بيكسل ميتا الخاص بك عشان تعرف مين زار مطعمك ومين ضغط زر الطلب — وتقيس حملاتك الإعلانية بدقة.'
+                  : 'اربط بيكسل ميتا الخاص بك عشان تعرف مين زار متجرك ومين ضغط زر الطلب — وتقيس حملاتك الإعلانية بدقة.'}
+              </FormDescription>
+            </div>
+
+            <FormField
+              control={form.control}
+              name="meta_pixel_id"
+              render={({ field }) => (
+                <FormItem className="space-y-1">
+                  <FormLabel className="text-[11px] flex items-center gap-1 font-semibold text-white/90">
+                    Meta Pixel ID
+                  </FormLabel>
+                  <div className="flex gap-1.5">
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value || ''}
+                        disabled={isSubmitting}
+                        dir="ltr"
+                        inputMode="numeric"
+                        autoComplete="off"
+                        placeholder="123456789012345"
+                        className="bg-white/80 h-10 text-sm border-slate-200 focus:border-sky-500 text-black font-medium tracking-wider"
+                      />
+                    </FormControl>
+                    <Button type="submit" size="sm" disabled={isSubmitting} className="shrink-0 h-10 px-4 bg-yellow-500 hover:bg-yellow-600 text-black text-[11px] font-bold">
+                      حفظ
+                    </Button>
+                  </div>
+                  <FormMessage className="text-[9px]" />
+                  <FormDescription className="text-[10px] text-white/70 leading-relaxed">
+                    هتلاقي الرقم في{' '}
+                    <a
+                      href="https://www.facebook.com/events_manager2"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline text-sky-300 hover:text-sky-200 inline-flex items-center gap-0.5"
+                    >
+                      Meta Events Manager
+                      <ExternalLink className="h-2.5 w-2.5" />
+                    </a>
+                    {' '}→ Data Sources → اختار البيكسل → Settings. سيبه فاضي لو مش عايز تتبّع.
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+
+            <div className="flex items-center gap-2 text-[10px] font-bold">
+              {watchedPixelId && /^\d{15,16}$/.test(watchedPixelId.trim()) ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 px-2 py-0.5">
+                  <Check className="h-2.5 w-2.5" />
+                  البيكسل مُفعّل
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/5 border border-white/10 text-white/50 px-2 py-0.5">
+                  غير مُفعّل
+                </span>
               )}
             </div>
           </div>

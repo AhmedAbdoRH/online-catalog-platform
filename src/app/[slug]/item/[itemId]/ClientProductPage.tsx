@@ -13,6 +13,8 @@ import { Catalog, MenuItem, ItemVariant } from "@/lib/types";
 import { getYouTubeEmbedUrl } from "@/lib/youtube";
 import { PageLoader } from "@/components/common/PageLoader";
 import { Head } from "@/components/common/Head";
+import { MerchantPixel } from "@/components/common/MerchantPixel";
+import { trackPixel, pixelValue, pixelCurrency } from "@/lib/merchant-pixel";
 import { Button } from "@/components/ui/button";
 import { CartProvider } from "@/components/cart/CartContext";
 import { StoreTheme } from "@/components/theme/StoreTheme";
@@ -223,6 +225,21 @@ export default function ClientProductPage() {
         fetchData();
     }, [slug, itemId]);
 
+    // Fire the merchant's own Meta ViewContent event once the product is ready.
+    const viewedProductId = data?.product?.id;
+    useEffect(() => {
+        if (!data) return;
+        trackPixel('ViewContent', {
+            content_ids: [String(data.product.id)],
+            content_name: data.product.name,
+            content_type: 'product',
+            value: pixelValue(data.product.price, (data.product as { discount_price?: number | null }).discount_price),
+            currency: pixelCurrency(data.catalog.country_code),
+        });
+        // Only re-fire when a different product is viewed.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewedProductId]);
+
     if (loading) return <PageLoader logoUrl={logoUrl} />;
     if (storeClosed) {
         return (
@@ -279,6 +296,7 @@ export default function ClientProductPage() {
         <StoreTheme theme={catalog.theme} color={catalog.custom_theme_color}>
         <CartProvider storageKey={`oc_cart_${catalog.name}`}>
             <div className={cn("relative min-h-screen pb-24", themeClass)}>
+                <MerchantPixel pixelId={catalog.meta_pixel_id} />
                 <Head
                     faviconUrl={catalog.logo_url || undefined}
                     storeName={`${product.name} | ${catalog.display_name || catalog.name}`}

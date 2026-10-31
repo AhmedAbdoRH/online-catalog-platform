@@ -14,6 +14,7 @@ import { DirectOrderForm, type DirectOrderFormData } from '@/components/menu/Dir
 import { saveCustomerData } from '@/app/actions/customer'
 import { hasConfiguredShippingRates } from '@/lib/shipping'
 import { hasConfiguredTableNumbers } from '@/lib/tables'
+import { trackPixel, pixelCurrency } from '@/lib/merchant-pixel'
 
 export function CartDrawer({ catalog }: { catalog: Catalog }) {
   const { items, total, isOpen, closeCart, removeItem, updateQuantity, clear } = useCart()
@@ -31,6 +32,18 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
   const shouldShowOrderForm = directOrderEnabled || restaurantEnabled
 
   const [showDirectOrderDialog, setShowDirectOrderDialog] = useState(false)
+
+  // Merchant's Meta pixel: a WhatsApp order is the real conversion for these stores.
+  const trackOrderContact = () => {
+    if (items.length === 0) return
+    trackPixel('Contact', {
+      content_ids: items.map((i) => String(i.id)),
+      content_type: 'product',
+      num_items: items.reduce((sum, i) => sum + i.quantity, 0),
+      value: total,
+      currency: pixelCurrency(catalog.country_code),
+    })
+  }
 
   const buildWhatsAppMessage = (orderData?: DirectOrderFormData | null) => {
     const lines = items.map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity, catalog.country_code)}`)
@@ -78,6 +91,7 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
     }
 
     window.open(getWhatsAppLink(data), '_blank')
+    trackOrderContact()
   }
 
   const handleInquiry = () => {
@@ -87,6 +101,7 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
       const encodedMessage = encodeURIComponent(inquiryMessage)
       const cleanPhone = whatsappNumber.replace(/[^\d]/g, '')
       const link = `https://wa.me/${cleanPhone}?text=${encodedMessage}`
+      trackOrderContact()
       window.open(link, '_blank')
     }
   }
@@ -95,6 +110,7 @@ export function CartDrawer({ catalog }: { catalog: Catalog }) {
     if (shouldShowOrderForm) {
       setShowDirectOrderDialog(true)
     } else {
+      trackOrderContact()
       window.open(getWhatsAppLink(), '_blank')
     }
   }

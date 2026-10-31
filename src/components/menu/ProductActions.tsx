@@ -12,6 +12,7 @@ import { ShareButtons } from './ShareButtons';
 import { DirectOrderForm, type DirectOrderFormData } from './DirectOrderForm';
 import { saveCustomerData } from '@/app/actions/customer';
 import { useCart } from '@/components/cart/CartContext';
+import { trackPixel, pixelValue, pixelCurrency } from '@/lib/merchant-pixel';
 
 interface ProductActionsProps {
     basePrice: number | null;
@@ -126,6 +127,13 @@ export function ProductActions({
 
         const link = getWhatsAppLink(data);
         if (link) {
+            trackPixel('Contact', {
+                content_ids: [String(productId)],
+                content_name: productName,
+                content_type: 'product',
+                value: pixelValue(currentPrice),
+                currency: pixelCurrency(countryCode),
+            });
             window.open(link, '_blank');
         }
     };
@@ -137,6 +145,12 @@ export function ProductActions({
             const encodedMessage = encodeURIComponent(message);
             const cleanPhone = catalogPhone.replace(/[^\d]/g, '');
             const link = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+            trackPixel('Contact', {
+                content_ids: [String(productId)],
+                content_name: productName,
+                content_type: 'product',
+                currency: pixelCurrency(countryCode),
+            });
             window.open(link, '_blank');
         }
     };

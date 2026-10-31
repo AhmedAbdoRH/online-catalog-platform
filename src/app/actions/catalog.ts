@@ -321,6 +321,16 @@ export async function updateCatalog(prevState: any, formData: FormData) {
   const snapchat_url = (formData.get('snapchat_url') as string | null) || null;
   const twitter_url = (formData.get('twitter_url') as string | null) || null;
 
+  // Merchant Meta Pixel ID (optional). Only touched when the form actually submits it,
+  // so other callers of updateCatalog never wipe an existing pixel.
+  const rawPixelId = formData.get('meta_pixel_id');
+  const pixelIdProvided = rawPixelId !== null;
+  const metaPixelId = pixelIdProvided ? String(rawPixelId).trim() : null;
+
+  if (pixelIdProvided && metaPixelId && !/^\d{15,16}$/.test(metaPixelId)) {
+    return { message: 'Pixel ID غير صالح: لازم يكون أرقام فقط (15 أو 16 رقم).' };
+  }
+
   let updateData: any = {
     name: validatedName,
     display_name: validatedDisplayName,
@@ -337,6 +347,10 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     snapchat_url: snapchat_url || null,
     twitter_url: twitter_url || null,
   };
+
+  if (pixelIdProvided) {
+    updateData.meta_pixel_id = metaPixelId || null;
+  }
 
   // Upload logo if provided
   if (logo && logo.size > 0) {
@@ -392,10 +406,22 @@ export async function updateCatalog(prevState: any, formData: FormData) {
     console.log('Cover uploaded successfully:', coverPublicUrl);
   }
 
-  const { error: dbError } = await supabase
+  let { error: dbError } = await supabase
     .from('catalogs')
     .update(updateData)
     .match({ id: Number(catalogId), user_id: user.id });
+
+  // Defensive: if migration 0017 has not been applied yet, never block the rest
+  // of the settings from saving — just drop the pixel field and retry once.
+  if (dbError && /meta_pixel_id/i.test(dbError.message || '')) {
+    console.warn('meta_pixel_id column missing — saving settings without it.');
+    delete updateData.meta_pixel_id;
+    const retry = await supabase
+      .from('catalogs')
+      .update(updateData)
+      .match({ id: Number(catalogId), user_id: user.id });
+    dbError = retry.error;
+  }
 
   if (dbError) {
     console.error('Database update error:', dbError);

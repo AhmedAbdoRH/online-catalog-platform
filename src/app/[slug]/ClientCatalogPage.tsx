@@ -7,6 +7,7 @@ import type { Catalog, CategoryWithSubcategories } from "@/lib/types";
 import { StorefrontView } from "@/components/menu/StorefrontView";
 import { Head } from "@/components/common/Head";
 import { InstallPrompt } from "@/components/common/InstallPrompt";
+import { MerchantPixel } from "@/components/common/MerchantPixel";
 import { PageLoader } from "@/components/common/PageLoader";
 import { recordStoreVisit } from "@/app/actions/stats";
 import {
@@ -205,6 +206,7 @@ export default function ClientCatalogPage() {
 
     return (
         <>
+            <MerchantPixel pixelId={data.meta_pixel_id} />
             <Head
                 faviconUrl={data.logo_url || undefined}
                 storeName={titleWithSlogan}
